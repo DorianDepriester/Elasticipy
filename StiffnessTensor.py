@@ -11,7 +11,7 @@ def _sph2cart(phi, theta, psi=None):
         return u
     else:
         e_phi = np.array([-sin(phi), cos(phi), 0])
-        e_theta = np.array([cos(theta)*cos(phi), cos(theta)*sin(phi), -sin(theta)])
+        e_theta = np.array([cos(theta) * cos(phi), cos(theta) * sin(phi), -sin(theta)])
         v = cos(psi) * e_phi + sin(psi) * e_theta
     return np.vstack((u, v))
 
@@ -37,7 +37,7 @@ def _multistart_minimization(fun, bounds):
     phi_theta_0 = _cart2sph(*xyz_0.T)
     angles_0 = np.transpose(phi_theta_0)
     if len(bounds) == 3:
-        psi_0 = np.array([[0, np.pi/2, np.pi]]).T
+        psi_0 = np.array([[0, np.pi / 2, np.pi]]).T
         phi_theta_0 = np.tile(angles_0, (len(psi_0), 1))
         psi_0 = np.repeat(psi_0, len(angles_0), axis=0)
         angles_0 = np.hstack((phi_theta_0, psi_0))
@@ -94,7 +94,7 @@ def tensorFromCrystalSymmetry(symmetry='Triclinic', point_group=None, tensor='St
     tensor = tensor.lower()
     if tensor == 'stiffness':
         prefix = 'C'
-        k = 1/2
+        k = 1 / 2
     else:
         prefix = 'S'
         k = 2
@@ -226,12 +226,29 @@ class StiffnessTensor(SymmetricTensor):
     def shear_modulus(self):
         return ShearModulus(self, unit=self.unit)
 
+    def Voigt_average(self):
+        c = self.matrix
+        C11 = (c[0, 0] + c[1, 1] + c[2, 2]) / 5 \
+            + (c[0, 1] + c[0, 2] + c[1, 2]) * 2 / 15 \
+            + (c[3, 3] + c[4, 4] + c[5, 5]) * 4 / 15
+        C12 = (c[0, 0] + c[1, 1] + c[2, 2]) / 15 \
+            + (c[0, 1] + c[0, 2] + c[1, 2]) * 4 / 15 \
+            - (c[3, 3] + c[4, 4] + c[5, 5]) * 2 / 15
+        C44 = (c[0, 0] + c[1, 1] + c[2, 2] - c[0, 1] - c[0, 2] - c[1, 2]) / 15 + (c[3, 3] + c[4, 4] + c[5, 5]) / 5
+        mat = np.array([[C11, C12, C12, 0,   0,   0],
+                        [C12, C11, C12, 0,   0,   0],
+                        [C12, C12, C11, 0,   0,   0],
+                        [0,   0,   0,   C44, 0,   0],
+                        [0,   0,   0,   0,   C44, 0],
+                        [0,   0,   0,   0,   0,   C44]])
+        return StiffnessTensor(mat, stress_unit=self.unit)
+
 
 class ComplianceTensor(StiffnessTensor):
     tensor_name = 'Compliance'
     voigt_map = np.vstack((
-        np.hstack((np.ones((3, 3)), 2*np.ones((3, 3)))),
-        np.hstack((2*np.ones((3, 3)), 4*np.ones((3, 3))))
+        np.hstack((np.ones((3, 3)), 2 * np.ones((3, 3)))),
+        np.hstack((2 * np.ones((3, 3)), 4 * np.ones((3, 3))))
     ))
 
     def __init__(self, C, stress_unit='TPa'):
@@ -244,6 +261,23 @@ class ComplianceTensor(StiffnessTensor):
     def inv(self):
         S = np.linalg.inv(self.matrix)
         return StiffnessTensor(S, stress_unit=self.unit)
+
+    def Reuss_average(self):
+        c = self.matrix
+        C11 = (c[0, 0] + c[1, 1] + c[2, 2]) / 5 \
+            + (c[0, 1] + c[0, 2] + c[1, 2]) * 2 / 15 \
+            + (c[3, 3] + c[4, 4] + c[5, 5]) * 4 / 15
+        C12 = (c[0, 0] + c[1, 1] + c[2, 2]) / 15 \
+            + (c[0, 1] + c[0, 2] + c[1, 2]) * 4 / 15 \
+            - (c[3, 3] + c[4, 4] + c[5, 5]) * 1 / 30
+        C44 = (c[0, 0] + c[1, 1] + c[2, 2] - c[0, 1] - c[0, 2] - c[1, 2]) * 4 / 15 + (c[3, 3] + c[4, 4] + c[5, 5]) / 5
+        mat = np.array([[C11, C12, C12, 0,   0,   0],
+                        [C12, C11, C12, 0,   0,   0],
+                        [C12, C12, C11, 0,   0,   0],
+                        [0,   0,   0,   C44, 0,   0],
+                        [0,   0,   0,   0,   C44, 0],
+                        [0,   0,   0,   0,   0,   C44]])
+        return ComplianceTensor(mat, stress_unit=self.unit)
 
 
 class SphericalFunction:
@@ -277,7 +311,8 @@ class YoungModulus(SphericalFunction):
     def min(self):
         def fun(x):
             return self.evalsph(*x)
-        q = _multistart_minimization(fun, bounds=[[0, 2*np.pi], [0, np.pi/2]])
+
+        q = _multistart_minimization(fun, bounds=[[0, 2 * np.pi], [0, np.pi / 2]])
         Emin = q.fun
         phi, theta = q.x
         return Emin, _sph2cart(phi, theta)
@@ -286,7 +321,8 @@ class YoungModulus(SphericalFunction):
     def max(self):
         def fun(x):
             return -self.evalsph(*x)
-        q = _multistart_minimization(fun, bounds=[[0, 2*np.pi], [0, np.pi/2]])
+
+        q = _multistart_minimization(fun, bounds=[[0, 2 * np.pi], [0, np.pi / 2]])
         Emax = -q.fun
         phi, theta = q.x
         return Emax, _sph2cart(phi, theta)
@@ -294,6 +330,7 @@ class YoungModulus(SphericalFunction):
     def mean(self):
         def fun(theta, phi):
             return self.evalsph(phi, theta) * sin(theta)
+
         q = integrate.dblquad(fun, 0, 2 * np.pi, 0, np.pi / 2)
         return q[0] / (2 * np.pi)
 
@@ -303,6 +340,7 @@ class YoungModulus(SphericalFunction):
 
         def fun(theta, phi):
             return (self.evalsph(phi, theta) - Emean) ** 2 * sin(theta)
+
         q = integrate.dblquad(fun, 0, 2 * np.pi, 0, np.pi / 2)
         var = q[0] / (2 * np.pi)
         return np.sqrt(var)
@@ -313,6 +351,7 @@ class ShearModulus(SphericalFunction):
         def compute_shear_modulus(m, n):
             eps = _compute_unit_strain_along_direction(S, m, n)
             return 1 / (4 * eps)
+
         self.G = compute_shear_modulus
         self.unit = unit
 
@@ -329,7 +368,8 @@ class ShearModulus(SphericalFunction):
     def min(self):
         def fun(x):
             return self.evalsph(*x)
-        q = _multistart_minimization(fun, bounds=[[0, 2*np.pi], [0, np.pi/2], [0, np.pi]])
+
+        q = _multistart_minimization(fun, bounds=[[0, 2 * np.pi], [0, np.pi / 2], [0, np.pi]])
         Gmin = q.fun
         phi, theta, psi = q.x
         return Gmin, _sph2cart(phi, theta, psi=psi)
@@ -338,7 +378,8 @@ class ShearModulus(SphericalFunction):
     def max(self):
         def fun(x):
             return -self.evalsph(*x)
-        q = _multistart_minimization(fun, bounds=[[0, 2*np.pi], [0, np.pi/2], [0, np.pi]])
+
+        q = _multistart_minimization(fun, bounds=[[0, 2 * np.pi], [0, np.pi / 2], [0, np.pi]])
         Gmax = -q.fun
         phi, theta, psi = q.x
         return Gmax, _sph2cart(phi, theta, psi=psi)
@@ -348,15 +389,15 @@ class ShearModulus(SphericalFunction):
             return self.evalsph(phi, theta, psi) * sin(theta)
 
         q = integrate.tplquad(fun, 0, 2 * np.pi, 0, np.pi / 2, 0, np.pi)
-        return q[0] / (2 * np.pi**2)
+        return q[0] / (2 * np.pi ** 2)
 
     def std(self, Gmean=None):
         if Gmean is None:
             Gmean = self.mean()
 
         def fun(psi, theta, phi):
-            return (Gmean - self.evalsph(phi, theta, psi))**2 * sin(theta)
+            return (Gmean - self.evalsph(phi, theta, psi)) ** 2 * sin(theta)
 
         q = integrate.tplquad(fun, 0, 2 * np.pi, 0, np.pi / 2, 0, np.pi)
-        var = q[0] / (2 * np.pi**2)
+        var = q[0] / (2 * np.pi ** 2)
         return np.sqrt(var)
