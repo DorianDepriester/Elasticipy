@@ -202,6 +202,25 @@ class SymmetricTensor:
         rotated_matrix = rotated_tensor[i, j, k, ell] * self.voigt_map[ij, kl]
         return self.__class__(rotated_matrix)
 
+    def __add__(self, other):
+        if isinstance(other, np.ndarray):
+            if other.shape == (6, 6):
+                mat = self.matrix + other
+            elif other.shape == (3, 3, 3, 3):
+                ten = self.full_tensor() + other
+                ij, kl = np.indices((6, 6))
+                i, j = unvoigt(ij).T
+                k, ell = unvoigt(kl).T
+                mat = ten[i, j, k, ell]
+        elif isinstance(other, SymmetricTensor):
+            if type(other) == type(self):
+                mat = self.matrix + other.matrix
+            else:
+                raise ValueError('The two tensors to add must be of the same class.')
+        else:
+            raise ValueError('I don''t know how to add {} with {}'.format(type(self), type(other)))
+        return self.__class__(mat)
+
 
 class StiffnessTensor(SymmetricTensor):
     tensor_name = 'Stiffness'
@@ -243,6 +262,9 @@ class StiffnessTensor(SymmetricTensor):
                         [0,   0,   0,   0,   0,   C44]])
         return StiffnessTensor(mat, stress_unit=self.unit)
 
+    def Reuss_average(self):
+        return self.inv().Reuss_average().inv()
+
 
 class ComplianceTensor(StiffnessTensor):
     tensor_name = 'Compliance'
@@ -278,6 +300,9 @@ class ComplianceTensor(StiffnessTensor):
                         [0,   0,   0,   0,   C44, 0],
                         [0,   0,   0,   0,   0,   C44]])
         return ComplianceTensor(mat, stress_unit=self.unit)
+
+    def Voigt_average(self):
+        return self.inv().Voigt_average().inv()
 
 
 class SphericalFunction:
