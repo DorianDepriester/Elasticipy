@@ -221,6 +221,9 @@ class SymmetricTensor:
             raise ValueError('I don''t know how to add {} with {}'.format(type(self), type(other)))
         return self.__class__(mat)
 
+    def __mul__(self, other):
+        return self.__class__(self.matrix * other)
+
 
 class StiffnessTensor(SymmetricTensor):
     tensor_name = 'Stiffness'
@@ -265,6 +268,9 @@ class StiffnessTensor(SymmetricTensor):
     def Reuss_average(self):
         return self.inv().Reuss_average().inv()
 
+    def Hill_average(self):
+        return (self.Reuss_average() + self.Voigt_average()) * 0.5
+
 
 class ComplianceTensor(StiffnessTensor):
     tensor_name = 'Compliance'
@@ -304,6 +310,8 @@ class ComplianceTensor(StiffnessTensor):
     def Voigt_average(self):
         return self.inv().Voigt_average().inv()
 
+    def Hill_average(self):
+        return self.inv().Hill_average()
 
 class SphericalFunction:
     min = 0, (0., 0., 0.)
