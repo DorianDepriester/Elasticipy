@@ -3,6 +3,7 @@ from numpy import cos, sin
 import scipy.integrate as integrate
 from scipy.optimize import minimize
 import re
+from inspect import signature
 
 
 def _sph2cart(phi, theta, psi=None):
@@ -13,7 +14,7 @@ def _sph2cart(phi, theta, psi=None):
         e_phi = np.array([-sin(phi), cos(phi), 0])
         e_theta = np.array([cos(theta) * cos(phi), cos(theta) * sin(phi), -sin(theta)])
         v = cos(psi) * e_phi + sin(psi) * e_theta
-    return np.vstack((u, v))
+    return u, v
 
 
 def _cart2sph(x, y, z):
@@ -87,6 +88,20 @@ def _compute_unit_strain_along_direction(S, m, n):
     indices = np.indices((3, 3, 3, 3))
     i, j, k, ell = indices[0], indices[1], indices[2], indices[3]
     cosine = m[i] * n[j] * m[k] * n[ell]
+    return np.sum(cosine * S.full_tensor())
+
+
+def _compute_unit_strain_along_transverse_direction(S, m, n):
+    if not isinstance(S, ComplianceTensor):
+        S = S.inv()
+    if (np.linalg.norm(m) < 1e-9) or (np.linalg.norm(n) < 1e-9):
+        raise ValueError('The input vector cannot be zeros')
+    m = m / np.linalg.norm(m)
+    n = n / np.linalg.norm(n)
+
+    indices = np.indices((3, 3, 3, 3))
+    i, j, k, ell = indices[0], indices[1], indices[2], indices[3]
+    cosine = m[i] * m[j] * n[k] * n[ell]
     return np.sum(cosine * S.full_tensor())
 
 
@@ -242,11 +257,18 @@ class StiffnessTensor(SymmetricTensor):
 
     @property
     def Young_modulus(self):
-        return YoungModulus(self, unit=self.unit)
+        def compute_young_modulus(n):
+            eps = _compute_unit_strain_along_direction(self, n, n)
+            return 1 / eps
+        return SphericalFunction(compute_young_modulus)
 
     @property
     def shear_modulus(self):
-        return ShearModulus(self, unit=self.unit)
+        def compute_shear_modulus(m, n):
+            eps = _compute_unit_strain_along_direction(self, m, n)
+            return 1 / (4 * eps)
+
+        return SphericalFunction(compute_shear_modulus)
 
     def Voigt_average(self):
         c = self.matrix
@@ -270,6 +292,9 @@ class StiffnessTensor(SymmetricTensor):
 
     def Hill_average(self):
         return (self.Reuss_average() + self.Voigt_average()) * 0.5
+
+    def Poisson_ratio(self):
+        return PoissonRatio(self)
 
 
 class ComplianceTensor(StiffnessTensor):
@@ -313,9 +338,22 @@ class ComplianceTensor(StiffnessTensor):
     def Hill_average(self):
         return self.inv().Hill_average()
 
+
 class SphericalFunction:
-    min = 0, (0., 0., 0.)
-    max = np.inf, (0., 0., 0.)
+    def __init__(self, fun, domain=None):
+        sig = signature(fun)
+        n_args = len(sig.parameters)
+        if domain is None:
+            if n_args == 1:
+                domain = [[0, 2 * np.pi],
+                          [0, np.pi / 2]]
+            else:
+                domain = [[0, 2 * np.pi],
+                          [0, np.pi / 2],
+                          [0, np.pi]]
+        self.n_args = n_args
+        self.domain = domain
+        self.fun = fun
 
     def __repr__(self):
         val_min, _ = self.min
@@ -324,6 +362,70 @@ class SphericalFunction:
         s += 'Min={}, Max={}'.format(val_min, val_max)
         return s
 
+    def eval(self, *args):
+        return self.fun(*args)
+
+    def evalsph(self, *args):
+        if self.n_args == 1:
+            phi, theta = args
+            u = _sph2cart(phi, theta)
+            return self.eval(u)
+        else:
+            phi, theta, psi = args
+            u, v = _sph2cart(phi, theta, psi)
+            return self.eval(u, v)
+
+
+    @property
+    def min(self):
+        def fun(x):
+            return self.evalsph(*x)
+
+        q = _multistart_minimization(fun, bounds=self.domain)
+        val = q.fun
+        angles = q.x
+        return val, _sph2cart(*angles)
+
+    @property
+    def max(self):
+        def fun(x):
+            return -self.evalsph(*x)
+
+        q = _multistart_minimization(fun, bounds=self.domain)
+        val = -q.fun
+        angles = q.x
+        return val, _sph2cart(*angles)
+
+    def mean(self):
+        if self.n_args == 1:
+            def fun(theta, phi):
+                return self.evalsph(phi, theta) * sin(theta)
+
+            q = integrate.dblquad(fun, 0, 2 * np.pi, 0, np.pi / 2)
+            return q[0] / (2 * np.pi)
+        else:
+            def fun(psi, theta, phi):
+                return self.evalsph(phi, theta, psi) * sin(theta)
+
+            q = integrate.tplquad(fun, 0, 2 * np.pi, 0, np.pi / 2, 0, np.pi)
+            return q[0] / (2 * np.pi ** 2)
+
+    def std(self, mean=None):
+        if mean is None:
+            mean = self.mean()
+        if self.n_args == 1:
+            def fun(theta, phi):
+                return (self.evalsph(phi, theta) - mean) ** 2 * sin(theta)
+
+            q = integrate.dblquad(fun, 0, 2 * np.pi, 0, np.pi / 2)
+            var = q[0] / (2 * np.pi)
+        else:
+            def fun(psi, theta, phi):
+                return (mean - self.evalsph(phi, theta, psi)) ** 2 * sin(theta)
+
+            q = integrate.tplquad(fun, 0, 2 * np.pi, 0, np.pi / 2, 0, np.pi)
+            var = q[0] / (2 * np.pi ** 2)
+        return np.sqrt(var)
 
 class YoungModulus(SphericalFunction):
     def __init__(self, tensor, unit='GPa'):
@@ -331,34 +433,8 @@ class YoungModulus(SphericalFunction):
             eps = _compute_unit_strain_along_direction(tensor, n, n)
             return 1 / eps
 
-        self.E = compute_young_modulus
+        super().__init__(compute_young_modulus)
         self.unit = unit
-
-    def eval(self, n):
-        return self.E(n)
-
-    def evalsph(self, phi, theta):
-        return self.eval(_sph2cart(phi, theta))
-
-    @property
-    def min(self):
-        def fun(x):
-            return self.evalsph(*x)
-
-        q = _multistart_minimization(fun, bounds=[[0, 2 * np.pi], [0, np.pi / 2]])
-        Emin = q.fun
-        phi, theta = q.x
-        return Emin, _sph2cart(phi, theta)
-
-    @property
-    def max(self):
-        def fun(x):
-            return -self.evalsph(*x)
-
-        q = _multistart_minimization(fun, bounds=[[0, 2 * np.pi], [0, np.pi / 2]])
-        Emax = -q.fun
-        phi, theta = q.x
-        return Emax, _sph2cart(phi, theta)
 
     def mean(self):
         def fun(theta, phi):
@@ -367,12 +443,12 @@ class YoungModulus(SphericalFunction):
         q = integrate.dblquad(fun, 0, 2 * np.pi, 0, np.pi / 2)
         return q[0] / (2 * np.pi)
 
-    def std(self, Emean=None):
-        if Emean is None:
-            Emean = self.mean()
+    def std(self, mean=None):
+        if mean is None:
+            mean = self.mean()
 
         def fun(theta, phi):
-            return (self.evalsph(phi, theta) - Emean) ** 2 * sin(theta)
+            return (self.evalsph(phi, theta) - mean) ** 2 * sin(theta)
 
         q = integrate.dblquad(fun, 0, 2 * np.pi, 0, np.pi / 2)
         var = q[0] / (2 * np.pi)
@@ -424,13 +500,26 @@ class ShearModulus(SphericalFunction):
         q = integrate.tplquad(fun, 0, 2 * np.pi, 0, np.pi / 2, 0, np.pi)
         return q[0] / (2 * np.pi ** 2)
 
-    def std(self, Gmean=None):
-        if Gmean is None:
-            Gmean = self.mean()
+    def std(self, mean=None):
+        if mean is None:
+            mean = self.mean()
 
         def fun(psi, theta, phi):
-            return (Gmean - self.evalsph(phi, theta, psi)) ** 2 * sin(theta)
+            return (mean - self.evalsph(phi, theta, psi)) ** 2 * sin(theta)
 
         q = integrate.tplquad(fun, 0, 2 * np.pi, 0, np.pi / 2, 0, np.pi)
         var = q[0] / (2 * np.pi ** 2)
         return np.sqrt(var)
+
+
+class PoissonRatio(SphericalFunction):
+    def __init__(self, S, unit='GPa'):
+        def compute_PoissonRatio(m, n):
+            eps1 = _compute_unit_strain_along_direction(S, m, m)
+            eps2 = _compute_unit_strain_along_transverse_direction(S, m, n)
+            return -eps2 / eps1
+        self.nu = compute_PoissonRatio
+
+    def eval(self, m, n):
+        return self.nu(m, n)
+
