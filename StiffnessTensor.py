@@ -270,6 +270,14 @@ class StiffnessTensor(SymmetricTensor):
 
         return SphericalFunction(compute_shear_modulus)
 
+    @property
+    def Poisson_ratio(self):
+        def compute_PoissonRatio(m, n):
+            eps1 = _compute_unit_strain_along_direction(self, m, m)
+            eps2 = _compute_unit_strain_along_transverse_direction(self, m, n)
+            return -eps2 / eps1
+        return SphericalFunction(compute_PoissonRatio)
+
     def Voigt_average(self):
         c = self.matrix
         C11 = (c[0, 0] + c[1, 1] + c[2, 2]) / 5 \
@@ -292,9 +300,6 @@ class StiffnessTensor(SymmetricTensor):
 
     def Hill_average(self):
         return (self.Reuss_average() + self.Voigt_average()) * 0.5
-
-    def Poisson_ratio(self):
-        return PoissonRatio(self)
 
 
 class ComplianceTensor(StiffnessTensor):
@@ -375,7 +380,6 @@ class SphericalFunction:
             u, v = _sph2cart(phi, theta, psi)
             return self.eval(u, v)
 
-
     @property
     def min(self):
         def fun(x):
@@ -426,6 +430,7 @@ class SphericalFunction:
             q = integrate.tplquad(fun, 0, 2 * np.pi, 0, np.pi / 2, 0, np.pi)
             var = q[0] / (2 * np.pi ** 2)
         return np.sqrt(var)
+
 
 class YoungModulus(SphericalFunction):
     def __init__(self, tensor, unit='GPa'):
