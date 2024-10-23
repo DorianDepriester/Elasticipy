@@ -157,7 +157,9 @@ class SphericalFunction:
         z *= val
         fig = plt.figure()
         ax = fig.add_subplot(1, 1, 1, projection='3d')
-        norm = Normalize(vmin=np.min(val), vmax=np.max(val))
+        val_min, _ = self.min
+        val_max, _ = self.max
+        norm = Normalize(vmin=val_min, vmax=val_max)
         colors = cm.viridis(norm(val))
         ax.plot_surface(x, y, z, facecolors=colors, rstride=1, cstride=1, antialiased=False)
         mappable = cm.ScalarMappable(cmap='viridis', norm=norm)
