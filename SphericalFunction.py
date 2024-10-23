@@ -1,6 +1,8 @@
 from inspect import signature
 
 import numpy as np
+from matplotlib import pyplot as plt, cm
+from matplotlib.colors import Normalize
 from numpy import cos, sin
 from scipy import integrate as integrate
 from scipy.optimize import minimize
@@ -140,3 +142,26 @@ class SphericalFunction:
             q = integrate.tplquad(fun, *domain)
             var = q[0] / (2 * np.pi ** 2)
         return np.sqrt(var)
+
+    def plot(self, n_phi=50, n_theta=50):
+        phi = np.linspace(0, 2 * np.pi, n_phi)
+        theta = np.linspace(0, np.pi, n_theta)
+        val = np.zeros((n_phi, n_theta))
+        phi_grid, theta = np.meshgrid(phi, theta)
+        x, y, z = _sph2cart(phi, theta)
+        for i in range(n_phi):
+            for j in range(n_theta):
+                val[i, j] = self.eval([x[i, j], y[i, j], z[i, j]])
+        x *= val
+        y *= val
+        z *= val
+        fig = plt.figure()
+        ax = fig.add_subplot(1, 1, 1, projection='3d')
+        norm = Normalize(vmin=np.min(val), vmax=np.max(val))
+        colors = cm.viridis(norm(val))
+        ax.plot_surface(x, y, z, facecolors=colors, rstride=1, cstride=1, antialiased=False)
+        mappable = cm.ScalarMappable(cmap='viridis', norm=norm)
+        mappable.set_array([])
+        fig.colorbar(mappable, ax=ax)
+        plt.show()
+        return fig
