@@ -165,5 +165,8 @@ class SphericalFunction:
         mappable = cm.ScalarMappable(cmap='viridis', norm=norm)
         mappable.set_array([])
         fig.colorbar(mappable, ax=ax)
+        ax.set_xlabel('X')
+        ax.set_ylabel('Y')
+        ax.set_zlabel('Z')
         plt.show()
         return fig
