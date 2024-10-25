@@ -59,7 +59,7 @@ def _compute_unit_strain_along_transverse_direction(S, m, n):
     return np.sum(cosine * S.full_tensor())
 
 
-def tensorFromCrystalSymmetry(symmetry='Triclinic', point_group=None, diad='x', tensor='Stiffness', unit='GPa', **kwargs):
+def tensorFromCrystalSymmetry(symmetry='Triclinic', point_group=None, diad='x', tensor='Stiffness', phase_name='', **kwargs):
     tensor = tensor.lower()
     if tensor == 'stiffness':
         prefix = 'C'
@@ -137,9 +137,10 @@ def tensorFromCrystalSymmetry(symmetry='Triclinic', point_group=None, diad='x', 
                     C[0, 4], C[1, 4], C[2, 4] = values['15'], values['25'], values['35']
                     C[3, 5], C[4, 5] = values['46'], values['56']
         if tensor == 'stiffness':
-            return StiffnessTensor(C + np.tril(C.T, -1), stress_unit=unit)
+            constructor = StiffnessTensor
         else:
-            return ComplianceTensor(C + np.tril(C.T, -1), stress_unit=unit)
+            constructor = ComplianceTensor
+        return constructor(C + np.tril(C.T, -1), symmetry=symmetry, phase_name=phase_name)
     except KeyError as key:
         entry_error = prefix + key.args[0]
         if (symmetry == 'tetragonal') or (symmetry == 'trigonal'):
@@ -155,12 +156,18 @@ class SymmetricTensor:
     tensor_name = 'Symmetric'
     voigt_map = np.ones((6, 6))
 
-    def __init__(self, M):
+    def __init__(self, M, phase_name='', symmetry='Triclinic'):
         self.matrix = M
+        self.phase_name = phase_name
+        self.symmetry = symmetry
 
     def __repr__(self):
-        heading = '{} tensor (in Voigt notation):\n'.format(self.tensor_name)
-        return heading + self.matrix.__str__()
+        if self.phase_name == '':
+            heading = '{} tensor (in Voigt notation):\n'.format(self.tensor_name)
+        else:
+            heading = '{} tensor (in Voigt notation) for {}:\n'.format(self.tensor_name, self.phase_name)
+        print_symmetry = '\nSymmetry: {}'.format(self.symmetry)
+        return heading + self.matrix.__str__() + print_symmetry
 
     def full_tensor(self):
         i, j, k, ell = np.indices((3, 3, 3, 3))
@@ -203,17 +210,12 @@ class SymmetricTensor:
 class StiffnessTensor(SymmetricTensor):
     tensor_name = 'Stiffness'
 
-    def __init__(self, S, stress_unit='GPa'):
-        super().__init__(S)
-        self.unit = stress_unit
-
-    def __repr__(self):
-        print_tensor = super().__repr__()
-        return print_tensor + ' {}'.format(self.unit)
+    def __init__(self, S, **kwargs):
+        super().__init__(S, **kwargs)
 
     def inv(self):
         C = np.linalg.inv(self.matrix)
-        return ComplianceTensor(C, stress_unit=self.unit)
+        return ComplianceTensor(C, symmetry=self.symmetry, phase_name=self.phase_name)
 
     @property
     def Young_modulus(self):
@@ -253,7 +255,7 @@ class StiffnessTensor(SymmetricTensor):
                         [0,   0,   0,   C44, 0,   0],
                         [0,   0,   0,   0,   C44, 0],
                         [0,   0,   0,   0,   0,   C44]])
-        return StiffnessTensor(mat, stress_unit=self.unit)
+        return StiffnessTensor(mat, symmetry=self.symmetry, phase_name=self.phase_name)
 
     def Reuss_average(self):
         return self.inv().Reuss_average().inv()
@@ -269,16 +271,12 @@ class ComplianceTensor(StiffnessTensor):
         np.hstack((2 * np.ones((3, 3)), 4 * np.ones((3, 3))))
     ))
 
-    def __init__(self, C, stress_unit='TPa'):
-        super().__init__(C, stress_unit=stress_unit)
-
-    def __repr__(self):
-        print_tensor = super(type(self).__bases__[0], self).__repr__()
-        return print_tensor + ' /{}'.format(self.unit)
+    def __init__(self, C, **kwargs):
+        super().__init__(C, **kwargs)
 
     def inv(self):
         S = np.linalg.inv(self.matrix)
-        return StiffnessTensor(S, stress_unit=self.unit)
+        return StiffnessTensor(S, symmetry=self.symmetry, phase_name=self.phase_name)
 
     def Reuss_average(self):
         s = self.matrix
@@ -295,7 +293,7 @@ class ComplianceTensor(StiffnessTensor):
                         [0,   0,   0,   C44, 0,   0],
                         [0,   0,   0,   0,   C44, 0],
                         [0,   0,   0,   0,   0,   C44]])
-        return ComplianceTensor(mat, stress_unit=self.unit)
+        return ComplianceTensor(mat, symmetry=self.symmetry, phase_name=self.phase_name)
 
     def Voigt_average(self):
         return self.inv().Voigt_average().inv()
