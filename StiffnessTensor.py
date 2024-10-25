@@ -59,7 +59,7 @@ def _compute_unit_strain_along_transverse_direction(S, m, n):
     return np.sum(cosine * S.full_tensor())
 
 
-def tensorFromCrystalSymmetry(symmetry='Triclinic', point_group=None, tensor='Stiffness', unit='GPa', **kwargs):
+def tensorFromCrystalSymmetry(symmetry='Triclinic', point_group=None, diad='x', tensor='Stiffness', unit='GPa', **kwargs):
     tensor = tensor.lower()
     if tensor == 'stiffness':
         prefix = 'C'
@@ -126,8 +126,12 @@ def tensorFromCrystalSymmetry(symmetry='Triclinic', point_group=None, tensor='St
             C[2, 2] = values['33']
             C[3, 3], C[4, 4], C[5, 5] = values['44'], values['55'], values['66']
             if (symmetry == 'monoclinic') or (symmetry == 'triclinic'):
-                C[0, 5], C[1, 5], C[2, 5] = values['C16'], values['C26'], values['C36']
-                C[3, 4] = values['C45']
+                if (symmetry == 'monoclinic') and (diad == 'x'):
+                    C[0, 5], C[1, 5], C[2, 5] = values['16'], values['26'], values['36']
+                    C[3, 4] = values['45']
+                else:
+                    C[0, 4], C[1, 4], C[2, 4] = values['15'], values['25'], values['35']
+                    C[3, 5] = values['46']
                 if symmetry == 'triclinic':
                     C[0, 3], C[1, 3], C[2, 3] = values['14'], values['24'], values['34']
                     C[0, 4], C[1, 4], C[2, 4] = values['15'], values['25'], values['35']
@@ -140,6 +144,8 @@ def tensorFromCrystalSymmetry(symmetry='Triclinic', point_group=None, tensor='St
         entry_error = prefix + key.args[0]
         if (symmetry == 'tetragonal') or (symmetry == 'trigonal'):
             err_msg = "For point group {}, keyword argument {} is required".format(point_group, entry_error)
+        elif symmetry == 'monoclinic':
+            err_msg = "For {} symmetry with diag='{}', keyword argument {} is required".format(symmetry, diad, entry_error)
         else:
             err_msg = "For {} symmetry, keyword argument {} is required".format(symmetry, entry_error)
         raise ValueError(err_msg)
