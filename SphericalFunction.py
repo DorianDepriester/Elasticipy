@@ -147,8 +147,8 @@ class SphericalFunction:
         phi = np.linspace(0, 2 * np.pi, n_phi)
         theta = np.linspace(0, np.pi, n_theta)
         val = np.zeros((n_phi, n_theta))
-        phi_grid, theta = np.meshgrid(phi, theta)
-        x, y, z = _sph2cart(phi, theta)
+        phi_grid, theta_grid = np.meshgrid(phi, theta)
+        x, y, z = _sph2cart(phi_grid, theta_grid)
         for i in range(n_phi):
             for j in range(n_theta):
                 val[i, j] = self.eval([x[i, j], y[i, j], z[i, j]])
