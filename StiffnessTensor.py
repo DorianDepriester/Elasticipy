@@ -255,7 +255,7 @@ class StiffnessTensor(SymmetricTensor):
                         [0,   0,   0,   C44, 0,   0],
                         [0,   0,   0,   0,   C44, 0],
                         [0,   0,   0,   0,   0,   C44]])
-        return StiffnessTensor(mat, symmetry=self.symmetry, phase_name=self.phase_name)
+        return StiffnessTensor(mat, symmetry='isotropic', phase_name=self.phase_name)
 
     def Reuss_average(self):
         return self.inv().Reuss_average().inv()
@@ -293,7 +293,7 @@ class ComplianceTensor(StiffnessTensor):
                         [0,   0,   0,   C44, 0,   0],
                         [0,   0,   0,   0,   C44, 0],
                         [0,   0,   0,   0,   0,   C44]])
-        return ComplianceTensor(mat, symmetry=self.symmetry, phase_name=self.phase_name)
+        return ComplianceTensor(mat, symmetry='isotropic', phase_name=self.phase_name)
 
     def Voigt_average(self):
         return self.inv().Voigt_average().inv()
