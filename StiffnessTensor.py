@@ -193,18 +193,35 @@ class SymmetricTensor:
                 ij, kl = np.indices((6, 6))
                 i, j = unvoigt(ij).T
                 k, ell = unvoigt(kl).T
-                mat = ten[i, j, k, ell]
+                mat = ten[i, j, k, ell] * self.voigt_map[ij, kl]
+            else:
+                raise ValueError('The input argument must be either a 6x6 matrix or a (3,3,3,3) array.')
         elif isinstance(other, SymmetricTensor):
             if type(other) == type(self):
                 mat = self.matrix + other.matrix
             else:
                 raise ValueError('The two tensors to add must be of the same class.')
         else:
-            raise ValueError('I don''t know how to add {} with {}'.format(type(self), type(other)))
+            raise ValueError('I don''t know how to add {} with {}.'.format(type(self), type(other)))
         return self.__class__(mat)
 
     def __mul__(self, other):
-        return self.__class__(self.matrix * other)
+        if isinstance(other, np.ndarray):
+            if other.shape == (3, 3):
+                return np.einsum('ijkl,kl->ij', self.full_tensor(), other)
+            elif len(other.shape) == 3 and other.shape[1] == 3 and other.shape[2] == 3:
+                return np.einsum('ijkl,mkl->mij', self.full_tensor(), other)
+        else:
+            return self.__class__(self.matrix * other, symmetry=self.symmetry)
+
+    def __rmul__(self, other):
+        if isinstance(other, np.ndarray):
+            if other.shape == (3, 3):
+                return self.rotate(other)
+            else:
+                raise ValueError('Left-multiplication only works with 3x3 matrices.')
+        else:
+            return self * other
 
     def _orientation_average(self, orientations):
         if len(orientations.shape) == 2:
@@ -219,6 +236,7 @@ class SymmetricTensor:
             k, ell = unvoigt(kl).T
             rotated_matrix = rotated_tensor[i, j, k, ell] * self.voigt_map[ij, kl] / orientations.shape[0]
             return self.__class__(rotated_matrix)
+
 
 class StiffnessTensor(SymmetricTensor):
     tensor_name = 'Stiffness'
