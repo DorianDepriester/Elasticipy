@@ -1,5 +1,6 @@
 import numpy as np
 from collections.abc import Iterable
+from scipy.stats import special_ortho_group
 
 
 def _rotation_matrix_z(phi):
@@ -35,3 +36,7 @@ def EulerAngles(phi1, Phi, phi2, degrees=False):
         return M
     else:
         return M[0]
+
+
+def random_orientation(n=1):
+    return special_ortho_group.rvs(3, size=n)
