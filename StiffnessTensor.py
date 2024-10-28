@@ -240,22 +240,37 @@ class StiffnessTensor(SymmetricTensor):
             return -eps2 / eps1
         return SphericalFunction(compute_PoissonRatio)
 
-    def Voigt_average(self):
-        c = self.matrix
-        C11 = (c[0, 0] + c[1, 1] + c[2, 2]) / 5 \
-            + (c[0, 1] + c[0, 2] + c[1, 2]) * 2 / 15 \
-            + (c[3, 3] + c[4, 4] + c[5, 5]) * 4 / 15
-        C12 = (c[0, 0] + c[1, 1] + c[2, 2]) / 15 \
-            + (c[0, 1] + c[0, 2] + c[1, 2]) * 4 / 15 \
-            - (c[3, 3] + c[4, 4] + c[5, 5]) * 2 / 15
-        C44 = (c[0, 0] + c[1, 1] + c[2, 2] - c[0, 1] - c[0, 2] - c[1, 2]) / 15 + (c[3, 3] + c[4, 4] + c[5, 5]) / 5
-        mat = np.array([[C11, C12, C12, 0,   0,   0],
-                        [C12, C11, C12, 0,   0,   0],
-                        [C12, C12, C11, 0,   0,   0],
-                        [0,   0,   0,   C44, 0,   0],
-                        [0,   0,   0,   0,   C44, 0],
-                        [0,   0,   0,   0,   0,   C44]])
-        return StiffnessTensor(mat, symmetry='isotropic', phase_name=self.phase_name)
+    def Voigt_average(self, orientations=None):
+        if orientations is None:
+            c = self.matrix
+            C11 = (c[0, 0] + c[1, 1] + c[2, 2]) / 5 \
+                + (c[0, 1] + c[0, 2] + c[1, 2]) * 2 / 15 \
+                + (c[3, 3] + c[4, 4] + c[5, 5]) * 4 / 15
+            C12 = (c[0, 0] + c[1, 1] + c[2, 2]) / 15 \
+                + (c[0, 1] + c[0, 2] + c[1, 2]) * 4 / 15 \
+                - (c[3, 3] + c[4, 4] + c[5, 5]) * 2 / 15
+            C44 = (c[0, 0] + c[1, 1] + c[2, 2] - c[0, 1] - c[0, 2] - c[1, 2]) / 15 + (c[3, 3] + c[4, 4] + c[5, 5]) / 5
+            mat = np.array([[C11, C12, C12, 0,   0,   0],
+                            [C12, C11, C12, 0,   0,   0],
+                            [C12, C12, C11, 0,   0,   0],
+                            [0,   0,   0,   C44, 0,   0],
+                            [0,   0,   0,   0,   C44, 0],
+                            [0,   0,   0,   0,   0,   C44]])
+            return StiffnessTensor(mat, symmetry='isotropic', phase_name=self.phase_name)
+        else:
+            orientations = np.array(orientations)
+            if len(orientations.shape) == 2:
+                raise ValueError('The orientation must be a 3x3 or a Nx3x3 matrix')
+            elif len(orientations.shape) == 2:
+                return self * orientations
+            else:
+                m = orientations
+                rotated_tensor = np.einsum('qim,qjn,qko,qlp,mnop->ijkl', m, m, m, m, self.full_tensor())
+                ij, kl = np.indices((6, 6))
+                i, j = unvoigt(ij).T
+                k, ell = unvoigt(kl).T
+                rotated_matrix = rotated_tensor[i, j, k, ell] / orientations.shape[0]
+                return StiffnessTensor(rotated_matrix, symmetry='triclinic')
 
     def Reuss_average(self):
         return self.inv().Reuss_average().inv()
@@ -295,8 +310,8 @@ class ComplianceTensor(StiffnessTensor):
                         [0,   0,   0,   0,   0,   C44]])
         return ComplianceTensor(mat, symmetry='isotropic', phase_name=self.phase_name)
 
-    def Voigt_average(self):
-        return self.inv().Voigt_average().inv()
+    def Voigt_average(self, **kwargs):
+        return self.inv().Voigt_average(**kwargs).inv()
 
     def Hill_average(self):
         return self.inv().Hill_average()
