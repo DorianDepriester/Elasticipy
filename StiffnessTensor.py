@@ -206,6 +206,19 @@ class SymmetricTensor:
     def __mul__(self, other):
         return self.__class__(self.matrix * other)
 
+    def _orientation_average(self, orientations):
+        if len(orientations.shape) == 2:
+            raise ValueError('The orientation must be a 3x3 or a Nx3x3 matrix')
+        elif len(orientations.shape) == 2:
+            return self * orientations
+        else:
+            m = orientations
+            rotated_tensor = np.einsum('qim,qjn,qko,qlp,mnop->ijkl', m, m, m, m, self.full_tensor())
+            ij, kl = np.indices((6, 6))
+            i, j = unvoigt(ij).T
+            k, ell = unvoigt(kl).T
+            rotated_matrix = rotated_tensor[i, j, k, ell] * self.voigt_map[ij, kl] / orientations.shape[0]
+            return self.__class__(rotated_matrix)
 
 class StiffnessTensor(SymmetricTensor):
     tensor_name = 'Stiffness'
@@ -258,25 +271,13 @@ class StiffnessTensor(SymmetricTensor):
                             [0,   0,   0,   0,   0,   C44]])
             return StiffnessTensor(mat, symmetry='isotropic', phase_name=self.phase_name)
         else:
-            orientations = np.array(orientations)
-            if len(orientations.shape) == 2:
-                raise ValueError('The orientation must be a 3x3 or a Nx3x3 matrix')
-            elif len(orientations.shape) == 2:
-                return self * orientations
-            else:
-                m = orientations
-                rotated_tensor = np.einsum('qim,qjn,qko,qlp,mnop->ijkl', m, m, m, m, self.full_tensor())
-                ij, kl = np.indices((6, 6))
-                i, j = unvoigt(ij).T
-                k, ell = unvoigt(kl).T
-                rotated_matrix = rotated_tensor[i, j, k, ell] / orientations.shape[0]
-                return StiffnessTensor(rotated_matrix, symmetry='triclinic')
+            return self._orientation_average(orientations)
 
-    def Reuss_average(self):
-        return self.inv().Reuss_average().inv()
+    def Reuss_average(self, **kwargs):
+        return self.inv().Reuss_average(**kwargs).inv()
 
-    def Hill_average(self):
-        return (self.Reuss_average() + self.Voigt_average()) * 0.5
+    def Hill_average(self, **kwargs):
+        return (self.Reuss_average(**kwargs) + self.Voigt_average(**kwargs)) * 0.5
 
 
 class ComplianceTensor(StiffnessTensor):
@@ -293,27 +294,30 @@ class ComplianceTensor(StiffnessTensor):
         S = np.linalg.inv(self.matrix)
         return StiffnessTensor(S, symmetry=self.symmetry, phase_name=self.phase_name)
 
-    def Reuss_average(self):
-        s = self.matrix
-        C11 = (s[0, 0] + s[1, 1] + s[2, 2]) / 5 \
-            + (s[0, 1] + s[0, 2] + s[1, 2]) * 2 / 15 \
-            + (s[3, 3] + s[4, 4] + s[5, 5]) * 1 / 15
-        C12 = (s[0, 0] + s[1, 1] + s[2, 2]) / 15 \
-            + (s[0, 1] + s[0, 2] + s[1, 2]) * 4 / 15 \
-            - (s[3, 3] + s[4, 4] + s[5, 5]) * 1 / 30
-        C44 = (s[0, 0] + s[1, 1] + s[2, 2] - s[0, 1] - s[0, 2] - s[1, 2]) * 4 / 15 + (s[3, 3] + s[4, 4] + s[5, 5]) / 5
-        mat = np.array([[C11, C12, C12, 0,   0,   0],
-                        [C12, C11, C12, 0,   0,   0],
-                        [C12, C12, C11, 0,   0,   0],
-                        [0,   0,   0,   C44, 0,   0],
-                        [0,   0,   0,   0,   C44, 0],
-                        [0,   0,   0,   0,   0,   C44]])
-        return ComplianceTensor(mat, symmetry='isotropic', phase_name=self.phase_name)
+    def Reuss_average(self, orientations=None):
+        if orientations is None:
+            s = self.matrix
+            C11 = (s[0, 0] + s[1, 1] + s[2, 2]) / 5 \
+                + (s[0, 1] + s[0, 2] + s[1, 2]) * 2 / 15 \
+                + (s[3, 3] + s[4, 4] + s[5, 5]) * 1 / 15
+            C12 = (s[0, 0] + s[1, 1] + s[2, 2]) / 15 \
+                + (s[0, 1] + s[0, 2] + s[1, 2]) * 4 / 15 \
+                - (s[3, 3] + s[4, 4] + s[5, 5]) * 1 / 30
+            C44 = (s[0, 0] + s[1, 1] + s[2, 2] - s[0, 1] - s[0, 2] - s[1, 2]) * 4 / 15 + (s[3, 3] + s[4, 4] + s[5, 5]) / 5
+            mat = np.array([[C11, C12, C12, 0,   0,   0],
+                            [C12, C11, C12, 0,   0,   0],
+                            [C12, C12, C11, 0,   0,   0],
+                            [0,   0,   0,   C44, 0,   0],
+                            [0,   0,   0,   0,   C44, 0],
+                            [0,   0,   0,   0,   0,   C44]])
+            return ComplianceTensor(mat, symmetry='isotropic', phase_name=self.phase_name)
+        else:
+            return self._orientation_average(orientations)
 
     def Voigt_average(self, **kwargs):
         return self.inv().Voigt_average(**kwargs).inv()
 
-    def Hill_average(self):
-        return self.inv().Hill_average()
+    def Hill_average(self, **kwargs):
+        return self.inv().Hill_average(**kwargs)
 
 
