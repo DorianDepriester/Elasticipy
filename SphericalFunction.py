@@ -170,3 +170,17 @@ class SphericalFunction:
         ax.set_zlabel('Z')
         plt.show()
         return fig
+
+    def _psi_min(self, phi, theta):
+        def fun(psi):
+            return self.eval_spherical(phi, theta, psi[0])
+
+        result = minimize(fun, 0.0, bounds=[self.domain[2]])
+        return result.fun
+
+    def _psi_max(self, phi, theta):
+        def fun(psi):
+            return -self.eval_spherical(phi, theta, psi)
+
+        result = minimize(fun, 0.0, bounds=[self.domain[2]])
+        return -result.fun
