@@ -54,17 +54,9 @@ def _multistart_minimization(fun, bounds):
 
 class SphericalFunction:
     def __init__(self, fun, domain=None):
-        sig = signature(fun)
-        n_args = len(sig.parameters)
         if domain is None:
-            if n_args == 1:
-                domain = [[0, 2 * np.pi],
-                          [0, np.pi / 2]]
-            else:
-                domain = [[0, 2 * np.pi],
-                          [0, np.pi / 2],
-                          [0, np.pi]]
-        self.n_args = n_args
+            domain = [[0, 2 * np.pi],
+                      [0, np.pi / 2]]
         self.domain = np.array(domain)
         self.fun = fun
 
@@ -79,14 +71,9 @@ class SphericalFunction:
         return self.fun(*args)
 
     def eval_spherical(self, *args):
-        if self.n_args == 1:
-            phi, theta = args
-            u = _sph2cart(phi, theta)
-            return self.eval(u)
-        else:
-            phi, theta, psi = args
-            u, v = _sph2cart(phi, theta, psi)
-            return self.eval(u, v)
+        phi, theta = args
+        u = _sph2cart(phi, theta)
+        return self.eval(u)
 
     @property
     def min(self):
@@ -109,39 +96,26 @@ class SphericalFunction:
         return val, _sph2cart(*angles)
 
     def mean(self):
-        if self.n_args == 1:
-            def fun(theta, phi):
-                return self.eval_spherical(phi, theta) * sin(theta)
+        def fun(theta, phi):
+            return self.eval_spherical(phi, theta) * sin(theta)
 
-            domain = self.domain.flatten()
-            q = integrate.dblquad(fun, *domain)
-            return q[0] / (2 * np.pi)
-        else:
-            def fun(psi, theta, phi):
-                return self.eval_spherical(phi, theta, psi) * sin(theta)
+        domain = self.domain.flatten()
+        q = integrate.dblquad(fun, *domain)
+        return q[0] / (2 * np.pi)
 
-            domain = self.domain.flatten()
-            q = integrate.tplquad(fun, *domain)
-            return q[0] / (2 * np.pi ** 2)
-
-    def std(self, mean=None):
+    def var(self, mean=None):
         if mean is None:
             mean = self.mean()
-        if self.n_args == 1:
-            def fun(theta, phi):
-                return (self.eval_spherical(phi, theta) - mean) ** 2 * sin(theta)
 
-            domain = self.domain.flatten()
-            q = integrate.dblquad(fun, *domain)
-            var = q[0] / (2 * np.pi)
-        else:
-            def fun(psi, theta, phi):
-                return (mean - self.eval_spherical(phi, theta, psi)) ** 2 * sin(theta)
+        def fun(theta, phi):
+            return (self.eval_spherical(phi, theta) - mean) ** 2 * sin(theta)
 
-            domain = self.domain.flatten()
-            q = integrate.tplquad(fun, *domain)
-            var = q[0] / (2 * np.pi ** 2)
-        return np.sqrt(var)
+        domain = self.domain.flatten()
+        q = integrate.dblquad(fun, *domain)
+        return q[0] / (2 * np.pi)
+
+    def std(self, **kwargs):
+        return np.sqrt(self.std(**kwargs))
 
     def plot(self, n_phi=50, n_theta=50):
         phi = np.linspace(0, 2 * np.pi, n_phi)
@@ -171,6 +145,23 @@ class SphericalFunction:
         plt.show()
         return fig
 
+
+class HyperSphericalFunction(SphericalFunction):
+    def __init__(self, fun, domain=None):
+        if domain is None:
+            domain = [[0, 2 * np.pi],
+                      [0, np.pi / 2],
+                      [0, np.pi]]
+        super().__init__(fun, domain=domain)
+
+    def mean(self):
+        def fun(psi, theta, phi):
+            return self.eval_spherical(phi, theta, psi) * sin(theta)
+
+        domain = self.domain.flatten()
+        q = integrate.tplquad(fun, *domain)
+        return q[0] / (2 * np.pi ** 2)
+
     def _psi_min(self, phi, theta):
         def fun(psi):
             return self.eval_spherical(phi, theta, psi[0])
@@ -184,3 +175,19 @@ class SphericalFunction:
 
         result = minimize(fun, 0.0, bounds=[self.domain[2]])
         return -result.fun
+
+    def eval_spherical(self, *args):
+        phi, theta, psi = args
+        u, v = _sph2cart(phi, theta, psi)
+        return self.eval(u, v)
+
+    def var(self, mean=None):
+        if mean is None:
+            mean = self.mean()
+
+        def fun(psi, theta, phi):
+            return (mean - self.eval_spherical(phi, theta, psi)) ** 2 * sin(theta)
+
+        domain = self.domain.flatten()
+        q = integrate.tplquad(fun, *domain)
+        return q[0] / (2 * np.pi ** 2)

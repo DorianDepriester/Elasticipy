@@ -1,7 +1,7 @@
 import numpy as np
 import re
 
-from SphericalFunction import SphericalFunction
+from SphericalFunction import SphericalFunction, HyperSphericalFunction
 
 
 def _parse_tensor_components(prefix, **kwargs):
@@ -261,7 +261,7 @@ class StiffnessTensor(SymmetricTensor):
             eps = _compute_unit_strain_along_direction(self, m, n)
             return 1 / (4 * eps)
 
-        return SphericalFunction(compute_shear_modulus)
+        return HyperSphericalFunction(compute_shear_modulus)
 
     @property
     def Poisson_ratio(self):
@@ -269,7 +269,7 @@ class StiffnessTensor(SymmetricTensor):
             eps1 = _compute_unit_strain_along_direction(self, m, m)
             eps2 = _compute_unit_strain_along_transverse_direction(self, m, n)
             return -eps2 / eps1
-        return SphericalFunction(compute_PoissonRatio)
+        return HyperSphericalFunction(compute_PoissonRatio)
 
     def Voigt_average(self, orientations=None):
         if orientations is None:
