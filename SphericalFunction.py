@@ -117,31 +117,36 @@ class SphericalFunction:
     def std(self, **kwargs):
         return np.sqrt(self.std(**kwargs))
 
-    def plot(self, n_phi=50, n_theta=50):
+    def _plot(self, funs, fig, n_phi=50, n_theta=50):
         phi = np.linspace(0, 2 * np.pi, n_phi)
         theta = np.linspace(0, np.pi, n_theta)
         val = np.zeros((n_phi, n_theta))
-        phi_grid, theta_grid = np.meshgrid(phi, theta)
-        x, y, z = _sph2cart(phi_grid, theta_grid)
-        for i in range(n_phi):
-            for j in range(n_theta):
-                val[i, j] = self.eval([x[i, j], y[i, j], z[i, j]])
-        x *= val
-        y *= val
-        z *= val
-        fig = plt.figure()
-        ax = fig.add_subplot(1, 1, 1, projection='3d')
-        val_min, _ = self.min
-        val_max, _ = self.max
-        norm = Normalize(vmin=val_min, vmax=val_max)
-        colors = cm.viridis(norm(val))
-        ax.plot_surface(x, y, z, facecolors=colors, rstride=1, cstride=1, antialiased=False)
-        mappable = cm.ScalarMappable(cmap='viridis', norm=norm)
-        mappable.set_array([])
-        fig.colorbar(mappable, ax=ax)
+        phi_grid, theta_grid = np.meshgrid(phi, theta, indexing='ij')
+        for fun in funs:
+            x, y, z = _sph2cart(phi_grid, theta_grid)
+            for i in range(n_phi):
+                for j in range(n_theta):
+                    val[i, j] = fun(phi_grid[i,j], theta_grid[i,j])
+            x *= val
+            y *= val
+            z *= val
+            ax = fig.add_subplot(1, 1, 1, projection='3d')
+            val_min, _ = self.min
+            val_max, _ = self.max
+            norm = Normalize(vmin=val_min, vmax=val_max)
+            colors = cm.viridis(norm(val))
+            ax.plot_surface(x, y, z, facecolors=colors, rstride=1, cstride=1, antialiased=False)
         ax.set_xlabel('X')
         ax.set_ylabel('Y')
         ax.set_zlabel('Z')
+        return ax, norm
+
+    def plot(self, **kwargs):
+        fig = plt.figure()
+        ax, norm = self._plot([self.eval_spherical], fig, **kwargs)
+        mappable = cm.ScalarMappable(cmap='viridis', norm=norm)
+        mappable.set_array([])
+        fig.colorbar(mappable, ax=ax)
         plt.show()
         return fig
 
@@ -191,3 +196,8 @@ class HyperSphericalFunction(SphericalFunction):
         domain = self.domain.flatten()
         q = integrate.tplquad(fun, *domain)
         return q[0] / (2 * np.pi ** 2)
+
+    def plot(self, **kwargs):
+        fig = plt.figure()
+        ax, norm = self._plot([self._psi_min, self._psi_max], fig, **kwargs)
+        return fig
