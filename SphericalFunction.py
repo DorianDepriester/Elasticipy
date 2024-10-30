@@ -117,12 +117,12 @@ class SphericalFunction:
     def std(self, **kwargs):
         return np.sqrt(self.std(**kwargs))
 
-    def _plot(self, funs, fig, n_phi=50, n_theta=50):
+    def _plot(self, funs, fig, n_phi=50, n_theta=50, opacities=None):
         phi = np.linspace(0, 2 * np.pi, n_phi)
         theta = np.linspace(0, np.pi, n_theta)
         val = np.zeros((n_phi, n_theta))
         phi_grid, theta_grid = np.meshgrid(phi, theta, indexing='ij')
-        for fun in funs:
+        for k, fun in enumerate(funs):
             x, y, z = _sph2cart(phi_grid, theta_grid)
             for i in range(n_phi):
                 for j in range(n_theta):
@@ -135,7 +135,11 @@ class SphericalFunction:
             val_max, _ = self.max
             norm = Normalize(vmin=val_min, vmax=val_max)
             colors = cm.viridis(norm(val))
-            ax.plot_surface(x, y, z, facecolors=colors, rstride=1, cstride=1, antialiased=False)
+            if opacities is None:
+                alpha = 1.0
+            else:
+                alpha = opacities[k]
+            ax.plot_surface(x, y, z, facecolors=colors, rstride=1, cstride=1, antialiased=False, alpha=alpha)
         ax.set_xlabel('X')
         ax.set_ylabel('Y')
         ax.set_zlabel('Z')
@@ -171,14 +175,14 @@ class HyperSphericalFunction(SphericalFunction):
         def fun(psi):
             return self.eval_spherical(phi, theta, psi[0])
 
-        result = minimize(fun, 0.0, bounds=[self.domain[2]])
+        result = minimize(fun, np.pi, bounds=[self.domain[2]])
         return result.fun
 
     def _psi_max(self, phi, theta):
         def fun(psi):
             return -self.eval_spherical(phi, theta, psi)
 
-        result = minimize(fun, 0.0, bounds=[self.domain[2]])
+        result = minimize(fun, np.pi, bounds=[self.domain[2]])
         return -result.fun
 
     def eval_spherical(self, *args):
@@ -197,7 +201,9 @@ class HyperSphericalFunction(SphericalFunction):
         q = integrate.tplquad(fun, *domain)
         return q[0] / (2 * np.pi ** 2)
 
-    def plot(self, **kwargs):
+    def plot(self, n_phi=50, n_theta=50, **kwargs):
         fig = plt.figure()
-        ax, norm = self._plot([self._psi_min, self._psi_max], fig, **kwargs)
+        ax, norm = self._plot([self._psi_min], fig,
+                              n_phi=n_phi, n_theta=n_theta, opacities=[1.0, 0.2])
+        plt.show()
         return fig
