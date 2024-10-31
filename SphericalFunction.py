@@ -9,12 +9,14 @@ from scipy.optimize import minimize
 
 
 def _sph2cart(phi, theta, psi=None):
-    u = np.array([cos(phi) * sin(theta), sin(phi) * sin(theta), cos(theta)])
+    phi_vec = np.array(phi).flatten()
+    theta_vec = np.array(theta).flatten()
+    u = np.array([cos(phi_vec) * sin(theta_vec), sin(phi_vec) * sin(theta_vec), cos(theta_vec)]).T
     if psi is None:
         return u
     else:
-        e_phi = np.array([-sin(phi), cos(phi), 0])
-        e_theta = np.array([cos(theta) * cos(phi), cos(theta) * sin(phi), -sin(theta)])
+        e_phi = np.array([-sin(phi_vec), cos(phi_vec), 0])
+        e_theta = np.array([cos(theta_vec) * cos(phi_vec), cos(theta_vec) * sin(phi_vec), -sin(theta_vec)])
         v = cos(psi) * e_phi + sin(psi) * e_theta
     return u, v
 
@@ -36,7 +38,11 @@ def _multistart_minimization(fun, bounds):
                       [0, -1, 0],
                       [1, 1, 1],
                       [-1, 1, 1],
-                      [1, -1, 1]])
+                      [1, -1, 1],
+                      [1, 1, -1],
+                      [-1, -1, 1],
+                      [-1, 1, -1],
+                      [1, -1, -1]])
     phi_theta_0 = _cart2sph(*xyz_0.T)
     angles_0 = np.transpose(phi_theta_0)
     if len(bounds) == 3:
