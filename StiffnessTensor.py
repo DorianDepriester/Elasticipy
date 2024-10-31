@@ -47,11 +47,7 @@ def _compute_unit_strain_along_direction(S, m, n, transverse=False):
         cosine = m_vec[:, i] * m_vec[:, j] * n_vec[:, k] * n_vec[:, ell]
     else:
         cosine = m_vec[:, i] * n_vec[:, j] * m_vec[:, k] * n_vec[:, ell]
-    values = np.einsum('pijkl,ijkl->p', cosine, S.full_tensor())
-    if np.array(m).shape == (3,) and not isinstance(m, np.ndarray):
-        return values[0]
-    else:
-        return values
+    return np.einsum('pijkl,ijkl->p', cosine, S.full_tensor())
 
 
 def tensorFromCrystalSymmetry(symmetry='Triclinic', point_group=None, diad='x', tensor='Stiffness', phase_name='', **kwargs):

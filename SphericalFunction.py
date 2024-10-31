@@ -74,7 +74,12 @@ class SphericalFunction:
         return s
 
     def eval(self, *args):
-        return self.fun(*args)
+        u = args
+        values = self.fun(u)
+        if np.array(u).shape == (3,) and not isinstance(u, np.ndarray):
+            return values[0]
+        else:
+            return values
 
     def eval_spherical(self, *args):
         phi, theta = args
@@ -168,6 +173,14 @@ class HyperSphericalFunction(SphericalFunction):
                       [0, np.pi / 2],
                       [0, np.pi]]
         super().__init__(fun, domain=domain)
+
+    def eval(self, *args):
+        u, v = args
+        values = self.fun(u, v)
+        if np.array(u).shape == (3,) and not isinstance(u, np.ndarray):
+            return values[0]
+        else:
+            return values
 
     def mean(self):
         def fun(psi, theta, phi):
