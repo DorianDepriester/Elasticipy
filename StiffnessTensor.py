@@ -31,7 +31,7 @@ def unvoigt(i):
     return inverse_voigt_mat[i]
 
 
-def _compute_unit_strain_along_direction(S, m, n):
+def _compute_unit_strain_along_direction(S, m, n, transverse=False):
     m_vec = np.atleast_2d(m)
     n_vec = np.atleast_2d(n)
     if not isinstance(S, ComplianceTensor):
@@ -43,29 +43,12 @@ def _compute_unit_strain_along_direction(S, m, n):
 
     indices = np.indices((3, 3, 3, 3))
     i, j, k, ell = indices[0], indices[1], indices[2], indices[3]
-    cosine = m_vec[:, i] * n_vec[:, j] * m_vec[:, k] * n_vec[:, ell]
-    values = np.einsum('pijkl,ijkl->p', cosine, S.full_tensor())
-    if np.array(m).shape == (3,):
-        return values[0]
+    if transverse:
+        cosine = m_vec[:, i] * m_vec[:, j] * n_vec[:, k] * n_vec[:, ell]
     else:
-        return values
-
-
-def _compute_unit_strain_along_transverse_direction(S, m, n):
-    m_vec = np.atleast_2d(m)
-    n_vec = np.atleast_2d(n)
-    if not isinstance(S, ComplianceTensor):
-        S = S.inv()
-    if np.any(np.linalg.norm(m_vec) < 1e-9) or np.any(np.linalg.norm(n_vec) < 1e-9):
-        raise ValueError('The input vector cannot be zeros')
-    m_vec = (m_vec.T / np.linalg.norm(m_vec, axis=1)).T
-    n_vec = (n_vec.T / np.linalg.norm(n_vec, axis=1)).T
-
-    indices = np.indices((3, 3, 3, 3))
-    i, j, k, ell = indices[0], indices[1], indices[2], indices[3]
-    cosine = m_vec[:, i] * m_vec[:, j] * n_vec[:, k] * n_vec[:, ell]
+        cosine = m_vec[:, i] * n_vec[:, j] * m_vec[:, k] * n_vec[:, ell]
     values = np.einsum('pijkl,ijkl->p', cosine, S.full_tensor())
-    if np.array(m).shape == (3,):
+    if np.array(m).shape == (3,) and not isinstance(m, np.ndarray):
         return values[0]
     else:
         return values
@@ -279,7 +262,7 @@ class StiffnessTensor(SymmetricTensor):
     def Poisson_ratio(self):
         def compute_PoissonRatio(m, n):
             eps1 = _compute_unit_strain_along_direction(self, m, m)
-            eps2 = _compute_unit_strain_along_transverse_direction(self, m, n)
+            eps2 = _compute_unit_strain_along_direction(self, m, n, transverse=True)
             return -eps2 / eps1
         return HyperSphericalFunction(compute_PoissonRatio)
 
