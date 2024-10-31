@@ -45,24 +45,30 @@ def _compute_unit_strain_along_direction(S, m, n):
     i, j, k, ell = indices[0], indices[1], indices[2], indices[3]
     cosine = m_vec[:, i] * n_vec[:, j] * m_vec[:, k] * n_vec[:, ell]
     values = np.einsum('pijkl,ijkl->p', cosine, S.full_tensor())
-    if (not isinstance(m, np.ndarray)) or m.shape == (1,):
+    if np.array(m).shape == (3,):
         return values[0]
     else:
         return values
 
 
 def _compute_unit_strain_along_transverse_direction(S, m, n):
+    m_vec = np.atleast_2d(m)
+    n_vec = np.atleast_2d(n)
     if not isinstance(S, ComplianceTensor):
         S = S.inv()
-    if (np.linalg.norm(m) < 1e-9) or (np.linalg.norm(n) < 1e-9):
+    if np.any(np.linalg.norm(m_vec) < 1e-9) or np.any(np.linalg.norm(n_vec) < 1e-9):
         raise ValueError('The input vector cannot be zeros')
-    m = m / np.linalg.norm(m)
-    n = n / np.linalg.norm(n)
+    m_vec = (m_vec.T / np.linalg.norm(m_vec, axis=1)).T
+    n_vec = (n_vec.T / np.linalg.norm(n_vec, axis=1)).T
 
     indices = np.indices((3, 3, 3, 3))
     i, j, k, ell = indices[0], indices[1], indices[2], indices[3]
-    cosine = m[i] * m[j] * n[k] * n[ell]
-    return np.sum(cosine * S.full_tensor())
+    cosine = m_vec[:, i] * m_vec[:, j] * n_vec[:, k] * n_vec[:, ell]
+    values = np.einsum('pijkl,ijkl->p', cosine, S.full_tensor())
+    if np.array(m).shape == (3,):
+        return values[0]
+    else:
+        return values
 
 
 def tensorFromCrystalSymmetry(symmetry='Triclinic', point_group=None, diad='x', tensor='Stiffness', phase_name='', **kwargs):
