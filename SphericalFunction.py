@@ -76,15 +76,20 @@ class SphericalFunction:
     def eval(self, *args):
         values = self.fun(*args)
         u = args
-        if np.array(u).shape == (1,3) and not isinstance(u, np.ndarray):
+        if np.array(u).shape == (1, 3) and not isinstance(u, np.ndarray):
             return values[0]
         else:
             return values
 
     def eval_spherical(self, *args):
-        phi, theta = args
+        angles = np.atleast_2d(*args)
+        phi, theta = angles.T
         u = _sph2cart(phi, theta)
-        return self.eval(u)
+        values = self.eval(u)
+        if np.array(args).shape == (1, 2) and not isinstance(args, np.ndarray):
+            return values[0]
+        else:
+            return values
 
     @property
     def min(self):
@@ -205,8 +210,13 @@ class HyperSphericalFunction(SphericalFunction):
         return -result.fun
 
     def eval_spherical(self, *args):
-        phi, theta, psi = args
-        u, v = _sph2cart(phi, theta, psi)
+        angles = np.atleast_2d(*args)
+        if angles.shape[1] == 1:
+            phi, theta = angles.T
+            u = _sph2cart(phi, theta)
+        else:
+            phi, theta = angles.T
+            u, v = _sph2cart(phi, theta, psi)
         return self.eval(u, v)
 
     def var(self, mean=None):
