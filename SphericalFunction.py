@@ -76,7 +76,7 @@ class SphericalFunction:
     def eval(self, *args):
         values = self.fun(*args)
         u = args
-        if np.array(u).shape == (3,) and not isinstance(u, np.ndarray):
+        if np.array(u).shape == (1,3) and not isinstance(u, np.ndarray):
             return values[0]
         else:
             return values
