@@ -73,15 +73,44 @@ class SphericalFunction:
         s += 'Min={}, Max={}'.format(val_min, val_max)
         return s
 
-    def eval(self, *args):
-        values = self.fun(*args)
-        u = args
-        if np.array(u).shape == (1, 3) and not isinstance(u, np.ndarray):
+    def eval(self, u):
+        """
+        Evaluate value along a given (set of) direction(s).
+
+        Parameters
+        ----------
+        u : np.ndarray or list
+            Direction(s) to estimate the value along with. It can be of a unique direction [nx, ny, nz],
+            or a set of directions (e.g. [[n1x, n1y n1z],[n2x, n2y, n2z],...]).
+
+        Returns
+        -------
+        float or np.ndarray
+            If only one direction is given as a tuple of floats [nx, ny, nz], the result is a float;
+            otherwise, the result is a nd.array.
+        """
+        values = self.fun(u)
+        if isinstance(u, list) and np.array(u).shape == (3,):
             return values[0]
         else:
             return values
 
     def eval_spherical(self, *args):
+        """
+        Evaluate value along a given (set of) direction(s) defined by its (their) spherical coordinates.
+
+        Parameters
+        ----------
+        args : list or np.ndarray
+            [phi, theta] where phi denotes the azimuth angle from X axis,
+            and theta is the latitude angle from Z axis (theta==0 -> Z axis).
+
+        Returns
+        -------
+        float or np.ndarray
+            If only one direction is given as a tuple of floats [nx, ny, nz], the result is a float;
+        otherwise, the result is a nd.array.
+        """
         angles = np.atleast_2d(args)
         phi, theta = angles.T
         u = _sph2cart(phi, theta)
@@ -93,6 +122,16 @@ class SphericalFunction:
 
     @property
     def min(self):
+        """
+        Find minimum value of the function.
+
+        Returns
+        -------
+        tuple
+            Minimum value and location where it is reached (direction)
+            min[0] (float): minimum value
+            min[1] (np.ndarray): direction along which this value is reached
+        """
         def fun(x):
             return self.eval_spherical(*x)
 
@@ -103,6 +142,16 @@ class SphericalFunction:
 
     @property
     def max(self):
+        """
+        Find maximum value of the function.
+
+        Returns
+        -------
+        tuple
+            Minimum value and location where it is reached (direction)
+            max[0] (float): maximum value
+            max[1] (np.ndarray): direction along which this value is reached
+        """
         def fun(x):
             return -self.eval_spherical(*x)
 
@@ -112,6 +161,14 @@ class SphericalFunction:
         return val, _sph2cart(*angles)
 
     def mean(self):
+        """
+        Estimate the mean value along all directions in the 3D space
+
+        Returns
+        -------
+        float
+            Mean value
+        """
         def fun(theta, phi):
             return self.eval_spherical(phi, theta) * sin(theta)
 
@@ -120,6 +177,19 @@ class SphericalFunction:
         return q[0] / (2 * np.pi)
 
     def var(self, mean=None):
+        """
+        Estimate the variance along all directions in the 3D space
+
+        Parameters
+        ----------
+        mean : float, optional
+            If provided, skip estimation of mean value and use that provided instead.
+
+        Returns
+        -------
+        float
+            Variance of the functio
+        """
         if mean is None:
             mean = self.mean()
 
@@ -131,6 +201,19 @@ class SphericalFunction:
         return q[0] / (2 * np.pi)
 
     def std(self, **kwargs):
+        """
+        Standard deviation of the function along all directions in the 3D space.
+
+        Parameters
+        ----------
+        kwargs : optional
+            Keyword arguments passed-by to var()
+
+        Returns
+        -------
+        float
+            Standard deviation
+        """
         return np.sqrt(self.std(**kwargs))
 
     def _plot(self, funs, fig, n_phi=50, n_theta=50, opacities=None):
@@ -144,7 +227,7 @@ class SphericalFunction:
         for k, fun in enumerate(funs):
             u = _sph2cart(phi, theta)
             values = fun(u)
-            xyz = (u.T*values).T
+            xyz = (u.T * values).T
             x = xyz[:, 0].reshape(phi_grid.shape)
             y = xyz[:, 1].reshape(phi_grid.shape)
             z = xyz[:, 2].reshape(phi_grid.shape)
@@ -161,7 +244,22 @@ class SphericalFunction:
         ax.set_zlabel('Z')
         return ax, norms
 
-    def plot(self, **kwargs):
+    def plot(self, n_phi, n_theta, **kwargs):
+        """
+        3D plotting of a spherical function
+
+        Parameters
+        ----------
+        n_phi : int, optional
+            Number of azimuth angles (phi) to use for plotting. Default is 50.
+        n_theta : int, optional
+            Number of latitude angles (theta) to use for plotting. Default is 50.
+
+        Returns
+        -------
+        matplotlib.figure.Figure
+            Handle to the figure
+        """
         fig = plt.figure()
         ax, norms = self._plot([self.eval], fig, **kwargs)
         mappable = cm.ScalarMappable(cmap='viridis', norm=norms[0])
