@@ -82,11 +82,11 @@ class SphericalFunction:
             return values
 
     def eval_spherical(self, *args):
-        angles = np.atleast_2d(*args)
+        angles = np.atleast_2d(args)
         phi, theta = angles.T
         u = _sph2cart(phi, theta)
         values = self.eval(u)
-        if np.array(args).shape == (1, 2) and not isinstance(args, np.ndarray):
+        if (np.array(args).shape == (2,) or np.array(args).shape == (1, 2)) and not isinstance(args, np.ndarray):
             return values[0]
         else:
             return values
@@ -136,21 +136,19 @@ class SphericalFunction:
     def _plot(self, funs, fig, n_phi=50, n_theta=50, opacities=None):
         phi = np.linspace(0, 2 * np.pi, n_phi)
         theta = np.linspace(0, np.pi, n_theta)
-        val = np.zeros((n_phi, n_theta))
         phi_grid, theta_grid = np.meshgrid(phi, theta, indexing='ij')
+        phi = phi_grid.flatten()
+        theta = theta_grid.flatten()
         for k, fun in enumerate(funs):
-            x, y, z = _sph2cart(phi_grid, theta_grid)
-            for i in range(n_phi):
-                for j in range(n_theta):
-                    val[i, j] = fun(phi_grid[i,j], theta_grid[i,j])
-            x *= val
-            y *= val
-            z *= val
+            u = _sph2cart(phi, theta)
+            values = fun(u)
+            xyz = (u.T*values).T
+            x = xyz[:, 0].reshape(phi_grid.shape)
+            y = xyz[:, 1].reshape(phi_grid.shape)
+            z = xyz[:, 2].reshape(phi_grid.shape)
             ax = fig.add_subplot(1, 1, 1, projection='3d')
-            val_min, _ = self.min
-            val_max, _ = self.max
-            norm = Normalize(vmin=val_min, vmax=val_max)
-            colors = cm.viridis(norm(val))
+            norm = Normalize(vmin=self.min[0], vmax=self.max[0])
+            colors = cm.viridis(norm(values.reshape(n_phi, n_theta)))
             if opacities is None:
                 alpha = 1.0
             else:
@@ -163,7 +161,7 @@ class SphericalFunction:
 
     def plot(self, **kwargs):
         fig = plt.figure()
-        ax, norm = self._plot([self.eval_spherical], fig, **kwargs)
+        ax, norm = self._plot([self.eval], fig, **kwargs)
         mappable = cm.ScalarMappable(cmap='viridis', norm=norm)
         mappable.set_array([])
         fig.colorbar(mappable, ax=ax)
