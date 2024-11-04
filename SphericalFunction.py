@@ -15,10 +15,10 @@ def _sph2cart(phi, theta, psi=None):
     if psi is None:
         return u
     else:
-        e_phi = np.array([-sin(phi_vec), cos(phi_vec), 0])
+        e_phi = np.array([-sin(phi_vec), cos(phi_vec), np.zeros(phi_vec.shape)])
         e_theta = np.array([cos(theta_vec) * cos(phi_vec), cos(theta_vec) * sin(phi_vec), -sin(theta_vec)])
         v = cos(psi) * e_phi + sin(psi) * e_theta
-    return u, v
+        return u, v.T
 
 
 def _cart2sph(x, y, z):
@@ -277,9 +277,8 @@ class HyperSphericalFunction(SphericalFunction):
                       [0, np.pi]]
         super().__init__(fun, domain=domain)
 
-    def eval(self, *args):
-        u, v = args
-        values = self.fun(u, v)
+    def eval(self, u, *args):
+        values = self.fun(u, *args)
         if np.array(u).shape == (3,) and not isinstance(u, np.ndarray):
             return values[0]
         else:
@@ -308,14 +307,14 @@ class HyperSphericalFunction(SphericalFunction):
         return -result.fun
 
     def eval_spherical(self, *args):
-        angles = np.atleast_2d(*args)
-        if angles.shape[1] == 1:
-            phi, theta = angles.T
-            u = _sph2cart(phi, theta)
+        angles = np.atleast_2d(args)
+        phi, theta, psi = angles.T
+        u, v = _sph2cart(phi, theta, psi)
+        values = self.eval(u, v)
+        if np.array(args).shape == (3,) and not isinstance(args, np.ndarray):
+            return values[0]
         else:
-            phi, theta = angles.T
-            u, v = _sph2cart(phi, theta, psi)
-        return self.eval(u, v)
+            return values
 
     def var(self, mean=None):
         if mean is None:
