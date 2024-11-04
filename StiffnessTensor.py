@@ -148,6 +148,12 @@ class SymmetricTensor:
     voigt_map = np.ones((6, 6))
 
     def __init__(self, M, phase_name='', symmetry='Triclinic'):
+        """
+        Constructor for symmetric tensors
+        :param M: np.ndarray 6x6 matrix of the tensor, using the Voigt notation
+        :param phase_name: Phase name
+        :param symmetry:
+        """
         self.matrix = M
         self.phase_name = phase_name
         self.symmetry = symmetry
@@ -161,6 +167,14 @@ class SymmetricTensor:
         return heading + self.matrix.__str__() + print_symmetry
 
     def full_tensor(self):
+        """
+        Returns the full (unvoigted) tensor, as a [3, 3, 3, 3] array
+
+        Returns
+        -------
+        np.ndarray
+            Full tensor (4-index notation)
+        """
         i, j, k, ell = np.indices((3, 3, 3, 3))
         ij = voigt(i, j)
         kl = voigt(k, ell)
@@ -168,6 +182,18 @@ class SymmetricTensor:
         return m
 
     def rotate(self, m):
+        """
+        Rotate a tensor
+        Parameters
+        ----------
+        m : np.ndarray
+            Rotation matrix
+
+        Returns
+        -------
+        SymmetricTensor
+            Rotated tensor
+        """
         rotated_tensor = np.einsum('im,jn,ko,lp,mnop->ijkl', m, m, m, m, self.full_tensor())
         ij, kl = np.indices((6, 6))
         i, j = unvoigt(ij).T
@@ -215,6 +241,20 @@ class SymmetricTensor:
             return self * other
 
     def _orientation_average(self, orientations):
+        """
+        Rotate the tensor by a series of rotations, then evaluate its mean value.
+
+        Parameters
+        ----------
+        orientations : np.ndarray
+            [m, 3, 3] array, where orientations[i,:,:] gives i-th the orientation matrix
+
+        Returns
+        -------
+        SymmetricTensor
+            Mean tensor
+
+        """
         if len(orientations.shape) == 2:
             raise ValueError('The orientation must be a 3x3 or a Nx3x3 matrix')
         elif len(orientations.shape) == 2:
@@ -236,11 +276,27 @@ class StiffnessTensor(SymmetricTensor):
         super().__init__(S, **kwargs)
 
     def inv(self):
+        """
+        Compute the reciprocal compliance tensor
+
+        Returns
+        -------
+        ComplianceTensor
+            Reciprocal tensor
+        """
         C = np.linalg.inv(self.matrix)
         return ComplianceTensor(C, symmetry=self.symmetry, phase_name=self.phase_name)
 
     @property
     def Young_modulus(self):
+        """
+        Directional Young's modulus
+
+        Returns
+        -------
+        SphericalFunction
+            Young's modulus
+        """
         def compute_young_modulus(n):
             eps = _compute_unit_strain_along_direction(self, n, n)
             return 1 / eps
@@ -248,6 +304,14 @@ class StiffnessTensor(SymmetricTensor):
 
     @property
     def shear_modulus(self):
+        """
+        Directional shear modulus
+
+        Returns
+        -------
+        HyperSphericalFunction
+            Shear modulus
+        """
         def compute_shear_modulus(m, n):
             eps = _compute_unit_strain_along_direction(self, m, n)
             return 1 / (4 * eps)
@@ -256,6 +320,14 @@ class StiffnessTensor(SymmetricTensor):
 
     @property
     def Poisson_ratio(self):
+        """
+        Directional Poisson's ratio
+
+        Returns
+        -------
+        HyperSphericalFunction
+            Poisson's ratio
+        """
         def compute_PoissonRatio(m, n):
             eps1 = _compute_unit_strain_along_direction(self, m, m)
             eps2 = _compute_unit_strain_along_direction(self, m, n, transverse=True)
@@ -263,6 +335,21 @@ class StiffnessTensor(SymmetricTensor):
         return HyperSphericalFunction(compute_PoissonRatio)
 
     def Voigt_average(self, orientations=None):
+        """
+        Compute the Voigt average of stiffness tensor
+
+        Parameters
+        ----------
+        orientations : np.ndarray or None
+            Set of m orientation matrices, defined as a [m, 3, 3] array.
+            If None, uniform distribution is assumed, resulting in isotropic tensor
+
+        Returns
+        -------
+        StiffnessTensor
+            Voigt average of stiffness tensor
+
+        """
         if orientations is None:
             c = self.matrix
             C11 = (c[0, 0] + c[1, 1] + c[2, 2]) / 5 \
@@ -283,9 +370,39 @@ class StiffnessTensor(SymmetricTensor):
             return self._orientation_average(orientations)
 
     def Reuss_average(self, **kwargs):
+        """
+        Compute the Reuss average of tensor
+
+        Parameters
+        ----------
+        orientations : np.ndarray or None
+            Set of m orientation matrices, defined as a [m, 3, 3] array.
+            If None, uniform distribution is assumed, resulting in isotropic tensor
+
+        Returns
+        -------
+        StiffnessTensor
+            Reuss average of stiffness tensor
+
+        """
         return self.inv().Reuss_average(**kwargs).inv()
 
     def Hill_average(self, **kwargs):
+        """
+                Compute the (Voigt-Reuss-)Hill average of tensor
+
+                Parameters
+                ----------
+                orientations : np.ndarray or None
+                    Set of m orientation matrices, defined as a [m, 3, 3] array.
+                    If None, uniform distribution is assumed, resulting in isotropic tensor
+
+                Returns
+                -------
+                StiffnessTensor
+                    Voigt-Reuss-Hill average of tensor
+
+                """
         return (self.Reuss_average(**kwargs) + self.Voigt_average(**kwargs)) * 0.5
 
 
@@ -300,6 +417,14 @@ class ComplianceTensor(StiffnessTensor):
         super().__init__(C, **kwargs)
 
     def inv(self):
+        """
+        Compute the reciprocal stiffness tensor
+
+        Returns
+        -------
+        StiffnessTensor
+            Reciprocal tensor
+        """
         S = np.linalg.inv(self.matrix)
         return StiffnessTensor(S, symmetry=self.symmetry, phase_name=self.phase_name)
 
@@ -328,5 +453,4 @@ class ComplianceTensor(StiffnessTensor):
 
     def Hill_average(self, **kwargs):
         return self.inv().Hill_average(**kwargs)
-
 
