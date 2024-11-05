@@ -58,6 +58,21 @@ def _multistart_minimization(fun, bounds):
     return best_result
 
 
+def _plot3D(fig, u, r, **kwargs):
+    norm = Normalize(vmin=r.min(), vmax=r.max())
+    colors = cm.viridis(norm(r))
+    ax = fig.add_subplot(1, 1, 1, projection='3d')
+    xyz = (u.T * r.T).T
+    ax.plot_surface(xyz[:, :, 0], xyz[:, :, 1], xyz[:, :, 2], facecolors=colors, rstride=1, cstride=1,
+                    antialiased=False, **kwargs)
+    mappable = cm.ScalarMappable(cmap='viridis', norm=norm)
+    mappable.set_array([])
+    fig.colorbar(mappable, ax=ax)
+    ax.set_xlabel('X')
+    ax.set_ylabel('Y')
+    ax.set_zlabel('Z')
+    return ax
+
 class SphericalFunction:
     def __init__(self, fun, domain=None):
         if domain is None:
@@ -216,35 +231,7 @@ class SphericalFunction:
         """
         return np.sqrt(self.std(**kwargs))
 
-    def _plot(self, funs, fig, n_phi=50, n_theta=50, opacities=None):
-        phi = np.linspace(0, 2 * np.pi, n_phi)
-        theta = np.linspace(0, np.pi, n_theta)
-        phi_grid, theta_grid = np.meshgrid(phi, theta, indexing='ij')
-        phi = phi_grid.flatten()
-        theta = theta_grid.flatten()
-        ax = fig.add_subplot(1, 1, 1, projection='3d')
-        norms = []
-        for k, fun in enumerate(funs):
-            u = _sph2cart(phi, theta)
-            values = fun(u)
-            xyz = (u.T * values).T
-            x = xyz[:, 0].reshape(phi_grid.shape)
-            y = xyz[:, 1].reshape(phi_grid.shape)
-            z = xyz[:, 2].reshape(phi_grid.shape)
-            norm = Normalize(vmin=self.min[0], vmax=self.max[0])
-            colors = cm.viridis(norm(values.reshape(n_phi, n_theta)))
-            if opacities is None:
-                alpha = 1.0
-            else:
-                alpha = opacities[k]
-            ax.plot_surface(x, y, z, facecolors=colors, rstride=1, cstride=1, antialiased=False, alpha=alpha)
-            norms.append(norm)
-        ax.set_xlabel('X')
-        ax.set_ylabel('Y')
-        ax.set_zlabel('Z')
-        return ax, norms
-
-    def plot(self, n_phi, n_theta, **kwargs):
+    def plot(self, n_phi=50, n_theta=50, **kwargs):
         """
         3D plotting of a spherical function
 
@@ -261,12 +248,18 @@ class SphericalFunction:
             Handle to the figure
         """
         fig = plt.figure()
-        ax, norms = self._plot([self.eval], fig, **kwargs)
-        mappable = cm.ScalarMappable(cmap='viridis', norm=norms[0])
-        mappable.set_array([])
-        fig.colorbar(mappable, ax=ax)
+        phi = np.linspace(0, 2 * np.pi, n_phi)
+        theta = np.linspace(0, np.pi, n_theta)
+        phi_grid, theta_grid = np.meshgrid(phi, theta, indexing='ij')
+        phi = phi_grid.flatten()
+        theta = theta_grid.flatten()
+        u = _sph2cart(phi, theta)
+        values = self.eval(u)
+        u_grid = u.reshape([*phi_grid.shape, 3])
+        r_grid = values.reshape(phi_grid.shape)
+        ax = _plot3D(fig, u_grid, r_grid, **kwargs)
         plt.show()
-        return fig
+        return fig, ax
 
 
 class HyperSphericalFunction(SphericalFunction):
@@ -327,7 +320,7 @@ class HyperSphericalFunction(SphericalFunction):
         q = integrate.tplquad(fun, *domain)
         return q[0] / (2 * np.pi ** 2)
 
-    def plot(self, n_phi=50, n_theta=50, **kwargs):
+    def plot(self, n_phi=50, n_theta=50, n_psi=50, which='mean', **kwargs):
         fig = plt.figure()
         ax, norm = self._plot([self._psi_min], fig,
                               n_phi=n_phi, n_theta=n_theta, opacities=[1.0, 0.2])
