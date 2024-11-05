@@ -176,45 +176,68 @@ class SphericalFunction:
         angles = q.x
         return val, _sph2cart(*angles)
 
-    def mean(self):
+    def mean(self, method='exact', n_evals=10000):
         """
         Estimate the mean value along all directions in the 3D space
+
+        Parameters
+        ----------
+        method : str {'exact', 'Monte Carlo'}
+            If method=='exact', the full integration is performed over the unit sphere, with the aid of
+            numpy.integrate.dblquad function. If method=='Monte Carlo', the function is evaluated along a finite set of
+            random directions.
+        n_evals : int, default 10000
+            If method=='Monte Carlo', sets the number of random directions to use.
 
         Returns
         -------
         float
             Mean value
         """
-        def fun(theta, phi):
-            return self.eval_spherical(phi, theta) * sin(theta)
+        if method == 'exact':
+            def fun(theta, phi):
+                return self.eval_spherical(phi, theta) * sin(theta)
 
-        domain = self.domain.flatten()
-        q = integrate.dblquad(fun, *domain)
-        return q[0] / (2 * np.pi)
+            domain = self.domain.flatten()
+            q = integrate.dblquad(fun, *domain)
+            return q[0] / (2 * np.pi)
+        else:
+            u = np.random.random((n_evals, 3))-0.5
+            return np.mean(self.eval(u))
 
-    def var(self, mean=None):
+    def var(self, method='exact', n_evals=10000, mean=None):
         """
         Estimate the variance along all directions in the 3D space
 
         Parameters
         ----------
-        mean : float, optional
-            If provided, skip estimation of mean value and use that provided instead.
+        method : str {'exact', 'Monte Carlo'}
+            If method=='exact', the full integration is performed over the unit sphere, with the aid of
+            numpy.integrate.dblquad function. If method=='Monte Carlo', the function is evaluated along a finite set of
+            random directions.
+        n_evals : int, default 10000
+            If method=='Monte Carlo', sets the number of random directions to use.
+        mean : float, default None
+            If provided, and if method=='exact', skip estimation of mean value and use that provided instead.
 
         Returns
         -------
         float
             Variance of the function
         """
-        if mean is None:
-            mean = self.mean()
+        if method == 'exact':
+            if mean is None:
+                mean = self.mean()
 
-        def fun(theta, phi):
-            return (self.eval_spherical(phi, theta) - mean) ** 2 * sin(theta)
+            def fun(theta, phi):
+                return (self.eval_spherical(phi, theta) - mean) ** 2 * sin(theta)
 
-        domain = self.domain.flatten()
-        q = integrate.dblquad(fun, *domain)
-        return q[0] / (2 * np.pi)
+            domain = self.domain.flatten()
+            q = integrate.dblquad(fun, *domain)
+            return q[0] / (2 * np.pi)
+        else:
+            u = np.random.random((n_evals, 3))-0.5
+            return np.var(self.eval(u))
 
     def std(self, **kwargs):
         """
@@ -222,8 +245,8 @@ class SphericalFunction:
 
         Parameters
         ----------
-        kwargs : optional
-            Keyword arguments passed-by to var()
+        **kwargs
+            These parameters will be passed to var() function
 
         Returns
         -------
