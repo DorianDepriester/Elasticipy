@@ -253,7 +253,7 @@ class SphericalFunction:
         float
             Standard deviation
         """
-        return np.sqrt(self.std(**kwargs))
+        return np.sqrt(self.var(**kwargs))
 
     def plot(self, n_phi=50, n_theta=50, **kwargs):
         """
@@ -305,27 +305,19 @@ class HyperSphericalFunction(SphericalFunction):
         else:
             return values
 
-    def mean(self):
-        def fun(psi, theta, phi):
-            return self.eval_spherical(phi, theta, psi) * sin(theta)
+    def mean(self, method='exact', n_evals=10000):
+        if method == 'exact':
+            def fun(psi, theta, phi):
+                return self.eval_spherical(phi, theta, psi) * sin(theta)
 
-        domain = self.domain.flatten()
-        q = integrate.tplquad(fun, *domain)
-        return q[0] / (2 * np.pi ** 2)
-
-    def _psi_min(self, phi, theta):
-        def fun(psi):
-            return self.eval_spherical(phi, theta, psi[0])
-
-        result = minimize(fun, np.pi, bounds=[self.domain[2]])
-        return result.fun
-
-    def _psi_max(self, phi, theta):
-        def fun(psi):
-            return -self.eval_spherical(phi, theta, psi)
-
-        result = minimize(fun, np.pi, bounds=[self.domain[2]])
-        return -result.fun
+            domain = self.domain.flatten()
+            q = integrate.tplquad(fun, *domain)
+            return q[0] / (2 * np.pi ** 2)
+        else:
+            u = np.random.random((n_evals, 3)) - 0.5
+            v = np.random.random((n_evals, 3)) - 0.5
+            w = np.cross(u, v)
+            return np.mean(self.eval(u, w))
 
     def eval_spherical(self, *args):
         angles = np.atleast_2d(args)
@@ -337,16 +329,22 @@ class HyperSphericalFunction(SphericalFunction):
         else:
             return values
 
-    def var(self, mean=None):
-        if mean is None:
-            mean = self.mean()
+    def var(self, method='exact', n_evals=10000, mean=None):
+        if method == 'exact':
+            if mean is None:
+                mean = self.mean()
 
-        def fun(psi, theta, phi):
-            return (mean - self.eval_spherical(phi, theta, psi)) ** 2 * sin(theta)
+            def fun(psi, theta, phi):
+                return (mean - self.eval_spherical(phi, theta, psi)) ** 2 * sin(theta)
 
-        domain = self.domain.flatten()
-        q = integrate.tplquad(fun, *domain)
-        return q[0] / (2 * np.pi ** 2)
+            domain = self.domain.flatten()
+            q = integrate.tplquad(fun, *domain)
+            return q[0] / (2 * np.pi ** 2)
+        else:
+            u = np.random.random((n_evals, 3)) - 0.5
+            v = np.random.random((n_evals, 3)) - 0.5
+            w = np.cross(u, v)
+            return np.var(self.eval(u, w))
 
     def plot(self, n_phi=50, n_theta=50, n_psi=50, which='mean', **kwargs):
         """
