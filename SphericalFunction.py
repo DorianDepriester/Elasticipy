@@ -1,5 +1,3 @@
-from inspect import signature
-
 import numpy as np
 from matplotlib import pyplot as plt, cm
 from matplotlib.colors import Normalize
@@ -8,11 +6,12 @@ from scipy import integrate as integrate
 from scipy.optimize import minimize
 
 
-def _sph2cart(phi, theta, psi=None):
+def _sph2cart(*args):
+    phi, theta, *psi = args
     phi_vec = np.array(phi).flatten()
     theta_vec = np.array(theta).flatten()
     u = np.array([cos(phi_vec) * sin(theta_vec), sin(phi_vec) * sin(theta_vec), cos(theta_vec)]).T
-    if psi is None:
+    if not psi:
         return u
     else:
         e_phi = np.array([-sin(phi_vec), cos(phi_vec), np.zeros(phi_vec.shape)])
@@ -379,7 +378,7 @@ class HyperSphericalFunction(SphericalFunction):
         phi = phi_grid.flatten()
         theta = theta_grid.flatten()
         psi = psi_grid.flatten()
-        u, v = _sph2cart(phi, theta, psi=psi)
+        u, v = _sph2cart(phi, theta, psi)
         values = self.eval(u, v).reshape((n_phi, n_theta, n_psi))
         if which == 'std':
             r_grid = np.std(values, axis=2)
