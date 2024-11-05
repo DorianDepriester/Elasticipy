@@ -73,6 +73,7 @@ def _plot3D(fig, u, r, **kwargs):
     ax.set_zlabel('Z')
     return ax
 
+
 class SphericalFunction:
     def __init__(self, fun, domain=None):
         if domain is None:
@@ -241,6 +242,7 @@ class SphericalFunction:
             Number of azimuth angles (phi) to use for plotting. Default is 50.
         n_theta : int, optional
             Number of latitude angles (theta) to use for plotting. Default is 50.
+        **kwargs : keyword arguments passed-by to ax.plot_surface()
 
         Returns
         -------
@@ -321,8 +323,39 @@ class HyperSphericalFunction(SphericalFunction):
         return q[0] / (2 * np.pi ** 2)
 
     def plot(self, n_phi=50, n_theta=50, n_psi=50, which='mean', **kwargs):
+        """
+        3D plotting of a spherical function
+
+        Parameters
+        ----------
+        n_phi : int, optional
+            Number of azimuth angles (phi) to use for plotting. Default is 50.
+        n_theta : int, optional
+            Number of latitude angles (theta) to use for plotting. Default is 50.
+        **kwargs : keyword arguments passed-by to ax.plot_surface()
+
+        Returns
+        -------
+        matplotlib.figure.Figure
+            Handle to the figure
+        """
         fig = plt.figure()
-        ax, norm = self._plot([self._psi_min], fig,
-                              n_phi=n_phi, n_theta=n_theta, opacities=[1.0, 0.2])
+        phi = np.linspace(0, 2 * np.pi, n_phi)
+        theta = np.linspace(0, np.pi, n_theta)
+        psi = np.linspace(0, np.pi, n_psi)
+        phi_grid, theta_grid, psi_grid = np.meshgrid(phi, theta, psi, indexing='ij')
+        phi = phi_grid.flatten()
+        theta = theta_grid.flatten()
+        psi = psi_grid.flatten()
+        u, v = _sph2cart(phi, theta, psi=psi)
+        values = self.eval(u, v).reshape((n_phi, n_theta, n_psi))
+        if which == 'mean':
+            r_grid = np.mean(values, axis=2)
+        elif which == 'min':
+            r_grid = np.min(values, axis=2)
+        else:
+            r_grid = np.max(values, axis=2)
+        u_grid = u.reshape((n_phi, n_theta, n_psi, 3))
+        ax = _plot3D(fig, u_grid[:, :, 0, :], r_grid, **kwargs)
         plt.show()
-        return fig
+        return fig, ax
