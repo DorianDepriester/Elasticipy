@@ -12,6 +12,7 @@ def _rotation_matrix_z(phi):
     M[:, 2, 2] = 1
     return M
 
+
 def _rotation_matrix_x(Phi):
     M = np.zeros((len(Phi), 3, 3))
     M[:, 0, 0] = 1
