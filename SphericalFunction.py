@@ -204,7 +204,7 @@ class SphericalFunction:
         Returns
         -------
         float
-            Variance of the functio
+            Variance of the function
         """
         if mean is None:
             mean = self.mean()
@@ -238,16 +238,19 @@ class SphericalFunction:
 
         Parameters
         ----------
-        n_phi : int, optional
+        n_phi : int, default 50
             Number of azimuth angles (phi) to use for plotting. Default is 50.
-        n_theta : int, optional
+        n_theta : int, default 50
             Number of latitude angles (theta) to use for plotting. Default is 50.
-        **kwargs : keyword arguments passed-by to ax.plot_surface()
+        **kwargs
+            These parameters will be passed to matplotlib plot_surface() function.
 
         Returns
         -------
         matplotlib.figure.Figure
             Handle to the figure
+        matplotlib.Axes3D
+            Handle to axes
         """
         fig = plt.figure()
         phi = np.linspace(0, 2 * np.pi, n_phi)
@@ -328,16 +331,24 @@ class HyperSphericalFunction(SphericalFunction):
 
         Parameters
         ----------
-        n_phi : int, optional
+        n_phi : int, default 50
             Number of azimuth angles (phi) to use for plotting. Default is 50.
-        n_theta : int, optional
+        n_theta : int, default 50
             Number of latitude angles (theta) to use for plotting. Default is 50.
-        **kwargs : keyword arguments passed-by to ax.plot_surface()
+        n_psi : int, default 50
+            Number of psi value to look for min/max/mean value (see below). Default is 50.
+        which : str {'mean', 'std', 'min', 'max'}
+            How to handle the 3rd coordinate. For instance, if which=='mean' (default), for a given value of angles
+            (phi, theta), the mean function value over all psi angles is plotted.
+        **kwargs
+            These arguments will be passed to ax.plot_surface() function.
 
         Returns
         -------
         matplotlib.figure.Figure
             Handle to the figure
+        matplotlib.Axes3D
+            Handle to axes
         """
         fig = plt.figure()
         phi = np.linspace(0, 2 * np.pi, n_phi)
@@ -349,12 +360,14 @@ class HyperSphericalFunction(SphericalFunction):
         psi = psi_grid.flatten()
         u, v = _sph2cart(phi, theta, psi=psi)
         values = self.eval(u, v).reshape((n_phi, n_theta, n_psi))
-        if which == 'mean':
-            r_grid = np.mean(values, axis=2)
+        if which == 'std':
+            r_grid = np.std(values, axis=2)
         elif which == 'min':
             r_grid = np.min(values, axis=2)
-        else:
+        elif which == 'max':
             r_grid = np.max(values, axis=2)
+        else:
+            r_grid = np.mean(values, axis=2)
         u_grid = u.reshape((n_phi, n_theta, n_psi, 3))
         ax = _plot3D(fig, u_grid[:, :, 0, :], r_grid, **kwargs)
         plt.show()
