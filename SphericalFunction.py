@@ -82,8 +82,8 @@ class SphericalFunction:
         self.fun = fun
 
     def __repr__(self):
-        val_min, _ = self.min
-        val_max, _ = self.max
+        val_min, _ = self.min()
+        val_max, _ = self.max()
         s = 'Spherical function\n'
         s += 'Min={}, Max={}'.format(val_min, val_max)
         return s
@@ -110,7 +110,7 @@ class SphericalFunction:
         else:
             return values
 
-    def eval_spherical(self, *args):
+    def eval_spherical(self, *args, degrees=False):
         """
         Evaluate value along a given (set of) direction(s) defined by its (their) spherical coordinates.
 
@@ -119,6 +119,8 @@ class SphericalFunction:
         args : list or np.ndarray
             [phi, theta] where phi denotes the azimuth angle from X axis,
             and theta is the latitude angle from Z axis (theta==0 -> Z axis).
+        degrees : bool, default False
+            If True, the angles are given in degrees instead of radians.
 
         Returns
         -------
@@ -127,6 +129,8 @@ class SphericalFunction:
         otherwise, the result is a nd.array.
         """
         angles = np.atleast_2d(args)
+        if degrees:
+            angles = np.radians(angles)
         phi, theta = angles.T
         u = _sph2cart(phi, theta)
         values = self.eval(u)
@@ -135,7 +139,6 @@ class SphericalFunction:
         else:
             return values
 
-    @property
     def min(self):
         """
         Find minimum value of the function.
@@ -155,7 +158,6 @@ class SphericalFunction:
         angles = q.x
         return val, _sph2cart(*angles)
 
-    @property
     def max(self):
         """
         Find maximum value of the function.
