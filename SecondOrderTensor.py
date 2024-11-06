@@ -68,6 +68,25 @@ class SecondOrderTensor:
         return np.linalg.det(self.matrix)
 
     def __mul__(self, other):
+        """
+        Element-wise matrix multiplication of arrays of tensors. The two tensors must be of the same shape, resulting in
+        a tensor with the same shape.
+
+        For instance, if T1.shape=T2.shape=[m,n],
+        with T3=T1*T2, we have:
+        T3[i, j] == np.matmul(T1[i, j], T2[i, j]) for i=0...m and j=0...n.
+
+        Parameters
+        ----------
+        other : SecondOrderTensor or np.ndarray
+            If other is a SecondOrderTensor, it must of the same shape.
+            If T2 is a numpy array, we must have:
+                T2.shape == T1.shape + (3, 3)
+
+        Returns
+        -------
+            Array of tensors populated with element-wise matrix multiplication, with the same shape as the input arguments.
+        """
         if isinstance(other, SecondOrderTensor):
             other_matrix = other.matrix
         else:
@@ -78,6 +97,25 @@ class SecondOrderTensor:
             return SecondOrderTensor(np.matmul(self.matrix, other.matrix))
 
     def matmul(self, other):
+        """
+        Perform matrix-like multiplication between two vectors of tensors. Each "product" is a matrix product between
+        their components. Only works for single tensors (0-dim tensors) and 1-dimensional tensors.
+
+        If T1.shape=(m) and T2.shape=(n), with T3=T1.matmul(T2), we have:
+            T3.shape = (m, n)
+        and
+            T3[i,j] = np.matmul(T1[i], T2[j]) for i=0...m and n=0...n
+
+        Parameters
+        ----------
+        other : SecondOrderTensor or np.ndarray
+            Array of tensors to multiply by.
+
+        Returns
+        -------
+        Array of tensors
+
+        """
         if isinstance(other, SecondOrderTensor):
             other_matrix = other.matrix
         else:
@@ -111,7 +149,7 @@ class SecondOrderTensor:
         transposed_arr = np.transpose(matrix, new_axes)
         return self.__class__(transposed_arr)
 
-    def __matmul__(self, other):
+    def dot(self, other):
         if isinstance(other, SecondOrderTensor):
             other_matrix = other.matrix
         else:
@@ -121,7 +159,6 @@ class SecondOrderTensor:
         n2 = len(shape_other) - 2
         if (n2 < 0) or (shape_other[-1] != 3) or (shape_other[-2] != 3):
             raise ValueError('The array to dot by must be of shape (...,3,3)')
-        shape_other = shape_other[:-2]
         ein_str = [['ik,jk->ij',     'ik,njk->nij',   'ik,npjk->npij'],
                    ['nik,jk->nij',   'nik,njk->ij',   'nik,npjk->pij'],
                    ['mnik,jk->mnij', 'mnik,njk->mij', 'mnik,npjk->mpij']]
