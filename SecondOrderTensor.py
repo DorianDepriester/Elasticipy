@@ -5,9 +5,10 @@ class SecondOrderTensor:
     name = 'Second-order tensor'
 
     def __init__(self, matrix):
+        matrix = np.atleast_2d(matrix)
         shape = matrix.shape
         if len(shape) < 2 or shape[-2:] != (3, 3):
-            raise ValueError('The input matrix must of shape (3,3) or (...,3,3)')
+            raise ValueError('The input matrix must be of shape (3,3) or (...,3,3)')
         self.matrix = matrix
 
     def __repr__(self):
@@ -19,8 +20,6 @@ class SecondOrderTensor:
         return s
 
     def __getitem__(self, index):
-        if len(index) > self.ndim:
-            raise IndexError('Too many indices for tensor of shape {}'.format(self.shape))
         return self.__class__(self.matrix[index])
 
     def __add__(self, other):
@@ -37,7 +36,7 @@ class SecondOrderTensor:
         elif isinstance(other, (int, float, np.ndarray)):
             return self.__class__(self.matrix - other)
         else:
-            raise ValueError('The element to substract must be a number, a ndarray or of the same class.')
+            raise ValueError('The element to subtract must be a number, a ndarray or of the same class.')
 
     @property
     def shape(self):
@@ -70,7 +69,39 @@ class SecondOrderTensor:
 
     def __mul__(self, other):
         if isinstance(other, SecondOrderTensor):
+            other_matrix = other.matrix
+        else:
+            other_matrix = other
+        if other_matrix.shape != self.matrix.shape:
+            return ValueError('The two arrays of tensors must be of the same shape.')
+        else:
             return SecondOrderTensor(np.matmul(self.matrix, other.matrix))
+
+    def matmul(self, other):
+        if isinstance(other, SecondOrderTensor):
+            other_matrix = other.matrix
+        else:
+            other_matrix = other
+        n1 = self.ndim
+        n2 = other_matrix.ndim - 2
+        if n1 == 0:
+            if n2 == 0:
+                ein_str = 'ik,kj->ij'
+            elif n2 == 1:
+                ein_str = 'ik,nkj->nij'
+            else:
+                raise ValueError('The dimension of the array to multiply by must be 1 or 2.')
+        elif n1 == 1:
+            if n2 == 0:
+                ein_str = 'mik,kj->mij'
+            elif n2 == 1:
+                ein_str = 'mik,nkj->mnij'
+            else:
+                raise ValueError('The dimension of the array to multiply by must be 1 or 2.')
+        else:
+            raise ValueError('matmul only works for arrays of tensor of dimension 0 or 1.')
+        new_mat = np.einsum(ein_str, self.matrix, other_matrix)
+        return SecondOrderTensor(new_mat)
 
     @property
     def T(self):
@@ -80,15 +111,15 @@ class SecondOrderTensor:
         transposed_arr = np.transpose(matrix, new_axes)
         return self.__class__(transposed_arr)
 
-    def dot(self, other):
+    def __matmul__(self, other):
         if isinstance(other, SecondOrderTensor):
             other_matrix = other.matrix
         else:
             other_matrix = other
         shape_other = other_matrix.shape
         n1 = self.ndim
-        n2 = len(shape_other)
-        if (n2 < 2) or (shape_other[-1] != 3) or (shape_other[-2] != 3):
+        n2 = len(shape_other) - 2
+        if (n2 < 0) or (shape_other[-1] != 3) or (shape_other[-2] != 3):
             raise ValueError('The array to dot by must be of shape (...,3,3)')
         shape_other = shape_other[:-2]
         ein_str = [['ik,jk->ij',     'ik,njk->nij',   'ik,npjk->npij'],
@@ -113,6 +144,7 @@ class StrainTensor(SecondOrderTensor):
 
     def volumetricChange(self):
         return self.firstInvariant()
+
 
 class StressTensor(SecondOrderTensor):
     name = 'Stress tensor'
