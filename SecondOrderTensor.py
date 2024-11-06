@@ -1,4 +1,5 @@
 import numpy as np
+from scipy.spatial.transform._rotation import Rotation
 
 
 class SecondOrderTensor:
@@ -121,6 +122,8 @@ class SecondOrderTensor:
         """
         if isinstance(other, SecondOrderTensor):
             other_matrix = other.matrix
+        elif isinstance(other, Rotation):
+            other_matrix = other.as_matrix()
         else:
             other_matrix = other
         matrix = self.matrix
@@ -130,8 +133,14 @@ class SecondOrderTensor:
         extra_dim_other = len(shape_matrix)
         matrix_expanded = matrix.reshape(shape_matrix + (1,) * extra_dim_other + (3, 3))
         other_expanded = other_matrix.reshape((1,) * extra_dim_matrix + shape_other + (3, 3))
-        new_mat = np.matmul(matrix_expanded, other_expanded)
-        return SecondOrderTensor(new_mat)
+        if isinstance(other, Rotation):
+            ndim = other_matrix.ndim
+            new_axes = np.hstack((np.arange(ndim - 2), -1, -2))
+            other_expanded_t = other_matrix.transpose(new_axes)
+            new_mat = np.matmul(np.matmul(other_expanded_t, matrix_expanded), other_expanded)
+        else:
+            new_mat = np.matmul(matrix_expanded, other_expanded)
+        return self.__class__(new_mat)
 
     @property
     def T(self):
