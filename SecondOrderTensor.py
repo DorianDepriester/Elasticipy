@@ -1,5 +1,5 @@
 import numpy as np
-from scipy.spatial.transform._rotation import Rotation
+from scipy.spatial.transform import Rotation
 
 
 class SecondOrderTensor:
@@ -112,8 +112,8 @@ class SecondOrderTensor:
 
         Parameters
         ----------
-        other : SecondOrderTensor or np.ndarray
-            Tensor array to right-multiply by.
+        other : SecondOrderTensor or np.ndarray or scipy.spatial.transform.Rotation
+            Tensor array or rotation to right-multiply by.
 
         Returns
         -------
