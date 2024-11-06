@@ -67,6 +67,9 @@ class SecondOrderTensor:
     def thirdInvariant(self):
         return np.linalg.det(self.matrix)
 
+    def trace(self):
+        return self.firstInvariant()
+
     def __mul__(self, other):
         """
         Element-wise matrix multiplication of arrays of tensors. The two tensors must be of the same shape, resulting in
@@ -92,53 +95,42 @@ class SecondOrderTensor:
         else:
             other_matrix = other
         if other_matrix.shape != self.matrix.shape:
-            return ValueError('The two arrays of tensors must be of the same shape.')
+            return ValueError('The two tensor arrays must be of the same shape.')
         else:
-            return SecondOrderTensor(np.matmul(self.matrix, other.matrix))
+            return SecondOrderTensor(np.matmul(self.matrix, other_matrix))
 
     def matmul(self, other):
         """
-        Perform matrix-like multiplication between two vectors of tensors. Each "product" is a matrix product between
-        their components. Only works for single tensors (0-dim tensors) and 1-dimensional tensors.
+        Perform matrix-like multiplication between tensor arrays. Each "product" is a matrix product between
+        the tensor components.
 
-        If T1.shape=(m) and T2.shape=(n), with T3=T1.matmul(T2), we have:
-            T3.shape = (m, n)
+        If A.shape=(a1, a2, ..., an) and B.shape=(b1, b2, ..., bn), with C=A.matmul(B), we have:
+            C.shape = (a1, a2, ..., an, b1, b2, ..., bn)
         and
-            T3[i,j] = np.matmul(T1[i], T2[j]) for i=0...m and n=0...n
+            C[i,j,k,...,p,q,r...] = np.matmul(A[i,j,k,...], B[p,q,r,...])
 
         Parameters
         ----------
         other : SecondOrderTensor or np.ndarray
-            Array of tensors to multiply by.
+            Tensor array to right-multiply by.
 
         Returns
         -------
-        Array of tensors
+        Tensor array
 
         """
         if isinstance(other, SecondOrderTensor):
             other_matrix = other.matrix
         else:
             other_matrix = other
-        n1 = self.ndim
-        n2 = other_matrix.ndim - 2
-        if n1 == 0:
-            if n2 == 0:
-                ein_str = 'ik,kj->ij'
-            elif n2 == 1:
-                ein_str = 'ik,nkj->nij'
-            else:
-                raise ValueError('The dimension of the array to multiply by must be 1 or 2.')
-        elif n1 == 1:
-            if n2 == 0:
-                ein_str = 'mik,kj->mij'
-            elif n2 == 1:
-                ein_str = 'mik,nkj->mnij'
-            else:
-                raise ValueError('The dimension of the array to multiply by must be 1 or 2.')
-        else:
-            raise ValueError('matmul only works for arrays of tensor of dimension 0 or 1.')
-        new_mat = np.einsum(ein_str, self.matrix, other_matrix)
+        matrix = self.matrix
+        shape_matrix = matrix.shape[:-2]
+        shape_other = other_matrix.shape[:-2]
+        extra_dim_matrix = len(shape_other)
+        extra_dim_other = len(shape_matrix)
+        matrix_expanded = matrix.reshape(shape_matrix + (1,) * extra_dim_other + (3, 3))
+        other_expanded = other_matrix.reshape((1,) * extra_dim_matrix + shape_other + (3, 3))
+        new_mat = np.matmul(matrix_expanded, other_expanded)
         return SecondOrderTensor(new_mat)
 
     @property
@@ -164,6 +156,25 @@ class SecondOrderTensor:
                    ['mnik,jk->mnij', 'mnik,njk->mij', 'mnik,npjk->mpij']]
         new_mat = np.einsum(ein_str[n1][n2], self.matrix, other_matrix)
         return self.__class__(new_mat)
+
+    def ddot(self, other):
+        """
+        Double dot product (contraction of tensor product) of two tensors. For two tensors whose matrices are M1 and M2:
+        M1.ddot(M2) == np.trace(np.matmul(M1, M2))
+
+        Parameters
+        ----------
+        other : SecondOrderTensor or np.ndarray
+            Tensor or tensor array to multiply by before contraction
+
+        Returns
+        -------
+        float or np.ndarray
+            Result of double dot product
+
+        """
+        tensor_prod = self*other
+        return tensor_prod.trace()
 
     def rotate(self, rotation_matrix):
         ndim = rotation_matrix.ndim
