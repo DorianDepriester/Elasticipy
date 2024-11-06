@@ -18,6 +18,11 @@ class SecondOrderTensor:
             s += self.matrix.__str__()
         return s
 
+    def __getitem__(self, index):
+        if len(index) > self.ndim:
+            raise IndexError('Too many indices for tensor of shape {}'.format(self.shape))
+        return self.__class__(self.matrix[index])
+
     def __add__(self, other):
         if type(self) == type(other):
             return self.__class__(self.matrix + other.matrix)
@@ -38,6 +43,10 @@ class SecondOrderTensor:
     def shape(self):
         *shape, _, _ = self.matrix.shape
         return shape
+
+    @property
+    def ndim(self):
+        return len(self.shape)
 
     def C(self, i, j):
         return self.matrix.T[j, i].T
@@ -77,16 +86,23 @@ class SecondOrderTensor:
         else:
             other_matrix = other
         shape_other = other_matrix.shape
-        if (len(shape_other) < 2) or (shape_other[-1] != 3) or (shape_other[-2] != 3):
+        n1 = self.ndim
+        n2 = len(shape_other)
+        if (n2 < 2) or (shape_other[-1] != 3) or (shape_other[-2] != 3):
             raise ValueError('The array to dot by must be of shape (...,3,3)')
         shape_other = shape_other[:-2]
         ein_str = [['ik,jk->ij',     'ik,njk->nij',   'ik,npjk->npij'],
                    ['nik,jk->nij',   'nik,njk->ij',   'nik,npjk->pij'],
                    ['mnik,jk->mnij', 'mnik,njk->mij', 'mnik,npjk->mpij']]
-        n1 = len(self.shape)
-        n2 = len(shape_other)
         new_mat = np.einsum(ein_str[n1][n2], self.matrix, other_matrix)
-        return SecondOrderTensor(new_mat)
+        return self.__class__(new_mat)
+
+    def rotate(self, rotation_matrix):
+        ndim = rotation_matrix.ndim
+        new_axes = np.hstack((np.arange(ndim - 2), -1, -2))
+        rot_mat_transpose = rotation_matrix.transpose(new_axes)
+        new_mat = np.matmul(np.matmul(rot_mat_transpose, self.matrix), rotation_matrix)
+        return self.__class__(new_mat)
 
 
 class StrainTensor(SecondOrderTensor):
@@ -105,13 +121,13 @@ class StressTensor(SecondOrderTensor):
         return self.eig()[0]
 
     def vonMises(self):
-        p = (self.C(0, 0) - self.C(1, 1))**2 + (self.C(0, 0) - self.C(2, 2))**2 + (self.C(1, 1) - self.C(1, 1))**2 + \
+        p = (self.C(0, 0) - self.C(1, 1))**2 + (self.C(0, 0) - self.C(2, 2))**2 + (self.C(1, 1) - self.C(2, 2))**2 + \
             6*self.C(0, 1)**2 + 6*self.C(0, 2)**2 + 6*self.C(1, 2)**2
         return np.sqrt(0.5*p)
 
     def Tresca(self):
         ps = self.principalStresses().T
-        return np.max(ps, axis=-1) - np.min(ps, axis=-1)
+        return np.max(np.real(ps), axis=0) - np.min(np.real(ps), axis=0)
 
     def hydrostaticPressure(self):
         return -self.firstInvariant()/3
