@@ -5,6 +5,9 @@ class SecondOrderTensor:
     name = 'Second-order tensor'
 
     def __init__(self, matrix):
+        shape = matrix.shape
+        if len(shape) < 2 or shape[-2:] != (3, 3):
+            raise ValueError('The input matrix must of shape (3,3) or (...,3,3)')
         self.matrix = matrix
 
     def __repr__(self):
@@ -29,7 +32,7 @@ class SecondOrderTensor:
         elif isinstance(other, (int, float, np.ndarray)):
             return self.__class__(self.matrix - other)
         else:
-            raise ValueError('The element to add must be a number, a ndarray or of the same class.')
+            raise ValueError('The element to substract must be a number, a ndarray or of the same class.')
 
     @property
     def shape(self):
@@ -56,9 +59,6 @@ class SecondOrderTensor:
     def thirdInvariant(self):
         return np.linalg.det(self.matrix)
 
-    def volumetricChange(self):
-        return self.firstInvariant()
-
     def __mul__(self, other):
         if isinstance(other, SecondOrderTensor):
             return SecondOrderTensor(np.matmul(self.matrix, other.matrix))
@@ -80,27 +80,12 @@ class SecondOrderTensor:
         if (len(shape_other) < 2) or (shape_other[-1] != 3) or (shape_other[-2] != 3):
             raise ValueError('The array to dot by must be of shape (...,3,3)')
         shape_other = shape_other[:-2]
-        if len(self.shape) == 0:
-            if len(shape_other) == 0:
-                new_mat = np.matmul(self.matrix, other_matrix)
-            elif len(shape_other) == 1:
-                new_mat = np.einsum('ik,njk->nij', self.matrix, other_matrix)
-            else:
-                new_mat = np.einsum('ik,npjk->npij', self.matrix, other_matrix)
-        elif len(self.shape) == 1:
-            if len(shape_other) == 0:
-                new_mat = np.einsum('nik,jk->nij', self.matrix, other_matrix)
-            elif len(shape_other) == 1:
-                new_mat = np.einsum('nik,njk->ij', self.matrix, other_matrix)
-            else:
-                new_mat = np.einsum('nik,npjk->pij', self.matrix, other_matrix)
-        else:
-            if len(shape_other) == 0:
-                new_mat = np.einsum('mnik,jk->mnij', self.matrix, other_matrix)
-            elif len(shape_other) == 1:
-                new_mat = np.einsum('mnik,njk->mij', self.matrix, other_matrix)
-            else:
-                new_mat = np.einsum('mnik,npjk->mpij', self.matrix, other_matrix)
+        ein_str = [['ik,jk->ij',     'ik,njk->nij',   'ik,npjk->npij'],
+                   ['nik,jk->nij',   'nik,njk->ij',   'nik,npjk->pij'],
+                   ['mnik,jk->mnij', 'mnik,njk->mij', 'mnik,npjk->mpij']]
+        n1 = len(self.shape)
+        n2 = len(shape_other)
+        new_mat = np.einsum(ein_str[n1][n2], self.matrix, other_matrix)
         return SecondOrderTensor(new_mat)
 
 
@@ -110,6 +95,8 @@ class StrainTensor(SecondOrderTensor):
     def principalStrains(self):
         return self.eig()[0]
 
+    def volumetricChange(self):
+        return self.firstInvariant()
 
 class StressTensor(SecondOrderTensor):
     name = 'Stress tensor'
