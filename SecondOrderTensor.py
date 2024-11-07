@@ -150,22 +150,6 @@ class SecondOrderTensor:
         transposed_arr = np.transpose(matrix, new_axes)
         return self.__class__(transposed_arr)
 
-    def dot(self, other):
-        if isinstance(other, SecondOrderTensor):
-            other_matrix = other.matrix
-        else:
-            other_matrix = other
-        shape_other = other_matrix.shape
-        n1 = self.ndim
-        n2 = len(shape_other) - 2
-        if (n2 < 0) or (shape_other[-1] != 3) or (shape_other[-2] != 3):
-            raise ValueError('The array to dot by must be of shape (...,3,3)')
-        ein_str = [['ik,jk->ij',     'ik,njk->nij',   'ik,npjk->npij'],
-                   ['nik,jk->nij',   'nik,njk->ij',   'nik,npjk->pij'],
-                   ['mnik,jk->mnij', 'mnik,njk->mij', 'mnik,npjk->mpij']]
-        new_mat = np.einsum(ein_str[n1][n2], self.matrix, other_matrix)
-        return self.__class__(new_mat)
-
     def ddot(self, other):
         """
         Double dot product (contraction of tensor product) of two tensors. For two tensors whose matrices are M1 and M2:
