@@ -173,13 +173,6 @@ class SecondOrderTensor:
         tensor_prod = self*other
         return tensor_prod.trace()
 
-    def rotate(self, rotation_matrix):
-        ndim = rotation_matrix.ndim
-        new_axes = np.hstack((np.arange(ndim - 2), -1, -2))
-        rot_mat_transpose = rotation_matrix.transpose(new_axes)
-        new_mat = np.matmul(np.matmul(rot_mat_transpose, self.matrix), rotation_matrix)
-        return self.__class__(new_mat)
-
 
 class StrainTensor(SecondOrderTensor):
     name = 'Strain tensor'
