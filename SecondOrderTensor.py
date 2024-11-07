@@ -174,8 +174,11 @@ class SecondOrderTensor:
         return tensor_prod.trace()
 
     def _flatten(self):
-        new_len = np.prod(self.shape)
-        return np.reshape(self.matrix, (new_len, 3, 3))
+        if self.shape:
+            new_len = np.prod(self.shape)
+            return np.reshape(self.matrix, (new_len, 3, 3))
+        else:
+            return self.matrix
 
     def _stats(self, fun, axis=None):
         if axis is None:
@@ -193,16 +196,28 @@ class SecondOrderTensor:
         return self.__class__(self._flatten())
 
     def mean(self, axis=None):
-        return self._stats(np.mean, axis=axis)
+        if self.ndim:
+            return self._stats(np.mean, axis=axis)
+        else:
+            return self
 
     def std(self, axis=None):
-        return self._stats(np.std, axis=axis)
+        if self.ndim:
+            return self._stats(np.std, axis=axis)
+        else:
+            return self.__class__(np.zeros((3, 3)))
 
     def min(self, axis=None):
-        return self._stats(np.min, axis=axis)
+        if self.ndim:
+            return self._stats(np.min, axis=axis)
+        else:
+            return self
 
     def max(self, axis=None):
-        return self._stats(np.max, axis=axis)
+        if self.ndim:
+            return self._stats(np.max, axis=axis)
+        else:
+            return self
 
 
 class StrainTensor(SecondOrderTensor):
