@@ -146,11 +146,14 @@ class SecondOrderTensor:
 
     @property
     def T(self):
-        matrix = self.matrix
-        ndim = matrix.ndim
-        new_axes = np.hstack((ndim-3-np.arange(ndim-2), -2, -1))
-        transposed_arr = np.transpose(matrix, new_axes)
-        return self.__class__(transposed_arr)
+        if self.ndim < 2:
+            return self
+        else:
+            matrix = self.matrix
+            ndim = matrix.ndim
+            new_axes = np.hstack((ndim-3-np.arange(ndim-2), -2, -1))
+            transposed_arr = np.transpose(matrix, new_axes)
+            return self.__class__(transposed_arr)
 
     def ddot(self, other):
         """
