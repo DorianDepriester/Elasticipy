@@ -187,7 +187,7 @@ class SecondOrderTensor:
         else:
             if axis < 0:
                 axis += -2
-            if (axis > self.ndim - 1 ) or (axis < -self.ndim - 2):
+            if (axis > self.ndim - 1) or (axis < -self.ndim - 2):
                 raise ValueError('The axis index is out of bounds for tensor array of shape {}'.format(self.shape))
             new_matrix = fun(self.matrix, axis=axis)
         return self.__class__(new_matrix)
@@ -271,7 +271,7 @@ class SecondOrderTensor:
         ----------
         axis : int or None, default None
             Axis to compute maximum along with.
-            If None, returns the overall maximum (min of flattened array)
+            If None, returns the overall maximum (max of flattened array)
 
             Returns
             -------
@@ -298,7 +298,7 @@ class StressTensor(SecondOrderTensor):
     name = 'Stress tensor'
 
     def principalStresses(self):
-        return self.eig()[0]
+        return np.real(self.eig()[0])
 
     def vonMises(self):
         p = (self.C(0, 0) - self.C(1, 1))**2 + (self.C(0, 0) - self.C(2, 2))**2 + (self.C(1, 1) - self.C(2, 2))**2 + \
@@ -306,8 +306,8 @@ class StressTensor(SecondOrderTensor):
         return np.sqrt(0.5*p)
 
     def Tresca(self):
-        ps = self.principalStresses().T
-        return np.max(np.real(ps), axis=0) - np.min(np.real(ps), axis=0)
+        ps = self.principalStresses()
+        return np.max(ps, axis=-1) - np.min(ps, axis=-1)
 
     def hydrostaticPressure(self):
         return -self.firstInvariant()/3
