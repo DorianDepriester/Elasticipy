@@ -46,15 +46,56 @@ class SecondOrderTensor:
 
     @property
     def ndim(self):
+        """
+        Number of dimensions of the tensor array
+
+        Returns
+        -------
+        float
+            number of dimensions
+        """
         return len(self.shape)
 
-    def C(self, i, j):
-        return self.matrix.T[j, i].T
+    @property
+    def C(self):
+        """
+        Retrieve tensor components
+
+        For instance T.C[i,j] returns all the (i,j)-th components of each tensor in the array.
+
+        Returns
+        -------
+        np.ndarray
+            Tensor components
+        """
+        class MatrixProxy:
+            def __init__(self, matrix):
+                self.matrix = matrix
+
+            def __getitem__(self, args):
+                return self.matrix[(...,) + (args if isinstance(args, tuple) else (args,))]
+
+        return MatrixProxy(self.matrix)
 
     def eig(self):
+        """
+        Eigenvalues of the tensor
+
+        Returns
+        -------
+            tuple
+            (lambda, v) with lambda the eigenvalues and the eigenvectors
+        """
         return np.linalg.eig(self.matrix)
 
     def principalDirections(self):
+        """
+        Principal directions of the tensors
+
+        Returns
+        -------
+            Principal directions of each tensor of the tensor array
+        """
         return self.eig()[1]
 
     def firstInvariant(self):
@@ -83,13 +124,14 @@ class SecondOrderTensor:
         Parameters
         ----------
         other : SecondOrderTensor or np.ndarray or Rotation
-            If other is a SecondOrderTensor, it must of the same shape.
+            If other is a SecondOrderTensor, it must be of the same shape.
             If T2 is a numpy array, we must have:
                 T2.shape == T1.shape + (3, 3)
 
         Returns
         -------
-            Array of tensors populated with element-wise matrix multiplication, with the same shape as the input arguments.
+            Array of tensors populated with element-wise matrix multiplication, with the same shape as the input
+            arguments.
         """
         if isinstance(other, SecondOrderTensor):
             other_matrix = other.matrix
@@ -288,9 +330,26 @@ class StrainTensor(SecondOrderTensor):
     name = 'Strain tensor'
 
     def principalStrains(self):
+        """
+        Values of the principals strains. If the tensor array is of shape [m,n,...], the results will be of shape
+        [m,n,...,3].
+
+        Returns
+        -------
+        np.ndarray
+            Principal strain values
+        """
         return self.eig()[0]
 
-    def volumetricChange(self):
+    def volumetricStrain(self):
+        """
+        Volumetric change (1st invariant of the strain tensor)
+
+        Returns
+        -------
+        np.array or float
+            Volumetric change
+        """
         return self.firstInvariant()
 
 
@@ -298,21 +357,60 @@ class StressTensor(SecondOrderTensor):
     name = 'Stress tensor'
 
     def principalStresses(self):
+        """
+        Values of the principals stresses. If the tensor array is of shape [m,n,...], the results will be of shape
+        [m,n,...,3].
+
+        Returns
+        -------
+        np.ndarray
+            Principal stresses
+        """
         return np.real(self.eig()[0])
 
     def vonMises(self):
-        p = (self.C(0, 0) - self.C(1, 1))**2 + (self.C(0, 0) - self.C(2, 2))**2 + (self.C(1, 1) - self.C(2, 2))**2 + \
-            6*self.C(0, 1)**2 + 6*self.C(0, 2)**2 + 6*self.C(1, 2)**2
+        """
+        von Mises equivalent stress.
+
+        Returns
+        -------
+        np.ndarray or float
+            von Mises equivalent stress
+        """
+        p = (self.C[0, 0] - self.C[1, 1])**2 + (self.C[0, 0] - self.C[2, 2])**2 + (self.C[1, 1] - self.C[2, 2])**2 + \
+            6*self.C[0, 1]**2 + 6*self.C[0, 2]**2 + 6*self.C[1, 2]**2
         return np.sqrt(0.5*p)
 
     def Tresca(self):
+        """
+         Tresca(-Guest) equivalent stress.
+
+         Returns
+         -------
+         np.ndarray or float
+             Tresca equivalent stress
+         """
         ps = self.principalStresses()
         return np.max(ps, axis=-1) - np.min(ps, axis=-1)
 
     def hydrostaticPressure(self):
+        """
+        Hydrostatic pressure
+
+        Returns
+        -------
+        np.ndarray or float
+        """
         return -self.firstInvariant()/3
 
     def deviatoricStress(self):
+        """
+        Deviatoric stress
+
+        Returns
+        -------
+        StressTensor
+        """
         eye = np.zeros(self.matrix.shape)
         eye[..., np.arange(3), np.arange(3)] = 1
         new_mat = self.matrix + self.hydrostaticPressure()*eye
