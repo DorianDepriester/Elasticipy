@@ -173,6 +173,37 @@ class SecondOrderTensor:
         tensor_prod = self*other
         return tensor_prod.trace()
 
+    def _flatten(self):
+        new_len = np.prod(self.shape)
+        return np.reshape(self.matrix, (new_len, 3, 3))
+
+    def _stats(self, fun, axis=None):
+        if axis is None:
+            flat_mat = self._flatten()
+            new_matrix = fun(flat_mat, axis=0)
+        else:
+            if axis < 0:
+                axis += -2
+            if (axis > self.ndim - 1 ) or (axis < -self.ndim - 2):
+                raise ValueError('The axis index is out of bounds for tensor array of shape {}'.format(self.shape))
+            new_matrix = fun(self.matrix, axis=axis)
+        return self.__class__(new_matrix)
+
+    def flatten(self):
+        return self.__class__(self._flatten())
+
+    def mean(self, axis=None):
+        return self._stats(np.mean, axis=axis)
+
+    def std(self, axis=None):
+        return self._stats(np.std, axis=axis)
+
+    def min(self, axis=None):
+        return self._stats(np.min, axis=axis)
+
+    def max(self, axis=None):
+        return self._stats(np.max, axis=axis)
+
 
 class StrainTensor(SecondOrderTensor):
     name = 'Strain tensor'
