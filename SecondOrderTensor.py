@@ -193,27 +193,91 @@ class SecondOrderTensor:
         return self.__class__(new_matrix)
 
     def flatten(self):
+        """
+        Flatten the array of tensors. If T is of shape [s1, s2, ..., sn], the shape for T.flatten() is [s1*s2*...*sn].
+
+        Returns
+        -------
+        SecondOrderTensor
+            Flattened array (vector) of tensor
+        """
         return self.__class__(self._flatten())
 
     def mean(self, axis=None):
+        """
+        Arithmetic mean value
+
+        Parameters
+        ----------
+        axis : int or None, default None
+            Axis to compute the mean along with.
+            If None, returns the overall mean (mean of flattened array)
+
+        Returns
+        -------
+        SecondOrderTensor
+            Mean tensor
+        """
         if self.ndim:
             return self._stats(np.mean, axis=axis)
         else:
             return self
 
     def std(self, axis=None):
+        """
+          Standard deviation
+
+          Parameters
+          ----------
+          axis : int or None, default None
+              Axis to compute standard deviation along with.
+              If None, returns the overall standard deviation (std of flattened array)
+
+          Returns
+          -------
+          SecondOrderTensor
+              Tensor of standard deviation
+          """
         if self.ndim:
             return self._stats(np.std, axis=axis)
         else:
             return self.__class__(np.zeros((3, 3)))
 
     def min(self, axis=None):
+        """
+           Minimum value
+
+           Parameters
+           ----------
+           axis : int or None, default None
+               Axis to compute minimum along with.
+               If None, returns the overall minimum (min of flattened array)
+
+           Returns
+           -------
+           SecondOrderTensor
+               Minimum value of tensors
+            """
         if self.ndim:
             return self._stats(np.min, axis=axis)
         else:
             return self
 
     def max(self, axis=None):
+        """
+        Maximum value
+
+        Parameters
+        ----------
+        axis : int or None, default None
+            Axis to compute maximum along with.
+            If None, returns the overall maximum (min of flattened array)
+
+            Returns
+            -------
+            SecondOrderTensor
+                Maximum value of tensors
+        """
         if self.ndim:
             return self._stats(np.max, axis=axis)
         else:
