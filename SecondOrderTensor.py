@@ -136,13 +136,11 @@ class SecondOrderTensor:
         matrix_expanded = matrix.reshape(shape_matrix + (1,) * extra_dim_other + (3, 3))
         other_expanded = other_matrix.reshape((1,) * extra_dim_matrix + shape_other + (3, 3))
         if isinstance(other, Rotation):
-            ndim = other_matrix.ndim
-            new_axes = np.hstack((np.arange(ndim - 2), -1, -2))
-            other_expanded_t = other_matrix.transpose(new_axes)
+            other_expanded_t = np.swapaxes(other_expanded, -1, -2)
             new_mat = np.matmul(np.matmul(other_expanded_t, matrix_expanded), other_expanded)
         else:
             new_mat = np.matmul(matrix_expanded, other_expanded)
-        return self.__class__(new_mat)
+        return self.__class__(np.squeeze(new_mat))
 
     @property
     def T(self):
@@ -157,7 +155,7 @@ class SecondOrderTensor:
 
     def ddot(self, other):
         """
-        Double dot product (contraction of tensor product) of two tensors, usually denoted ":". For two tensors whose
+        Double dot product (contraction of tensor product, usually denoted ":") of two tensors. For two tensors whose
         matrices are M1 and M2:
             M1.ddot(M2) == np.trace(np.matmul(M1, M2))
 
