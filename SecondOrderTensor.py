@@ -82,7 +82,7 @@ class SecondOrderTensor:
 
         Parameters
         ----------
-        other : SecondOrderTensor or np.ndarray
+        other : SecondOrderTensor or np.ndarray or Rotation
             If other is a SecondOrderTensor, it must of the same shape.
             If T2 is a numpy array, we must have:
                 T2.shape == T1.shape + (3, 3)
@@ -93,6 +93,8 @@ class SecondOrderTensor:
         """
         if isinstance(other, SecondOrderTensor):
             other_matrix = other.matrix
+        elif isinstance(other, Rotation):
+            return self.matmul(other)
         else:
             other_matrix = other
         if other_matrix.shape != self.matrix.shape:
@@ -152,8 +154,9 @@ class SecondOrderTensor:
 
     def ddot(self, other):
         """
-        Double dot product (contraction of tensor product) of two tensors. For two tensors whose matrices are M1 and M2:
-        M1.ddot(M2) == np.trace(np.matmul(M1, M2))
+        Double dot product (contraction of tensor product) of two tensors, usually denoted ":". For two tensors whose
+        matrices are M1 and M2:
+            M1.ddot(M2) == np.trace(np.matmul(M1, M2))
 
         Parameters
         ----------
