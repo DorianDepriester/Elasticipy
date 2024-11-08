@@ -1,8 +1,8 @@
 import numpy as np
 import re
 from SecondOrderTensor import StressTensor, StrainTensor
-
 from SphericalFunction import SphericalFunction, HyperSphericalFunction
+from scipy.spatial.transform import Rotation
 
 
 def _parse_tensor_components(prefix, **kwargs):
@@ -232,6 +232,8 @@ class SymmetricTensor:
         if isinstance(other, np.ndarray):
             if other.shape[-2:] == (3, 3):
                 return np.einsum('ijkl,...kl->...ij', self.full_tensor(), other)
+        elif isinstance(other, Rotation):
+            return self.rotate(other.as_matrix())
         else:
             return self.__class__(self.matrix * other, symmetry=self.symmetry)
 
