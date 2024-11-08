@@ -42,7 +42,7 @@ class SecondOrderTensor:
     @property
     def shape(self):
         *shape, _, _ = self.matrix.shape
-        return shape
+        return tuple(shape)
 
     @property
     def ndim(self):
@@ -112,7 +112,9 @@ class SecondOrderTensor:
 
     def secondInvariant(self):
         """
-        Second invariant of the tensor, defined as::
+        Second invariant of the tensor
+
+        For a matrix M, it is defined as::
 
             I_2 = 0.5 * ( np.trace(M)**2 + np.trace(np.matmul(M, M.T)) )
 
@@ -122,7 +124,7 @@ class SecondOrderTensor:
             Second invariant(s) of the tensor(s)
         """
         a = self.matrix.trace(axis1=-1, axis2=-2)**2
-        b = np.linalg.matrix_power(self.matrix, 2).trace(axis1=-1, axis2=-2)
+        b = np.matmul(self.matrix, self._transposeArray())
         return 0.5 * (a - b)
 
     def thirdInvariant(self):
@@ -252,6 +254,9 @@ class SecondOrderTensor:
         """
         return self.transposeArray()
 
+    def _transposeArray(self):
+        return np.swapaxes(self.matrix, -1, -2)
+
     def transposeTensor(self):
         """
         Transpose of tensor of the tensor array
@@ -261,8 +266,7 @@ class SecondOrderTensor:
         SecondOrderTensor
             Array of transposed tensors of the tensor array
         """
-        new_mat = np.swapaxes(self.matrix, -1, -2)
-        return self.__class__(new_mat)
+        return self.__class__(self._transposeArray())
 
     def ddot(self, other):
         """
@@ -486,7 +490,9 @@ class StressTensor(SecondOrderTensor):
         -------
         StressTensor
         """
-        eye = np.zeros(self.matrix.shape)
-        eye[..., np.arange(3), np.arange(3)] = 1
-        new_mat = self.matrix + self.hydrostaticPressure()*eye
+        spherical_stress = np.zeros(self.matrix.shape)
+        spherical_stress[..., 0, 0] = self.hydrostaticPressure()
+        spherical_stress[..., 1, 1] = self.hydrostaticPressure()
+        spherical_stress[..., 2, 2] = self.hydrostaticPressure()
+        new_mat = self.matrix + spherical_stress
         return StressTensor(new_mat)
