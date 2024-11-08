@@ -4,24 +4,38 @@ from scipy.spatial.transform import Rotation
 
 class SecondOrderTensor:
     name = 'Second-order tensor'
+    voigt_map = [1, 1, 1, 1, 1, 1]
 
     def __init__(self, matrix):
         """
         Create an array of second-order tensors.
 
-        The input argument must be a (3,3) matrix defining all the component of the tensor, or a stack of matrices (that
-        is an array of shape (...,3,3).
+        The input argument can be:
+            - an array of shape (3,3) defining all the component of the tensor;
+            - a stack of matrices, that is an array of shape (...,3,3);
+            - an array of shape (6);
+            - a stack of vectors of lenghts 6, that is an array of shape (...,6).
+        In the two last cases, it is assumed that the Voigt numbering convention is used.
 
         Parameters
         ----------
         matrix : list or np.ndarray
-            (3,3) matrix or stack of (3,3) matrices
+            (3,3) matrix, stack of (3,3) matrices, 6-length vector or stack of 6-length vectors
         """
-        matrix = np.atleast_2d(matrix)
+        matrix = np.array(matrix)
         shape = matrix.shape
-        if len(shape) < 2 or shape[-2:] != (3, 3):
+        if shape and (shape[-1] == 6):
+            new_shape = shape[:-1] + (3, 3)
+            unvoigted_matrix = np.zeros(new_shape)
+            voigt = [[0, 0], [1, 1], [2, 2], [1, 2], [0, 2], [0, 1]]
+            for i in range(6):
+                unvoigted_matrix[..., voigt[i][0], voigt[i][1]] = matrix[..., i]/self.voigt_map[i]
+                unvoigted_matrix[..., voigt[i][1], voigt[i][0]] = matrix[..., i]/self.voigt_map[i]
+            self.matrix = unvoigted_matrix
+        elif len(shape) > 1 and shape[-2:] == (3, 3):
+            self.matrix = matrix
+        else:
             raise ValueError('The input matrix must be of shape (3,3) or (...,3,3)')
-        self.matrix = matrix
 
     def __repr__(self):
         s = self.name + '\n'
@@ -521,6 +535,7 @@ class SecondOrderTensor:
 
 class StrainTensor(SecondOrderTensor):
     name = 'Strain tensor'
+    voigt_map = [1, 1, 1, 2, 2, 2]
 
     def principalStrains(self):
         """
@@ -592,7 +607,7 @@ class StressTensor(SecondOrderTensor):
         See Also
         --------
         vonMises : von Mises equivalent stress
-         """
+        """
         ps = self.principalStresses()
         return np.max(ps, axis=-1) - np.min(ps, axis=-1)
 
