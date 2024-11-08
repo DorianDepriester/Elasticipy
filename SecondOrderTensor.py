@@ -236,7 +236,7 @@ class SecondOrderTensor:
 
         Parameters
         ----------
-        other : SecondOrderTensor or np.ndarray or Rotation
+        other : SecondOrderTensor or np.ndarray or Rotation or float
             If other is a SecondOrderTensor, it must be of the same shape.
             If T2 is a numpy array, we must have:
                 T2.shape == T1.shape + (3, 3)
@@ -251,15 +251,22 @@ class SecondOrderTensor:
         matmul : matrix-like multiplication of tensor arrays
         """
         if isinstance(other, SecondOrderTensor):
-            other_matrix = other.matrix
+            if self.shape == other.shape:
+                return SecondOrderTensor(np.matmul(self.matrix, other.matrix))
+            else:
+                raise ValueError('The two tensor arrays must be of the same shape.')
         elif isinstance(other, Rotation):
             return self.matmul(other)
+        elif isinstance(other, (float, int)):
+            return self.__class__(self.matrix * other)
+        elif isinstance(other, np.ndarray):
+            if other.shape != self.matrix.shape:
+                err_msg = 'For a tensor of shape {}, the input argument must be an array of shape {}'.format(self.shape, self.shape + (3,3))
+                raise ValueError(err_msg)
+            else:
+                return self.__class__(np.matmul(self.matrix, other))
         else:
-            other_matrix = other
-        if other_matrix.shape != self.matrix.shape:
-            return ValueError('The two tensor arrays must be of the same shape.')
-        else:
-            return self.__class__(np.matmul(self.matrix, other_matrix))
+            raise ValueError('The input argument must be a tensor, an ndarray, a rotation or a scalar value.')
 
     def matmul(self, other):
         """
