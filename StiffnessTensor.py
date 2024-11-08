@@ -1,5 +1,6 @@
 import numpy as np
 import re
+from SecondOrderTensor import StressTensor, StrainTensor
 
 from SphericalFunction import SphericalFunction, HyperSphericalFunction
 
@@ -149,10 +150,15 @@ class SymmetricTensor:
 
     def __init__(self, M, phase_name='', symmetry='Triclinic'):
         """
-        Constructor for symmetric tensors
-        :param M: np.ndarray 6x6 matrix of the tensor, using the Voigt notation
-        :param phase_name: Phase name
-        :param symmetry:
+        Construct of stiffness tensor from a (6,6) matrix
+
+        Parameters
+        ----------
+        M : np.ndarray
+            (6,6) matrix corresponding to the stiffness tensor, written using the Voigt notation
+        phase_name : str, default None
+            Name to display
+        symmetry : str, default Triclinic
         """
         self.matrix = M
         self.phase_name = phase_name
@@ -224,10 +230,8 @@ class SymmetricTensor:
 
     def __mul__(self, other):
         if isinstance(other, np.ndarray):
-            if other.shape == (3, 3):
-                return np.einsum('ijkl,kl->ij', self.full_tensor(), other)
-            elif len(other.shape) == 3 and other.shape[1] == 3 and other.shape[2] == 3:
-                return np.einsum('ijkl,mkl->mij', self.full_tensor(), other)
+            if other.shape[-2:] == (3, 3):
+                return np.einsum('ijkl,...kl->...ij', self.full_tensor(), other)
         else:
             return self.__class__(self.matrix * other, symmetry=self.symmetry)
 
@@ -274,6 +278,14 @@ class StiffnessTensor(SymmetricTensor):
 
     def __init__(self, S, **kwargs):
         super().__init__(S, **kwargs)
+
+    def __mul__(self, other):
+        if isinstance(other, StrainTensor):
+            return StressTensor(self * other.matrix)
+        elif isinstance(other, StressTensor):
+            raise ValueError('You cannot multiply a stiffness tensor with a Stress tensor.')
+        else:
+            return super().__mul__(other)
 
     def inv(self):
         """
@@ -415,6 +427,14 @@ class ComplianceTensor(StiffnessTensor):
 
     def __init__(self, C, **kwargs):
         super().__init__(C, **kwargs)
+
+    def __mul__(self, other):
+        if isinstance(other, StressTensor):
+            return StrainTensor(self * other.matrix)
+        elif isinstance(other, StrainTensor):
+            raise ValueError('You cannot multiply a compliance tensor with Strain tensor.')
+        else:
+            return super().__mul__(other)
 
     def inv(self):
         """
