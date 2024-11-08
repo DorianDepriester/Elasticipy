@@ -94,19 +94,46 @@ class SecondOrderTensor:
 
         Returns
         -------
+        np.nparray
             Principal directions of each tensor of the tensor array
         """
         return self.eig()[1]
 
     def firstInvariant(self):
+        """
+        First invariant of the tensor (trace)
+
+        Returns
+        -------
+        np.ndarray or float
+            First invariant(s) of the tensor(s)
+        """
         return self.matrix.trace(axis1=-1, axis2=-2)
 
     def secondInvariant(self):
+        """
+        Second invariant of the tensor, defined as::
+
+            I_2 = 0.5 * ( np.trace(M)**2 + np.trace(np.matmul(M, M.T)) )
+
+        Returns
+        -------
+        np.array or float
+            Second invariant(s) of the tensor(s)
+        """
         a = self.matrix.trace(axis1=-1, axis2=-2)**2
         b = np.linalg.matrix_power(self.matrix, 2).trace(axis1=-1, axis2=-2)
         return 0.5 * (a - b)
 
     def thirdInvariant(self):
+        """
+        Third invariant of the tensor (determinant)
+
+        Returns
+        -------
+        np.array or float
+            Third invariant(s) of the tensor(s)
+        """
         return np.linalg.det(self.matrix)
 
     def trace(self):
@@ -115,11 +142,15 @@ class SecondOrderTensor:
     def __mul__(self, other):
         """
         Element-wise matrix multiplication of arrays of tensors. The two tensors must be of the same shape, resulting in
-        a tensor with the same shape.
+        a tensor with the same shape as well.
 
-        For instance, if T1.shape=T2.shape=[m,n],
-        with T3=T1*T2, we have:
-        T3[i, j] == np.matmul(T1[i, j], T2[i, j]) for i=0...m and j=0...n.
+        For instance, if::
+
+            T1.shape == T2.shape == [m, n]
+
+        with T3=T1*T2, we have::
+
+            T3[i, j] == np.matmul(T1[i, j], T2[i, j]) for i=0...m and j=0...n.
 
         Parameters
         ----------
@@ -149,9 +180,12 @@ class SecondOrderTensor:
         Perform matrix-like multiplication between tensor arrays. Each "product" is a matrix product between
         the tensor components.
 
-        If A.shape=(a1, a2, ..., an) and B.shape=(b1, b2, ..., bn), with C=A.matmul(B), we have:
+        If A.shape=(a1, a2, ..., an) and B.shape=(b1, b2, ..., bn), with C=A.matmul(B), we have::
+
             C.shape = (a1, a2, ..., an, b1, b2, ..., bn)
-        and
+
+        and::
+
             C[i,j,k,...,p,q,r...] = np.matmul(A[i,j,k,...], B[p,q,r,...])
 
         Parameters
@@ -184,21 +218,58 @@ class SecondOrderTensor:
             new_mat = np.matmul(matrix_expanded, other_expanded)
         return self.__class__(np.squeeze(new_mat))
 
-    @property
-    def T(self):
+    def transposeArray(self):
+        """
+        Transpose the array of tensors
+
+        If A is a tensor array of shape [s1, s2, ..., sn], A.T is of shape [sn, ..., s2, s1].
+
+        Returns
+        -------
+        SecondOrderTensor
+            Transposed array
+        """
         if self.ndim < 2:
             return self
         else:
             matrix = self.matrix
             ndim = matrix.ndim
-            new_axes = np.hstack((ndim-3-np.arange(ndim-2), -2, -1))
+            new_axes = np.hstack((ndim - 3 - np.arange(ndim - 2), -2, -1))
             transposed_arr = np.transpose(matrix, new_axes)
             return self.__class__(transposed_arr)
 
+    @property
+    def T(self):
+        """
+        Transpose the array of tensors.
+
+        It is actually an alias for transposeArray()
+
+        Returns
+        -------
+        SecondOrderTensor
+            Transposed array
+        """
+        return self.transposeArray()
+
+    def transposeTensor(self):
+        """
+        Transpose of tensor of the tensor array
+
+        Returns
+        -------
+        SecondOrderTensor
+            Array of transposed tensors of the tensor array
+        """
+        new_mat = np.swapaxes(self.matrix, -1, -2)
+        return self.__class__(new_mat)
+
     def ddot(self, other):
         """
-        Double dot product (contraction of tensor product, usually denoted ":") of two tensors. For two tensors whose
-        matrices are M1 and M2:
+        Double dot product (contraction of tensor product, usually denoted ":") of two tensors.
+
+        For two tensors whose matrices are M1 and M2::
+
             M1.ddot(M2) == np.trace(np.matmul(M1, M2))
 
         Parameters
@@ -236,7 +307,9 @@ class SecondOrderTensor:
 
     def flatten(self):
         """
-        Flatten the array of tensors. If T is of shape [s1, s2, ..., sn], the shape for T.flatten() is [s1*s2*...*sn].
+        Flatten the array of tensors.
+
+        If T is of shape [s1, s2, ..., sn], the shape for T.flatten() is [s1*s2*...*sn].
 
         Returns
         -------
@@ -287,19 +360,19 @@ class SecondOrderTensor:
 
     def min(self, axis=None):
         """
-           Minimum value
+        Minimum value
 
-           Parameters
-           ----------
-           axis : int or None, default None
-               Axis to compute minimum along with.
-               If None, returns the overall minimum (min of flattened array)
+        Parameters
+        ----------
+        axis : int or None, default None
+           Axis to compute minimum along with.
+           If None, returns the overall minimum (min of flattened array)
 
-           Returns
-           -------
-           SecondOrderTensor
-               Minimum value of tensors
-            """
+        Returns
+        -------
+        SecondOrderTensor
+           Minimum value of tensors
+        """
         if self.ndim:
             return self._stats(np.min, axis=axis)
         else:
@@ -315,10 +388,10 @@ class SecondOrderTensor:
             Axis to compute maximum along with.
             If None, returns the overall maximum (max of flattened array)
 
-            Returns
-            -------
-            SecondOrderTensor
-                Maximum value of tensors
+        Returns
+        -------
+        SecondOrderTensor
+            Maximum value of tensors
         """
         if self.ndim:
             return self._stats(np.max, axis=axis)
@@ -331,8 +404,9 @@ class StrainTensor(SecondOrderTensor):
 
     def principalStrains(self):
         """
-        Values of the principals strains. If the tensor array is of shape [m,n,...], the results will be of shape
-        [m,n,...,3].
+        Values of the principals strains.
+
+        If the tensor array is of shape [m,n,...], the results will be of shape [m,n,...,3].
 
         Returns
         -------
@@ -358,8 +432,9 @@ class StressTensor(SecondOrderTensor):
 
     def principalStresses(self):
         """
-        Values of the principals stresses. If the tensor array is of shape [m,n,...], the results will be of shape
-        [m,n,...,3].
+        Values of the principals stresses.
+
+        If the tensor array is of shape [m,n,...], the results will be of shape [m,n,...,3].
 
         Returns
         -------
