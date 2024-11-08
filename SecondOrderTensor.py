@@ -6,6 +6,17 @@ class SecondOrderTensor:
     name = 'Second-order tensor'
 
     def __init__(self, matrix):
+        """
+        Create an array of second-order tensors.
+
+        The input argument must be a (3,3) matrix defining all the component of the tensor, or a stack of matrices (that
+        is an array of shape (...,3,3).
+
+        Parameters
+        ----------
+        matrix : list or np.ndarray
+            (3,3) matrix or stack of (3,3) matrices
+        """
         matrix = np.atleast_2d(matrix)
         shape = matrix.shape
         if len(shape) < 2 or shape[-2:] != (3, 3):
@@ -41,25 +52,41 @@ class SecondOrderTensor:
 
     @property
     def shape(self):
+        """
+        Return the shape of the tensor array
+
+        Returns
+        -------
+        tuple
+            Shape of array
+
+        See Also
+        --------
+        ndim : number of dimensions
+        """
         *shape, _, _ = self.matrix.shape
         return tuple(shape)
 
     @property
     def ndim(self):
         """
-        Number of dimensions of the tensor array
+        Return the number of dimensions of the tensor array
 
         Returns
         -------
         float
             number of dimensions
+
+        See Also
+        --------
+        shape : shape of tensor array
         """
         return len(self.shape)
 
     @property
     def C(self):
         """
-        Retrieve tensor components
+        Return tensor components
 
         For instance T.C[i,j] returns all the (i,j)-th components of each tensor in the array.
 
@@ -83,8 +110,14 @@ class SecondOrderTensor:
 
         Returns
         -------
-            tuple
-            (lambda, v) with lambda the eigenvalues and the eigenvectors
+        lambda : np.array
+            Eigenvalues of each tensor.
+        v : np.array
+            Eigenvectors of teach tensor.
+
+        See Also
+        --------
+        principalDirections : return only the principal directions (without eigenvalues)
         """
         return np.linalg.eig(self.matrix)
 
@@ -96,6 +129,10 @@ class SecondOrderTensor:
         -------
         np.nparray
             Principal directions of each tensor of the tensor array
+
+        See Also
+        --------
+        eig : Return both eigenvalues and corresponding principal directions
         """
         return self.eig()[1]
 
@@ -107,6 +144,11 @@ class SecondOrderTensor:
         -------
         np.ndarray or float
             First invariant(s) of the tensor(s)
+
+        See Also
+        --------
+        secondInvariant : Second invariant of the tensors
+        thirdInvariant : Third invariant of the tensors (det)
         """
         return self.matrix.trace(axis1=-1, axis2=-2)
 
@@ -122,6 +164,11 @@ class SecondOrderTensor:
         -------
         np.array or float
             Second invariant(s) of the tensor(s)
+
+        See Also
+        --------
+        firstInvariant : First invariant of the tensors (trace)
+        thirdInvariant : Third invariant of the tensors (det)
         """
         a = self.matrix.trace(axis1=-1, axis2=-2)**2
         b = np.matmul(self.matrix, self._transposeArray())
@@ -135,10 +182,29 @@ class SecondOrderTensor:
         -------
         np.array or float
             Third invariant(s) of the tensor(s)
+
+        See Also
+        --------
+        firstInvariant : First invariant of the tensors (trace)
+        secondInvariant : Second invariant of the tensors
         """
         return np.linalg.det(self.matrix)
 
     def trace(self):
+        """
+        Return the traces of the tensor array
+
+        Returns
+        -------
+        np.ndarray or float
+            traces of each tensor of the tensor array
+
+        See Also
+        --------
+        firstInvariant : First invariant of the tensors (trace)
+        secondInvariant : Second invariant of the tensors
+        thirdInvariant : Third invariant of the tensors (det)
+        """
         return self.firstInvariant()
 
     def __mul__(self, other):
@@ -148,7 +214,7 @@ class SecondOrderTensor:
 
         For instance, if::
 
-            T1.shape == T2.shape == [m, n]
+            T1.shape == T2.shape == (m, n)
 
         with T3=T1*T2, we have::
 
@@ -165,6 +231,10 @@ class SecondOrderTensor:
         -------
             Array of tensors populated with element-wise matrix multiplication, with the same shape as the input
             arguments.
+
+        See Also
+        --------
+        matmul : matrix-like multiplication of tensor arrays
         """
         if isinstance(other, SecondOrderTensor):
             other_matrix = other.matrix
@@ -179,7 +249,7 @@ class SecondOrderTensor:
 
     def matmul(self, other):
         """
-        Perform matrix-like multiplication between tensor arrays. Each "product" is a matrix product between
+        Perform matrix-like product between tensor arrays. Each "product" is a matrix product between
         the tensor components.
 
         If A.shape=(a1, a2, ..., an) and B.shape=(b1, b2, ..., bn), with C=A.matmul(B), we have::
@@ -197,8 +267,12 @@ class SecondOrderTensor:
 
         Returns
         -------
-        Tensor array
+        SecondOrderTensor
+            Tensor array
 
+        See Also
+        --------
+        * : Element-wise matrix product
         """
         if isinstance(other, SecondOrderTensor):
             other_matrix = other.matrix
@@ -230,6 +304,10 @@ class SecondOrderTensor:
         -------
         SecondOrderTensor
             Transposed array
+
+        See Also
+        --------
+        T : transpose the tensor array (not the components)
         """
         if self.ndim < 2:
             return self
@@ -265,6 +343,10 @@ class SecondOrderTensor:
         -------
         SecondOrderTensor
             Array of transposed tensors of the tensor array
+
+        See Also
+        --------
+        Transpose : transpose the array (not the components)
         """
         return self.__class__(self._transposeArray())
 
@@ -279,12 +361,17 @@ class SecondOrderTensor:
         Parameters
         ----------
         other : SecondOrderTensor or np.ndarray
-            Tensor or tensor array to multiply by before contraction
+            Tensor or tensor array to multiply by before contraction.
 
         Returns
         -------
         float or np.ndarray
             Result of double dot product
+
+        See Also
+        --------
+        * : element-wise matrix product of tensor array.
+        matmul : matrix-like product between two tensor arrays.
 
         """
         tensor_prod = self*other
@@ -319,6 +406,11 @@ class SecondOrderTensor:
         -------
         SecondOrderTensor
             Flattened array (vector) of tensor
+
+        See Also
+        --------
+        ndim : number of dimensions of the tensor array
+        shape : shape of the tensor array
         """
         return self.__class__(self._flatten())
 
@@ -336,6 +428,12 @@ class SecondOrderTensor:
         -------
         SecondOrderTensor
             Mean tensor
+
+        See Also
+        --------
+        std : Standard deviation
+        min : Minimum value
+        max : Maximum value
         """
         if self.ndim:
             return self._stats(np.mean, axis=axis)
@@ -356,6 +454,12 @@ class SecondOrderTensor:
           -------
           SecondOrderTensor
               Tensor of standard deviation
+
+        See Also
+        --------
+        mean : Mean value
+        min : Minimum value
+        max : Maximum value
           """
         if self.ndim:
             return self._stats(np.std, axis=axis)
@@ -376,6 +480,12 @@ class SecondOrderTensor:
         -------
         SecondOrderTensor
            Minimum value of tensors
+
+        See Also
+        --------
+        max : Maximum value
+        mean : Mean value
+        std : Standard deviation
         """
         if self.ndim:
             return self._stats(np.min, axis=axis)
@@ -396,6 +506,12 @@ class SecondOrderTensor:
         -------
         SecondOrderTensor
             Maximum value of tensors
+
+        See Also
+        --------
+        min : Minimum value
+        mean : Mean value
+        std : Standard deviation
         """
         if self.ndim:
             return self._stats(np.max, axis=axis)
@@ -455,6 +571,10 @@ class StressTensor(SecondOrderTensor):
         -------
         np.ndarray or float
             von Mises equivalent stress
+
+        See Also
+        --------
+        Tresca : Tresca equivalent stress
         """
         p = (self.C[0, 0] - self.C[1, 1])**2 + (self.C[0, 0] - self.C[2, 2])**2 + (self.C[1, 1] - self.C[2, 2])**2 + \
             6*self.C[0, 1]**2 + 6*self.C[0, 2]**2 + 6*self.C[1, 2]**2
@@ -468,6 +588,10 @@ class StressTensor(SecondOrderTensor):
          -------
          np.ndarray or float
              Tresca equivalent stress
+
+        See Also
+        --------
+        vonMises : von Mises equivalent stress
          """
         ps = self.principalStresses()
         return np.max(ps, axis=-1) - np.min(ps, axis=-1)
@@ -479,6 +603,10 @@ class StressTensor(SecondOrderTensor):
         Returns
         -------
         np.ndarray or float
+
+        See Also
+        --------
+        sphericalStress : spherical part of the stress
         """
         return -self.firstInvariant()/3
 
@@ -490,6 +618,11 @@ class StressTensor(SecondOrderTensor):
         -------
         StressTensor
             Spherical stress
+
+        See Also
+        --------
+        hydrostaticPressure : compute the hydrostatic pressure
+        deviatoricStress : deviatoric part of the stress
         """
         spherical_stress = np.zeros(self.matrix.shape)
         s = self.firstInvariant()/3
@@ -506,5 +639,8 @@ class StressTensor(SecondOrderTensor):
         -------
         StressTensor
 
+        See Also
+        --------
+        sphericalStress : spherical part of the stress
         """
         return self - self.sphericalStress()
