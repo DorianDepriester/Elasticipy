@@ -185,7 +185,7 @@ class SecondOrderTensor:
         thirdInvariant : Third invariant of the tensors (det)
         """
         a = self.matrix.trace(axis1=-1, axis2=-2)**2
-        b = np.matmul(self.matrix, self._transposeArray())
+        b = np.matmul(self.matrix, self._transposeTensor())
         return 0.5 * (a - b)
 
     def thirdInvariant(self):
@@ -353,12 +353,12 @@ class SecondOrderTensor:
         """
         return self.transposeArray()
 
-    def _transposeArray(self):
+    def _transposeTensor(self):
         return np.swapaxes(self.matrix, -1, -2)
 
     def transposeTensor(self):
         """
-        Transpose of tensor of the tensor array
+        Transpose of tensors of the tensor array
 
         Returns
         -------
@@ -369,7 +369,7 @@ class SecondOrderTensor:
         --------
         Transpose : transpose the array (not the components)
         """
-        return self.__class__(self._transposeArray())
+        return self.__class__(self._transposeTensor())
 
     def ddot(self, other):
         """
@@ -538,6 +538,34 @@ class SecondOrderTensor:
             return self._stats(np.max, axis=axis)
         else:
             return self
+
+    def symmetricPart(self):
+        """
+        Symmetric part of the tensor
+
+        Returns
+        -------
+        SecondOrderTensor
+            Symmetric tensor
+
+        See Also
+        --------
+        skewPart : Skew-symmetric part of the tensor
+        """
+        new_mat = 0.5 * (self.matrix + self._transposeTensor())
+        return self.__class__(new_mat)
+
+    def skewPart(self):
+        """
+        Skew-symmetric part of the tensor
+
+        Returns
+        -------
+        SecondOrderTensor
+            Skew-symmetric tensor
+        """
+        new_mat = 0.5 * (self.matrix - self._transposeTensor())
+        return self.__class__(new_mat)
 
 
 class StrainTensor(SecondOrderTensor):
