@@ -10,8 +10,11 @@ C = tensorFromCrystalSymmetry(symmetry='monoclinic', diad='y', phase_name='TiNi'
                               C15=-18, C25=1, C35=-3, C46=3)
 print(C)
 
-# Show spatial dependence of Young's modulus
+# Let consider the Young's modulus first
 E = C.Young_modulus
+# See min/max values
+print(E)
+# Now illustrate the spatial dependence
 fig, ax = E.plot()
 
 # Apply a random rotation on stiffness tensor
