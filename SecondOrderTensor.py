@@ -259,7 +259,7 @@ class SecondOrderTensor:
         if other_matrix.shape != self.matrix.shape:
             return ValueError('The two tensor arrays must be of the same shape.')
         else:
-            return SecondOrderTensor(np.matmul(self.matrix, other_matrix))
+            return self.__class__(np.matmul(self.matrix, other_matrix))
 
     def matmul(self, other):
         """
