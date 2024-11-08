@@ -482,6 +482,22 @@ class StressTensor(SecondOrderTensor):
         """
         return -self.firstInvariant()/3
 
+    def sphericalStress(self):
+        """
+        Spherical (hydrostatic) stresses
+
+        Returns
+        -------
+        StressTensor
+            Spherical stress
+        """
+        spherical_stress = np.zeros(self.matrix.shape)
+        s = self.firstInvariant()/3
+        spherical_stress[..., 0, 0] = s
+        spherical_stress[..., 1, 1] = s
+        spherical_stress[..., 2, 2] = s
+        return StressTensor(spherical_stress)
+
     def deviatoricStress(self):
         """
         Deviatoric stress
@@ -489,10 +505,6 @@ class StressTensor(SecondOrderTensor):
         Returns
         -------
         StressTensor
+
         """
-        spherical_stress = np.zeros(self.matrix.shape)
-        spherical_stress[..., 0, 0] = self.hydrostaticPressure()
-        spherical_stress[..., 1, 1] = self.hydrostaticPressure()
-        spherical_stress[..., 2, 2] = self.hydrostaticPressure()
-        new_mat = self.matrix + spherical_stress
-        return StressTensor(new_mat)
+        return self - self.sphericalStress()
