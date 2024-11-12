@@ -18,6 +18,7 @@ print(E)
 # Now illustrate the spatial dependence
 E.plot_xyz_sections()   # As 2D sections...
 E.plot()                # ...or in 3D
+print(E.max())
 
 # Apply a random rotation on stiffness tensor
 rotation = Rotation.from_euler('zxz', [0, 45, 0], degrees=True)
@@ -29,10 +30,14 @@ Crot.Young_modulus.plot()
 G = C.shear_modulus
 G.plot_xyz_sections()   # Plot sections with min, max and mean
 G.plot(which='min')     # And plot it in 3D
+print(G.min())
+print(G.max())
 
 # Finally, let's have a look on the Poisson ratio
 nu = C.Poisson_ratio
 nu.plot_xyz_sections()
 nu.plot(which='max')
+print(nu.min())
+print(nu.max())
 
 
