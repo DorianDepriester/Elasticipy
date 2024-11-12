@@ -3,7 +3,7 @@ from matplotlib import pyplot as plt, cm
 from matplotlib.colors import Normalize
 from numpy import cos, sin
 from scipy import integrate as integrate
-from scipy.optimize import minimize
+from scipy import optimize
 
 
 def _sph2cart(*args):
@@ -14,9 +14,10 @@ def _sph2cart(*args):
     if not psi:
         return u
     else:
+        psi_vec = np.array(psi).flatten()
         e_phi = np.array([-sin(phi_vec), cos(phi_vec), np.zeros(phi_vec.shape)])
         e_theta = np.array([cos(theta_vec) * cos(phi_vec), cos(theta_vec) * sin(phi_vec), -sin(theta_vec)])
-        v = cos(psi) * e_phi + sin(psi) * e_theta
+        v = cos(psi_vec) * e_phi + sin(psi_vec) * e_theta
         return u, v.T
 
 
@@ -25,36 +26,6 @@ def _cart2sph(x, y, z):
     theta = np.arccos(z / r)
     phi = np.arctan2(y, x)
     return phi, theta
-
-
-def _multistart_minimization(fun, bounds):
-    # Ensure that the initial guesses are uniformly
-    # distributed over the half unit sphere
-    xyz_0 = np.array([[1, 0, 0],
-                      [0, 1, 0],
-                      [0, 0, 1],
-                      [-1, 0, 0],
-                      [0, -1, 0],
-                      [1, 1, 1],
-                      [-1, 1, 1],
-                      [1, -1, 1],
-                      [1, 1, -1],
-                      [-1, -1, 1],
-                      [-1, 1, -1],
-                      [1, -1, -1]])
-    phi_theta_0 = _cart2sph(*xyz_0.T)
-    angles_0 = np.transpose(phi_theta_0)
-    if len(bounds) == 3:
-        psi_0 = np.array([[0, np.pi / 2, np.pi]]).T
-        phi_theta_0 = np.tile(angles_0, (len(psi_0), 1))
-        psi_0 = np.repeat(psi_0, len(angles_0), axis=0)
-        angles_0 = np.hstack((phi_theta_0, psi_0))
-    best_result = None
-    for x0 in angles_0:
-        result = minimize(fun, x0, method='L-BFGS-B', bounds=bounds)
-        if best_result is None or (result.fun < best_result.fun):
-            best_result = result
-    return best_result
 
 
 def _plot3D(fig, u, r, **kwargs):
@@ -156,6 +127,23 @@ class SphericalFunction:
         else:
             return values
 
+    def _global_minimizer(self, fun):
+        n_eval = 50
+        phi = np.linspace(*self.domain[0], n_eval)
+        theta = np.linspace(*self.domain[1], n_eval)
+        if len(self.domain) == 2:
+            phi, theta = np.meshgrid(phi, theta)
+            angles0 = np.array([phi.flatten(), theta.flatten()]).T
+        else:
+            psi = np.linspace(*self.domain[2], n_eval)
+            phi, theta, psi = np.meshgrid(phi, theta, psi)
+            angles0 = np.array([phi.flatten(), theta.flatten(), psi.flatten()]).T
+        values = fun(angles0)
+        loc_x0 = np.argmin(values)
+        angles1 = angles0[loc_x0]
+        results = optimize.minimize(fun, angles1, method='L-BFGS-B', bounds=self.domain)
+        return results
+
     def min(self):
         """
         Find minimum value of the function.
@@ -167,13 +155,8 @@ class SphericalFunction:
         dir : np.ndarray
             Direction along which the minimum value is reached
         """
-        def fun(x):
-            return self.eval_spherical(*x)
-
-        q = _multistart_minimization(fun, bounds=self.domain)
-        val = q.fun
-        angles = q.x
-        return val, _sph2cart(*angles)
+        results = self._global_minimizer(self.eval_spherical)
+        return results.fun, _sph2cart(*results.x)
 
     def max(self):
         """
@@ -189,10 +172,8 @@ class SphericalFunction:
         def fun(x):
             return -self.eval_spherical(*x)
 
-        q = _multistart_minimization(fun, bounds=self.domain)
-        val = -q.fun
-        angles = q.x
-        return val, _sph2cart(*angles)
+        results = self._global_minimizer(fun)
+        return -results.fun, _sph2cart(*results.x)
 
     def mean(self, method='exact', n_evals=10000):
         """
