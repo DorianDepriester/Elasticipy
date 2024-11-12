@@ -3,6 +3,7 @@ from scipy.spatial.transform import Rotation
 import matplotlib as mpl
 mpl.use('Qt5Agg')   # Ensure interactive plot
 
+# First, let consider the NiTi material:
 C = tensorFromCrystalSymmetry(symmetry='monoclinic', diad='y', phase_name='TiNi',
                               C11=231, C12=127, C13=104,
                               C22=240, C23=131, C33=175,
@@ -10,26 +11,28 @@ C = tensorFromCrystalSymmetry(symmetry='monoclinic', diad='y', phase_name='TiNi'
                               C15=-18, C25=1, C35=-3, C46=3)
 print(C)
 
-# Let consider the Young's modulus first
+# Let's have a look on its Young modulus
 E = C.Young_modulus
 # See min/max values
 print(E)
 # Now illustrate the spatial dependence
-fig, ax = E.plot()
+E.plot_xyz_sections()   # As 2D sections...
+E.plot()                # ...or in 3D
 
 # Apply a random rotation on stiffness tensor
 rotation = Rotation.from_euler('zxz', [0, 45, 0], degrees=True)
 Crot = C*rotation
+# Check that the Young modulus has changed as well
 Crot.Young_modulus.plot()
 
-# Show spatial dependence of shear modulus
+# Now let's consider the shear modulus
 G = C.shear_modulus
-G.plot(which='min')
+G.plot_xyz_sections()   # Plot sections with min, max and mean
+G.plot(which='min')     # And plot it in 3D
 
-# Show spatial dependence of Poisson ratio
+# Finally, let's have a look on the Poisson ratio
 nu = C.Poisson_ratio
+nu.plot_xyz_sections()
 nu.plot(which='max')
-
-
 
 
