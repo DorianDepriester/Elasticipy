@@ -73,6 +73,23 @@ def _plot3D(fig, u, r, **kwargs):
     return ax
 
 
+def _create_xyz_section(ax, section_name, polar_angle):
+    ax.title.set_text('{}-{} plane'.format(*section_name))
+    if section_name == 'XY':
+        phi = polar_angle
+        theta = np.pi / 2 * np.ones(len(polar_angle))
+    elif section_name == 'XZ':
+        phi = np.zeros(len(polar_angle))
+        theta = np.pi / 2 - polar_angle
+    else:
+        phi = (np.pi / 2) * np.ones(len(polar_angle))
+        theta = np.pi / 2 - polar_angle
+    ax.set_xticks(np.linspace(0, 3 * np.pi / 2, 4))
+    h_direction, v_direction = section_name
+    ax.set_xticklabels((h_direction, v_direction, '-' + h_direction, '-' + v_direction))
+    return phi, theta, ax
+
+
 class SphericalFunction:
     def __init__(self, fun, domain=None):
         if domain is None:
@@ -290,22 +307,6 @@ class SphericalFunction:
         plt.show()
         return fig, ax
 
-    def _create_xyz_section(self, ax, section_name, polar_angle):
-        ax.title.set_text('{}-{} plane'.format(*section_name))
-        if section_name == 'XY':
-            phi = polar_angle
-            theta = np.pi / 2 * np.ones(len(polar_angle))
-        elif section_name == 'XZ':
-            phi = np.zeros(len(polar_angle))
-            theta = np.pi / 2 - polar_angle
-        else:
-            phi = (np.pi / 2) * np.ones(len(polar_angle))
-            theta = np.pi / 2 - polar_angle
-        ax.set_xticks(np.linspace(0, 3 * np.pi / 2, 4))
-        h_direction, v_direction = section_name
-        ax.set_xticklabels((h_direction, v_direction, '-' + h_direction, '-' + v_direction))
-        return phi, theta, ax
-
     def plot_xyz_sections(self, n_theta=500):
         """
         Plot values in X-Y, X-Z and Y-Z planes
@@ -328,7 +329,7 @@ class SphericalFunction:
         for i in range(0, 3):
             ax = fig.add_subplot(1, 3, i+1, projection='polar')
             angles = np.zeros((n_theta, 2))
-            phi, theta, ax = self._create_xyz_section(ax, titles[i], theta_polar)
+            phi, theta, ax = _create_xyz_section(ax, titles[i], theta_polar)
             angles[:, 0] = phi
             angles[:, 1] = theta
             r = self.eval_spherical(angles)
@@ -479,7 +480,7 @@ class HyperSphericalFunction(SphericalFunction):
         handles, labels = [], []
         for i in range(0, 3):
             ax = fig.add_subplot(1, 3, i+1, projection='polar')
-            phi, theta, ax = self._create_xyz_section(ax, titles[i], theta_polar)
+            phi, theta, ax = _create_xyz_section(ax, titles[i], theta_polar)
             psi = np.linspace(0, np.pi, n_psi)
             phi_grid, psi_grid = np.meshgrid(phi, psi, indexing='ij')
             theta_grid, _ = np.meshgrid(theta, psi, indexing='ij')
