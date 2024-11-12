@@ -145,10 +145,10 @@ class SphericalFunction:
 
         Returns
         -------
-        tuple
+        fmin : float
             Minimum value and location where it is reached (direction)
-            min[0] (float): minimum value
-            min[1] (np.ndarray): direction along which this value is reached
+        dir : np.ndarray
+            Direction along which the minimum value is reached
         """
         def fun(x):
             return self.eval_spherical(*x)
@@ -164,10 +164,10 @@ class SphericalFunction:
 
         Returns
         -------
-        tuple
+        min : float
             Minimum value and location where it is reached (direction)
-            max[0] (float): maximum value
-            max[1] (np.ndarray): direction along which this value is reached
+        direction : np.ndarray
+            direction along which the maximum value is reached
         """
         def fun(x):
             return -self.eval_spherical(*x)
@@ -179,7 +179,7 @@ class SphericalFunction:
 
     def mean(self, method='exact', n_evals=10000):
         """
-        Estimate the mean value along all directions in the 3D space
+        Estimate the mean value along all directions in the 3D space.
 
         Parameters
         ----------
@@ -300,6 +300,20 @@ class HyperSphericalFunction(SphericalFunction):
         super().__init__(fun, domain=domain)
 
     def eval(self, u, *args):
+        """
+        Evaluate the Hyperspherical function with respect to two orthogonal directions.
+
+        Parameters
+        ----------
+        u : np.ndarray
+            First axis
+        v : np.ndarray
+            Second axis
+
+        Returns
+        -------
+            Function value
+        """
         values = self.fun(u, *args)
         if np.array(u).shape == (3,) and not isinstance(u, np.ndarray):
             return values[0]
@@ -359,7 +373,7 @@ class HyperSphericalFunction(SphericalFunction):
             Number of latitude angles (theta) to use for plotting. Default is 50.
         n_psi : int, default 50
             Number of psi value to look for min/max/mean value (see below). Default is 50.
-        which : str {'mean', 'std', 'min', 'max'}
+        which : str {'mean', 'std', 'min', 'max'}, default 'mean'
             How to handle the 3rd coordinate. For instance, if which=='mean' (default), for a given value of angles
             (phi, theta), the mean function value over all psi angles is plotted.
         **kwargs
