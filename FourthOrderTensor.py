@@ -44,6 +44,9 @@ def _compute_unit_strain_along_direction(S, m, n, transverse=False):
 
     indices = np.indices((3, 3, 3, 3))
     i, j, k, ell = indices[0], indices[1], indices[2], indices[3]
+    dot = np.abs(np.einsum('ij,ij->i', m_vec, n_vec))
+    if np.any(np.logical_and(dot > 1e-9, dot < (1 - 1e-9))):
+        raise ValueError('The two directions must be either equal or orthogonal.')
     if transverse:
         cosine = m_vec[:, i] * m_vec[:, j] * n_vec[:, k] * n_vec[:, ell]
     else:
