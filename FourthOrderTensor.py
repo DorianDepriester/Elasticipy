@@ -255,8 +255,9 @@ class SymmetricTensor:
 
         Parameters
         ----------
-        orientations : np.ndarray
-            [m, 3, 3] array, where orientations[i,:,:] gives i-th the orientation matrix
+        orientations : np.ndarray or Rotation
+            If an array is provided, it must be of shape [m, 3, 3], where orientations[i,:,:] gives i-th the orientation
+            matrix
 
         Returns
         -------
@@ -264,6 +265,8 @@ class SymmetricTensor:
             Mean tensor
 
         """
+        if isinstance(orientations, Rotation):
+            orientations = orientations.as_matrix()
         if len(orientations.shape) == 2:
             raise ValueError('The orientation must be a 3x3 or a Nx3x3 matrix')
         elif len(orientations.shape) == 2:
