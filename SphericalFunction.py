@@ -62,11 +62,10 @@ def _create_xyz_section(ax, section_name, polar_angle):
 
 
 class SphericalFunction:
-    def __init__(self, fun, domain=None):
-        if domain is None:
-            domain = [[0, 2 * np.pi],
-                      [0, np.pi / 2]]
-        self.domain = np.array(domain)
+    domain = np.array([[0, 2 * np.pi],
+                       [0, np.pi / 2]])
+
+    def __init__(self, fun):
         self.fun = fun
 
     def __repr__(self):
@@ -320,12 +319,9 @@ class SphericalFunction:
 
 
 class HyperSphericalFunction(SphericalFunction):
-    def __init__(self, fun, domain=None):
-        if domain is None:
-            domain = [[0, 2 * np.pi],
-                      [0, np.pi / 2],
-                      [0, np.pi]]
-        super().__init__(fun, domain=domain)
+    domain = np.array([[0, 2 * np.pi],
+                       [0, np.pi / 2],
+                       [0, np.pi]])
 
     def eval(self, u, *args):
         """
@@ -335,7 +331,7 @@ class HyperSphericalFunction(SphericalFunction):
         ----------
         u : np.ndarray
             First axis
-        v : np.ndarray
+        args : np.ndarray
             Second axis
 
         Returns
