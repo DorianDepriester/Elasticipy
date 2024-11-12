@@ -290,35 +290,52 @@ class SphericalFunction:
         plt.show()
         return fig, ax
 
+    def _create_xyz_section(self, ax, section_name, polar_angle):
+        ax.title.set_text('{}-{} plane'.format(*section_name))
+        if section_name == 'XY':
+            phi = polar_angle
+            theta = np.pi / 2 * np.ones(len(polar_angle))
+        elif section_name == 'XZ':
+            phi = np.zeros(len(polar_angle))
+            theta = np.pi / 2 - polar_angle
+        else:
+            phi = (np.pi / 2) * np.ones(len(polar_angle))
+            theta = np.pi / 2 - polar_angle
+        ax.set_xticks(np.linspace(0, 3 * np.pi / 2, 4))
+        h_direction, v_direction = section_name
+        ax.set_xticklabels((h_direction, v_direction, '-' + h_direction, '-' + v_direction))
+        return phi, theta, ax
+
     def plot_xyz_sections(self, n_theta=500):
+        """
+        Plot values in X-Y, X-Z and Y-Z planes
+
+        Parameters
+        ----------
+        n_theta : int, default 500
+            Number of values of polar angle to use for plotting
+
+        Returns
+        -------
+        matplotlib.figure.Figure
+            Handle to the figure
+        matplotlib.Axes3D
+            Handle to axes
+        """
         fig = plt.figure()
         theta_polar = np.linspace(0, 2*np.pi, n_theta)
-        angles = np.zeros((n_theta, 2))
         titles = ('XY', 'XZ', 'YZ')
-
         for i in range(0, 3):
             ax = fig.add_subplot(1, 3, i+1, projection='polar')
-            title = titles[i]
-            ax.title.set_text('{}-{} plane'.format(*title))
-            if i == 0:
-                theta = np.pi/2
-                phi = theta_polar
-            elif i == 1:
-                phi = 0
-                theta = np.pi / 2 - theta_polar
-            else:
-                phi = np.pi / 2
-                theta = np.pi / 2 - theta_polar
+            angles = np.zeros((n_theta, 2))
+            phi, theta, ax = self._create_xyz_section(ax, titles[i], theta_polar)
             angles[:, 0] = phi
             angles[:, 1] = theta
             r = self.eval_spherical(angles)
             ax.plot(theta_polar, r)
-            ax.set_xticks(np.linspace(0, 3*np.pi/2, 4))
-            h_direction, v_direction = title
-            ax.set_xticklabels((h_direction, v_direction, '-'+h_direction, '-'+v_direction))
-
         fig.show()
         return fig, ax
+
 
 class HyperSphericalFunction(SphericalFunction):
     def __init__(self, fun, domain=None):
@@ -436,4 +453,50 @@ class HyperSphericalFunction(SphericalFunction):
         u_grid = u.reshape((n_phi, n_theta, n_psi, 3))
         ax = _plot3D(fig, u_grid[:, :, 0, :], r_grid, **kwargs)
         plt.show()
+        return fig, ax
+
+    def plot_xyz_sections(self, n_theta=500, n_psi=100):
+        """
+        Plot values in X-Y, X-Z and Y-Z planes
+
+        Parameters
+        ----------
+        n_theta : int, default 500
+            Number of values of polar angle to use for plotting
+        n_psi : int, default 100
+            Number of psi value to use for evaluating the statistics (mean, min and max)
+
+        Returns
+        -------
+        matplotlib.figure.Figure
+            Handle to the figure
+        matplotlib.Axes3D
+            Handle to axes
+        """
+        fig = plt.figure()
+        theta_polar = np.linspace(0, 2 * np.pi, n_theta)
+        titles = ('XY', 'XZ', 'YZ')
+        handles, labels = [], []
+        for i in range(0, 3):
+            ax = fig.add_subplot(1, 3, i+1, projection='polar')
+            phi, theta, ax = self._create_xyz_section(ax, titles[i], theta_polar)
+            psi = np.linspace(0, np.pi, n_psi)
+            phi_grid, psi_grid = np.meshgrid(phi, psi, indexing='ij')
+            theta_grid, _ = np.meshgrid(theta, psi, indexing='ij')
+            phi = phi_grid.flatten()
+            theta = theta_grid.flatten()
+            psi = psi_grid.flatten()
+            u, v = _sph2cart(phi, theta, psi)
+            values = self.eval(u, v).reshape((n_theta, n_psi))
+            min_val = np.min(values, axis=1)
+            max_val = np.max(values, axis=1)
+            ax.plot(theta_polar, min_val, color='blue')
+            ax.plot(theta_polar, max_val, color='blue')
+            ax.plot(theta_polar, np.mean(values, axis=1), color='red', label='Mean')
+            area = ax.fill_between(theta_polar, min_val, max_val, alpha=0.2, label='Min/Max')
+            line, = ax.plot(theta_polar, np.mean(values, axis=1), color='red', label='Mean')
+        handles.extend([line, area])
+        labels.extend([line.get_label(), area.get_label()])
+        fig.legend(handles, labels, loc='upper center', ncol=2, bbox_to_anchor=(0.5, 0.95))
+        fig.show()
         return fig, ax
