@@ -219,8 +219,8 @@ class SphericalFunction:
         ----------
         method : str {'exact', 'Monte Carlo'}
             If method=='exact', the full integration is performed over the unit sphere, with the aid of
-            numpy.integrate.dblquad function. If method=='Monte Carlo', the function is evaluated along a finite set of
-            random directions.
+            numpy.integrate.dblquad function. If method=='Monte Carlo', the function is evaluated along a finite set of random directions. The
+            Monte Carlo method is usually very fast, compared to the exact method.
         n_evals : int, default 10000
             If method=='Monte Carlo', sets the number of random directions to use.
         mean : float, default None
@@ -358,7 +358,7 @@ class HyperSphericalFunction(SphericalFunction):
         else:
             return values
 
-    def mean(self, method='exact', n_evals=10000):
+    def mean(self, method='Monte Carlo', n_evals=10000):
         if method == 'exact':
             def fun(psi, theta, phi):
                 return self.eval_spherical(phi, theta, psi) * sin(theta)
@@ -382,7 +382,7 @@ class HyperSphericalFunction(SphericalFunction):
         else:
             return values
 
-    def var(self, method='exact', n_evals=10000, mean=None):
+    def var(self, method='Monte Carlo', n_evals=10000, mean=None):
         if method == 'exact':
             if mean is None:
                 mean = self.mean()
