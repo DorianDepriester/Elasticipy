@@ -189,9 +189,9 @@ class SphericalFunction:
         Parameters
         ----------
         method : str {'exact', 'Monte Carlo'}
-            If method=='exact', the full integration is performed over the unit sphere, with the aid of
-            numpy.integrate.dblquad function. If method=='Monte Carlo', the function is evaluated along a finite set of
-            random directions.
+            If 'exact', the full integration is performed over the unit sphere, with the aid of numpy.integrate.dblquad
+            function. If method=='Monte Carlo', the function is evaluated along a finite set of random directions. The
+            Monte Carlo method is usually very fast, compared to the exact method.
         n_evals : int, default 10000
             If method=='Monte Carlo', sets the number of random directions to use.
 
@@ -208,7 +208,7 @@ class SphericalFunction:
             q = integrate.dblquad(fun, *domain)
             return q[0] / (2 * np.pi)
         else:
-            u = np.random.random((n_evals, 3))-0.5
+            u = np.random.normal(size=(n_evals, 3))
             return np.mean(self.eval(u))
 
     def var(self, method='exact', n_evals=10000, mean=None):
@@ -242,7 +242,7 @@ class SphericalFunction:
             q = integrate.dblquad(fun, *domain)
             return q[0] / (2 * np.pi)
         else:
-            u = np.random.random((n_evals, 3))-0.5
+            u = np.random.normal(size=(n_evals, 3))
             return np.var(self.eval(u))
 
     def std(self, **kwargs):
