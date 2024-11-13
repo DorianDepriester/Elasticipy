@@ -66,6 +66,14 @@ class SphericalFunction:
                        [0, np.pi / 2]])
 
     def __init__(self, fun):
+        """
+        Create a spherical function, that is, a function that depends on one direction only.
+
+        Parameters
+        ----------
+        fun : function
+            Function to return
+        """
         self.fun = fun
 
     def __repr__(self):
@@ -322,6 +330,12 @@ class HyperSphericalFunction(SphericalFunction):
     domain = np.array([[0, 2 * np.pi],
                        [0, np.pi / 2],
                        [0, np.pi]])
+
+    def __init__(self):
+        """
+        Create a hyperspherical function, that is, a function that depends on two orthogonal directions only.
+        """
+        super().__init__()
 
     def eval(self, u, *args):
         """
