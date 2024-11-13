@@ -98,6 +98,10 @@ class SphericalFunction:
         float or np.ndarray
             If only one direction is given as a tuple of floats [nx, ny, nz], the result is a float;
             otherwise, the result is a nd.array.
+
+        See Also
+        --------
+        eval_spherical : evaluate the function along a given direction given using the spherical coordinates
         """
         values = self.fun(u)
         if isinstance(u, list) and np.array(u).shape == (3,):
@@ -122,6 +126,10 @@ class SphericalFunction:
         float or np.ndarray
             If only one direction is given as a tuple of floats [nx, ny, nz], the result is a float;
         otherwise, the result is a nd.array.
+
+        See Also
+        --------
+        eval : evaluate the function along a direction given by its cartesian coordinates
         """
         angles = np.atleast_2d(args)
         if degrees:
@@ -158,9 +166,13 @@ class SphericalFunction:
         Returns
         -------
         fmin : float
-            Minimum value and location where it is reached (direction)
+            Minimum value
         dir : np.ndarray
             Direction along which the minimum value is reached
+
+        See Also
+        --------
+        max : return the maximum value and the location where it is reached
         """
         results = self._global_minimizer(self.eval_spherical)
         return results.fun, _sph2cart(*results.x)
@@ -172,9 +184,13 @@ class SphericalFunction:
         Returns
         -------
         min : float
-            Minimum value and location where it is reached (direction)
+            Maximum value
         direction : np.ndarray
             direction along which the maximum value is reached
+
+        See Also
+        --------
+        min : return the minimum value and the location where it is reached
         """
         def fun(x):
             return -self.eval_spherical(*x)
@@ -199,6 +215,10 @@ class SphericalFunction:
         -------
         float
             Mean value
+
+        See Also
+        --------
+        std : Standard deviation of the spherical function over the unit sphere.
         """
         if method == 'exact':
             def fun(theta, phi):
@@ -230,6 +250,10 @@ class SphericalFunction:
         -------
         float
             Variance of the function
+
+        See Also
+        --------
+        mean : mean value of the function over the unit sphere.
         """
         if method == 'exact':
             if mean is None:
@@ -258,6 +282,10 @@ class SphericalFunction:
         -------
         float
             Standard deviation
+
+        See Also
+        --------
+        var : variance of the function
         """
         return np.sqrt(self.var(**kwargs))
 
@@ -280,6 +308,10 @@ class SphericalFunction:
             Handle to the figure
         matplotlib.Axes3D
             Handle to axes
+
+        See Also
+        --------
+        plot_xyz_sections : plot values of the function in X-Y, X-Z an Y-Z planes.
         """
         fig = plt.figure()
         phi = np.linspace(0, 2 * np.pi, n_phi)
@@ -310,6 +342,10 @@ class SphericalFunction:
             Handle to the figure
         matplotlib.Axes3D
             Handle to axes
+
+        See Also
+        --------
+        plot : plot the values of the function over the whole unit sphere as a 3D surface
         """
         fig = plt.figure()
         theta_polar = np.linspace(0, 2*np.pi, n_theta)
@@ -350,7 +386,12 @@ class HyperSphericalFunction(SphericalFunction):
 
         Returns
         -------
+        float or np.ndarray
             Function value
+
+        See Also
+        --------
+        eval_spherical : evaluate the function along a direction defined by its spherical coordinates.
         """
         values = self.fun(u, *args)
         if np.array(u).shape == (3,) and not isinstance(u, np.ndarray):
@@ -372,8 +413,32 @@ class HyperSphericalFunction(SphericalFunction):
             w = np.cross(u, v)
             return np.mean(self.eval(u, w))
 
-    def eval_spherical(self, *args):
+    def eval_spherical(self, *args, degrees=False):
+        """
+        Evaluate value along a given (set of) direction(s) defined by its (their) spherical coordinates.
+
+        Parameters
+        ----------
+        args : list or np.ndarray
+            [phi, theta, psi] where phi denotes for the azimuth angle from X axis to the first direction (u), theta is
+            the latitude angle from Z axis (theta==0 -> u = Z axis), and psi is the angle defining the orientation of
+            the second direction (v) in the plane orthogonal to u.
+        degrees : bool, default False
+            If True, the angles are given in degrees instead of radians.
+
+        Returns
+        -------
+        float or np.ndarray
+            If only one direction is given as a tuple of floats [nx, ny, nz], the result is a float;
+        otherwise, the result is a nd.array.
+
+        See Also
+        --------
+        eval : evaluate the function along two orthogonal directions (u,v))
+        """
         angles = np.atleast_2d(args)
+        if degrees:
+            angles = np.radians(angles)
         phi, theta, psi = angles.T
         u, v = _sph2cart(phi, theta, psi)
         values = self.eval(u, v)
@@ -423,6 +488,10 @@ class HyperSphericalFunction(SphericalFunction):
             Handle to the figure
         matplotlib.Axes3D
             Handle to axes
+
+        See Also
+        --------
+        plot_xyz_sections : plot statistics in X-Y, X-Z and Y-Z planes
         """
         fig = plt.figure()
         phi = np.linspace(0, 2 * np.pi, n_phi)
@@ -449,7 +518,10 @@ class HyperSphericalFunction(SphericalFunction):
 
     def plot_xyz_sections(self, n_theta=500, n_psi=100):
         """
-        Plot values in X-Y, X-Z and Y-Z planes
+        Plot statistics in X-Y, X-Z and Y-Z planes.
+
+        The function value will be plotted as functions of the first direction (u), whereas the second direction (v)
+        will be used to evaluate the statistics (min/max and mean).
 
         Parameters
         ----------
@@ -464,6 +536,10 @@ class HyperSphericalFunction(SphericalFunction):
             Handle to the figure
         matplotlib.Axes3D
             Handle to axes
+
+        See Also
+        --------
+        plot : plot a given statistic as a 3D surface
         """
         fig = plt.figure()
         theta_polar = np.linspace(0, 2 * np.pi, n_theta)
