@@ -416,8 +416,8 @@ class HyperSphericalFunction(SphericalFunction):
             q = integrate.tplquad(fun, *domain)
             return q[0] / (2 * np.pi ** 2)
         else:
-            u = np.random.random((n_evals, 3)) - 0.5
-            v = np.random.random((n_evals, 3)) - 0.5
+            u = np.random.normal(size=(n_evals, 3))
+            v = np.random.normal(size=(n_evals, 3))
             w = np.cross(u, v)
             return np.mean(self.eval(u, w))
 
@@ -468,7 +468,7 @@ class HyperSphericalFunction(SphericalFunction):
             return q[0] / (2 * np.pi ** 2)
         else:
             u = np.random.normal(size=(n_evals, 3))
-            v = np.random.random((n_evals, 3)) - 0.5
+            v = np.random.normal(size=(n_evals, 3))
             w = np.cross(u, v)
             return np.var(self.eval(u, w))
 
