@@ -331,11 +331,11 @@ class HyperSphericalFunction(SphericalFunction):
                        [0, np.pi / 2],
                        [0, np.pi]])
 
-    def __init__(self):
+    def __init__(self, fun):
         """
         Create a hyperspherical function, that is, a function that depends on two orthogonal directions only.
         """
-        super().__init__()
+        super().__init__(fun)
 
     def eval(self, u, *args):
         """
@@ -394,7 +394,7 @@ class HyperSphericalFunction(SphericalFunction):
             q = integrate.tplquad(fun, *domain)
             return q[0] / (2 * np.pi ** 2)
         else:
-            u = np.random.random((n_evals, 3)) - 0.5
+            u = np.random.normal(size=(n_evals, 3))
             v = np.random.random((n_evals, 3)) - 0.5
             w = np.cross(u, v)
             return np.var(self.eval(u, w))
