@@ -148,6 +148,16 @@ def tensorFromCrystalSymmetry(symmetry='Triclinic', point_group=None, diad='x', 
 
 
 class SymmetricTensor:
+    """
+    Template class for manipulating symmetric fourth-order tensors.
+
+    Attributes
+    ----------
+    matrix : np.ndarray
+        (6,6) matrix gathering all the components of the tensor, using the Voigt notation.
+    symmetry : str
+        Symmetry of the tensor
+    """
     tensor_name = 'Symmetric'
     voigt_map = np.ones((6, 6))
 
@@ -193,6 +203,7 @@ class SymmetricTensor:
     def rotate(self, m):
         """
         Rotate a tensor
+
         Parameters
         ----------
         m : np.ndarray
@@ -201,7 +212,7 @@ class SymmetricTensor:
         Returns
         -------
         SymmetricTensor
-            Rotated tensor
+            Rotated tenso
         """
         rotated_tensor = np.einsum('im,jn,ko,lp,mnop->ijkl', m, m, m, m, self.full_tensor())
         ij, kl = np.indices((6, 6))
@@ -369,6 +380,10 @@ class StiffnessTensor(SymmetricTensor):
         StiffnessTensor
             Voigt average of stiffness tensor
 
+        See Also
+        --------
+        Reuss_average : compute the Reuss average
+        Hill_average : compute the Voigt-Reuss-Hill average
         """
         if orientations is None:
             c = self.matrix
@@ -404,25 +419,33 @@ class StiffnessTensor(SymmetricTensor):
         StiffnessTensor
             Reuss average of stiffness tensor
 
+        See Also
+        --------
+        Voigt_average : compute the Voigt average
+        Hill_average : compute the Voigt-Reuss-Hill average
         """
         return self.inv().Reuss_average(**kwargs).inv()
 
     def Hill_average(self, **kwargs):
         """
-                Compute the (Voigt-Reuss-)Hill average of tensor
+        Compute the (Voigt-Reuss-)Hill average of tensor
 
-                Parameters
-                ----------
-                orientations : np.ndarray or None
-                    Set of m orientation matrices, defined as a [m, 3, 3] array.
-                    If None, uniform distribution is assumed, resulting in isotropic tensor
+        Parameters
+        ----------
+        orientations : np.ndarray or None
+            Set of m orientation matrices, defined as a [m, 3, 3] array.
+            If None, uniform distribution is assumed, resulting in isotropic tensor
 
-                Returns
-                -------
-                StiffnessTensor
-                    Voigt-Reuss-Hill average of tensor
+        Returns
+        -------
+        StiffnessTensor
+            Voigt-Reuss-Hill average of tensor
 
-                """
+        See Also
+        --------
+        Voigt_average : compute the Voigt average
+        Reuss_average : compute the Reuss average
+        """
         return (self.Reuss_average(**kwargs) + self.Voigt_average(**kwargs)) * 0.5
 
 

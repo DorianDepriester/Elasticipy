@@ -3,8 +3,24 @@ from scipy.spatial.transform import Rotation
 
 
 class SecondOrderTensor:
+    """
+    Template class for manipulation of second order tensors
+
+    Attributes
+    ----------
+    matrix : np.ndarray
+        (...,3,3) matrix storing all the components of the tensor
+
+    Methods
+    -------
+    eig():
+        Returns the eigenvalues and eigenvectors of the tensor
+    """
     name = 'Second-order tensor'
+    "Name to use when printing the tensor"
+
     voigt_map = [1, 1, 1, 1, 1, 1]
+    "List of factors to use for building a tensor from Voigt vector(s)"
 
     def __init__(self, matrix):
         """
@@ -293,7 +309,7 @@ class SecondOrderTensor:
 
         See Also
         --------
-        * : Element-wise matrix product
+        __mul__ : Element-wise matrix product
         """
         if isinstance(other, SecondOrderTensor):
             other_matrix = other.matrix
@@ -391,7 +407,7 @@ class SecondOrderTensor:
 
         See Also
         --------
-        * : element-wise matrix product of tensor array.
+        __mul__ : element-wise matrix product of tensor array.
         matmul : matrix-like product between two tensor arrays.
 
         """

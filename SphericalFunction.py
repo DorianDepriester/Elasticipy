@@ -115,8 +115,16 @@ def uniform_spherical_distribution(n_evals, seed=None, return_orthogonal=False):
 
 
 class SphericalFunction:
+    """
+    Class for spherical functions, that is, functions that depend on directions in 3D space.
+
+    Attribute
+    ---------
+    fun : function to use
+    """
     domain = np.array([[0, 2 * np.pi],
                        [0, np.pi / 2]])
+    """Bounds to consider in spherical coordinates"""
 
     def __init__(self, fun):
         """
@@ -430,6 +438,9 @@ class SphericalFunction:
 
 
 class HyperSphericalFunction(SphericalFunction):
+    """
+    Class for defining functions that depend on two orthogonal directions u and v.
+    """
     domain = np.array([[0, 2 * np.pi],
                        [0, np.pi / 2],
                        [0, np.pi]])
