@@ -242,7 +242,7 @@ class SymmetricTensor:
         Returns
         -------
         SymmetricTensor
-            Rotated tenso
+            Rotated tensor
         """
         rotated_tensor = np.einsum('im,jn,ko,lp,mnop->ijkl', m, m, m, m, self.full_tensor())
         ij, kl = np.indices((6, 6))
