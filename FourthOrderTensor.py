@@ -54,7 +54,37 @@ def _compute_unit_strain_along_direction(S, m, n, transverse=False):
     return np.einsum('pijkl,ijkl->p', cosine, S.full_tensor())
 
 
-def tensorFromCrystalSymmetry(symmetry='Triclinic', point_group=None, diad='x', tensor='Stiffness', phase_name='', **kwargs):
+def tensorFromCrystalSymmetry(symmetry='Triclinic', point_group=None, diad='x',
+                              tensor='Stiffness', phase_name='', **kwargs):
+    """
+    Create a fourth-order tensor from limited number of components, taking advantage of crystallographic symmetries
+
+    Parameters
+    ----------
+    symmetry : str, default Triclinic
+        Name of the crystallographic symmetry
+    point_group : str
+        Point group of the considered crystal. Only used (and mandatory) for tetragonal and trigonal symmetries.
+    diad : str {'x', 'y'}, default 'x'
+        Alignment convention. Sets whether x||a or y||b. Only used for monoclinic symmetry.
+    tensor : str {'Stiffness', 'Compliance'}, default 'Stiffness'
+        Type of tensor to create
+    phase_name : str, default None
+        Name to use when printing the tensor
+    kwargs
+        Keyword describing all the necessary components, depending on the crystal's symmetry and the type of tensor.
+        For Stiffness, they should start with a 'C'. For example:
+
+             C = tensorFromCrystalSymmetry(..., tensor='Stiffness', C11=<value>, C12=<value>,...)
+
+        For Compliance, they should start with a 'S. For example:
+
+            S = tensorFromCrystalSymmetry(..., tensor='Compliance', S11=<value>, S12=<value>,...)
+
+    Returns
+    -------
+    StiffnessTensor or ComplianceTensor
+    """
     tensor = tensor.lower()
     if tensor == 'stiffness':
         prefix = 'C'
