@@ -6,7 +6,25 @@ from scipy import integrate as integrate
 from scipy import optimize
 
 
-def _sph2cart(*args):
+def sph2cart(*args):
+    """
+    Converts spherical/hyperspherical coordinates to cartesian coordinates.
+
+    Parameters
+    ----------
+    args : tuple
+        (phi, theta) angles for spherical coordinates of direction u, where phi denotes the azimuth from X and theta is
+        the colatitude angle from Z.
+        If a third argument is passed, it defines the third angle in hyperspherical coordinate system, that is
+        the orientation of the second vector v, orthogonal to u.
+
+    Returns
+    -------
+    np.ndarray
+        directions u expressed in cartesian coordinates system.
+    tuple of (np.ndarray, np.ndarray)
+        direction of the second vector, orthogonal to u, expressed in cartesian coordinates system.
+    """
     phi, theta, *psi = args
     phi_vec = np.array(phi).flatten()
     theta_vec = np.array(theta).flatten()
@@ -19,13 +37,6 @@ def _sph2cart(*args):
         e_theta = np.array([cos(theta_vec) * cos(phi_vec), cos(theta_vec) * sin(phi_vec), -sin(theta_vec)])
         v = cos(psi_vec) * e_phi + sin(psi_vec) * e_theta
         return u, v.T
-
-
-def _cart2sph(x, y, z):
-    r = np.sqrt(x ** 2 + y ** 2 + z ** 2)
-    theta = np.arccos(z / r)
-    phi = np.arctan2(y, x)
-    return phi, theta
 
 
 def _plot3D(fig, u, r, **kwargs):
@@ -59,6 +70,48 @@ def _create_xyz_section(ax, section_name, polar_angle):
     h_direction, v_direction = section_name
     ax.set_xticklabels((h_direction, v_direction, '-' + h_direction, '-' + v_direction))
     return phi, theta, ax
+
+
+def uniform_spherical_distribution(n_evals, seed=None, return_orthogonal=False):
+    """
+    Create a set of vectors whose projections over the unit sphere are uniformly distributed.
+
+    Parameters
+    ----------
+    n_evals : int
+        Number of vectors to generate
+    seed : int, default None
+        Sets the seed for the random values. Useful if one wants to ensure reproducibility.
+    return_orthogonal : bool, default False
+        If true, also return a second set of vectors which are orthogonal to the first one.
+
+    Returns
+    -------
+    u : np.ndarray
+        Random set of vectors whose projections over the unit sphere are uniform.
+    v : np.ndarray
+        Set of vectors with the same properties as u, but orthogonal to u.
+        Returned only if return_orthogonal is True
+
+    Notes
+    -----
+    The returned vector(s) are not unit. If needed, one can use:
+        u = (u.T / np.linalg.norm(u, axis=1)).T
+    """
+    if seed is None:
+        rng = np.random
+    else:
+        rng = np.random.default_rng(seed)
+    u = rng.normal(size=(n_evals, 3))
+    if return_orthogonal:
+        if seed is not None:
+            # Ensure that the seed used for generated v is not the same as that for u
+            # Otherwise, u and v would be equal.
+            rng = np.random.default_rng(seed+1)
+        u2 = rng.normal(size=(n_evals, 3))
+        return u, np.cross(u, u2)
+    else:
+        return u
 
 
 class SphericalFunction:
@@ -135,7 +188,7 @@ class SphericalFunction:
         if degrees:
             angles = np.radians(angles)
         phi, theta = angles.T
-        u = _sph2cart(phi, theta)
+        u = sph2cart(phi, theta)
         values = self.eval(u)
         if (np.array(args).shape == (2,) or np.array(args).shape == (1, 2)) and not isinstance(args, np.ndarray):
             return values[0]
@@ -175,7 +228,7 @@ class SphericalFunction:
         max : return the maximum value and the location where it is reached
         """
         results = self._global_minimizer(self.eval_spherical)
-        return results.fun, _sph2cart(*results.x)
+        return results.fun, sph2cart(*results.x)
 
     def max(self):
         """
@@ -196,9 +249,9 @@ class SphericalFunction:
             return -self.eval_spherical(*x)
 
         results = self._global_minimizer(fun)
-        return -results.fun, _sph2cart(*results.x)
+        return -results.fun, sph2cart(*results.x)
 
-    def mean(self, method='exact', n_evals=10000):
+    def mean(self, method='exact', n_evals=10000, seed=None):
         """
         Estimate the mean value along all directions in the 3D space.
 
@@ -209,6 +262,9 @@ class SphericalFunction:
             Monte Carlo method is usually very fast, compared to the exact method.
         n_evals : int, default 10000
             If method=='Monte Carlo', sets the number of random directions to use.
+        seed : int, default None
+            Sets the seed for random sampling when using the Monte Carlo method. Useful when one wants to reproduce
+            results.
 
         Returns
         -------
@@ -232,10 +288,10 @@ class SphericalFunction:
             q = integrate.dblquad(fun, *domain)
             return q[0] / (2 * np.pi)
         else:
-            u = np.random.normal(size=(n_evals, 3))
+            u = uniform_spherical_distribution(n_evals, seed=seed)
             return np.mean(self.eval(u))
 
-    def var(self, method='exact', n_evals=10000, mean=None):
+    def var(self, method='exact', n_evals=10000, mean=None, seed=None):
         """
         Estimate the variance along all directions in the 3D space
 
@@ -248,6 +304,9 @@ class SphericalFunction:
             If method=='Monte Carlo', sets the number of random directions to use.
         mean : float, default None
             If provided, and if method=='exact', skip estimation of mean value and use that provided instead.
+        seed : int, default None
+            Sets the seed for random sampling when using the Monte Carlo method. Useful when one wants to reproduce
+            results.
 
         Returns
         -------
@@ -274,7 +333,7 @@ class SphericalFunction:
             q = integrate.dblquad(fun, *domain)
             return q[0] / (2 * np.pi)
         else:
-            u = np.random.normal(size=(n_evals, 3))
+            u = uniform_spherical_distribution(n_evals, seed=seed)
             return np.var(self.eval(u))
 
     def std(self, **kwargs):
@@ -327,7 +386,7 @@ class SphericalFunction:
         phi_grid, theta_grid = np.meshgrid(phi, theta, indexing='ij')
         phi = phi_grid.flatten()
         theta = theta_grid.flatten()
-        u = _sph2cart(phi, theta)
+        u = sph2cart(phi, theta)
         values = self.eval(u)
         u_grid = u.reshape([*phi_grid.shape, 3])
         r_grid = values.reshape(phi_grid.shape)
@@ -407,7 +466,7 @@ class HyperSphericalFunction(SphericalFunction):
         else:
             return values
 
-    def mean(self, method='Monte Carlo', n_evals=10000):
+    def mean(self, method='Monte Carlo', n_evals=10000, seed=None):
         if method == 'exact':
             def fun(psi, theta, phi):
                 return self.eval_spherical(phi, theta, psi) * sin(theta)
@@ -416,10 +475,8 @@ class HyperSphericalFunction(SphericalFunction):
             q = integrate.tplquad(fun, *domain)
             return q[0] / (2 * np.pi ** 2)
         else:
-            u = np.random.normal(size=(n_evals, 3))
-            v = np.random.normal(size=(n_evals, 3))
-            w = np.cross(u, v)
-            return np.mean(self.eval(u, w))
+            u, v = uniform_spherical_distribution(n_evals, seed=seed, return_orthogonal=True)
+            return np.mean(self.eval(u, v))
 
     def eval_spherical(self, *args, degrees=False):
         """
@@ -448,14 +505,14 @@ class HyperSphericalFunction(SphericalFunction):
         if degrees:
             angles = np.radians(angles)
         phi, theta, psi = angles.T
-        u, v = _sph2cart(phi, theta, psi)
+        u, v = sph2cart(phi, theta, psi)
         values = self.eval(u, v)
         if np.array(args).shape == (3,) and not isinstance(args, np.ndarray):
             return values[0]
         else:
             return values
 
-    def var(self, method='Monte Carlo', n_evals=10000, mean=None):
+    def var(self, method='Monte Carlo', n_evals=10000, mean=None, seed=None):
         if method == 'exact':
             if mean is None:
                 mean = self.mean()
@@ -467,10 +524,8 @@ class HyperSphericalFunction(SphericalFunction):
             q = integrate.tplquad(fun, *domain)
             return q[0] / (2 * np.pi ** 2)
         else:
-            u = np.random.normal(size=(n_evals, 3))
-            v = np.random.normal(size=(n_evals, 3))
-            w = np.cross(u, v)
-            return np.var(self.eval(u, w))
+            u, v = uniform_spherical_distribution(n_evals, seed=seed, return_orthogonal=True)
+            return np.var(self.eval(u, v))
 
     def plot(self, n_phi=50, n_theta=50, n_psi=50, which='mean', **kwargs):
         """
@@ -509,7 +564,7 @@ class HyperSphericalFunction(SphericalFunction):
         phi = phi_grid.flatten()
         theta = theta_grid.flatten()
         psi = psi_grid.flatten()
-        u, v = _sph2cart(phi, theta, psi)
+        u, v = sph2cart(phi, theta, psi)
         values = self.eval(u, v).reshape((n_phi, n_theta, n_psi))
         if which == 'std':
             r_grid = np.std(values, axis=2)
@@ -562,7 +617,7 @@ class HyperSphericalFunction(SphericalFunction):
             phi = phi_grid.flatten()
             theta = theta_grid.flatten()
             psi = psi_grid.flatten()
-            u, v = _sph2cart(phi, theta, psi)
+            u, v = sph2cart(phi, theta, psi)
             values = self.eval(u, v).reshape((n_theta, n_psi))
             min_val = np.min(values, axis=1)
             max_val = np.max(values, axis=1)
