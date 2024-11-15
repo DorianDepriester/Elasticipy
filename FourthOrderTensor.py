@@ -72,18 +72,44 @@ def tensorFromCrystalSymmetry(symmetry='Triclinic', point_group=None, diad='x',
     phase_name : str, default None
         Name to use when printing the tensor
     kwargs
-        Keyword describing all the necessary components, depending on the crystal's symmetry and the type of tensor.
-        For Stiffness, they should start with a 'C'. For example:
-
-             C = tensorFromCrystalSymmetry(..., tensor='Stiffness', C11=<value>, C12=<value>,...)
-
-        For Compliance, they should start with a 'S. For example:
-
-            S = tensorFromCrystalSymmetry(..., tensor='Compliance', S11=<value>, S12=<value>,...)
+        Keywords describing all the necessary components, depending on the crystal's symmetry and the type of tensor.
+        For Stiffness, they should be named as 'Cij' (e.g. C11=..., C12=...).
+        For Comliance, they should be named as 'Sij' (e.g. S11=..., S12=...).
+        See examples below.
 
     Returns
     -------
     StiffnessTensor or ComplianceTensor
+
+    Examples
+    --------
+    >>> tensorFromCrystalSymmetry(symmetry='monoclinic', diad='y', phase_name='TiNi',
+    ...                          C11=231, C12=127, C13=104,
+    ...                          C22=240, C23=131, C33=175,
+    ...                          C44=81, C55=11, C66=85,
+    ...                          C15=-18, C25=1, C35=-3, C46=3)
+    Stiffness tensor (in Voigt notation) for TiNi:
+    [[231. 127. 104.   0. -18.   0.]
+     [127. 240. 131.   0.   1.   0.]
+     [104. 131. 175.   0.  -3.   0.]
+     [  0.   0.   0.  81.   0.   3.]
+     [-18.   1.  -3.   0.  11.   0.]
+     [  0.   0.   0.   3.   0.  85.]]
+    Symmetry: monoclinic
+
+    >>> tensorFromCrystalSymmetry(symmetry='monoclinic', diad='y', phase_name='TiNi',
+    ...                          C11=8, C12=-3, C13=-2,
+    ...                          C22=8, C23=-5, C33=10,
+    ...                          C44=12, C55=116, C66=12,
+    ...                          C15=14, C25=-8, C35=0, C46=0)
+    Stiffness tensor (in Voigt notation) for TiNi:
+    [[  8.  -3.  -2.   0.  14.   0.]
+     [ -3.   8.  -5.   0.  -8.   0.]
+     [ -2.  -5.  10.   0.   0.   0.]
+     [  0.   0.   0.  12.   0.   0.]
+     [ 14.  -8.   0.   0. 116.   0.]
+     [  0.   0.   0.   0.   0.  12.]]
+    Symmetry: monoclinic
     """
     tensor = tensor.lower()
     if tensor == 'stiffness':
