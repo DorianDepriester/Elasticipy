@@ -4,7 +4,7 @@ from scipy.spatial.transform import Rotation
 
 class SecondOrderTensor:
     """
-    Template class for manipulation of second order tensors
+    Template class for manipulation of second order tensors or arrays of second order tensors
 
     Attributes
     ----------
@@ -13,8 +13,42 @@ class SecondOrderTensor:
 
     Methods
     -------
-    eig():
+    eig()
         Returns the eigenvalues and eigenvectors of the tensor
+    principalDirections()
+        Returns the principal directions only (eigenvectors of each tensor)
+    firstInvariant()
+        Returns the first invariant(s) of the tensor(s)
+    secondInvariant()
+        Returns the second invariant(s) of the tensor(s)
+    thirdInvariant()
+        Returns the third invariant(s) of the tensor(s)
+    trace()
+        Returns the trace(s) (alias for firstInvariant)
+    matmul()
+        Matrix-like product between arrays of tensors
+    transposeArray()
+        Transpose the indices of the tensor array
+    transposeTensor()
+        Transpose each tensor of the tensor array
+    ddot()
+        Perform tensor product contracted twice (":" operator)
+    flatten()
+        Flatten the tensor array
+    mean()
+        Compute the mean tensor along a given direction in the tensor array
+    std()
+        Compute the tensor corresponding to the standard deviation along a given direction in the tensor array
+    var()
+        Compute the tensor corresponding to the variance along a given direction in the tensor array
+    min()
+        Compute the tensor corresponding to the minima along a given direction in the tensor array
+    max()
+        Compute the tensor corresponding to the maxima along a given direction in the tensor array
+    symmetricPart()
+         Returns the symmetric parts of each tensor in the tensor array
+    skewPart()
+         Returns the skew-symmetric parts of each tensor in the tensor array
     """
     name = 'Second-order tensor'
     "Name to use when printing the tensor"
@@ -407,7 +441,6 @@ class SecondOrderTensor:
 
         See Also
         --------
-        __mul__ : element-wise matrix product of tensor array.
         matmul : matrix-like product between two tensor arrays.
 
         """
