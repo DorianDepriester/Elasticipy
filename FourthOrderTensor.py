@@ -1,6 +1,6 @@
 import numpy as np
 import re
-from SecondOrderTensor import StressTensor, StrainTensor
+from StressStrainTensors import StrainTensor, StressTensor
 from SphericalFunction import SphericalFunction, HyperSphericalFunction
 from scipy.spatial.transform import Rotation
 

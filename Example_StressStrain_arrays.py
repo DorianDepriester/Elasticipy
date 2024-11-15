@@ -1,7 +1,7 @@
 import numpy as np
 
 from FourthOrderTensor import tensorFromCrystalSymmetry
-from SecondOrderTensor import StressTensor
+from StressStrainTensors import StressTensor
 from scipy.spatial.transform import Rotation
 
 # We start with a linear evolution of strain
