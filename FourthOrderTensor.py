@@ -214,12 +214,6 @@ class SymmetricTensor:
     symmetry : str
         Symmetry of the tensor
 
-    Methods
-    -------
-    full_tensor:
-        Returns the full tensor as a (3,3,3,3) array
-    rotate:
-        Apply rotation to the tensor
     """
     tensor_name = 'Symmetric'
     voigt_map = np.ones((6, 6))
@@ -358,17 +352,6 @@ class SymmetricTensor:
 class StiffnessTensor(SymmetricTensor):
     """
     Class for manipulating fourth-order stiffness tensors.
-
-    Methods
-    -------
-    inv:
-        Returns the corresponding compliance tensor
-    Voigt_average:
-        Compute the Voigt average of the tensor
-    Reuss_average:
-        Compute the Reuss average of the tensor
-    Hill_average:
-        Compute the Voigt-Reuss-Hill average
     """
     tensor_name = 'Stiffness'
 
@@ -532,16 +515,6 @@ class ComplianceTensor(StiffnessTensor):
     """
     Class for manipulating compliance tensors
 
-    Methods
-    -------
-    inv:
-        Returns the corresponding stiffness tensor
-    Voigt_average:
-        Compute the Voigt average of the tensor
-    Reuss_average:
-        Compute the Reuss average of the tensor
-    Hill_average:
-        Compute the Voigt-Reuss-Hill average
     """
     tensor_name = 'Compliance'
     voigt_map = np.vstack((
