@@ -7,12 +7,6 @@ class StrainTensor(SecondOrderTensor):
     """
     Class for manipulating symmetric strain tensors or arrays of symmetric strain tensors.
 
-    Methods
-    -------
-    principalStresses:
-        Returns the principal strains.
-    volumetricStrain:
-        Returns the volumetric strain. Alias for firstInvariant
     """
     name = 'Strain tensor'
     voigt_map = [1, 1, 1, 2, 2, 2]
@@ -45,17 +39,6 @@ class StrainTensor(SecondOrderTensor):
 class StressTensor(SecondOrderTensor):
     """
     Class for manipulating stress tensors or arrays of stress tensors.
-
-    Methods
-    -------
-    principalStresses:
-        Returns the principal stresses
-    vonMises:
-        Returns the von Mises equivalent stress
-    Tresca:
-        Returns the Tresca equivalent stress
-    hydrostaticPressure:
-        Computes the hydrostatic pressure for each stress tensor
     """
     name = 'Stress tensor'
 
