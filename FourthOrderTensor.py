@@ -213,6 +213,13 @@ class SymmetricTensor:
         (6,6) matrix gathering all the components of the tensor, using the Voigt notation.
     symmetry : str
         Symmetry of the tensor
+
+    Methods
+    -------
+    full_tensor:
+        Returns the full tensor as a (3,3,3,3) array
+    rotate:
+        Apply rotation to the tensor
     """
     tensor_name = 'Symmetric'
     voigt_map = np.ones((6, 6))
@@ -349,6 +356,20 @@ class SymmetricTensor:
 
 
 class StiffnessTensor(SymmetricTensor):
+    """
+    Class for manipulating fourth-order stiffness tensors.
+
+    Methods
+    -------
+    inv:
+        Returns the corresponding compliance tensor
+    Voigt_average:
+        Compute the Voigt average of the tensor
+    Reuss_average:
+        Compute the Reuss average of the tensor
+    Hill_average:
+        Compute the Voigt-Reuss-Hill average
+    """
     tensor_name = 'Stiffness'
 
     def __init__(self, S, **kwargs):
@@ -482,7 +503,7 @@ class StiffnessTensor(SymmetricTensor):
         """
         return self.inv().Reuss_average(**kwargs).inv()
 
-    def Hill_average(self, **kwargs):
+    def Hill_average(self, orientations=None):
         """
         Compute the (Voigt-Reuss-)Hill average of tensor
 
@@ -502,10 +523,26 @@ class StiffnessTensor(SymmetricTensor):
         Voigt_average : compute the Voigt average
         Reuss_average : compute the Reuss average
         """
-        return (self.Reuss_average(**kwargs) + self.Voigt_average(**kwargs)) * 0.5
+        Reuss = self.Reuss_average(orientations=orientations)
+        Voigt = self.Voigt_average(orientations=orientations)
+        return (Reuss + Voigt) * 0.5
 
 
 class ComplianceTensor(StiffnessTensor):
+    """
+    Class for manipulating compliance tensors
+
+    Methods
+    -------
+    inv:
+        Returns the corresponding stiffness tensor
+    Voigt_average:
+        Compute the Voigt average of the tensor
+    Reuss_average:
+        Compute the Reuss average of the tensor
+    Hill_average:
+        Compute the Voigt-Reuss-Hill average
+    """
     tensor_name = 'Compliance'
     voigt_map = np.vstack((
         np.hstack((np.ones((3, 3)), 2 * np.ones((3, 3)))),
