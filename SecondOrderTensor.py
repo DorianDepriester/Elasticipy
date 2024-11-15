@@ -49,6 +49,10 @@ class SecondOrderTensor:
          Returns the symmetric parts of each tensor in the tensor array
     skewPart()
          Returns the skew-symmetric parts of each tensor in the tensor array
+    sphericalPart()
+        Returns the spherical (hydrostatic) part of the the tensor
+    deviatoricPart()
+        Returns the deviatoric (non-spherical) part of the tensor
     """
     name = 'Second-order tensor'
     "Name to use when printing the tensor"
