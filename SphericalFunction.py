@@ -157,8 +157,8 @@ class SphericalFunction:
         Returns
         -------
         float or np.ndarray
-            If only one direction is given as a tuple of floats [nx, ny, nz], the result is a float;
-            otherwise, the result is a nd.array.
+            If only one direction is given as a tuple of floats [nx, ny, nz], the result is a float; otherwise, the
+            result is a nd.array.
 
         See Also
         --------
@@ -185,8 +185,8 @@ class SphericalFunction:
         Returns
         -------
         float or np.ndarray
-            If only one direction is given as a tuple of floats [nx, ny, nz], the result is a float;
-        otherwise, the result is a nd.array.
+            If only one direction is given as a tuple of floats [phi, theta], the result is a float; otherwise, the
+            result is a nd.array.
 
         See Also
         --------
