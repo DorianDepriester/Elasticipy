@@ -140,9 +140,9 @@ class SecondOrderTensor:
 
         Returns
         -------
-        lambda : np.array
+        lambda : np.ndarray
             Eigenvalues of each tensor.
-        v : np.array
+        v : np.ndarray
             Eigenvectors of teach tensor.
 
         See Also
