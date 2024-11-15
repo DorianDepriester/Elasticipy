@@ -13,45 +13,45 @@ class SecondOrderTensor:
 
     Methods
     -------
-    eig()
+    eig:
         Returns the eigenvalues and eigenvectors of the tensor
-    principalDirections()
+    principalDirections:
         Returns the principal directions only (eigenvectors of each tensor)
-    firstInvariant()
+    firstInvariant:
         Returns the first invariant(s) of the tensor(s)
-    secondInvariant()
+    secondInvariant:
         Returns the second invariant(s) of the tensor(s)
-    thirdInvariant()
+    thirdInvariant:
         Returns the third invariant(s) of the tensor(s)
-    trace()
+    trace:
         Returns the trace(s) (alias for firstInvariant)
-    matmul()
+    matmul:
         Matrix-like product between arrays of tensors
-    transposeArray()
+    transposeArray:
         Transpose the indices of the tensor array
-    transposeTensor()
+    transposeTensor(:
         Transpose each tensor of the tensor array
-    ddot()
+    ddot:
         Perform tensor product contracted twice (":" operator)
-    flatten()
+    flatten:
         Flatten the tensor array
-    mean()
+    mean:
         Compute the mean tensor along a given direction in the tensor array
-    std()
+    std:
         Compute the tensor corresponding to the standard deviation along a given direction in the tensor array
-    var()
+    var:
         Compute the tensor corresponding to the variance along a given direction in the tensor array
-    min()
+    min:
         Compute the tensor corresponding to the minima along a given direction in the tensor array
-    max()
+    max:
         Compute the tensor corresponding to the maxima along a given direction in the tensor array
-    symmetricPart()
+    symmetricPart:
          Returns the symmetric parts of each tensor in the tensor array
-    skewPart()
+    skewPart:
          Returns the skew-symmetric parts of each tensor in the tensor array
-    sphericalPart()
+    sphericalPart:
         Returns the spherical (hydrostatic) part of the the tensor
-    deviatoricPart()
+    deviatoricPart:
         Returns the deviatoric (non-spherical) part of the tensor
     """
     name = 'Second-order tensor'
