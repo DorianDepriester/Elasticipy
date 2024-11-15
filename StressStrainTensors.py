@@ -94,38 +94,3 @@ class StressTensor(SecondOrderTensor):
         sphericalPart : spherical part of the stress
         """
         return -self.firstInvariant()/3
-
-    def sphericalPart(self):
-        """
-        Spherical (hydrostatic) stresses
-
-        Returns
-        -------
-        StressTensor
-            Spherical stress
-
-        See Also
-        --------
-        hydrostaticPressure : compute the hydrostatic pressure
-        deviatoricPart : deviatoric part of the stress
-        """
-        spherical_stress = np.zeros(self.matrix.shape)
-        s = self.firstInvariant()/3
-        spherical_stress[..., 0, 0] = s
-        spherical_stress[..., 1, 1] = s
-        spherical_stress[..., 2, 2] = s
-        return StressTensor(spherical_stress)
-
-    def deviatoricPart(self):
-        """
-        Deviatoric stress
-
-        Returns
-        -------
-        StressTensor
-
-        See Also
-        --------
-        sphericalPart : spherical part of the stress
-        """
-        return self - self.sphericalPart()

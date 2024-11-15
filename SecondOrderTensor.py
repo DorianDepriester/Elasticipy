@@ -615,3 +615,38 @@ class SecondOrderTensor:
         """
         new_mat = 0.5 * (self.matrix - self._transposeTensor())
         return self.__class__(new_mat)
+
+    def sphericalPart(self):
+        """
+        Spherical (hydrostatic) part of the tensor
+
+        Returns
+        -------
+        SecondOrderTensor
+            Spherical part
+
+        See Also
+        --------
+        firstInvariant : compute the first invariant of the tensor
+        deviatoricPart : deviatoric the part of the tensor
+        """
+        eye = np.zeros(self.matrix.shape)
+        s = self.firstInvariant()/3
+        eye[..., 0, 0] = s
+        eye[..., 1, 1] = s
+        eye[..., 2, 2] = s
+        return self.__class__(eye)
+
+    def deviatoricPart(self):
+        """
+        Deviatoric part of the tensor
+
+        Returns
+        -------
+        SecondOrderTensor
+
+        See Also
+        --------
+        sphericalPart : spherical part of the tensor
+        """
+        return self - self.sphericalPart()
