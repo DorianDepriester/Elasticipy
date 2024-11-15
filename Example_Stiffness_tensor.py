@@ -1,4 +1,4 @@
-from FourthOrderTensor import tensorFromCrystalSymmetry
+from src.Elasticipy.FourthOrderTensor import tensorFromCrystalSymmetry
 from scipy.spatial.transform import Rotation
 import matplotlib as mpl
 mpl.use('Qt5Agg')   # Ensure interactive plot
