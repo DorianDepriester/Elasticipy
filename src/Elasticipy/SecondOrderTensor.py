@@ -13,6 +13,9 @@ class _MatrixProxy:
         else:
             return sub
 
+    def __setitem__(self, args, value):
+        self.matrix[(...,) + (args if isinstance(args, tuple) else (args,))] = value
+
 
 class SecondOrderTensor:
     """
