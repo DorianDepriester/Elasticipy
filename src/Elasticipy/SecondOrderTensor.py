@@ -126,7 +126,11 @@ class SecondOrderTensor:
                 self.matrix = matrix
 
             def __getitem__(self, args):
-                return self.matrix[(...,) + (args if isinstance(args, tuple) else (args,))]
+                sub = self.matrix[(...,) + (args if isinstance(args, tuple) else (args,))]
+                if sub.shape == ():
+                    return float(sub)
+                else:
+                    return sub
 
         return MatrixProxy(self.matrix)
 
