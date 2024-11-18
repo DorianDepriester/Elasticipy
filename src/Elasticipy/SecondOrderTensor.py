@@ -597,12 +597,8 @@ class SecondOrderTensor:
         firstInvariant : compute the first invariant of the tensor
         deviatoricPart : deviatoric the part of the tensor
         """
-        eye = np.zeros(self.matrix.shape)
         s = self.firstInvariant()/3
-        eye[..., 0, 0] = s
-        eye[..., 1, 1] = s
-        eye[..., 2, 2] = s
-        return self.__class__(eye)
+        return self.eye(self.shape)*s
 
     def deviatoricPart(self):
         """
