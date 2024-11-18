@@ -76,7 +76,12 @@ class SecondOrderTensor:
         return self.__class__(self.matrix[index])
 
     def __setitem__(self, index, value):
-        self.matrix[index] = value
+        if isinstance(value, (float, np.ndarray)):
+            self.matrix[index] = value
+        elif type(value) == self.__class__:
+            self.matrix[index] = value.matrix
+        else:
+            raise ValueError('The r.h.s must be either float, a ndarray or an object of class {}'.format(self.__class__))
 
     def __add__(self, other):
         if type(self) == type(other):
