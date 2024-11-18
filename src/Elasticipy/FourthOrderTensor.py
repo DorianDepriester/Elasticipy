@@ -218,7 +218,7 @@ class SymmetricTensor:
     tensor_name = 'Symmetric'
     voigt_map = np.ones((6, 6))
 
-    def __init__(self, M, phase_name='', symmetry='Triclinic'):
+    def __init__(self, M, phase_name='', symmetry='Triclinic', orientations=None):
         """
         Construct of stiffness tensor from a (6,6) matrix
 
@@ -233,6 +233,7 @@ class SymmetricTensor:
         self.matrix = np.array(M)
         self.phase_name = phase_name
         self.symmetry = symmetry
+        self.orientations = orientations
 
     def __repr__(self):
         if self.phase_name == '':
@@ -240,7 +241,18 @@ class SymmetricTensor:
         else:
             heading = '{} tensor (in Voigt notation) for {}:\n'.format(self.tensor_name, self.phase_name)
         print_symmetry = '\nSymmetry: {}'.format(self.symmetry)
-        return heading + self.matrix.__str__() + print_symmetry
+        msg = heading + self.matrix.__str__() + print_symmetry
+        if self.orientations is not None:
+            msg = msg + '\n{} orientations'.format(len(self))
+        return msg
+
+    def __len__(self):
+        if self.orientations is None:
+            return ()
+        elif self.orientations.single:
+            return 1
+        else:
+            return len(self.orientations)
 
     def full_tensor(self):
         """
@@ -255,7 +267,12 @@ class SymmetricTensor:
         ij = voigt(i, j)
         kl = voigt(k, ell)
         m = self.matrix[ij, kl] / self.voigt_map[ij, kl]
-        return m
+        if self.orientations is None:
+            return m
+        else:
+            ori = self.orientations.as_matrix()
+            rotated_tensors = np.einsum('qim,qjn,qko,qlp,mnop->qijkl', ori, ori, ori, ori, m)
+            return rotated_tensors
 
     def rotate(self, m):
         """
@@ -302,9 +319,15 @@ class SymmetricTensor:
     def __mul__(self, other):
         if isinstance(other, np.ndarray):
             if other.shape[-2:] == (3, 3):
-                return np.einsum('ijkl,...kl->...ij', self.full_tensor(), other)
+                if self.orientations is None:
+                    return np.einsum('ijkl,...kl->...ij', self.full_tensor(), other)
+                else:
+                    return np.einsum('qijkl,...kl->...qij', self.full_tensor(), other)
         elif isinstance(other, Rotation):
-            return self.rotate(other.as_matrix())
+            if other.single:
+                return self.rotate(other.as_matrix())
+            else:
+                return self.__class__(self.matrix, symmetry=self.symmetry, orientations=other)
         else:
             return self.__class__(self.matrix * other, symmetry=self.symmetry)
 
