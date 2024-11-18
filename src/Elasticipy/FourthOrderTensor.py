@@ -230,7 +230,7 @@ class SymmetricTensor:
             Name to display
         symmetry : str, default Triclinic
         """
-        self.matrix = M
+        self.matrix = np.array(M)
         self.phase_name = phase_name
         self.symmetry = symmetry
 
