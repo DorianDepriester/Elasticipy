@@ -251,41 +251,28 @@ class SecondOrderTensor:
 
     def __mul__(self, other):
         """
-        Element-wise matrix multiplication of arrays of tensors. The two tensors must be of the same shape, resulting in
-        a tensor with the same shape as well.
-
-        For instance, if::
-
-            T1.shape == T2.shape == (m, n)
-
-        with T3=T1*T2, we have::
-
-            T3[i, j] == np.matmul(T1[i, j], T2[i, j]) for i=0...m and j=0...n.
+        Element-wise matrix multiplication of arrays of tensors. Each tensor of the resulting tensor array is computed
+        as the matrix product of the tensor components.
 
         Parameters
         ----------
         other : SecondOrderTensor or np.ndarray or Rotation or float
-            If other is a SecondOrderTensor, it must be of the same shape.
-            If T2 is a numpy array, we must have:
-                T2.shape == T1.shape + (3, 3)
+            If B is a numpy array, we must have:
+                B.shape == (..., 3, 3)
 
         Returns
         -------
-            Array of tensors populated with element-wise matrix multiplication, with the same shape as the input
-            arguments.
+            Array of tensors populated with element-wise matrix multiplication.
 
         See Also
         --------
         matmul : matrix-like multiplication of tensor arrays
         """
         if isinstance(other, SecondOrderTensor):
-            if self.shape == other.shape:
-                return SecondOrderTensor(np.matmul(self.matrix, other.matrix))
-            else:
-                raise ValueError('The two tensor arrays must be of the same shape.')
+            return SecondOrderTensor(np.matmul(self.matrix, other.matrix))
         elif isinstance(other, Rotation):
             rotation_matrices = other.as_matrix()
-            transpose_matrices= np.swapaxes(rotation_matrices, -1, -2)
+            transpose_matrices = np.swapaxes(rotation_matrices, -1, -2)
             new_matrix = np.matmul(np.matmul(transpose_matrices, self.matrix), rotation_matrices)
             return self.__class__(new_matrix)
         elif isinstance(other, (float, int)):
