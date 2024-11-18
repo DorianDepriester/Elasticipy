@@ -457,9 +457,9 @@ class HyperSphericalFunction(SphericalFunction):
 
         Parameters
         ----------
-        u : np.ndarray
+        u : list or np.ndarray
             First axis
-        args : np.ndarray
+        args : list or np.ndarray
             Second axis
 
         Returns
