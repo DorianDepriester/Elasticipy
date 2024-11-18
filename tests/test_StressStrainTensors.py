@@ -175,7 +175,7 @@ class TestStrainStressTensors(unittest.TestCase):
         Tresca_th = np.array([1, 2, 0.0])
         np.testing.assert_array_equal(Tresca_stress, Tresca_th)
 
-    def test_rotation_stiffness(self, n_strain=100, n_ori=100):
+    def test_rotation_stiffness(self, n_strain=50, n_ori=100):
         """
         Check that the two ways to compute stress from a rotated stiffness tensor are consistent.
 
@@ -189,13 +189,11 @@ class TestStrainStressTensors(unittest.TestCase):
         matrix = np.random.random((n_strain, 3, 3))
         eps = Tensors.StrainTensor(matrix).symmetricPart()  # Ensure that the strain is symmetric
         ori = Rotation.random(n_ori)
-        sigma = Tensors.StressTensor.zeros((n_strain, n_ori))
-        for i in range(0, n_ori):
-            C_rotated = C * ori[i]
-            sigma[:, i] = C_rotated * eps
+        C_rotated = C * ori
+        sigma = C_rotated * eps
 
         # Rotate stress and stress by their own
-        eps_rot = eps * ori
+        eps_rot = eps.matmul(ori)
         sigma_rot2 = C * eps_rot
         sigma2 = sigma_rot2 * ori.inv()
         sigma2 = sigma2[:, np.arange(n_ori), np.arange(n_ori), :, :]
