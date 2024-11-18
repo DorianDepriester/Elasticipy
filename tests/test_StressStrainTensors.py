@@ -18,6 +18,9 @@ C = StiffnessTensor(Cmat)
 
 class TestStrainStressTensors(unittest.TestCase):
     def test_mult_by_stiffness(self):
+        """
+        Test Stiffness/Strain tensors product C*eps (which stands for C:E)
+        """
         tensile_dir = [1, 0, 0]
         stress = Tensors.StressTensor([[1, 0, 0],
                                        [0, 0, 0],
@@ -34,6 +37,14 @@ class TestStrainStressTensors(unittest.TestCase):
         assert eps_zz == approx(-nu_z / E)
 
     def test_rotate_tensor(self, n_oris=10):
+        """
+        Test the rotation of a tensor
+
+        Parameters
+        ----------
+        n_oris : int
+            Number of random orientations to use
+        """
         random_tensor = Tensors.SecondOrderTensor(np.random.random((3, 3)))
         random_oris = Rotation.random(n_oris)
         eps_rotated = random_tensor * random_oris
@@ -43,6 +54,14 @@ class TestStrainStressTensors(unittest.TestCase):
             np.testing.assert_almost_equal(eps_matrix_th, eps_rotated[i].matrix)
 
     def test_transpose_array(self, shape=(1, 2, 3)):
+        """
+        Test transposing a tensor array
+
+        Parameters
+        ----------
+        shape : tuple
+            Shape of the tensor array to use
+        """
         random_matrix = np.random.random(shape + (3, 3))
         random_tensor = Tensors.SecondOrderTensor(random_matrix)
         transposed_tensor = random_tensor.transposeArray()
@@ -52,6 +71,14 @@ class TestStrainStressTensors(unittest.TestCase):
                     np.testing.assert_array_equal(random_matrix[i, j, k], transposed_tensor[k, j, i].matrix)
 
     def test_mul(self, shape=(4, 5)):
+        """
+        Test the element-wise product of tensors.
+
+        Parameters
+        ----------
+        shape : tuple
+            Shape of the tensor arrays to use.
+        """
         shape = shape + (3, 3)
         matrix1 = np.random.random(shape)
         matrix2 = np.random.random(shape)
@@ -62,6 +89,16 @@ class TestStrainStressTensors(unittest.TestCase):
                 np.testing.assert_array_equal(tensor_prod[i, j].matrix, mat_prod)
 
     def test_matmul(self, length1=3, length2=4):
+        """
+        Test the matrix-like product of tensor arrays
+
+        Parameters
+        ----------
+        length1 : int
+            Length of the first array
+        length2 : int
+            Length of the second array
+        """
         matrix1 = np.random.random((length1, 3, 3))
         matrix2 = np.random.random((length2, 3, 3))
         rand_tensor1 = Tensors.SecondOrderTensor(matrix1)
@@ -73,6 +110,14 @@ class TestStrainStressTensors(unittest.TestCase):
                 np.testing.assert_array_equal(cross_prod_tensor[i, j].matrix, mat_prod)
 
     def test_statistics(self, shape=(5, 4, 3, 2)):
+        """
+        Test the std/min and max functions for tensor arrays.
+
+        Parameters
+        ----------
+        shape : tuple
+            Shape of the tensor to use
+        """
         matrix = np.random.random(shape + (3, 3))
         tensor = Tensors.SecondOrderTensor(matrix)
         std = tensor.std()
@@ -87,6 +132,14 @@ class TestStrainStressTensors(unittest.TestCase):
             np.testing.assert_array_equal(tensor.std(axis=i).matrix, np.std(matrix, axis=i))
 
     def test_ddot(self, shape=(4, 3, 2)):
+        """
+        Test the ddot method.
+
+        Parameters
+        ----------
+        shape : tuple
+            shape of the tensor arrays to use
+        """
         matrix1 = np.random.random(shape + (3, 3))
         matrix2 = np.random.random(shape + (3, 3))
         tens1 = Tensors.SecondOrderTensor(matrix1)
@@ -99,6 +152,10 @@ class TestStrainStressTensors(unittest.TestCase):
                     self.assertEqual(ddot_th, ddot[i, j, k])
 
     def test_vonMises_Tresca(self):
+        """
+        Check that the Tresca and von Mises methods work well for simple tension, simple shear and hydrostatic
+        pressure.
+        """
         matrix = np.zeros((3, 3, 3))
         matrix[0, 0, 0] = 1  # Simple tension
         matrix[1, 1, 0] = matrix[1, 0, 1] = 1  # Simple shear
