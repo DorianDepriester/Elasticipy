@@ -1,7 +1,7 @@
 import numpy as np
 
-from src.Elasticipy.FourthOrderTensor import tensorFromCrystalSymmetry
-from src.Elasticipy.StressStrainTensors import StressTensor
+from Elasticipy.FourthOrderTensor import tensorFromCrystalSymmetry
+from Elasticipy.StressStrainTensors import StressTensor
 from scipy.spatial.transform import Rotation
 
 # We start with a linear evolution of strain
@@ -37,7 +37,7 @@ print(energy)
 # Now let consider a set of n rotations
 n = 100
 rotations = Rotation.random(n)
-sigma_rotated = sigma * rotations
+sigma_rotated = sigma.matmul(rotations)
 print(sigma_rotated)    # Just to check how it looks like
 eps_rotated = S*sigma_rotated
 # Check mean strain value at the beginning and the end
