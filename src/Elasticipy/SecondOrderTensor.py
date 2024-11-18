@@ -646,9 +646,7 @@ class SecondOrderTensor:
         else:
             matrix_shape = shape + (3, 3,)
         eye = np.zeros(matrix_shape)
-        eye[..., 0, 0] = 1
-        eye[..., 1, 1] = 1
-        eye[..., 2, 2] = 1
+        eye[..., np.arange(3), np.arange(3)] = 1
         return cls(eye)
 
     @classmethod
