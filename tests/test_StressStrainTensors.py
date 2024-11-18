@@ -111,7 +111,7 @@ class TestStrainStressTensors(unittest.TestCase):
 
     def test_statistics(self, shape=(5, 4, 3, 2)):
         """
-        Test the std/min and max functions for tensor arrays.
+        Test the std, min and max functions for tensor arrays.
 
         Parameters
         ----------
@@ -120,16 +120,21 @@ class TestStrainStressTensors(unittest.TestCase):
         """
         matrix = np.random.random(shape + (3, 3))
         tensor = Tensors.SecondOrderTensor(matrix)
+        mini = tensor.min()
+        maxi = tensor.max()
         std = tensor.std()
         # First, check T.std()
         for i in range(0, 3):
             for j in range(0, 3):
                 Cij = matrix[..., i, j].flatten()
                 assert np.std(Cij) == approx(std.C[i, j])
-
+                assert np.min(Cij) == approx(mini.C[i, j])
+                assert np.max(Cij) == approx(maxi.C[i, j])
         # Then, check T.std(axis=...)
         for i in range(0, len(shape)):
             np.testing.assert_array_equal(tensor.std(axis=i).matrix, np.std(matrix, axis=i))
+            np.testing.assert_array_equal(tensor.min(axis=i).matrix, np.min(matrix, axis=i))
+            np.testing.assert_array_equal(tensor.max(axis=i).matrix, np.max(matrix, axis=i))
 
     def test_ddot(self, shape=(4, 3, 2)):
         """
