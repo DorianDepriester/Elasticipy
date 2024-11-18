@@ -196,7 +196,6 @@ class TestStrainStressTensors(unittest.TestCase):
         eps_rot = eps.matmul(ori)
         sigma_rot2 = C * eps_rot
         sigma2 = sigma_rot2 * ori.inv()
-        sigma2 = sigma2[:, np.arange(n_ori), np.arange(n_ori), :, :]
         np.testing.assert_almost_equal(sigma.matrix, sigma2.matrix)
 
 

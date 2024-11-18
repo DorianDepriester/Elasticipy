@@ -284,7 +284,10 @@ class SecondOrderTensor:
             else:
                 raise ValueError('The two tensor arrays must be of the same shape.')
         elif isinstance(other, Rotation):
-            return self.matmul(other)
+            rotation_matrices = other.as_matrix()
+            transpose_matrices= np.swapaxes(rotation_matrices, -1, -2)
+            new_matrix = np.matmul(np.matmul(transpose_matrices, self.matrix), rotation_matrices)
+            return self.__class__(new_matrix)
         elif isinstance(other, (float, int)):
             return self.__class__(self.matrix * other)
         elif isinstance(other, np.ndarray):
