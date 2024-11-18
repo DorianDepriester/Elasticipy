@@ -2,6 +2,18 @@ import numpy as np
 from scipy.spatial.transform import Rotation
 
 
+class _MatrixProxy:
+    def __init__(self, matrix):
+        self.matrix = matrix
+
+    def __getitem__(self, args):
+        sub = self.matrix[(...,) + (args if isinstance(args, tuple) else (args,))]
+        if sub.shape == ():
+            return float(sub)
+        else:
+            return sub
+
+
 class SecondOrderTensor:
     """
     Template class for manipulation of second order tensors or arrays of second order tensors
@@ -121,18 +133,7 @@ class SecondOrderTensor:
         np.ndarray
             Tensor components
         """
-        class MatrixProxy:
-            def __init__(self, matrix):
-                self.matrix = matrix
-
-            def __getitem__(self, args):
-                sub = self.matrix[(...,) + (args if isinstance(args, tuple) else (args,))]
-                if sub.shape == ():
-                    return float(sub)
-                else:
-                    return sub
-
-        return MatrixProxy(self.matrix)
+        return _MatrixProxy(self.matrix)
 
     def eig(self):
         """
