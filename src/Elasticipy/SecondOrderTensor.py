@@ -617,3 +617,90 @@ class SecondOrderTensor:
         sphericalPart : spherical part of the tensor
         """
         return self - self.sphericalPart()
+
+    @classmethod
+    def eye(cls, shape=()):
+        """
+        Create an array of tensors populated with identity matrices
+
+        Parameters
+        ----------
+        shape : list or int, default ()
+            If not provided, it just creates a single identity tensor. Otherwise, the tensor array will be of the
+            specified shape.
+
+        Returns
+        -------
+        SecondOrderTensor
+            Array of identity tensors
+
+        See Also
+        --------
+        ones : creates an array of tensors full of ones
+        zeros : creates an array full of zero tensors
+        """
+        if isinstance(shape, int):
+            matrix_shape = (shape, 3, 3)
+        else:
+            matrix_shape = shape + (3, 3,)
+        eye = np.zeros(matrix_shape)
+        eye[..., 0, 0] = 1
+        eye[..., 1, 1] = 1
+        eye[..., 2, 2] = 1
+        return cls(eye)
+
+    @classmethod
+    def ones(cls, shape=()):
+        """
+        Create an array of tensors populated with matrices of full of ones.
+
+        Parameters
+        ----------
+        shape : list or int, default ()
+            If not provided, it just creates a single tensor of ones. Otherwise, the tensor array will be of the
+            specified shape.
+
+        Returns
+        -------
+        SecondOrderTensor
+            Array of ones tensors
+
+        See Also
+        --------
+        eye : creates an array of identity tensors
+        zeros : creates an array full of zero tensors
+        """
+        if isinstance(shape, int):
+            matrix_shape = (shape, 3, 3)
+        else:
+            matrix_shape = shape + (3, 3,)
+        ones = np.ones(matrix_shape)
+        return cls(ones)
+
+    @classmethod
+    def zeros(cls, shape=()):
+        """
+        Create an array of tensors populated with matrices full of zeros.
+
+        Parameters
+        ----------
+        shape : list or int, default ()
+            If not provided, it just creates a single tensor of ones. Otherwise, the tensor array will be of the
+            specified shape.
+
+        Returns
+        -------
+        SecondOrderTensor
+            Array of ones tensors
+
+        See Also
+        --------
+        eye : creates an array of identity tensors
+        ones : creates an array of tensors full of ones
+        """
+        if isinstance(shape, int):
+            matrix_shape = (shape, 3, 3)
+        else:
+            matrix_shape = shape + (3, 3,)
+        zeros = np.zeros(matrix_shape)
+        return cls(zeros)
