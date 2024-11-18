@@ -72,6 +72,9 @@ class SecondOrderTensor:
     def __getitem__(self, index):
         return self.__class__(self.matrix[index])
 
+    def __setitem__(self, index, value):
+        self.matrix[index] = value
+
     def __add__(self, other):
         if type(self) == type(other):
             return self.__class__(self.matrix + other.matrix)
