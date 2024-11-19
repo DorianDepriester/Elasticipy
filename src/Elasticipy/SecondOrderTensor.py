@@ -178,7 +178,8 @@ class SecondOrderTensor:
         """
         return self.eig()[1]
 
-    def firstInvariant(self):
+    @property
+    def I1(self):
         """
         First invariant of the tensor (trace)
 
@@ -189,12 +190,13 @@ class SecondOrderTensor:
 
         See Also
         --------
-        secondInvariant : Second invariant of the tensors
-        thirdInvariant : Third invariant of the tensors (det)
+        I2 : Second invariant of the tensors
+        I3 : Third invariant of the tensors (det)
         """
         return self.matrix.trace(axis1=-1, axis2=-2)
 
-    def secondInvariant(self):
+    @property
+    def I2(self):
         """
         Second invariant of the tensor
 
@@ -209,14 +211,15 @@ class SecondOrderTensor:
 
         See Also
         --------
-        firstInvariant : First invariant of the tensors (trace)
-        thirdInvariant : Third invariant of the tensors (det)
+        I1 : First invariant of the tensors (trace)
+        I3 : Third invariant of the tensors (det)
         """
-        a = self.matrix.trace(axis1=-1, axis2=-2)**2
-        b = np.matmul(self.matrix, self._transposeTensor())
+        a = self.I1**2
+        b = np.matmul(self.matrix, self._transposeTensor()).trace(axis1=-1, axis2=-2)
         return 0.5 * (a - b)
 
-    def thirdInvariant(self):
+    @property
+    def I3(self):
         """
         Third invariant of the tensor (determinant)
 
@@ -227,8 +230,8 @@ class SecondOrderTensor:
 
         See Also
         --------
-        firstInvariant : First invariant of the tensors (trace)
-        secondInvariant : Second invariant of the tensors
+        I1 : First invariant of the tensors (trace)
+        I2 : Second invariant of the tensors
         """
         return np.linalg.det(self.matrix)
 
@@ -243,11 +246,11 @@ class SecondOrderTensor:
 
         See Also
         --------
-        firstInvariant : First invariant of the tensors (trace)
-        secondInvariant : Second invariant of the tensors
-        thirdInvariant : Third invariant of the tensors (det)
+        I1 : First invariant of the tensors (trace)
+        I2 : Second invariant of the tensors
+        I3 : Third invariant of the tensors (det)
         """
-        return self.firstInvariant()
+        return self.I1
 
     def __mul__(self, B):
         """
@@ -279,11 +282,15 @@ class SecondOrderTensor:
         elif isinstance(B, (float, int)):
             return self.__class__(self.matrix * B)
         elif isinstance(B, np.ndarray):
-            if B.shape != self.matrix.shape:
-                err_msg = 'For a tensor of shape {}, the input argument must be an array of shape {}'.format(self.shape, self.shape + (3,3))
-                raise ValueError(err_msg)
-            else:
+            if B.shape == self.shape:
+                new_matrix = np.einsum('...ij,...->...ij', self.matrix, B)
+                return self.__class__(new_matrix)
+            elif B.shape == self.matrix.shape:
                 return self.__class__(np.matmul(self.matrix, B))
+            else:
+                err_msg = 'For a tensor of shape {}, the input argument must be an array of shape {} or {}'.format(
+                    self.shape, self.shape, self.shape + (3, 3))
+                raise ValueError(err_msg)
         else:
             raise ValueError('The input argument must be a tensor, an ndarray, a rotation or a scalar value.')
 
@@ -597,10 +604,10 @@ class SecondOrderTensor:
 
         See Also
         --------
-        firstInvariant : compute the first invariant of the tensor
+        I1 : compute the first invariant of the tensor
         deviatoricPart : deviatoric the part of the tensor
         """
-        s = self.firstInvariant()/3
+        s = self.I1 / 3
         return self.eye(self.shape)*s
 
     def deviatoricPart(self):

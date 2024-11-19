@@ -1,5 +1,5 @@
 import numpy as np
-from SecondOrderTensor import SecondOrderTensor
+from Elasticipy.SecondOrderTensor import SecondOrderTensor
 
 
 class StrainTensor(SecondOrderTensor):
@@ -32,7 +32,7 @@ class StrainTensor(SecondOrderTensor):
         np.array or float
             Volumetric change
         """
-        return self.firstInvariant()
+        return self.I1
 
 
 class StressTensor(SecondOrderTensor):
@@ -99,4 +99,4 @@ class StressTensor(SecondOrderTensor):
         --------
         sphericalPart : spherical part of the stress
         """
-        return -self.firstInvariant()/3
+        return -self.I1/3
