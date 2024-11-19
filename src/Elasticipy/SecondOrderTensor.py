@@ -249,15 +249,16 @@ class SecondOrderTensor:
         """
         return self.firstInvariant()
 
-    def __mul__(self, other):
+    def __mul__(self, B):
         """
         Element-wise matrix multiplication of arrays of tensors. Each tensor of the resulting tensor array is computed
         as the matrix product of the tensor components.
 
         Parameters
         ----------
-        other : SecondOrderTensor or np.ndarray or Rotation or float
-            If B is a numpy array, we must have:
+        B : SecondOrderTensor or np.ndarray or Rotation or float
+            If B is a numpy array, we must have::
+
                 B.shape == (..., 3, 3)
 
         Returns
@@ -268,21 +269,21 @@ class SecondOrderTensor:
         --------
         matmul : matrix-like multiplication of tensor arrays
         """
-        if isinstance(other, SecondOrderTensor):
-            return SecondOrderTensor(np.matmul(self.matrix, other.matrix))
-        elif isinstance(other, Rotation):
-            rotation_matrices = other.as_matrix()
+        if isinstance(B, SecondOrderTensor):
+            return SecondOrderTensor(np.matmul(self.matrix, B.matrix))
+        elif isinstance(B, Rotation):
+            rotation_matrices = B.as_matrix()
             transpose_matrices = np.swapaxes(rotation_matrices, -1, -2)
             new_matrix = np.matmul(np.matmul(transpose_matrices, self.matrix), rotation_matrices)
             return self.__class__(new_matrix)
-        elif isinstance(other, (float, int)):
-            return self.__class__(self.matrix * other)
-        elif isinstance(other, np.ndarray):
-            if other.shape != self.matrix.shape:
+        elif isinstance(B, (float, int)):
+            return self.__class__(self.matrix * B)
+        elif isinstance(B, np.ndarray):
+            if B.shape != self.matrix.shape:
                 err_msg = 'For a tensor of shape {}, the input argument must be an array of shape {}'.format(self.shape, self.shape + (3,3))
                 raise ValueError(err_msg)
             else:
-                return self.__class__(np.matmul(self.matrix, other))
+                return self.__class__(np.matmul(self.matrix, B))
         else:
             raise ValueError('The input argument must be a tensor, an ndarray, a rotation or a scalar value.')
 
@@ -301,8 +302,9 @@ class SecondOrderTensor:
 
         Parameters
         ----------
-        other : SecondOrderTensor or np.ndarray or scipy.spatial.transform.Rotation
-            Tensor array or rotation to right-multiply by.
+        other : SecondOrderTensor or np.ndarray or Rotation
+            Tensor array or rotation to right-multiply by. If Rotation is provided, the rotations are applied on each
+            tensor.
 
         Returns
         -------
