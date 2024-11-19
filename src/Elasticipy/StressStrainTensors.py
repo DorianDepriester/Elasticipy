@@ -54,6 +54,10 @@ class StressTensor(SecondOrderTensor):
         """
         return np.real(self.eig()[0])
 
+    @property
+    def J2(self):
+        return self.I1**2 / 3 - self.I2
+
     def vonMises(self):
         """
         von Mises equivalent stress.
@@ -67,9 +71,7 @@ class StressTensor(SecondOrderTensor):
         --------
         Tresca : Tresca equivalent stress
         """
-        p = (self.C[0, 0] - self.C[1, 1])**2 + (self.C[0, 0] - self.C[2, 2])**2 + (self.C[1, 1] - self.C[2, 2])**2 + \
-            6*self.C[0, 1]**2 + 6*self.C[0, 2]**2 + 6*self.C[1, 2]**2
-        return np.sqrt(0.5*p)
+        return np.sqrt(3 * self.J2)
 
     def Tresca(self):
         """
