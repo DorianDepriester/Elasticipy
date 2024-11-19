@@ -496,7 +496,7 @@ class HyperSphericalFunction(SphericalFunction):
         Parameters
         ----------
         args : list or np.ndarray
-            [phi, theta, psi] where phi denotes for the azimuth angle from X axis to the first direction (u), theta is
+            [phi, theta, psi] where phi denotes the azimuth angle from X axis to the first direction (u), theta is
             the latitude angle from Z axis (theta==0 -> u = Z axis), and psi is the angle defining the orientation of
             the second direction (v) in the plane orthogonal to u.
         degrees : bool, default False
