@@ -15,4 +15,9 @@ setup(
     description='Collection of tools to work on strain, stress and stiffness tensors, with plotting features',
     long_description=long_description,
     long_description_content_type="text/markdown",
+    install_requires=[
+            'scipy',
+            'numpy',
+            're'
+        ],
 )
