@@ -1,6 +1,6 @@
 import numpy as np
 import re
-from StressStrainTensors import StrainTensor, StressTensor
+from StressStrainTensors import SecondOrderTensor, StrainTensor, StressTensor
 from SphericalFunction import SphericalFunction, HyperSphericalFunction
 from scipy.spatial.transform import Rotation
 
@@ -274,21 +274,22 @@ class SymmetricTensor:
             rotated_tensors = np.einsum('qim,qjn,qko,qlp,mnop->qijkl', ori, ori, ori, ori, m)
             return rotated_tensors
 
-    def rotate(self, m):
+    def rotate(self, rotation):
         """
-        Rotate a tensor
+        Apply a single rotation to a tensor, and return its component into the rotated frame.
 
         Parameters
         ----------
-        m : np.ndarray
-            Rotation matrix
+        rotation : Rotation
+            Rotation to apply
 
         Returns
         -------
         SymmetricTensor
             Rotated tensor
         """
-        rotated_tensor = np.einsum('im,jn,ko,lp,mnop->ijkl', m, m, m, m, self.full_tensor())
+        rot_mat = rotation.as_matrix()
+        rotated_tensor = np.einsum('im,jn,ko,lp,mnop->ijkl', rot_mat, rot_mat, rot_mat, rot_mat, self.full_tensor())
         ij, kl = np.indices((6, 6))
         i, j = unvoigt(ij).T
         k, ell = unvoigt(kl).T
@@ -325,20 +326,17 @@ class SymmetricTensor:
                     return np.einsum('qijkl,...kl->...qij', self.full_tensor(), other)
         elif isinstance(other, Rotation):
             if other.single:
-                return self.rotate(other.as_matrix())
+                return self.rotate(other)
             else:
                 return self.__class__(self.matrix, symmetry=self.symmetry, orientations=other)
         else:
             return self.__class__(self.matrix * other, symmetry=self.symmetry)
 
     def __rmul__(self, other):
-        if isinstance(other, np.ndarray):
-            if other.shape == (3, 3):
-                return self.rotate(other)
-            else:
-                raise ValueError('Left-multiplication only works with 3x3 matrices.')
-        else:
+        if isinstance(other, (Rotation, float, int)):
             return self * other
+        else:
+            raise ValueError('A fourth order tensor can be left-multiplied by rotations or scalar only.')
 
     def _orientation_average(self, orientations):
         """
