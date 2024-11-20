@@ -6,9 +6,9 @@ This package also provides a collection of easy-to-use and very fast tools to wo
 ### Working with stiffness tensor
 First, create a stiffness tensor, taking into account the material symmetry:
 ````python
- from Elasticipy.FourthOrderTensor import tensorFromCrystalSymmetry
+from Elasticipy.FourthOrderTensor import tensorFromCrystalSymmetry
  
- C = tensorFromCrystalSymmetry(symmetry='cubic', phase_name='ferrite'
+C = tensorFromCrystalSymmetry(symmetry='cubic', phase_name='ferrite',
                               C11=274, C12=175, C44=89)
 ````
 
