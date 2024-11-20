@@ -318,12 +318,14 @@ class SymmetricTensor:
         return self.__class__(mat)
 
     def __mul__(self, other):
-        if isinstance(other, np.ndarray):
+        if isinstance(other, SecondOrderTensor):
+            return SecondOrderTensor(self * other.matrix)
+        elif isinstance(other, np.ndarray):
             if other.shape[-2:] == (3, 3):
                 if self.orientations is None:
                     return np.einsum('ijkl,...kl->...ij', self.full_tensor(), other)
                 else:
-                    return np.einsum('qijkl,...kl->...qij', self.full_tensor(), other)
+                    return np.einsum('qijkl,...kl->q...ij', self.full_tensor(), other)
         elif isinstance(other, Rotation):
             if other.single:
                 return self.rotate(other)
@@ -381,7 +383,8 @@ class StiffnessTensor(SymmetricTensor):
 
     def __mul__(self, other):
         if isinstance(other, StrainTensor):
-            return StressTensor(self * other.matrix)
+            new_tensor = super().__mul__(other)
+            return StressTensor(new_tensor.matrix)
         elif isinstance(other, StressTensor):
             raise ValueError('You cannot multiply a stiffness tensor with a Stress tensor.')
         else:
