@@ -1,13 +1,13 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(
     name='Elasticipy',
-    version='1.0.1',
-    packages=[''],
-    package_dir={'': 'src/Elasticipy'},
+    version='1.0.2',
+    packages=find_packages(where="src"),
+    package_dir={'': 'src'},
     url='https://github.com/DorianDepriester/Elasticipy',
     license='MIT Licence',
     author='Dorian Depriester',
