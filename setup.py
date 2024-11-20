@@ -18,6 +18,5 @@ setup(
     install_requires=[
             'scipy',
             'numpy',
-            're'
         ],
 )
