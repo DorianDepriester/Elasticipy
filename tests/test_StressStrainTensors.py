@@ -199,6 +199,17 @@ class TestStrainStressTensors(unittest.TestCase):
         np.testing.assert_almost_equal(sigma.matrix, sigma2.matrix)
 
     def test_multidimensional_tensors(self, shape_strain=(5, 4, 3), n_ori=100):
+        """
+        Check that the shape of (C * rotations) * eps is (m, p, r, ...) if rotation.shape=(p, q,...) and
+        len(rotations)=m.
+
+        Parameters
+        ----------
+        shape_strain : tuple
+            shape of tensor array
+        n_ori : int
+            number of orientations to consider
+        """
         strain = Tensors.StrainTensor.ones(shape_strain)
         ori = Rotation.random(n_ori)
         C_rotated = C * ori
