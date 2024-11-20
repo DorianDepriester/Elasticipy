@@ -55,8 +55,44 @@ class StressTensor(SecondOrderTensor):
         return np.real(self.eig()[0])
 
     @property
+    def J1(self):
+        """
+        First invariant of the deviatoric part of the stress tensor. It is always zeros, as the deviatoric part as null
+        trace.
+
+        Returns
+        -------
+        float or np.ndarray
+            zero(s)
+        """
+        if self.shape:
+            return np.zeros(self.shape)
+        else:
+            return 0.0
+
+    @property
     def J2(self):
-        return self.I1**2 / 3 - self.I2
+        """
+        Second invariant of the deviatoric part of the stress tensor.
+
+        Returns
+        -------
+        float or np.ndarray
+            J2 invariant
+        """
+        return -self.deviatoricPart().I2
+
+    @property
+    def J3(self):
+        """
+        Third invariant of the deviatoric part of the stress tensor.
+
+        Returns
+        -------
+        float or np.ndarray
+            J3 invariant
+        """
+        return self.deviatoricPart().I3
 
     def vonMises(self):
         """
