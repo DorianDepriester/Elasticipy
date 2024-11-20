@@ -205,5 +205,6 @@ class TestStrainStressTensors(unittest.TestCase):
         stress = C_rotated * strain
         self.assertEqual(stress.shape, (n_ori,) + shape_strain)
 
+
 if __name__ == '__main__':
     unittest.main()
