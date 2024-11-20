@@ -1,5 +1,5 @@
 import numpy as np
-from Elasticipy.SecondOrderTensor import SecondOrderTensor
+from SecondOrderTensor import SecondOrderTensor
 
 
 class StrainTensor(SecondOrderTensor):
