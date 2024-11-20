@@ -1,7 +1,7 @@
 import numpy as np
 import re
-from StressStrainTensors import SecondOrderTensor, StrainTensor, StressTensor
-from SphericalFunction import SphericalFunction, HyperSphericalFunction
+from Elasticipy.StressStrainTensors import SecondOrderTensor, StrainTensor, StressTensor
+from Elasticipy.SphericalFunction import SphericalFunction, HyperSphericalFunction
 from scipy.spatial.transform import Rotation
 
 
