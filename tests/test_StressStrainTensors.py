@@ -198,6 +198,12 @@ class TestStrainStressTensors(unittest.TestCase):
         sigma2 = sigma_rot2 * ori.inv()
         np.testing.assert_almost_equal(sigma.matrix, sigma2.matrix)
 
+    def test_multidimensional_tensors(self, shape_strain=(5, 4, 3), n_ori=100):
+        strain = Tensors.StrainTensor.ones(shape_strain)
+        ori = Rotation.random(n_ori)
+        C_rotated = C * ori
+        stress = C_rotated * strain
+        self.assertEqual(stress.shape, (n_ori,) + shape_strain)
 
 if __name__ == '__main__':
     unittest.main()
