@@ -400,7 +400,7 @@ class StiffnessTensor(SymmetricTensor):
             Reciprocal tensor
         """
         C = np.linalg.inv(self.matrix)
-        return ComplianceTensor(C, symmetry=self.symmetry, phase_name=self.phase_name)
+        return ComplianceTensor(C, symmetry=self.symmetry, phase_name=self.phase_name, orientations=self.orientations)
 
     @property
     def Young_modulus(self):
@@ -567,7 +567,7 @@ class ComplianceTensor(StiffnessTensor):
             Reciprocal tensor
         """
         S = np.linalg.inv(self.matrix)
-        return StiffnessTensor(S, symmetry=self.symmetry, phase_name=self.phase_name)
+        return StiffnessTensor(S, symmetry=self.symmetry, phase_name=self.phase_name, orientations=self.orientations)
 
     def Reuss_average(self, orientations=None):
         if orientations is None:
