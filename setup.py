@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='Elasticipy',
-    version='1.0.2',
+    version='1.0.3',
     packages=find_packages(where="src"),
     package_dir={'': 'src'},
     url='https://github.com/DorianDepriester/Elasticipy',
