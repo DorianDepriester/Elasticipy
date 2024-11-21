@@ -16,6 +16,20 @@ def _parse_tensor_components(prefix, **kwargs):
 
 
 def voigt(i, j):
+    """
+    Translate the two-index notation to one-index notation
+
+    Parameters
+    ----------
+    i : int or np.ndarray
+        First index
+    j : int or np.ndarray
+        Second index
+
+    Returns
+    -------
+    Index in the vector of length 6
+    """
     voigt_mat = np.array([[0, 5, 4],
                           [5, 1, 3],
                           [4, 3, 2]])
