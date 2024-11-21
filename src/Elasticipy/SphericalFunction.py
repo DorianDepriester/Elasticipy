@@ -500,7 +500,7 @@ class HyperSphericalFunction(SphericalFunction):
             the latitude angle from Z axis (theta==0 -> u = Z axis), and psi is the angle defining the orientation of
             the second direction (v) in the plane orthogonal to u, as illustrated below:
 
-            .. image:: _static/images/HyperSphericalCoordinates.png
+            .. image:: ../../docs/_static/images/HyperSphericalCoordinates.png
 
 
         degrees : bool, default False
