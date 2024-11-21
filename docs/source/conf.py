@@ -2,7 +2,9 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../src/Elasticipy'))
+src_path = os.path.abspath('../../src/')
+sys.path.insert(0, src_path)
+print(f"Chemin ajouté au PYTHONPATH : {sys.path}")
 
 # For the full list of built-in configuration values, see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
