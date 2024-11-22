@@ -364,7 +364,7 @@ class SphericalFunction:
         """
         return np.sqrt(self.var(**kwargs))
 
-    def plot(self, n_phi=50, n_theta=50, **kwargs):
+    def plot3D(self, n_phi=50, n_theta=50, **kwargs):
         """
         3D plotting of a spherical function
 
@@ -420,7 +420,7 @@ class SphericalFunction:
 
         See Also
         --------
-        plot : plot the values of the function over the whole unit sphere as a 3D surface
+        plot3D : plot the values of the function over the whole unit sphere as a 3D surface
         """
         fig = plt.figure()
         theta_polar = np.linspace(0, 2*np.pi, n_theta)
@@ -542,7 +542,7 @@ class HyperSphericalFunction(SphericalFunction):
             u, v = uniform_spherical_distribution(n_evals, seed=seed, return_orthogonal=True)
             return np.var(self.eval(u, v))
 
-    def plot(self, n_phi=50, n_theta=50, n_psi=50, which='mean', **kwargs):
+    def plot3D(self, n_phi=50, n_theta=50, n_psi=50, which='mean', **kwargs):
         """
         3D plotting of a spherical function
 
@@ -617,7 +617,7 @@ class HyperSphericalFunction(SphericalFunction):
 
         See Also
         --------
-        plot : plot a given statistic as a 3D surface
+        plot3D : plot a given statistic as a 3D surface
         """
         fig = plt.figure()
         theta_polar = np.linspace(0, 2 * np.pi, n_theta)
