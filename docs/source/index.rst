@@ -1,6 +1,19 @@
 Welcome to Elasticipy's Documentation!
 ======================================
 
+.. image:: https://img.shields.io/pypi/v/Elasticpy?link=https%3A%2F%2Fpypi.org%2Fproject%2FElasticipy%2F
+   :alt: PyPI - Version
+
+.. image:: https://img.shields.io/pypi/dm/Elasticpy
+   :alt: PyPI - Downloads
+
+.. image:: https://img.shields.io/pypi/l/Elasticipy
+   :alt: PyPI - License
+
+.. image:: https://readthedocs.org/projects/elasticipy/badge/?version=latest
+   :alt: ReadTheDoc
+
+
 Purpose of this package
 -----------------------
 This Python's package is dedicated to work on mechanical elasticity-related tensors; namely: stress, strain and
