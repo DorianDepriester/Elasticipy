@@ -276,7 +276,7 @@ class SecondOrderTensor:
             return SecondOrderTensor(np.matmul(self.matrix, B.matrix))
         elif isinstance(B, Rotation):
             rotation_matrices = B.as_matrix()
-            transpose_matrices = np.swapaxes(rotation_matrices, -1, -2)
+            transpose_matrices = B.inv().as_matrix()
             new_matrix = np.matmul(np.matmul(transpose_matrices, self.matrix), rotation_matrices)
             return self.__class__(new_matrix)
         elif isinstance(B, (float, int)):
