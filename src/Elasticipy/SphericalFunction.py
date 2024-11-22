@@ -124,6 +124,7 @@ class SphericalFunction:
     """
     domain = np.array([[0, 2 * np.pi],
                        [0, np.pi / 2]])
+    name = 'Spherical function'
     """Bounds to consider in spherical coordinates"""
 
     def __init__(self, fun):
@@ -140,7 +141,7 @@ class SphericalFunction:
     def __repr__(self):
         val_min, _ = self.min()
         val_max, _ = self.max()
-        s = 'Spherical function\n'
+        s = '{}\n'.format(self.name)
         s += 'Min={}, Max={}'.format(val_min, val_max)
         return s
 
@@ -444,6 +445,7 @@ class HyperSphericalFunction(SphericalFunction):
     domain = np.array([[0, 2 * np.pi],
                        [0, np.pi / 2],
                        [0, np.pi]])
+    name = 'Hyperspherical function'
 
     def __init__(self, fun):
         """
