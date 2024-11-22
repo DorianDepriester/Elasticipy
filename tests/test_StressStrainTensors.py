@@ -3,8 +3,8 @@ from pytest import approx
 import numpy as np
 from scipy.spatial.transform import Rotation
 
-from FourthOrderTensor import StiffnessTensor
-import StressStrainTensors as Tensors
+from Elasticipy.FourthOrderTensor import StiffnessTensor
+import Elasticipy.StressStrainTensors as Tensors
 
 
 Cmat = [[231, 127, 104, 0, -18, 0],
