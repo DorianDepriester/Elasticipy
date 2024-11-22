@@ -14,4 +14,7 @@ pip install Elasticipy
 ````
 
 ## Documentation
-The full documentation is available on [ReadTheDoc](https://elasticipy.readthedocs.io/). 
+The full documentation is available on [ReadTheDoc](https://elasticipy.readthedocs.io/).
+
+## Sources
+The source code is available on [GitHub](https://github.com/DorianDepriester/Elasticipy).
