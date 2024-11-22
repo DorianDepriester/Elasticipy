@@ -5,10 +5,10 @@ with open("README.md", "r") as fh:
 
 setup(
     name='Elasticipy',
-    version='1.0.3',
+    version='1.1.0',
     packages=find_packages(where="src"),
     package_dir={'': 'src'},
-    url='https://github.com/DorianDepriester/Elasticipy',
+    url='https://elasticipy.readthedocs.io/',
     license='MIT Licence',
     author='Dorian Depriester',
     author_email='dorian.depriester@ensam.eu',
