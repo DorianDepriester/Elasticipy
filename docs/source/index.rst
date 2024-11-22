@@ -36,4 +36,5 @@ To install this package, simply run::
    :caption: Table of Contents
 
    ./example_StressStrain.rst
+   ./example_StiffnessTensor.rst
    modules
