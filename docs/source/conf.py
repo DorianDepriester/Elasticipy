@@ -27,7 +27,8 @@ extensions = [
    'sphinx.ext.autosummary',
    'sphinx.ext.napoleon',
    'sphinx.ext.viewcode',
-   'sphinx.ext.githubpages']
+   'sphinx.ext.githubpages',
+   'sphinx.ext.autosectionlabel']
 templates_path = ['_templates']
 exclude_patterns = []
 

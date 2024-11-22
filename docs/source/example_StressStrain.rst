@@ -48,6 +48,8 @@ and check that we retrieve the correct (initial) strain:
    :language: python
    :lines: 38
 
+.. _multidimensional-arrays:
+
 Multidimensional tensor arrays
 ------------------------------
 Elasticipy allows to process thousands of tensors at one, with the aid of tensor arrays.
