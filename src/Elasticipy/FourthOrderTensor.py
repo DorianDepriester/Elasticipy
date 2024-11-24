@@ -70,61 +70,6 @@ def _compute_unit_strain_along_direction(S, m, n, transverse=False):
 
 def _matrixFromCrystalSymmetry(C11_C12_factor=0.5, component_prefix='C', symmetry='Triclinic', point_group=None,
                                diad='x', **kwargs):
-    """
-    Create a fourth-order tensor from limited number of components, taking advantage of crystallographic symmetries
-
-    Parameters
-    ----------
-    symmetry : str, default Triclinic
-        Name of the crystallographic symmetry
-    point_group : str
-        Point group of the considered crystal. Only used (and mandatory) for tetragonal and trigonal symmetries.
-    diad : str {'x', 'y'}, default 'x'
-        Alignment convention. Sets whether x||a or y||b. Only used for monoclinic symmetry.
-    tensor : str {'Stiffness', 'Compliance'}, default 'Stiffness'
-        Type of tensor to create
-    phase_name : str, default None
-        Name to use when printing the tensor
-    kwargs
-        Keywords describing all the necessary components, depending on the crystal's symmetry and the type of tensor.
-        For Stiffness, they should be named as 'Cij' (e.g. C11=..., C12=...).
-        For Comliance, they should be named as 'Sij' (e.g. S11=..., S12=...).
-        See examples below.
-
-    Returns
-    -------
-    StiffnessTensor or ComplianceTensor
-
-    Examples
-    --------
-    >>> _matrixFromCrystalSymmetry(symmetry='monoclinic', diad='y', phase_name='TiNi',
-    ...                          C11=231, C12=127, C13=104,
-    ...                          C22=240, C23=131, C33=175,
-    ...                          C44=81, C55=11, C66=85,
-    ...                          C15=-18, C25=1, C35=-3, C46=3)
-    Stiffness tensor (in Voigt notation) for TiNi:
-    [[231. 127. 104.   0. -18.   0.]
-     [127. 240. 131.   0.   1.   0.]
-     [104. 131. 175.   0.  -3.   0.]
-     [  0.   0.   0.  81.   0.   3.]
-     [-18.   1.  -3.   0.  11.   0.]
-     [  0.   0.   0.   3.   0.  85.]]
-    Symmetry: monoclinic
-
-    >>> _matrixFromCrystalSymmetry(symmetry='monoclinic', diad='y', phase_name='TiNi',
-    ...                          C11=8, C12=-3, C13=-2,
-    ...                          C22=8, C23=-5, C33=10,
-    ...                          C44=12, C55=116, C66=12,
-    ...                          C15=14, C25=-8, C35=0, C46=0)
-    Stiffness tensor (in Voigt notation) for TiNi:
-    [[  8.  -3.  -2.   0.  14.   0.]
-     [ -3.   8.  -5.   0.  -8.   0.]
-     [ -2.  -5.  10.   0.   0.   0.]
-     [  0.   0.   0.  12.   0.   0.]
-     [ 14.  -8.   0.   0. 116.   0.]
-     [  0.   0.   0.   0.   0.  12.]]
-    Symmetry: monoclinic
-    """
     values = _parse_tensor_components(component_prefix, **kwargs)
     C = np.zeros((6, 6))
     symmetry = symmetry.lower()
@@ -377,10 +322,65 @@ class SymmetricTensor:
             return self.__class__(rotated_matrix)
 
     @classmethod
-    def fromCrystalSymmetry(cls, symmetry='Triclinic', phasename=None, **kwargs):
-        mat = _matrixFromCrystalSymmetry(C11_C12_factor=cls.C11_C12_factor, component_prefix=cls.component_prefix,
-                                         symmetry=symmetry, **kwargs)
-        return cls(mat, symmetry=symmetry, phase_name=phasename)
+    def fromCrystalSymmetry(cls, symmetry='Triclinic', point_group=None, diad='x', phase_name=None, **kwargs):
+        """
+        Create a fourth-order tensor from limited number of components, taking advantage of crystallographic symmetries
+
+        Parameters
+        ----------
+        symmetry : str, default Triclinic
+            Name of the crystallographic symmetry
+        point_group : str
+            Point group of the considered crystal. Only used (and mandatory) for tetragonal and trigonal symmetries.
+        diad : str {'x', 'y'}, default 'x'
+            Alignment convention. Sets whether x||a or y||b. Only used for monoclinic symmetry.
+        phase_name : str, default None
+            Name to use when printing the tensor
+        kwargs
+            Keywords describing all the necessary components, depending on the crystal's symmetry and the type of tensor.
+            For Stiffness, they should be named as 'Cij' (e.g. C11=..., C12=...).
+            For Comliance, they should be named as 'Sij' (e.g. S11=..., S12=...).
+            See examples below.
+
+        Returns
+        -------
+        FourthOrderTensor
+
+        Examples
+        --------
+        >>> from Elasticipy.FourthOrderTensor import StiffnessTensor\n
+        ... StiffnessTensor.fromCrystalSymmetry(symmetry='monoclinic', diad='y', phase_name='TiNi',
+        ...                                     C11=231, C12=127, C13=104,
+        ...                                     C22=240, C23=131, C33=175,
+        ...                                     C44=81, C55=11, C66=85,
+        ...                                     C15=-18, C25=1, C35=-3, C46=3)
+        Stiffness tensor (in Voigt notation) for TiNi:
+        [[231. 127. 104.   0. -18.   0.]
+         [127. 240. 131.   0.   1.   0.]
+         [104. 131. 175.   0.  -3.   0.]
+         [  0.   0.   0.  81.   0.   3.]
+         [-18.   1.  -3.   0.  11.   0.]
+         [  0.   0.   0.   3.   0.  85.]]
+        Symmetry: monoclinic
+
+        >>> from Elasticipy.FourthOrderTensor import ComplianceTensor\n
+        >>> ComplianceTensor.fromCrystalSymmetry(symmetry='monoclinic', diad='y', phase_name='TiNi',
+        ...                                      S11=8, S12=-3, S13=-2,
+        ...                                      S22=8, S23=-5, S33=10,
+        ...                                      S44=12, S55=116, S66=12,
+        ...                                      S15=14, S25=-8, S35=0, S46=0)
+        Comliance tensor (in Voigt notation) for TiNi:
+        [[  8.  -3.  -2.   0.  14.   0.]
+         [ -3.   8.  -5.   0.  -8.   0.]
+         [ -2.  -5.  10.   0.   0.   0.]
+         [  0.   0.   0.  12.   0.   0.]
+         [ 14.  -8.   0.   0. 116.   0.]
+         [  0.   0.   0.   0.   0.  12.]]
+        Symmetry: monoclinic
+        """
+        matrix = _matrixFromCrystalSymmetry(C11_C12_factor=cls.C11_C12_factor, component_prefix=cls.component_prefix,
+                                            point_group=point_group, diad=diad, symmetry=symmetry, **kwargs)
+        return cls(matrix, symmetry=symmetry, phase_name=phase_name)
 
 
 class StiffnessTensor(SymmetricTensor):
