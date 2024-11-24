@@ -369,7 +369,7 @@ class SymmetricTensor:
         ...                                      S22=8, S23=-5, S33=10,
         ...                                      S44=12, S55=116, S66=12,
         ...                                      S15=14, S25=-8, S35=0, S46=0)
-        Comliance tensor (in Voigt notation) for TiNi:
+        Compliance tensor (in Voigt notation) for TiNi:
         [[  8.  -3.  -2.   0.  14.   0.]
          [ -3.   8.  -5.   0.  -8.   0.]
          [ -2.  -5.  10.   0.   0.   0.]
