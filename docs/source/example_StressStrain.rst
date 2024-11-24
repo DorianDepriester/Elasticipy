@@ -113,14 +113,14 @@ Finally, we can estimate the mean stresses among all the orientations:
    :language: python
    :lines: 71-72
 
-Actually, a more straightforward method is to compute the Reuss average of the stiffness tensor:
+Actually, a more straightforward method is to define a set of rotated stiffness tensors, and compute their Reuss average:
 
 .. literalinclude:: ../../Examples/Example_StressStrain_arrays.py
    :language: python
-   :lines: 74
+   :lines: 74-75
 
-Which yields to the same results in terms of stress:
+Which yields the same results in terms of stress:
 
 .. literalinclude:: ../../Examples/Example_StressStrain_arrays.py
    :language: python
-   :lines: 75-76
+   :lines: 76-77
