@@ -42,7 +42,8 @@ print(nu.max())
 
 # Now let consider a finite set of orientations
 oris = Rotation.random(1000)
-Cvoigt = C.Voigt_average(oris)  # Compute the Voigt average
+Crotated = C*oris  # Compute the Voigt average
+Cvoigt = Crotated.Voigt_average()
 print(Cvoigt.Young_modulus) # Look at the corresponding Young modulis
 print(C.Voigt_average().Young_modulus) # Compare with infinite number of orientations
 

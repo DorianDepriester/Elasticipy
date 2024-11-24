@@ -378,11 +378,11 @@ class SymmetricTensor:
             return self * orientations
         else:
             m = orientations
-            rotated_tensor = np.einsum('qim,qjn,qko,qlp,mnop->ijkl', m, m, m, m, self.full_tensor())
+            mean_full_tensor = np.mean(self.full_tensor(), axis=0)
             ij, kl = np.indices((6, 6))
             i, j = unvoigt(ij).T
             k, ell = unvoigt(kl).T
-            rotated_matrix = rotated_tensor[i, j, k, ell] * self.voigt_map[ij, kl] / orientations.shape[0]
+            rotated_matrix = mean_full_tensor[i, j, k, ell]
             return self.__class__(rotated_matrix)
 
 
@@ -463,15 +463,10 @@ class StiffnessTensor(SymmetricTensor):
             return -eps2 / eps1
         return HyperSphericalFunction(compute_PoissonRatio)
 
-    def Voigt_average(self, orientations=None):
+    def Voigt_average(self):
         """
-        Compute the Voigt average of stiffness tensor
-
-        Parameters
-        ----------
-        orientations : np.ndarray or None
-            Set of m orientation matrices, defined as a [m, 3, 3] array.
-            If None, uniform distribution is assumed, resulting in isotropic tensor
+        Compute the Voigt average of the stiffness tensor. If the tensor contains no orientation, we assume isotropic
+        behaviour. Otherwise, the mean is computed over all orientations.
 
         Returns
         -------
@@ -483,7 +478,7 @@ class StiffnessTensor(SymmetricTensor):
         Reuss_average : compute the Reuss average
         Hill_average : compute the Voigt-Reuss-Hill average
         """
-        if orientations is None:
+        if self.orientations is None:
             c = self.matrix
             C11 = (c[0, 0] + c[1, 1] + c[2, 2]) / 5 \
                 + (c[0, 1] + c[0, 2] + c[1, 2]) * 2 / 15 \
@@ -500,17 +495,12 @@ class StiffnessTensor(SymmetricTensor):
                             [0,   0,   0,   0,   0,   C44]])
             return StiffnessTensor(mat, symmetry='isotropic', phase_name=self.phase_name)
         else:
-            return self._orientation_average(orientations)
+            return self._orientation_average(self.orientations)
 
-    def Reuss_average(self, **kwargs):
+    def Reuss_average(self):
         """
-        Compute the Reuss average of tensor
-
-        Parameters
-        ----------
-        orientations : np.ndarray or None
-            Set of m orientation matrices, defined as a [m, 3, 3] array.
-            If None, uniform distribution is assumed, resulting in isotropic tensor
+        Compute the Reuss average of the stiffness tensor. If the tensor contains no orientation, we assume isotropic
+        behaviour. Otherwise, the mean is computed over all orientations.
 
         Returns
         -------
@@ -522,11 +512,12 @@ class StiffnessTensor(SymmetricTensor):
         Voigt_average : compute the Voigt average
         Hill_average : compute the Voigt-Reuss-Hill average
         """
-        return self.inv().Reuss_average(**kwargs).inv()
+        return self.inv().Reuss_average().inv()
 
-    def Hill_average(self, orientations=None):
+    def Hill_average(self):
         """
-        Compute the (Voigt-Reuss-)Hill average of tensor
+        Compute the (Voigt-Reuss-)Hill average ofthe stiffness tensor. If the tensor contains no orientation, we assume
+        isotropic behaviour. Otherwise, the mean is computed over all orientations.
 
         Parameters
         ----------
@@ -544,8 +535,8 @@ class StiffnessTensor(SymmetricTensor):
         Voigt_average : compute the Voigt average
         Reuss_average : compute the Reuss average
         """
-        Reuss = self.Reuss_average(orientations=orientations)
-        Voigt = self.Voigt_average(orientations=orientations)
+        Reuss = self.Reuss_average()
+        Voigt = self.Voigt_average()
         return (Reuss + Voigt) * 0.5
 
 
@@ -583,8 +574,8 @@ class ComplianceTensor(StiffnessTensor):
         S = np.linalg.inv(self.matrix)
         return StiffnessTensor(S, symmetry=self.symmetry, phase_name=self.phase_name, orientations=self.orientations)
 
-    def Reuss_average(self, orientations=None):
-        if orientations is None:
+    def Reuss_average(self):
+        if self.orientations is None:
             s = self.matrix
             C11 = (s[0, 0] + s[1, 1] + s[2, 2]) / 5 \
                 + (s[0, 1] + s[0, 2] + s[1, 2]) * 2 / 15 \
@@ -601,11 +592,11 @@ class ComplianceTensor(StiffnessTensor):
                             [0,   0,   0,   0,   0,   C44]])
             return ComplianceTensor(mat, symmetry='isotropic', phase_name=self.phase_name)
         else:
-            return self._orientation_average(orientations)
+            return self._orientation_average(self.orientations)
 
-    def Voigt_average(self, **kwargs):
-        return self.inv().Voigt_average(**kwargs).inv()
+    def Voigt_average(self):
+        return self.inv().Voigt_average().inv()
 
-    def Hill_average(self, **kwargs):
-        return self.inv().Hill_average(**kwargs)
+    def Hill_average(self):
+        return self.inv().Hill_average()
 
