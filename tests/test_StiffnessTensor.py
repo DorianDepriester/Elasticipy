@@ -1,5 +1,5 @@
 import unittest
-from FourthOrderTensor import ComplianceTensor, tensorFromCrystalSymmetry
+from Elasticipy.FourthOrderTensor import ComplianceTensor, tensorFromCrystalSymmetry
 import numpy as np
 from pytest import approx
 
