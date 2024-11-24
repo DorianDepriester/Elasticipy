@@ -68,8 +68,8 @@ def _compute_unit_strain_along_direction(S, m, n, transverse=False):
     return np.einsum('pijkl,ijkl->p', cosine, S.full_tensor())
 
 
-def tensorFromCrystalSymmetry(symmetry='Triclinic', point_group=None, diad='x',
-                              tensor='Stiffness', phase_name='', **kwargs):
+def _matrixFromCrystalSymmetry(C11_C12_factor=0.5, component_prefix='C', symmetry='Triclinic', point_group=None,
+                               diad='x', **kwargs):
     """
     Create a fourth-order tensor from limited number of components, taking advantage of crystallographic symmetries
 
@@ -97,7 +97,7 @@ def tensorFromCrystalSymmetry(symmetry='Triclinic', point_group=None, diad='x',
 
     Examples
     --------
-    >>> tensorFromCrystalSymmetry(symmetry='monoclinic', diad='y', phase_name='TiNi',
+    >>> _matrixFromCrystalSymmetry(symmetry='monoclinic', diad='y', phase_name='TiNi',
     ...                          C11=231, C12=127, C13=104,
     ...                          C22=240, C23=131, C33=175,
     ...                          C44=81, C55=11, C66=85,
@@ -111,7 +111,7 @@ def tensorFromCrystalSymmetry(symmetry='Triclinic', point_group=None, diad='x',
      [  0.   0.   0.   3.   0.  85.]]
     Symmetry: monoclinic
 
-    >>> tensorFromCrystalSymmetry(symmetry='monoclinic', diad='y', phase_name='TiNi',
+    >>> _matrixFromCrystalSymmetry(symmetry='monoclinic', diad='y', phase_name='TiNi',
     ...                          C11=8, C12=-3, C13=-2,
     ...                          C22=8, C23=-5, C33=10,
     ...                          C44=12, C55=116, C66=12,
@@ -125,14 +125,7 @@ def tensorFromCrystalSymmetry(symmetry='Triclinic', point_group=None, diad='x',
      [  0.   0.   0.   0.   0.  12.]]
     Symmetry: monoclinic
     """
-    tensor = tensor.lower()
-    if tensor == 'stiffness':
-        prefix = 'C'
-        k = 1 / 2
-    else:
-        prefix = 'S'
-        k = 2
-    values = _parse_tensor_components(prefix, **kwargs)
+    values = _parse_tensor_components(component_prefix, **kwargs)
     C = np.zeros((6, 6))
     symmetry = symmetry.lower()
     if ((symmetry == 'tetragonal') or (symmetry == 'trigonal')) and (point_group is None):
@@ -150,7 +143,7 @@ def tensorFromCrystalSymmetry(symmetry='Triclinic', point_group=None, diad='x',
         if symmetry == 'isotropic':
             C[0, 0] = C[1, 1] = C[2, 2] = values['11']
             C[0, 1] = C[0, 2] = C[1, 2] = values['12']
-            C[3, 3] = C[4, 4] = C[5, 5] = (C[0, 0] - C[0, 1]) * k
+            C[3, 3] = C[4, 4] = C[5, 5] = (C[0, 0] - C[0, 1]) * C11_C12_factor
         elif symmetry == 'cubic':
             C[0, 0] = C[1, 1] = C[2, 2] = values['11']
             C[0, 1] = C[0, 2] = C[1, 2] = values['12']
@@ -161,7 +154,7 @@ def tensorFromCrystalSymmetry(symmetry='Triclinic', point_group=None, diad='x',
             C[0, 2] = C[1, 2] = values['13']
             C[2, 2] = values['33']
             C[3, 3] = C[4, 4] = values['44']
-            C[5, 5] = (C[0, 0] - C[0, 1]) * k
+            C[5, 5] = (C[0, 0] - C[0, 1]) * C11_C12_factor
         elif symmetry == 'tetragonal':
             C[0, 0] = C[1, 1] = values['11']
             C[0, 1] = values['12']
@@ -180,7 +173,7 @@ def tensorFromCrystalSymmetry(symmetry='Triclinic', point_group=None, diad='x',
             C[1, 3] = -C[0, 3]
             C[2, 2] = values['33']
             C[3, 3] = C[4, 4] = values['44']
-            C[5, 5] = (C[0, 0] - C[0, 1]) * k
+            C[5, 5] = (C[0, 0] - C[0, 1]) * C11_C12_factor
             if point_group in trigo_2:
                 C[1, 4] = values['25']
                 C[3, 5] = C[1, 4]
@@ -201,13 +194,9 @@ def tensorFromCrystalSymmetry(symmetry='Triclinic', point_group=None, diad='x',
                     C[0, 3], C[1, 3], C[2, 3] = values['14'], values['24'], values['34']
                     C[0, 4], C[1, 4], C[2, 4] = values['15'], values['25'], values['35']
                     C[3, 5], C[4, 5] = values['46'], values['56']
-        if tensor == 'stiffness':
-            constructor = StiffnessTensor
-        else:
-            constructor = ComplianceTensor
-        return constructor(C + np.tril(C.T, -1), symmetry=symmetry, phase_name=phase_name)
+        return C + np.tril(C.T, -1)
     except KeyError as key:
-        entry_error = prefix + key.args[0]
+        entry_error = component_prefix + key.args[0]
         if (symmetry == 'tetragonal') or (symmetry == 'trigonal'):
             err_msg = "For point group {}, keyword argument {} is required".format(point_group, entry_error)
         elif symmetry == 'monoclinic':
@@ -231,6 +220,8 @@ class SymmetricTensor:
     """
     tensor_name = 'Symmetric'
     voigt_map = np.ones((6, 6))
+    C11_C12_factor = 0.5
+    component_prefix = 'C'
 
     def __init__(self, M, phase_name='', symmetry='Triclinic', orientations=None):
         """
@@ -385,12 +376,19 @@ class SymmetricTensor:
             rotated_matrix = mean_full_tensor[i, j, k, ell]
             return self.__class__(rotated_matrix)
 
+    @classmethod
+    def fromCrystalSymmetry(cls, symmetry='Triclinic', phasename=None, **kwargs):
+        mat = _matrixFromCrystalSymmetry(C11_C12_factor=cls.C11_C12_factor, component_prefix=cls.component_prefix,
+                                         symmetry=symmetry, **kwargs)
+        return cls(mat, symmetry=symmetry, phase_name=phasename)
+
 
 class StiffnessTensor(SymmetricTensor):
     """
     Class for manipulating fourth-order stiffness tensors.
     """
     tensor_name = 'Stiffness'
+    C11_C12_factor = 0.5
 
     def __init__(self, S, **kwargs):
         super().__init__(S, **kwargs)
@@ -543,13 +541,14 @@ class StiffnessTensor(SymmetricTensor):
 class ComplianceTensor(StiffnessTensor):
     """
     Class for manipulating compliance tensors
-
     """
     tensor_name = 'Compliance'
     voigt_map = np.vstack((
         np.hstack((np.ones((3, 3)), 2 * np.ones((3, 3)))),
         np.hstack((2 * np.ones((3, 3)), 4 * np.ones((3, 3))))
     ))
+    C11_C12_factor = 2.0
+    component_prefix = 'S'
 
     def __init__(self, C, **kwargs):
         super().__init__(C, **kwargs)

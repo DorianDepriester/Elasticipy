@@ -23,10 +23,10 @@ print(strain.volumetricStrain())
 # ======================================================
 # Linear elasticity
 # ======================================================
-from Elasticipy.FourthOrderTensor import tensorFromCrystalSymmetry
+from Elasticipy.FourthOrderTensor import StiffnessTensor
 
-C = tensorFromCrystalSymmetry(symmetry='cubic', phase_name='ferrite',
-                              C11=274, C12=175, C44=89)
+C = StiffnessTensor.fromCrystalSymmetry(symmetry='cubic', phase_name='ferrite',
+                                        C11=274, C12=175, C44=89)
 print(C)
 
 sigma = C * strain
@@ -71,7 +71,8 @@ sigma = sigma_rotated * rotations.inv()         # Go back to initial frame
 sigma_mean = sigma.mean(axis=1)     # Compute the mean over all orientations
 print(sigma_mean[-1])
 
-C_Voigt = C.Voigt_average(orientations=rotations)
+C_rotated = C * rotations
+C_Voigt = C_rotated.Voigt_average()
 sigma_Voigt = C_Voigt * eps
 print(sigma_Voigt[-1])
 

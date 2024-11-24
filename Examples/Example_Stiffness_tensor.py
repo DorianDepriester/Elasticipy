@@ -1,14 +1,14 @@
-from Elasticipy.FourthOrderTensor import tensorFromCrystalSymmetry
+from Elasticipy.FourthOrderTensor import StiffnessTensor
 from scipy.spatial.transform import Rotation
 import matplotlib as mpl
 mpl.use('Qt5Agg')   # Ensure interactive plot
 
 # First, let consider the NiTi material:
-C = tensorFromCrystalSymmetry(symmetry='monoclinic', diad='y', phase_name='TiNi',
-                              C11=231, C12=127, C13=104,
-                              C22=240, C23=131, C33=175,
-                              C44=81, C55=11, C66=85,
-                              C15=-18, C25=1, C35=-3, C46=3)
+C = StiffnessTensor.fromCrystalSymmetry(symmetry='monoclinic', diad='y', phase_name='TiNi',
+                                        C11=231, C12=127, C13=104,
+                                        C22=240, C23=131, C33=175,
+                                        C44=81, C55=11, C66=85,
+                                        C15=-18, C25=1, C35=-3, C46=3)
 print(C)
 
 # Let's have a look on its Young modulus
