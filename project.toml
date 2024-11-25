@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=42", "setuptools_scm[toml]", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "elasticipy"
+description = "A Python library for elasticity tensor computations"
+readme = "README.md"
+readme-content-type = "text/markdown"
+license = {text = "MIT"}
+authors = [
+    {name = "Dorian Depriester", email = "dorian.dep@gmail.com"}
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10"
+]
+dependencies = [
+    "numpy",
+    "scipy",
+    "matplotlib"
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "pytest-cov", "black", "isort", "mypy"]
+
+[project.urls]
+Homepage = "https://pypi.org/project/Elasticipy/"
+Source = "https://github.com/DorianDepriester/Elasticipy"
+Tracker = "https://github.com/DorianDepriester/Elasticipy/issues"
+Documentation = "https://elasticipy.readthedocs.io/"
+
+[tool.setuptools_scm]
+version_scheme = "post-release"  # Optionnel, ajuste la version entre les tags
+local_scheme = "no-local-version"  # Optionnel, désactive les informations locales dans les versions non taguées
