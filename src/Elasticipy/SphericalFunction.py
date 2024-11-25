@@ -416,7 +416,7 @@ class SphericalFunction:
         -------
         matplotlib.figure.Figure
             Handle to the figure
-        matplotlib.Axes3D
+        tuple of matplotlib.axes.Axes
             Handle to axes
 
         See Also
@@ -426,6 +426,7 @@ class SphericalFunction:
         fig = plt.figure()
         theta_polar = np.linspace(0, 2*np.pi, n_theta)
         titles = ('XY', 'XZ', 'YZ')
+        axs = []
         for i in range(0, 3):
             ax = fig.add_subplot(1, 3, i+1, projection='polar')
             angles = np.zeros((n_theta, 2))
@@ -434,8 +435,9 @@ class SphericalFunction:
             angles[:, 1] = theta
             r = self.eval_spherical(angles)
             ax.plot(theta_polar, r)
+            axs.append(ax)
         fig.show()
-        return fig, ax
+        return fig, axs
 
 
 class HyperSphericalFunction(SphericalFunction):
