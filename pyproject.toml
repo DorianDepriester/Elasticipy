@@ -25,6 +25,8 @@ dependencies = [
     "matplotlib"
 ]
 
+dynamic = ["version"]
+
 [project.optional-dependencies]
 dev = ["pytest", "pytest-cov", "black", "isort", "mypy"]
 
