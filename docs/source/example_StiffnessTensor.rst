@@ -99,22 +99,28 @@ In order to fully evidence the directional dependence of the Young moduli, we ca
 
 >>> E.plot3D()
 
-Alternatively, we can only plot its value on X-Y, X-Z and Y-Z sections:
+It is advised to use interactive plot to be able to zoom/rotate the surface. For flat images (i.e. to put in
+document/articles), we can use plot the values as a Pole Figure (PF):
+
+>>> E.plot_as_pole_figure()
+
+Alternatively, we can plot the Young moduli on X-Y, X-Z and Y-Z sections only:
 
 >>> E.plot_xyz_sections()
 
 Hyperspherical functions
 ~~~~~~~~~~~~~~~~~~~~~~~~
 Hyperspherical functions cannot plotted as 3D surfaces, as their values depends on two orthogonal directions.
-But at least, for a each first direction, we can consider the mean value for all the orthogonal directions for plotting:
+But at least, for a each direction **u**, we can consider the mean value for all the orthogonal directions **v** for
+plotting:
 
 >>> G.plot3D()
 
-Alternatively, we can see the minimal values for each orthogonal directions (instead of the mean):
+Instead of the mean value, we can consider other statistics, e.g.:
 
 >>> G.plot3D(which='min')
 
-This also work for ``max`` and ``std`` (standard deviation)
+This also works for ``max`` and ``std``.
 
 When plotting the X-Y, X-Z and Y-Z sections, the min, max and mean values are plotted at once:
 
