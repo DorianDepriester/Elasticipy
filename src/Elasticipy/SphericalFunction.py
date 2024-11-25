@@ -616,7 +616,7 @@ class HyperSphericalFunction(SphericalFunction):
         -------
         matplotlib.figure.Figure
             Handle to the figure
-        matplotlib.Axes3D
+        tuple of matplotlib.axes.Axes
             Handle to axes
 
         See Also
@@ -627,6 +627,7 @@ class HyperSphericalFunction(SphericalFunction):
         theta_polar = np.linspace(0, 2 * np.pi, n_theta)
         titles = ('XY', 'XZ', 'YZ')
         handles, labels = [], []
+        axs = []
         for i in range(0, 3):
             ax = fig.add_subplot(1, 3, i+1, projection='polar')
             phi, theta, ax = _create_xyz_section(ax, titles[i], theta_polar)
@@ -645,8 +646,9 @@ class HyperSphericalFunction(SphericalFunction):
             ax.plot(theta_polar, np.mean(values, axis=1), color='red', label='Mean')
             area = ax.fill_between(theta_polar, min_val, max_val, alpha=0.2, label='Min/Max')
             line, = ax.plot(theta_polar, np.mean(values, axis=1), color='red', label='Mean')
+            axs.append(ax)
         handles.extend([line, area])
         labels.extend([line.get_label(), area.get_label()])
         fig.legend(handles, labels, loc='upper center', ncol=2, bbox_to_anchor=(0.5, 0.95))
         fig.show()
-        return fig, ax
+        return fig, axs
