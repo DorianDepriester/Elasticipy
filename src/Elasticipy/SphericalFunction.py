@@ -708,3 +708,76 @@ class HyperSphericalFunction(SphericalFunction):
         fig.legend(handles, labels, loc='upper center', ncol=2, bbox_to_anchor=(0.5, 0.95))
         fig.show()
         return fig, axs
+
+    def plot_as_pole_figure(self, n_theta=50, n_phi=200, n_psi=50, which='mean', projection='lambert', fig=None,
+                            plot_type='imshow', **kwargs):
+        """
+        Generate a pole figure plot from spherical function evaluation.
+
+        This function evaluates a spherical function over specified ranges of angles
+        (phi, theta, psi) and then generates a 2D pole figure plot using various
+        statistical summaries of the data (mean, std, min, max). It also supports
+        several types of plot visualizations such as 'imshow', 'contourf', and 'contour'.
+
+        Parameters
+        ----------
+        n_theta : int, optional
+            Number of sampling points for theta angle. Default is 50.
+        n_phi : int, optional
+            Number of sampling points for phi angle. Default is 200.
+        n_psi : int, optional
+            Number of sampling points for psi angle. Default is 50.
+        which : str, optional
+            Specifies the type of statistical summary to use for plotting.
+            Options include 'mean', 'std', 'min', 'max'. Default is 'mean'.
+        projection : str, optional
+            Type of projection for the pole figure plot. Default is 'lambert'.
+        fig : matplotlib.figure.Figure, optional
+            Pre-existing figure to use for plotting. If None, a new figure is created.
+            Default is None.
+        plot_type : str, optional
+            Type of plot to generate. Can be 'imshow', 'contourf', or 'contour'.
+            Default is 'imshow'.
+        **kwargs : dict, optional
+            Additional keyword arguments passed to the plotting functions.
+
+        Returns
+        -------
+        fig : matplotlib.figure.Figure
+            The figure object containing the plot.
+        ax : matplotlib.axes.Axes
+            The axes object containing the plot.
+        """
+        if fig is None:
+            fig = plt.figure()
+        ax = add_polefigure(fig, projection=projection)
+        phi = np.linspace(*self.domain[0], n_phi)
+        theta = np.linspace(*self.domain[1], n_theta)
+        psi = np.linspace(*self.domain[2], n_psi)
+        phi_grid, theta_grid, psi_grid = np.meshgrid(phi, theta, psi, indexing='ij')
+        phi_flat = phi_grid.flatten()
+        theta_flat = theta_grid.flatten()
+        psi_flat = psi_grid.flatten()
+        values = self.eval_spherical(np.array([phi_flat, theta_flat, psi_flat]).T)
+        reshaped_values = values.reshape((n_phi, n_theta, n_psi))
+        if which == 'std':
+            to_plot = np.std(reshaped_values, axis=2)
+        elif which == 'min':
+            to_plot = np.min(reshaped_values, axis=2)
+        elif which == 'max':
+            to_plot = np.max(reshaped_values, axis=2)
+        else:
+            to_plot = np.mean(reshaped_values, axis=2)
+        phi_grid, theta_grid = np.meshgrid(phi, theta, indexing='ij')
+        if plot_type == 'imshow':
+            sc = ax.pcolormesh(phi_grid, theta_grid, to_plot, **kwargs)
+        elif plot_type == 'contourf':
+            sc = ax.contourf(phi_grid, theta_grid, to_plot, **kwargs)
+        elif plot_type == 'contour':
+            sc = ax.contour(phi_grid, theta_grid, to_plot, **kwargs)
+        else:
+            raise ValueError(f'Unknown plot type: {plot_type}')
+        ax.set_rlim(*self.domain[1])
+        fig.colorbar(sc)
+        plt.show()
+        return fig, ax
