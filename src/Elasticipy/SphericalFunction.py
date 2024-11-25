@@ -403,25 +403,27 @@ class SphericalFunction:
         plt.show()
         return fig, ax
 
-    def plot_xyz_sections(self, n_theta=500):
+    def plot_xyz_sections(self, n_theta=500, **kwargs):
         """
-        Plot values in X-Y, X-Z and Y-Z planes
+        Plot XYZ sections of spherical data.
+
+        This method generates a figure with three polar plots showing the XY, XZ, and YZ sections of the
+        spherical data contained within the instance. Each section is plotted using n_theta evenly spaced
+        points over the interval [0, 2π].
 
         Parameters
         ----------
-        n_theta : int, default 500
-            Number of values of polar angle to use for plotting
+        n_theta : int, optional
+            Number of points to use for the polar plot angles. Default is 500.
+        **kwargs : dict, optional
+            Additional keyword arguments to pass to the plot function.
 
         Returns
         -------
-        matplotlib.figure.Figure
-            Handle to the figure
-        tuple of matplotlib.axes.Axes
-            Handle to axes
-
-        See Also
-        --------
-        plot3D : plot the values of the function over the whole unit sphere as a 3D surface
+        fig : matplotlib.figure.Figure
+            The figure object containing the polar plots.
+        axs : list of matplotlib.axes._subplots.PolarAxesSubplot
+            List of axes objects for each plot.
         """
         fig = plt.figure()
         theta_polar = np.linspace(0, 2*np.pi, n_theta)
@@ -434,7 +436,7 @@ class SphericalFunction:
             angles[:, 0] = phi
             angles[:, 1] = theta
             r = self.eval_spherical(angles)
-            ax.plot(theta_polar, r)
+            ax.plot(theta_polar, r, **kwargs)
             axs.append(ax)
         fig.show()
         return fig, axs
@@ -548,32 +550,31 @@ class HyperSphericalFunction(SphericalFunction):
 
     def plot3D(self, n_phi=50, n_theta=50, n_psi=50, which='mean', **kwargs):
         """
-        3D plotting of a spherical function
+        Generate a 3D plot representing the evaluation of spherical harmonics.
+
+        This function evaluates a function over a grid defined by spherical coordinates
+        (phi, theta, psi) and produces a 3D plot. It provides options to display the mean,
+        standard deviation, minimum, or maximum of the evaluated values along the third angles (psi).
+        The plot can be customized with additional keyword arguments.
 
         Parameters
         ----------
-        n_phi : int, default 50
-            Number of azimuth angles (phi) to use for plotting. Default is 50.
-        n_theta : int, default 50
-            Number of latitude angles (theta) to use for plotting. Default is 50.
-        n_psi : int, default 50
-            Number of psi value to look for min/max/mean value (see below). Default is 50.
-        which : str {'mean', 'std', 'min', 'max'}, default 'mean'
-            How to handle the 3rd coordinate. For instance, if which=='mean' (default), for a given value of angles
-            (phi, theta), the mean function value over all psi angles is plotted.
-        **kwargs
-            These arguments will be passed to ax.plot_surface() function.
+        n_phi : int, optional
+            Number of divisions along the phi axis, default is 50.
+        n_theta : int, optional
+            Number of divisions along the theta axis, default is 50.
+        n_psi : int, optional
+            Number of divisions along the psi axis, default is 50.
+        which : str, optional
+            Determines which statistical measure to plot ('mean', 'std', 'min', 'max'),
+            default is 'mean'.
+        kwargs : dict, optional
+            Additional keyword arguments to customize the plot.
 
         Returns
         -------
-        matplotlib.figure.Figure
-            Handle to the figure
-        matplotlib.Axes3D
-            Handle to axes
-
-        See Also
-        --------
-        plot_xyz_sections : plot statistics in X-Y, X-Z and Y-Z planes
+        tuple
+            A tuple containing the matplotlib figure and axes objects.
         """
         fig = plt.figure()
         phi = np.linspace(0, 2 * np.pi, n_phi)
@@ -598,30 +599,33 @@ class HyperSphericalFunction(SphericalFunction):
         plt.show()
         return fig, ax
 
-    def plot_xyz_sections(self, n_theta=500, n_psi=100):
+    def plot_xyz_sections(self, n_theta=500, n_psi=100, color_minmax='blue', alpha_minmax=0.2, color_mean='red'):
         """
-        Plot statistics in X-Y, X-Z and Y-Z planes.
+        Plots the XYZ sections using polar projections.
 
-        The function value will be plotted as functions of the first direction (u), whereas the second direction (v)
-        will be used to evaluate the statistics (min/max and mean).
+        This function creates a figure with three subplots representing the XY, XZ,
+        and YZ sections. It utilizes polar projections to plot the min, max, and mean
+        values of the evaluated function over given theta and phi ranges.
 
         Parameters
         ----------
-        n_theta : int, default 500
-            Number of values of polar angle to use for plotting
-        n_psi : int, default 100
-            Number of psi value to use for evaluating the statistics (mean, min and max)
+        n_theta : int, optional
+            Number of theta points to use in the grid (default is 500).
+        n_psi : int, optional
+            Number of psi points to use in the grid (default is 100).
+        color_minmax : str, optional
+            Color to use for plotting min and max values (default is 'blue').
+        alpha_minmax : float, optional
+            Alpha transparency level to use for the min/max fill (default is 0.2).
+        color_mean : str, optional
+            Color to use for plotting mean values (default is 'red').
 
         Returns
         -------
-        matplotlib.figure.Figure
-            Handle to the figure
-        tuple of matplotlib.axes.Axes
-            Handle to axes
-
-        See Also
-        --------
-        plot3D : plot a given statistic as a 3D surface
+        fig : matplotlib.figure.Figure
+            The created figure.
+        axs : list of matplotlib.axes._subplots.PolarAxesSubplot
+            List of polar axis subplots.
         """
         fig = plt.figure()
         theta_polar = np.linspace(0, 2 * np.pi, n_theta)
@@ -641,11 +645,10 @@ class HyperSphericalFunction(SphericalFunction):
             values = self.eval(u, v).reshape((n_theta, n_psi))
             min_val = np.min(values, axis=1)
             max_val = np.max(values, axis=1)
-            ax.plot(theta_polar, min_val, color='blue')
-            ax.plot(theta_polar, max_val, color='blue')
-            ax.plot(theta_polar, np.mean(values, axis=1), color='red', label='Mean')
-            area = ax.fill_between(theta_polar, min_val, max_val, alpha=0.2, label='Min/Max')
-            line, = ax.plot(theta_polar, np.mean(values, axis=1), color='red', label='Mean')
+            ax.plot(theta_polar, min_val, color=color_minmax)
+            ax.plot(theta_polar, max_val, color=color_minmax)
+            area = ax.fill_between(theta_polar, min_val, max_val, alpha=alpha_minmax, label='Min/Max')
+            line, = ax.plot(theta_polar, np.mean(values, axis=1), color=color_mean, label='Mean')
             axs.append(ax)
         handles.extend([line, area])
         labels.extend([line.get_label(), area.get_label()])
