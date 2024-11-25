@@ -13,14 +13,14 @@ Direction-dependent Young moduli
 
 First, create a stiffness tensor with a given symmetry (let say, monoclinic):
 
->>> from Elasticipy.FourthOrderTensor import tensorFromCrystalSymmetry
+>>> from Elasticipy.FourthOrderTensor import StiffnessTensor
 >>>
->>> C = _matrixFromCrystalSymmetry(symmetry='monoclinic', diad='y', phase_name='TiNi',
+>>> C = StiffnessTensor(symmetry='monoclinic', diad='y', phase_name='TiNi',
 >>>                              C11=231, C12=127, C13=104,
 >>>                              C22=240, C23=131, C33=175,
 >>>                              C44=81, C55=11, C66=85,
 >>>                              C15=-18, C25=1, C35=-3, C46=3)
->>>    print(C)
+>>> print(C)
 Stiffness tensor (in Voigt notation) for TiNi:
 [[231. 127. 104.   0. -18.   0.]
  [127. 240. 131.   0.   1.   0.]
