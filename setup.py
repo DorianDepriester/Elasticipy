@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='Elasticipy',
-    version='2.0.1',
+    version=__import__('subprocess').check_output(['git', 'describe', '--tags']).strip().decode(),
     packages=find_packages(where="src"),
     package_dir={'': 'src'},
     url='https://elasticipy.readthedocs.io/',
