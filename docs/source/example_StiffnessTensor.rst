@@ -15,11 +15,11 @@ First, create a stiffness tensor with a given symmetry (let say, monoclinic):
 
 >>> from Elasticipy.FourthOrderTensor import StiffnessTensor
 >>>
->>> C = StiffnessTensor(symmetry='monoclinic', diad='y', phase_name='TiNi',
->>>                              C11=231, C12=127, C13=104,
->>>                              C22=240, C23=131, C33=175,
->>>                              C44=81, C55=11, C66=85,
->>>                              C15=-18, C25=1, C35=-3, C46=3)
+>>> C = StiffnessTensor.fromCrystalSymmetry(symmetry='monoclinic', diad='y', phase_name='TiNi',
+>>>                                         C11=231, C12=127, C13=104,
+>>>                                         C22=240, C23=131, C33=175,
+>>>                                         C44=81, C55=11, C66=85,
+>>>                                         C15=-18, C25=1, C35=-3, C46=3)
 >>> print(C)
 Stiffness tensor (in Voigt notation) for TiNi:
 [[231. 127. 104.   0. -18.   0.]
@@ -45,7 +45,8 @@ let's see its value along the x, y and z directions:
 
 Actually, a more compact syntax, and a faster way to do that, is to use:
 
->>> print(E.eval(np.eye(3))
+>>> import numpy as np
+>>> print(E.eval(np.eye(3)))
 array([124.5223244 , 120.92120855,  96.13750722])
 
 To quickly see the min/max value of a ``SphericalFunction``, just print it:
@@ -111,7 +112,7 @@ But at least, for a each first direction, we can consider the mean value for all
 
 Alternatively, we can see the minimal values for each orthogonal directions (instead of the mean):
 
->>> G.plot(which=min)
+>>> G.plot3D(which='min')
 
 This also work for ``max`` and ``std`` (standard deviation)
 
