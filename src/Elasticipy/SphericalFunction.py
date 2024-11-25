@@ -4,7 +4,7 @@ from matplotlib.colors import Normalize
 from numpy import cos, sin
 from scipy import integrate as integrate
 from scipy import optimize
-
+from Elasticipy.PoleFigure import add_polefigure
 
 def sph2cart(*args):
     """
@@ -440,6 +440,59 @@ class SphericalFunction:
             axs.append(ax)
         fig.show()
         return fig, axs
+
+    def plot_as_pole_figure(self, n_theta=50, n_phi=200, projection='lambert', fig=None, plot_type='imshow', **kwargs):
+        """
+        Plots a pole figure visualization of spherical data using specified parameters and plot types.
+
+        The function creates a pole figure based on spherical coordinates and can use different
+        types of plots including 'imshow', 'contourf', and 'contour'. It also supports a variety of
+        projections and renders the figure using Matplotlib.
+
+        Parameters
+        ----------
+        n_theta : int, optional
+            Number of divisions in the theta dimension, by default 50.
+        n_phi : int, optional
+            Number of divisions in the phi dimension, by default 200.
+        projection : str {'Lambert','equal area'}, optional
+            The type of projection to use for the plot, by default 'Lambert'.
+        fig : matplotlib.figure.Figure, optional
+            A Matplotlib figure object. If None, a new figure will be created, by default None.
+        plot_type : str, optional
+            The type of plot to generate: 'imshow', 'contourf', or 'contour', by default 'imshow'.
+        **kwargs : dict
+            Additional keyword arguments to pass to the plotting functions.
+
+        Returns
+        -------
+        fig : matplotlib.figure.Figure
+            The Matplotlib figure containing the plot.
+        ax : matplotlib.axes._axes.Axes
+            The Matplotlib axes of the plot.
+        """
+        if fig is None:
+            fig = plt.figure()
+        ax = add_polefigure(fig, projection=projection)
+        phi = np.linspace(*self.domain[0], n_phi)
+        theta = np.linspace(*self.domain[1], n_theta)
+        phi, theta = np.meshgrid(phi, theta)
+        phi_flat = phi.flatten()
+        theta_flat = theta.flatten()
+        values = self.eval_spherical(np.array([phi_flat, theta_flat]).T)
+        if plot_type == 'imshow':
+            sc = ax.pcolormesh(phi, theta, values.reshape(phi.shape), **kwargs)
+        elif plot_type == 'contourf':
+            sc = ax.contourf(phi, theta, values.reshape(phi.shape), **kwargs)
+        elif plot_type == 'contour':
+            sc = ax.contour(phi, theta, values.reshape(phi.shape), **kwargs)
+        else:
+            raise ValueError(f'Unknown plot type: {plot_type}')
+        ax.set_rlim(*self.domain[1])
+        fig.colorbar(sc)
+        plt.show()
+        return fig, ax
+
 
 
 class HyperSphericalFunction(SphericalFunction):
