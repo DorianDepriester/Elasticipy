@@ -34,7 +34,7 @@ Let's investigate the Young modulus:
 
 >>> E = C.Young_modulus
 
-Here ``E`` is a ``SphericalFunction`` object. It meas that its value depends on the considered direction. For instance,
+Here ``E`` is a ``SphericalFunction`` object. It means that its value depends on the considered direction. For instance,
 let's see its value along the x, y and z directions:
 
 >>> Ex = E.eval([1,0,0])
