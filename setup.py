@@ -5,7 +5,8 @@ with open("README.md", "r") as fh:
 
 setup(
     name='Elasticipy',
-    version=__import__('subprocess').check_output(['git', 'describe', '--tags']).strip().decode(),
+    use_scm_version=True,  # Active setuptools_scm
+    setup_requires=["setuptools_scm"],  # Spécifie la dépendance à setuptools_scm
     packages=find_packages(where="src"),
     package_dir={'': 'src'},
     url='https://elasticipy.readthedocs.io/',
