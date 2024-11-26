@@ -356,6 +356,18 @@ class SymmetricTensor:
         -------
         FourthOrderTensor
 
+        See Also
+        --------
+        StiffnessTensor.isotropic : creates an isotropic stiffness tensor from two paremeters (e.g. E and v).
+
+        Notes
+        -----
+        The relationships between the tensor's components depend on the crystallogrpahic symmetry [1]_.
+
+        References
+        ----------
+        .. [1] Nye, J. F. Physical Properties of Crystals. London: Oxford University Press, 1959.
+
         Examples
         --------
         >>> from Elasticipy.FourthOrderTensor import StiffnessTensor\n
