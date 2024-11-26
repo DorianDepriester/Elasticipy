@@ -371,7 +371,7 @@ class SymmetricTensor:
         Examples
         --------
         >>> from Elasticipy.FourthOrderTensor import StiffnessTensor\n
-        ... StiffnessTensor.fromCrystalSymmetry(symmetry='monoclinic', diad='y', phase_name='TiNi',
+        >>> StiffnessTensor.fromCrystalSymmetry(symmetry='monoclinic', diad='y', phase_name='TiNi',
         ...                                     C11=231, C12=127, C13=104,
         ...                                     C22=240, C23=131, C33=175,
         ...                                     C44=81, C55=11, C66=85,
