@@ -1,5 +1,5 @@
 import unittest
-from Elasticipy.FourthOrderTensor import ComplianceTensor, _matrixFromCrystalSymmetry
+from Elasticipy.FourthOrderTensor import ComplianceTensor, StiffnessTensor
 import numpy as np
 from pytest import approx
 
@@ -50,8 +50,8 @@ class TestComplianceTensor(unittest.TestCase):
 
     def test_unvoigt(self):
         lame1, lame2 = 1, 2
-        C = _matrixFromCrystalSymmetry(C11=lame1 + 2 * lame2,
-                                       C12=lame1, symmetry='isotropic')
+        C = StiffnessTensor.fromCrystalSymmetry(C11=lame1 + 2 * lame2,
+                                                C12=lame1, symmetry='isotropic')
         C_full = C.full_tensor()
         eye = np.eye(3)
         A = np.einsum('ij,kl->ijkl', eye, eye)
