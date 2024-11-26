@@ -560,7 +560,7 @@ class StiffnessTensor(SymmetricTensor):
         return (Reuss + Voigt) * 0.5
 
     @classmethod
-    def isotropic(cls, E=None, nu=None, lame1=None, lame2=None):
+    def isotropic(cls, E=None, nu=None, lame1=None, lame2=None, phase_name=None):
         """
         Create an isotropic stiffness tensor from two elasticity coefficients, namely: E, nu, lame1, or lame2. Exactly
         two of these coefficients must be provided.
@@ -575,6 +575,8 @@ class StiffnessTensor(SymmetricTensor):
             First Lamé coefficient
         lame2 : float, None
             Second Lamé coefficient
+        phase_name : str, None
+            Name to print
 
         Returns
         -------
@@ -613,7 +615,7 @@ class StiffnessTensor(SymmetricTensor):
         C12 = lame1
         C44 = lame2
         matrix = _isotropic_matrix(C11, C12, C44)
-        return StiffnessTensor(np.array(matrix), symmetry='isotropic')
+        return StiffnessTensor(np.array(matrix), symmetry='isotropic', phase_name=phase_name)
 
 
 class ComplianceTensor(StiffnessTensor):
