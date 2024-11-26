@@ -82,7 +82,7 @@ def _matrixFromCrystalSymmetry(C11_C12_factor=0.5, component_prefix='C', symmetr
     if point_group is not None:
         if (point_group in tetra_1) or (point_group in tetra_2):
             symmetry = 'tetragonal'
-        elif (point_group in trigo_1) or (point_group in trigo_1):
+        elif (point_group in trigo_1) or (point_group in trigo_2):
             symmetry = 'trigonal'
     try:
         if symmetry == 'isotropic':
