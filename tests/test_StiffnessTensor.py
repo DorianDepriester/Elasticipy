@@ -70,6 +70,15 @@ class TestComplianceTensor(unittest.TestCase):
             assert approx(average.shear_modulus.mean(), rel=1e-4) == G_mean_th[i]
             assert approx(average.Poisson_ratio.mean(), rel=1e-4) == nu_mean_th[i]
 
+    def test_isotropic(self, E=210000, nu=0.28):
+        C = StiffnessTensor.isotropic(E=E, nu=nu)
+        G = C.shear_modulus.mean()
+        assert approx(G) == E / (1+nu) /2
+        C = StiffnessTensor.isotropic(E=E, lame2=G)
+        assert approx(C.Poisson_ratio.mean()) == nu
+        C = StiffnessTensor.isotropic(lame2=G, nu=nu)
+        assert approx(C.Young_modulus.mean()) == E
+
 
 if __name__ == '__main__':
     unittest.main()
