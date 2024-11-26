@@ -145,10 +145,20 @@ def _matrixFromCrystalSymmetry(C11_C12_factor=0.5, component_prefix='C', symmetr
         if (symmetry == 'tetragonal') or (symmetry == 'trigonal'):
             err_msg = "For point group {}, keyword argument {} is required".format(point_group, entry_error)
         elif symmetry == 'monoclinic':
-            err_msg = "For {} symmetry with diag='{}', keyword argument {} is required".format(symmetry, diad, entry_error)
+            err_msg = "For {} symmetry with diag='{}', keyword argument {} is required".format(symmetry, diad,
+                                                                                               entry_error)
         else:
             err_msg = "For {} symmetry, keyword argument {} is required".format(symmetry, entry_error)
         raise ValueError(err_msg)
+
+
+def _isotropic_matrix(C11, C12, C44):
+    return np.array([[C11, C12, C12, 0, 0, 0],
+                     [C12, C11, C12, 0, 0, 0],
+                     [C12, C12, C11, 0, 0, 0],
+                     [0, 0, 0, C44, 0, 0],
+                     [0, 0, 0, 0, C44, 0],
+                     [0, 0, 0, 0, 0, C44]])
 
 
 class SymmetricTensor:
@@ -424,9 +434,11 @@ class StiffnessTensor(SymmetricTensor):
         SphericalFunction
             Young's modulus
         """
+
         def compute_young_modulus(n):
             eps = _compute_unit_strain_along_direction(self, n, n)
             return 1 / eps
+
         return SphericalFunction(compute_young_modulus)
 
     @property
@@ -439,6 +451,7 @@ class StiffnessTensor(SymmetricTensor):
         HyperSphericalFunction
             Shear modulus
         """
+
         def compute_shear_modulus(m, n):
             eps = _compute_unit_strain_along_direction(self, m, n)
             return 1 / (4 * eps)
@@ -455,10 +468,12 @@ class StiffnessTensor(SymmetricTensor):
         HyperSphericalFunction
             Poisson's ratio
         """
+
         def compute_PoissonRatio(m, n):
             eps1 = _compute_unit_strain_along_direction(self, m, m)
             eps2 = _compute_unit_strain_along_direction(self, m, n, transverse=True)
             return -eps2 / eps1
+
         return HyperSphericalFunction(compute_PoissonRatio)
 
     def Voigt_average(self):
@@ -479,18 +494,13 @@ class StiffnessTensor(SymmetricTensor):
         if self.orientations is None:
             c = self.matrix
             C11 = (c[0, 0] + c[1, 1] + c[2, 2]) / 5 \
-                + (c[0, 1] + c[0, 2] + c[1, 2]) * 2 / 15 \
-                + (c[3, 3] + c[4, 4] + c[5, 5]) * 4 / 15
+                  + (c[0, 1] + c[0, 2] + c[1, 2]) * 2 / 15 \
+                  + (c[3, 3] + c[4, 4] + c[5, 5]) * 4 / 15
             C12 = (c[0, 0] + c[1, 1] + c[2, 2]) / 15 \
-                + (c[0, 1] + c[0, 2] + c[1, 2]) * 4 / 15 \
-                - (c[3, 3] + c[4, 4] + c[5, 5]) * 2 / 15
+                  + (c[0, 1] + c[0, 2] + c[1, 2]) * 4 / 15 \
+                  - (c[3, 3] + c[4, 4] + c[5, 5]) * 2 / 15
             C44 = (c[0, 0] + c[1, 1] + c[2, 2] - c[0, 1] - c[0, 2] - c[1, 2]) / 15 + (c[3, 3] + c[4, 4] + c[5, 5]) / 5
-            mat = np.array([[C11, C12, C12, 0,   0,   0],
-                            [C12, C11, C12, 0,   0,   0],
-                            [C12, C12, C11, 0,   0,   0],
-                            [0,   0,   0,   C44, 0,   0],
-                            [0,   0,   0,   0,   C44, 0],
-                            [0,   0,   0,   0,   0,   C44]])
+            mat = _isotropic_matrix(C11, C12, C44)
             return StiffnessTensor(mat, symmetry='isotropic', phase_name=self.phase_name)
         else:
             return self._orientation_average(self.orientations)
@@ -537,6 +547,62 @@ class StiffnessTensor(SymmetricTensor):
         Voigt = self.Voigt_average()
         return (Reuss + Voigt) * 0.5
 
+    @classmethod
+    def isotropic(cls, E=None, nu=None, lame1=None, lame2=None):
+        """
+        Create an isotropic stiffness tensor from two elasticity coefficients, namely: E, nu, lame1, or lame2. Exactly
+        two of these coefficients must be provided.
+
+        Parameters
+        ----------
+        E : float, None
+            Young modulus
+        nu : float, None
+            Poisson ratio
+        lame1 : float, None
+            First Lamé coefficient
+        lame2 : float, None
+            Second Lamé coefficient
+
+        Returns
+        -------
+            Corresponding isotropic stiffness tensor
+
+        Examples
+        --------
+        On can check that the shear modulus for steel is around 80 GPa:
+        >>> C=StiffnessTensor.isotropic(E=210e3, nu=0.28)\n
+        ... C.shear_modulus
+        Hyperspherical function
+        Min=82031.24999999991, Max=82031.24999999997
+        """
+        argument_vector = np.array([E, nu, lame1, lame2])
+        if np.count_nonzero(argument_vector) != 2:
+            raise ValueError("Exactly two values are required among E, nu, lame1 and lame2.")
+        if E is not None:
+            if nu is not None:
+                lame1 = E * nu / ((1 + nu) * (1 - 2 * nu))
+                lame2 = E / (1 + nu) / 2
+            elif lame1 is not None:
+                R = np.sqrt(E ** 2 + 9 * lame1 ** 2 + 2 * E * lame1)
+                lame2 = (E - 3 * lame1 + R) / 4
+            elif lame2 is not None:
+                lame1 = lame2 * (E - 2 * lame2) / (3 * lame2 - E)
+            else:
+                raise ValueError('Either nu, lame1 or lame2 must be provided.')
+        elif nu is not None:
+            if lame1 is not None:
+                lame2 = lame1 * (1 - 2 * nu) / (2 * nu)
+            elif lame2 is not None:
+                lame1 = 2 * lame2 * nu / (1 - 2 * nu)
+            else:
+                raise ValueError('Either lame1 or lame2 must be provided.')
+        C11 = lame1 + 2 * lame2
+        C12 = lame1
+        C44 = lame2
+        matrix = _isotropic_matrix(C11, C12, C44)
+        return StiffnessTensor(np.array(matrix), symmetry='isotropic')
+
 
 class ComplianceTensor(StiffnessTensor):
     """
@@ -576,19 +642,15 @@ class ComplianceTensor(StiffnessTensor):
     def Reuss_average(self):
         if self.orientations is None:
             s = self.matrix
-            C11 = (s[0, 0] + s[1, 1] + s[2, 2]) / 5 \
-                + (s[0, 1] + s[0, 2] + s[1, 2]) * 2 / 15 \
-                + (s[3, 3] + s[4, 4] + s[5, 5]) * 1 / 15
-            C12 = (s[0, 0] + s[1, 1] + s[2, 2]) / 15 \
-                + (s[0, 1] + s[0, 2] + s[1, 2]) * 4 / 15 \
-                - (s[3, 3] + s[4, 4] + s[5, 5]) * 1 / 30
-            C44 = (s[0, 0] + s[1, 1] + s[2, 2] - s[0, 1] - s[0, 2] - s[1, 2]) * 4 / 15 + (s[3, 3] + s[4, 4] + s[5, 5]) / 5
-            mat = np.array([[C11, C12, C12, 0,   0,   0],
-                            [C12, C11, C12, 0,   0,   0],
-                            [C12, C12, C11, 0,   0,   0],
-                            [0,   0,   0,   C44, 0,   0],
-                            [0,   0,   0,   0,   C44, 0],
-                            [0,   0,   0,   0,   0,   C44]])
+            S11 = (s[0, 0] + s[1, 1] + s[2, 2]) / 5 \
+                  + (s[0, 1] + s[0, 2] + s[1, 2]) * 2 / 15 \
+                  + (s[3, 3] + s[4, 4] + s[5, 5]) * 1 / 15
+            S12 = (s[0, 0] + s[1, 1] + s[2, 2]) / 15 \
+                  + (s[0, 1] + s[0, 2] + s[1, 2]) * 4 / 15 \
+                  - (s[3, 3] + s[4, 4] + s[5, 5]) * 1 / 30
+            S44 = ((s[0, 0] + s[1, 1] + s[2, 2] - s[0, 1] - s[0, 2] - s[1, 2]) * 4 / 15 +
+                   (s[3, 3] + s[4, 4] + s[5, 5]) / 5)
+            mat = _isotropic_matrix(S11, S12, S44)
             return ComplianceTensor(mat, symmetry='isotropic', phase_name=self.phase_name)
         else:
             return self._orientation_average(self.orientations)
@@ -599,3 +661,19 @@ class ComplianceTensor(StiffnessTensor):
     def Hill_average(self):
         return self.inv().Hill_average()
 
+    @classmethod
+    def isotropic(cls, **kwargs):
+        """
+        Create an isotropic compliance tensor for either E, nu, lame1 or lame2. Exactly two of these parameters must be
+        provided.
+
+        Parameters
+        ----------
+        kwargs : keyword arguments
+            E, nu, lame1 or lame2, passed to the StiffnessTensor.isotropic constructor
+
+        See Also
+        --------
+        StressTensor.isotropic
+        """
+        return StiffnessTensor.isotropic(**kwargs).inv()
