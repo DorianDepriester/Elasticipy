@@ -15,7 +15,7 @@ def _parse_tensor_components(prefix, **kwargs):
     return value
 
 
-def voigt(i, j):
+def voigt_indices(i, j):
     """
     Translate the two-index notation to one-index notation
 
@@ -36,7 +36,15 @@ def voigt(i, j):
     return voigt_mat[i, j]
 
 
-def unvoigt(i):
+def unvoigt_index(i):
+    """
+    Translate the one-index notation to two-index notation
+
+    Parameters
+    ----------
+    i : int or np.ndarray
+        Index to translate
+    """
     inverse_voigt_mat = np.array([[0, 0],
                                   [1, 1],
                                   [2, 2],
@@ -224,8 +232,8 @@ class SymmetricTensor:
             Full tensor (4-index notation)
         """
         i, j, k, ell = np.indices((3, 3, 3, 3))
-        ij = voigt(i, j)
-        kl = voigt(k, ell)
+        ij = voigt_indices(i, j)
+        kl = voigt_indices(k, ell)
         m = self.matrix[ij, kl] / self.voigt_map[ij, kl]
         if self.orientations is None:
             return m
@@ -251,8 +259,8 @@ class SymmetricTensor:
         rot_mat = rotation.as_matrix()
         rotated_tensor = np.einsum('im,jn,ko,lp,mnop->ijkl', rot_mat, rot_mat, rot_mat, rot_mat, self.full_tensor())
         ij, kl = np.indices((6, 6))
-        i, j = unvoigt(ij).T
-        k, ell = unvoigt(kl).T
+        i, j = unvoigt_index(ij).T
+        k, ell = unvoigt_index(kl).T
         rotated_matrix = rotated_tensor[i, j, k, ell] * self.voigt_map[ij, kl]
         return self.__class__(rotated_matrix)
 
@@ -263,8 +271,8 @@ class SymmetricTensor:
             elif other.shape == (3, 3, 3, 3):
                 ten = self.full_tensor() + other
                 ij, kl = np.indices((6, 6))
-                i, j = unvoigt(ij).T
-                k, ell = unvoigt(kl).T
+                i, j = unvoigt_index(ij).T
+                k, ell = unvoigt_index(kl).T
                 mat = ten[i, j, k, ell] * self.voigt_map[ij, kl]
             else:
                 raise ValueError('The input argument must be either a 6x6 matrix or a (3,3,3,3) array.')
@@ -326,8 +334,8 @@ class SymmetricTensor:
             m = orientations
             mean_full_tensor = np.mean(self.full_tensor(), axis=0)
             ij, kl = np.indices((6, 6))
-            i, j = unvoigt(ij).T
-            k, ell = unvoigt(kl).T
+            i, j = unvoigt_index(ij).T
+            k, ell = unvoigt_index(kl).T
             rotated_matrix = mean_full_tensor[i, j, k, ell]
             return self.__class__(rotated_matrix)
 
