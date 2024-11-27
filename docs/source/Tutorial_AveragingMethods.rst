@@ -1,8 +1,6 @@
 Averaging methods
 -----------------
 
-Introduction
-============
 This tutorial explains how to compute the Voigt, Reuss and Hill averages from a given stiffness tensor and a finite or
 an infinite set of rotations.
 
@@ -11,9 +9,9 @@ assumption, namely:
 
 - Voigt (i.e. homogeneous strain assumption);
 - Reuss (i.e. homogeneous stress assumption);
-- Voigt-Reuss-Hill (or Hill, for short.
+- Voigt-Reuss-Hill (or Hill, for short).
 
-The later is just the arthmetic mean between the Voig and the Reuss stiffnesses.
+The later is just the arithmetic mean between the Voigt and the Reuss stiffnesses.
 
 As an example, let's consider the stiffness tensor for monoclinic TiNi:
 
@@ -68,7 +66,7 @@ If one wants to consider a finite set of orientations, or consider that these or
 over the SO3 (i.e. if we have a crystallographic texture), the first steps consists in estimating the mean of all the
 rotated stiffnesses/compliances (depending on the model).
 
-As an example, we assume that the material displays a perfect fiber texture along *z*. In terms of Bunge-Euler angles,
+As an example, we assume that the material displays a perfect fiber texture along **z**. In terms of Bunge-Euler angles,
 it means that we have Phi=0 for each orientation:
 
     >>> from scipy.spatial.transform import Rotation
