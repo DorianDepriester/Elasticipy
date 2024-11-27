@@ -303,10 +303,16 @@ class SymmetricTensor:
             return self.__class__(self.matrix * other, symmetry=self.symmetry)
 
     def __rmul__(self, other):
-        if isinstance(other, (Rotation, float, int)):
+        if isinstance(other, (Rotation, float, int, np.number)):
             return self * other
         else:
-            raise ValueError('A fourth order tensor can be left-multiplied by rotations or scalar only.')
+            raise NotImplementedError('A fourth order tensor can be left-multiplied by rotations or scalar only.')
+
+    def __truediv__(self, other):
+        if isinstance(other, (float, int, np.number)):
+            return self.__class__(self.matrix / other, symmetry=self.symmetry)
+        else:
+            raise NotImplementedError
 
     def _orientation_average(self, orientations):
         """
