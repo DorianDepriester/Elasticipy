@@ -177,3 +177,5 @@ Which yields the same results in terms of stress:
     [[ 5.35134832e-01  8.22419895e+01  2.02619662e-01]
      [ 8.22419895e+01 -4.88440590e-01 -1.52733598e-01]
      [ 2.02619662e-01 -1.52733598e-01 -4.66942413e-02]]
+
+See :ref:`here<Averaging methods>` for further details about the averaging methods.
