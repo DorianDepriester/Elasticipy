@@ -285,6 +285,12 @@ class SymmetricTensor:
             raise ValueError('I don''t know how to add {} with {}.'.format(type(self), type(other)))
         return self.__class__(mat)
 
+    def __sub__(self, other):
+        if isinstance(other, SymmetricTensor):
+            return self.__add__(-other.matrix)
+        else:
+            return self.__add__(-other)
+
     def __mul__(self, other):
         if isinstance(other, SecondOrderTensor):
             return SecondOrderTensor(self * other.matrix)
