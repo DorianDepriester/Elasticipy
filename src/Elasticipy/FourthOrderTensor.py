@@ -592,9 +592,10 @@ class StiffnessTensor(SymmetricTensor):
 
         Examples
         --------
-        On can check that the shear modulus for steel is around 80 GPa:
-        >>> C=StiffnessTensor.isotropic(E=210e3, nu=0.28)\n
-        ... C.shear_modulus
+        On can check that the shear modulus for steel is around 82 GPa:
+
+        >>> C=StiffnessTensor.isotropic(E=210e3, nu=0.28)
+        >>> C.shear_modulus
         Hyperspherical function
         Min=82031.24999999991, Max=82031.24999999997
         """
@@ -696,6 +697,6 @@ class ComplianceTensor(StiffnessTensor):
 
         See Also
         --------
-        StressTensor.isotropic
+        fromCrystalSymmetry : Define a stiffness tensor, taking advantage of crystal symmetry
         """
         return StiffnessTensor.isotropic(**kwargs).inv()
