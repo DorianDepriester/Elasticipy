@@ -336,7 +336,7 @@ class SymmetricTensor:
             ij, kl = np.indices((6, 6))
             i, j = unvoigt_index(ij).T
             k, ell = unvoigt_index(kl).T
-            rotated_matrix = mean_full_tensor[i, j, k, ell]
+            rotated_matrix = mean_full_tensor[i, j, k, ell] * self.voigt_map[ij, kl]
             return self.__class__(rotated_matrix)
 
     @classmethod
