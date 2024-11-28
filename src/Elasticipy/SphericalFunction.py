@@ -155,7 +155,8 @@ class SphericalFunction:
                 return self.fun(*x) + other
             return self.__class__(fun)
         else:
-            raise NotImplementedError('A spherical function can only be added to a function or a scalar value')
+            msg_error = 'A {} can only be added to another {} or a scalar value.'.format(self.name, self.name)
+            raise NotImplementedError(msg_error)
 
     def __sub__(self, other):
         if isinstance(other, self.__class__):
