@@ -638,6 +638,46 @@ class StiffnessTensor(SymmetricTensor):
         matrix = _isotropic_matrix(C11, C12, C44)
         return StiffnessTensor(np.array(matrix), symmetry='isotropic', phase_name=phase_name)
 
+    def ChristoffelTensor(self, u):
+        """
+        Create the Christoffel tensor along a given direction, or set or directions
+
+        Parameters
+        ----------
+        u : list or np.ndarray
+            3D direction(s) to compute the Christoffel tensor along with
+        """
+        u_vec = np.atleast_2d(u)
+        u_vec = (u_vec.T/np.linalg.norm(u_vec, axis=1)).T
+        return np.einsum('ijkl,pk,pl->pij', self.full_tensor(), u_vec, u_vec)
+
+    def wave_velocity(self, rho):
+        """
+        Compute the wave velocities, given the mass density.
+
+        Parameters
+        ----------
+        rho : float
+            mass density
+
+        Returns
+        -------
+        c_p : SphericalFunction
+            Velocity of the primary (compressive) wave
+        c_s1 : SphericalFunction
+            Velocity of the fast secondary (shear) wave
+        c_s2 : SphericalFunction
+            Velocity of the slow secondary (shear) wave
+        """
+        def make_fun(index):
+            def fun(n):
+                Gamma = self.ChristoffelTensor(n)
+                eig, _ = np.linalg.eig(Gamma)
+                eig = np.sort(eig, axis=-1, )
+                return np.sqrt(eig[..., index]/rho)
+            return fun
+        return [SphericalFunction(make_fun(i)) for i in range(3)]
+
 
 class ComplianceTensor(StiffnessTensor):
     """
@@ -712,3 +752,4 @@ class ComplianceTensor(StiffnessTensor):
         fromCrystalSymmetry : Define a stiffness tensor, taking advantage of crystal symmetry
         """
         return StiffnessTensor.isotropic(**kwargs).inv()
+
