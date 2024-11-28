@@ -146,21 +146,22 @@ class SphericalFunction:
         return s
 
     def __add__(self, other):
-        if isinstance(other, SphericalFunction):
-            def fun(x):
-                return self.fun(x) + other.fun(x)
-            return SphericalFunction(fun)
+        if isinstance(other, self.__class__):
+            def fun(*x):
+                return self.fun(*x) + other.fun(*x)
+            return self.__class__(fun)
         elif isinstance(other, (float, int, np.number)):
-            def fun(x):
-                return self.fun(x) + other
+            def fun(*x):
+                return self.fun(*x) + other
+            return self.__class__(fun)
         else:
-            raise NotImplemented('A spherical function can only be added to a function or a scalar value')
+            raise NotImplementedError('A spherical function can only be added to a function or a scalar value')
 
     def __sub__(self, other):
-        if isinstance(other, SphericalFunction):
-            def fun(x):
-                return self.fun(x) - other.fun(x)
-            return SphericalFunction(fun)
+        if isinstance(other, self.__class__):
+            def fun(*x):
+                return self.fun(*x) - other.fun(*x)
+            return self.__class__(fun)
         else:
             return self.__add__(-other)
 
