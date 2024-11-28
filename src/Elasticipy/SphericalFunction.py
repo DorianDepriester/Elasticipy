@@ -145,6 +145,25 @@ class SphericalFunction:
         s += 'Min={}, Max={}'.format(val_min, val_max)
         return s
 
+    def __add__(self, other):
+        if isinstance(other, SphericalFunction):
+            def fun(x):
+                return self.fun(x) + other.fun(x)
+            return SphericalFunction(fun)
+        elif isinstance(other, (float, int, np.number)):
+            def fun(x):
+                return self.fun(x) + other
+        else:
+            raise NotImplemented('A spherical function can only be added to a function or a scalar value')
+
+    def __sub__(self, other):
+        if isinstance(other, SphericalFunction):
+            def fun(x):
+                return self.fun(x) - other.fun(x)
+            return SphericalFunction(fun)
+        else:
+            return self.__add__(-other)
+
     def eval(self, u):
         """
         Evaluate value along a given (set of) direction(s).
