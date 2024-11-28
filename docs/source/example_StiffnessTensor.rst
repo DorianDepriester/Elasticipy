@@ -1,5 +1,5 @@
-Tutorial: extracting elasticity constant from the stiffness tensor
-==================================================================
+Tutorial: extracting elasticity constants from the stiffness tensor
+===================================================================
 
 
 Introduction
@@ -67,8 +67,8 @@ The shear modulus can be computed from the stiffness tensor as well:
     Hyperspherical function
     Min=8.748742560867354, Max=86.60555127546394
 
-Here, the shear modulus is a ``HyperSphericalFunction`` object because its value depends on two orthogonal direction (in
-other words, its arguments must lie on an unit hypersphere S3).
+Here, the shear modulus is a ``HyperSphericalFunction`` object because its value depends on two orthogonal directions
+(in other words, its arguments must lie on an unit hypersphere S3).
 
 Let's compute its value with respect to X and Y directions:
 
@@ -101,8 +101,8 @@ Alternatively, we can plot the Young moduli on X-Y, X-Z and Y-Z sections only:
 
 Hyperspherical functions
 ~~~~~~~~~~~~~~~~~~~~~~~~
-Hyperspherical functions cannot plotted as 3D surfaces, as their values depends on two orthogonal directions.
-But at least, for a each direction **u**, we can consider the mean value for all the orthogonal directions **v** for
+Hyperspherical functions cannot plotted as 3D surfaces, as their values depend on two orthogonal directions.
+But at least, for a each direction **u**, we can consider the mean value for all the orthogonal directions **v** when
 plotting:
 
     >>> G.plot3D() # doctest: +SKIP
@@ -111,7 +111,7 @@ Instead of the mean value, we can consider other statistics, e.g.:
 
     >>> G.plot3D(which='min')   # doctest: +SKIP
 
-This also works for ``max`` and ``std``.
+This also works for ``max`` and ``std``. These parameters also apply for pole figures (see above).
 
 When plotting the X-Y, X-Z and Y-Z sections, the min, max and mean values are plotted at once:
 
