@@ -38,4 +38,5 @@ To install this package, simply run::
    ./example_StressStrain.rst
    ./example_StiffnessTensor.rst
    ./Tutorial_AveragingMethods.rst
+   ./Tutorial_wave-velocities.rst
    modules
