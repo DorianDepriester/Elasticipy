@@ -638,22 +638,35 @@ class StiffnessTensor(SymmetricTensor):
         matrix = _isotropic_matrix(C11, C12, C44)
         return StiffnessTensor(np.array(matrix), symmetry='isotropic', phase_name=phase_name)
 
-    def ChristoffelTensor(self, u):
+    def Christoffel_tensor(self, u):
         """
-        Create the Christoffel tensor along a given direction, or set or directions
+        Create the Christoffel tensor along a given direction, or set or directions.
 
         Parameters
         ----------
         u : list or np.ndarray
             3D direction(s) to compute the Christoffel tensor along with
 
+        Returns
+        -------
+        Gamma : np.ndarray
+            Array of Christoffel tensor(s). if u is a list of directions, Gamma[i] is the Christoffel tensor for
+            direction  u[i].
+
         See Also
         --------
         wave_velocity : computes the p- and s-wave velocities.
+
+        Notes
+        -----
+        For a given stiffness tensor **C** and a given unit vector **u**, the Christoffel tensor is defined as [2]_ :
+
+            .. math:: M_{ij} = C_{iklj}.u_k.u_l
+
         """
         u_vec = np.atleast_2d(u)
         u_vec = (u_vec.T/np.linalg.norm(u_vec, axis=1)).T
-        return np.einsum('ijkl,pk,pl->pij', self.full_tensor(), u_vec, u_vec)
+        return np.einsum('inmj,pn,pm->pij', self.full_tensor(), u_vec, u_vec)
 
     def wave_velocity(self, rho):
         """
@@ -679,27 +692,34 @@ class StiffnessTensor(SymmetricTensor):
 
         Notes
         -----
-        One should double-check the units. The table below provides hints about the unit you get, depending on the
-        stiffness unit (Pa, MPa or GPa) and the mass density unit:
+        The estimation of the wave velocities is made by finding the eigenvalues of the Christoffel tensor [2]_.
 
-        +------------------+----------------+----------------+----------------------+
-        | Stiffness units  | Units of rho   | Velocity units | Notes                |
-        +==================+================+================+======================+
-        | Pa (N/m²)        | kg/m³          | m/s            | SI units             |
-        +------------------+----------------+----------------+----------------------+
-        | GPa (10⁹ Pa)     | kg/dm³         | km/s           | Conversion factor    |
-        +------------------+----------------+----------------+----------------------+
-        | GPa (10³ N/mm²)  | kg/mm³         | km/s           | Consistent units     |
-        +------------------+----------------+----------------+----------------------+
-        | MPa (10⁶ Pa)     | kg/m³          | km/s           | Consistent units     |
-        +------------------+----------------+----------------+----------------------+
-        | MPa (10³ N/mm²)  | g/mm³          | m/s            | 1 g/mm³ =0.001 kg/mm³|
-        +------------------+----------------+----------------+----------------------+
+        One should double-check the units. The table below provides hints about the unit you get, depending on the units
+        you use for stiffness and the mass density:
+
+        +-----------------+--------------+------------+-----------------------+
+        | Stiffness       | Mass density | Velocities | Notes                 |
+        +=================+==============+============+=======================+
+        | Pa (N/m²)       | kg/m³        | m/s        | SI units              |
+        +-----------------+--------------+------------+-----------------------+
+        | GPa (10⁹ Pa)    | kg/dm³       | km/s       | Conversion factor     |
+        +-----------------+--------------+------------+-----------------------+
+        | GPa (10³ N/mm²) | kg/mm³       | m/s        | Consistent units      |
+        +-----------------+--------------+------------+-----------------------+
+        | MPa (10⁶ Pa)    | kg/m³        | km/s       | Conversion factor     |
+        +-----------------+--------------+------------+-----------------------+
+        | MPa (10³ N/mm²) | g/mm³        | m/s        | Consistent units      |
+        +-----------------+--------------+------------+-----------------------+
+
+        References
+        ----------
+        .. [2] J. W. Jaeken, S. Cottenier, Solving the Christoffel equation: Phase and group velocities, Computer Physics
+               Communications (207), 2016, https://doi.org/10.1016/j.cpc.2016.06.014.
 
         """
         def make_fun(index):
             def fun(n):
-                Gamma = self.ChristoffelTensor(n)
+                Gamma = self.Christoffel_tensor(n)
                 eig, _ = np.linalg.eig(Gamma)
                 if index == 0:
                     eig_of_interest = np.max(eig, axis=-1)
