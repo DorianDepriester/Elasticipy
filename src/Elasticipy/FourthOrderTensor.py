@@ -701,8 +701,13 @@ class StiffnessTensor(SymmetricTensor):
             def fun(n):
                 Gamma = self.ChristoffelTensor(n)
                 eig, _ = np.linalg.eig(Gamma)
-                eig = np.sort(eig, axis=-1, )
-                return np.sqrt(eig[..., index]/rho)
+                if index == 0:
+                    eig_of_interest = np.max(eig, axis=-1)
+                elif index == 1:
+                    eig_of_interest = np.median(eig, axis=-1)
+                else:
+                    eig_of_interest = np.min(eig, axis=-1)
+                return np.sqrt(eig_of_interest/rho)
             return fun
         return [SphericalFunction(make_fun(i)) for i in range(3)]
 
