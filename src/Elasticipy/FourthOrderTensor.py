@@ -646,6 +646,10 @@ class StiffnessTensor(SymmetricTensor):
         ----------
         u : list or np.ndarray
             3D direction(s) to compute the Christoffel tensor along with
+
+        See Also
+        --------
+        wave_velocity : computes the p- and s-wave velocities.
         """
         u_vec = np.atleast_2d(u)
         u_vec = (u_vec.T/np.linalg.norm(u_vec, axis=1)).T
@@ -658,7 +662,11 @@ class StiffnessTensor(SymmetricTensor):
         Parameters
         ----------
         rho : float
-            mass density
+            mass density. Its unit must be consistent with that of the stiffness tensor. See notes for hints.
+
+        See Also
+        --------
+        ChristoffelTensor : Computes the Christoffel tensor along a given direction
 
         Returns
         -------
@@ -668,6 +676,26 @@ class StiffnessTensor(SymmetricTensor):
             Velocity of the fast secondary (shear) wave
         c_s2 : SphericalFunction
             Velocity of the slow secondary (shear) wave
+
+        Notes
+        -----
+        One should double-check the units. The table below provides hints about the unit you get, depending on the
+        stiffness unit (Pa, MPa or GPa) and the mass density unit:
+
+        +------------------+----------------+----------------+----------------------+
+        | Stiffness units  | Units of rho   | Velocity units | Notes                |
+        +==================+================+================+======================+
+        | Pa (N/m²)        | kg/m³          | m/s            | SI units             |
+        +------------------+----------------+----------------+----------------------+
+        | GPa (10⁹ Pa)     | kg/dm³         | km/s           | Conversion factor    |
+        +------------------+----------------+----------------+----------------------+
+        | GPa (10³ N/mm²)  | kg/mm³         | km/s           | Consistent units     |
+        +------------------+----------------+----------------+----------------------+
+        | MPa (10⁶ Pa)     | kg/m³          | km/s           | Consistent units     |
+        +------------------+----------------+----------------+----------------------+
+        | MPa (10³ N/mm²)  | g/mm³          | m/s            | 1 g/mm³ =0.001 kg/mm³|
+        +------------------+----------------+----------------+----------------------+
+
         """
         def make_fun(index):
             def fun(n):
