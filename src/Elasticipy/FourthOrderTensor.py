@@ -606,6 +606,7 @@ class StiffnessTensor(SymmetricTensor):
         --------
         On can check that the shear modulus for steel is around 82 GPa:
 
+        >>> from Elasticipy.FourthOrderTensor import StiffnessTensor
         >>> C=StiffnessTensor.isotropic(E=210e3, nu=0.28)
         >>> C.shear_modulus
         Hyperspherical function
