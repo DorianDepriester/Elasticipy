@@ -462,7 +462,9 @@ class SphericalFunction:
         fig.show()
         return fig, axs
 
-    def plot_as_pole_figure(self, n_theta=50, n_phi=200, projection='lambert', fig=None, plot_type='imshow', **kwargs):
+    def plot_as_pole_figure(self, n_theta=50, n_phi=200, projection='lambert',
+                            fig=None, plot_type='imshow', show=True, title=None,
+                            subplot_args=(), subplot_kwargs=None, **kwargs):
         """
         Plots a pole figure visualization of spherical data using specified parameters and plot types.
 
@@ -482,6 +484,12 @@ class SphericalFunction:
             A Matplotlib figure object. If None, a new figure will be created, by default None.
         plot_type : str, optional
             The type of plot to generate: 'imshow', 'contourf', or 'contour', by default 'imshow'.
+        title : str, optional
+            Title to add to the current axis. Defaut is None.
+        subplot_args : tuple
+            List of arguments to pass to the subplot function, by default ()
+        subplot_kwargs : dict
+            Dictionary of keyword-arguments to pass to the subplot function, by default {}
         **kwargs : dict
             Additional keyword arguments to pass to the plotting functions.
 
@@ -492,9 +500,13 @@ class SphericalFunction:
         ax : matplotlib.axes._axes.Axes
             The Matplotlib axes of the plot.
         """
+        if subplot_kwargs is None:
+            subplot_kwargs = {}
         if fig is None:
-            fig = plt.figure()
-        ax = add_polefigure(fig, projection=projection)
+            new_fig = plt.figure()
+        else:
+            new_fig = fig
+        ax = add_polefigure(new_fig, *subplot_args, projection=projection, **subplot_kwargs)
         phi = np.linspace(*self.domain[0], n_phi)
         theta = np.linspace(*self.domain[1], n_theta)
         phi, theta = np.meshgrid(phi, theta)
@@ -510,9 +522,11 @@ class SphericalFunction:
         else:
             raise ValueError(f'Unknown plot type: {plot_type}')
         ax.set_rlim(*self.domain[1])
-        fig.colorbar(sc)
-        plt.show()
-        return fig, ax
+        ax.set_title(title)
+        new_fig.colorbar(sc)
+        if show:
+            plt.show()
+        return new_fig, ax
 
 
 
