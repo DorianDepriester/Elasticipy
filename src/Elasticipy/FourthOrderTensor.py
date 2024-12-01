@@ -186,7 +186,7 @@ class SymmetricTensor:
     C11_C12_factor = 0.5
     component_prefix = 'C'
 
-    def __init__(self, M, phase_name='', symmetry='Triclinic', orientations=None):
+    def __init__(self, M, phase_name=None, symmetry='Triclinic', orientations=None):
         """
         Construct of stiffness tensor from a (6,6) matrix
 
@@ -204,7 +204,7 @@ class SymmetricTensor:
         self.orientations = orientations
 
     def __repr__(self):
-        if self.phase_name == '':
+        if self.phase_name is None:
             heading = '{} tensor (in Voigt notation):\n'.format(self.tensor_name)
         else:
             heading = '{} tensor (in Voigt notation) for {}:\n'.format(self.tensor_name, self.phase_name)
