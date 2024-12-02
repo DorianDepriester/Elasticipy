@@ -55,7 +55,7 @@ class StressTensor(SymmetricSecondOrderTensor):
     """
     name = 'Stress tensor'
 
-    def principalStresses(self):
+    def principal_stresses(self):
         """
         Values of the principals stresses.
 
@@ -125,18 +125,18 @@ class StressTensor(SymmetricSecondOrderTensor):
 
     def Tresca(self):
         """
-         Tresca(-Guest) equivalent stress.
+        Tresca(-Guest) equivalent stress.
 
-         Returns
-         -------
-         np.ndarray or float
-             Tresca equivalent stress
+        Returns
+        -------
+        np.ndarray or float
+            Tresca equivalent stress
 
         See Also
         --------
         vonMises : von Mises equivalent stress
         """
-        ps = self.principalStresses()
+        ps = self.principal_stresses()
         return np.max(ps, axis=-1) - np.min(ps, axis=-1)
 
     def hydrostaticPressure(self):
