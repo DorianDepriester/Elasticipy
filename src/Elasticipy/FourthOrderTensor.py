@@ -557,14 +557,8 @@ class StiffnessTensor(SymmetricTensor):
 
     def Hill_average(self):
         """
-        Compute the (Voigt-Reuss-)Hill average ofthe stiffness tensor. If the tensor contains no orientation, we assume
+        Compute the (Voigt-Reuss-)Hill average of the stiffness tensor. If the tensor contains no orientation, we assume
         isotropic behaviour. Otherwise, the mean is computed over all orientations.
-
-        Parameters
-        ----------
-        orientations : np.ndarray or None
-            Set of m orientation matrices, defined as a [m, 3, 3] array.
-            If None, uniform distribution is assumed, resulting in isotropic tensor
 
         Returns
         -------
