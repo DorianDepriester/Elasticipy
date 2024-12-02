@@ -1,4 +1,5 @@
 import numpy as np
+from numpy.matrixlib.defmatrix import matrix
 from scipy.spatial.transform import Rotation
 
 
@@ -16,6 +17,18 @@ class _MatrixProxy:
     def __setitem__(self, args, value):
         self.matrix[(...,) + (args if isinstance(args, tuple) else (args,))] = value
 
+def _tensor_from_direction_magnitude(u, v, magnitude):
+    if np.asarray(u).shape != (3,):
+        raise ValueError('u must be 3D vector.')
+    if np.asarray(v).shape != (3,):
+        raise ValueError('v must be 3D vector.')
+    u = u / np.linalg.norm(u)
+    v = v / np.linalg.norm(v)
+    direction_matrix = np.outer(u, v)
+    if np.asarray(magnitude).ndim:
+        return np.einsum('ij,...p->...pij', direction_matrix, magnitude)
+    else:
+        return magnitude * direction_matrix
 
 class SecondOrderTensor:
     """
@@ -708,3 +721,47 @@ class SecondOrderTensor:
             matrix_shape = shape + (3, 3,)
         zeros = np.zeros(matrix_shape)
         return cls(zeros)
+
+    @classmethod
+    def tensile(cls, u, magnitude):
+        """
+        Create an array of tensors corresponding to tensile state along a given direction.
+
+        Parameters
+        ----------
+        u : np.ndarray or list
+            Tensile direction. Must be a 3D vector.
+        magnitude : float or np.ndarray or list
+            Magnitude of the tensile state to consider. If a list or an array is provided, the shape of the tensor array
+            will be of the same shape as magnitude.
+        Returns
+        -------
+        SecondOrderTensor
+            tensor or tensor array
+        """
+        mat = _tensor_from_direction_magnitude(u, u, magnitude)
+        return cls(mat)
+
+    @classmethod
+    def shear(cls, u, v, magnitude):
+        """
+        Create an array of tensors corresponding to shear state along two orthogonal directions.
+
+        Parameters
+        ----------
+        u : np.ndarray or list
+            First direction. Must be a 3D vector.
+        v : np.ndarray or list
+            Second direction. Must be a 3D vector.
+        magnitude : float or np.ndarray or list
+            Magnitude of the shear state to consider. If a list or an array is provided, the shape of the tensor array
+            will be of the same shape as magnitude.
+        Returns
+        -------
+        SecondOrderTensor
+            tensor or tensor array
+        """
+        if np.abs(np.dot(u, v)) > 1e-5:
+            raise ValueError("u and v must be orthogonal")
+        mat = _tensor_from_direction_magnitude(u, v, magnitude)
+        return cls(mat)
