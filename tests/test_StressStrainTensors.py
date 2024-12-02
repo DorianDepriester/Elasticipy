@@ -5,6 +5,7 @@ from scipy.spatial.transform import Rotation
 
 from Elasticipy.FourthOrderTensor import StiffnessTensor
 import Elasticipy.StressStrainTensors as Tensors
+from Elasticipy.SecondOrderTensor import SymmetricSecondOrderTensor
 
 
 Cmat = [[231, 127, 104, 0, -18, 0],
@@ -36,7 +37,7 @@ class TestStrainStressTensors(unittest.TestCase):
         assert eps_yy == approx(-nu_y / E)
         assert eps_zz == approx(-nu_z / E)
 
-    def test_rotate_tensor(self, n_oris=10):
+    def test_rotate_tensor(self, n_oris=100):
         """
         Test the rotation of a tensor
 
@@ -45,11 +46,11 @@ class TestStrainStressTensors(unittest.TestCase):
         n_oris : int
             Number of random orientations to use
         """
-        random_tensor = Tensors.SecondOrderTensor(np.random.random((3, 3)))
+        random_tensor = Tensors.SymmetricSecondOrderTensor(np.random.random((3, 3)))
         random_oris = Rotation.random(n_oris)
         eps_rotated = random_tensor * random_oris
         for i in range(n_oris):
-            rot_mat = random_oris.as_matrix()[i, :, :]
+            rot_mat = random_oris[i].as_matrix()
             eps_matrix_th = np.matmul(np.matmul(rot_mat.T, random_tensor.matrix), rot_mat)
             np.testing.assert_almost_equal(eps_matrix_th, eps_rotated[i].matrix)
 
@@ -63,12 +64,13 @@ class TestStrainStressTensors(unittest.TestCase):
             Shape of the tensor array to use
         """
         random_matrix = np.random.random(shape + (3, 3))
-        random_tensor = Tensors.SecondOrderTensor(random_matrix)
+        random_tensor = Tensors.SymmetricSecondOrderTensor(random_matrix)
         transposed_tensor = random_tensor.transposeArray()
         for i in range(shape[0]):
             for j in range(shape[1]):
                 for k in range(shape[2]):
-                    np.testing.assert_array_equal(random_matrix[i, j, k], transposed_tensor[k, j, i].matrix)
+                    sym_mat = 0.5 * (random_matrix[i, j, k] + random_matrix[i, j, k].T)
+                    np.testing.assert_array_equal(sym_mat, transposed_tensor[k, j, i].matrix)
 
     def test_mul(self, shape=(4, 5)):
         """
@@ -82,10 +84,12 @@ class TestStrainStressTensors(unittest.TestCase):
         shape = shape + (3, 3)
         matrix1 = np.random.random(shape)
         matrix2 = np.random.random(shape)
-        tensor_prod = Tensors.SecondOrderTensor(matrix1) * Tensors.SecondOrderTensor(matrix2)
+        tensor_prod = Tensors.SymmetricSecondOrderTensor(matrix1) * Tensors.SymmetricSecondOrderTensor(matrix2)
         for i in range(shape[0]):
             for j in range(shape[1]):
-                mat_prod = np.matmul(matrix1[i, j], matrix2[i, j])
+                sym_mat1 = 0.5 * (matrix1[i, j] + matrix1[i, j].T)
+                sym_mat2 = 0.5 * (matrix2[i, j] + matrix2[i, j].T)
+                mat_prod = np.matmul(sym_mat1, sym_mat2)
                 np.testing.assert_array_equal(tensor_prod[i, j].matrix, mat_prod)
 
     def test_matmul(self, length1=3, length2=4):
@@ -101,13 +105,26 @@ class TestStrainStressTensors(unittest.TestCase):
         """
         matrix1 = np.random.random((length1, 3, 3))
         matrix2 = np.random.random((length2, 3, 3))
-        rand_tensor1 = Tensors.SecondOrderTensor(matrix1)
-        rand_tensor2 = Tensors.SecondOrderTensor(matrix2)
+        rand_tensor1 = Tensors.SymmetricSecondOrderTensor(matrix1)
+        rand_tensor2 = Tensors.SymmetricSecondOrderTensor(matrix2)
         cross_prod_tensor = rand_tensor1.matmul(rand_tensor2)
         for i in range(0, length1):
+            sym_mat1 = 0.5 * (matrix1[i] + matrix1[i].T)
             for j in range(0, length2):
-                mat_prod = np.matmul(matrix1[i], matrix2[j])
+                sym_mat2 = 0.5 * (matrix2[j] + matrix2[j].T)
+                mat_prod = np.matmul(sym_mat1, sym_mat2)
                 np.testing.assert_array_equal(cross_prod_tensor[i, j].matrix, mat_prod)
+
+    def test_matmul_rotation(self, m=5, n=100):
+        random_tensor = SymmetricSecondOrderTensor(np.random.random((m,) + (3, 3)))
+        random_oris = Rotation.random(n)
+        array = random_tensor.matmul(random_oris)
+        assert array.shape == (m, n)
+        for i in range(m):
+            for j in range(n):
+                rot_mat = random_oris[j].as_matrix()
+                matrix = np.matmul(np.matmul(rot_mat.T, random_tensor[i].matrix), rot_mat)
+                np.testing.assert_almost_equal(matrix, array[i,j].matrix)
 
     def test_statistics(self, shape=(5, 4, 3, 2)):
         """
@@ -119,7 +136,8 @@ class TestStrainStressTensors(unittest.TestCase):
             Shape of the tensor to use
         """
         matrix = np.random.random(shape + (3, 3))
-        tensor = Tensors.SecondOrderTensor(matrix)
+        tensor = Tensors.SymmetricSecondOrderTensor(matrix)
+        matrix = 0.5 *(matrix + np.swapaxes(matrix, -2, -1))
         mini = tensor.min()
         maxi = tensor.max()
         std = tensor.std()
@@ -147,13 +165,15 @@ class TestStrainStressTensors(unittest.TestCase):
         """
         matrix1 = np.random.random(shape + (3, 3))
         matrix2 = np.random.random(shape + (3, 3))
-        tens1 = Tensors.SecondOrderTensor(matrix1)
-        tens2 = Tensors.SecondOrderTensor(matrix2)
+        tens1 = Tensors.SymmetricSecondOrderTensor(matrix1)
+        tens2 = Tensors.SymmetricSecondOrderTensor(matrix2)
         ddot = tens1.ddot(tens2)
         for i in range(0, shape[0]):
             for j in range(0, shape[1]):
                 for k in range(0, shape[2]):
-                    ddot_th = np.trace(np.matmul(matrix1[i, j, k], matrix2[i, j, k]))
+                    sym_mat1 = 0.5* (matrix1[i, j, k] + matrix1[i, j, k].T)
+                    sym_mat2 = 0.5* (matrix2[i, j, k] + matrix2[i, j, k].T)
+                    ddot_th = np.trace(np.matmul(sym_mat1, sym_mat2))
                     self.assertEqual(ddot_th, ddot[i, j, k])
 
     def test_vonMises_Tresca(self):
@@ -187,7 +207,7 @@ class TestStrainStressTensors(unittest.TestCase):
             Number of random orientation to consider
         """
         matrix = np.random.random((n_strain, 3, 3))
-        eps = Tensors.StrainTensor(matrix).symmetricPart()  # Ensure that the strain is symmetric
+        eps = Tensors.StrainTensor(matrix)
         ori = Rotation.random(n_ori)
         C_rotated = C * ori
         sigma = C_rotated * eps
@@ -196,7 +216,7 @@ class TestStrainStressTensors(unittest.TestCase):
         eps_rot = eps.matmul(ori)
         sigma_rot2 = C * eps_rot
         sigma2 = sigma_rot2 * ori.inv()
-        np.testing.assert_almost_equal(sigma.matrix, sigma2.matrix)
+        np.testing.assert_almost_equal(sigma.matrix, sigma2.transposeArray().matrix)
 
     def test_multidimensional_tensors(self, shape_strain=(5, 4, 3), n_ori=100):
         """
