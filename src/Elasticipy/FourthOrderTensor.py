@@ -1,6 +1,7 @@
 import numpy as np
 import re
-from Elasticipy.StressStrainTensors import SecondOrderTensor, StrainTensor, StressTensor
+from Elasticipy.SecondOrderTensor import SymmetricSecondOrderTensor
+from Elasticipy.StressStrainTensors import StrainTensor, StressTensor
 from Elasticipy.SphericalFunction import SphericalFunction, HyperSphericalFunction
 from scipy.spatial.transform import Rotation
 
@@ -292,8 +293,8 @@ class SymmetricTensor:
             return self.__add__(-other)
 
     def __mul__(self, other):
-        if isinstance(other, SecondOrderTensor):
-            return SecondOrderTensor(self * other.matrix)
+        if isinstance(other, SymmetricSecondOrderTensor):
+            return SymmetricSecondOrderTensor(self * other.matrix)
         elif isinstance(other, np.ndarray):
             if other.shape[-2:] == (3, 3):
                 if self.orientations is None:
