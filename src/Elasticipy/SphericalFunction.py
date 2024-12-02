@@ -386,7 +386,7 @@ class SphericalFunction:
         """
         return np.sqrt(self.var(**kwargs))
 
-    def plot3D(self, n_phi=50, n_theta=50, **kwargs):
+    def plot3D(self, n_phi=50, n_theta=50, fig=None, **kwargs):
         """
         3D plotting of a spherical function
 
@@ -396,6 +396,9 @@ class SphericalFunction:
             Number of azimuth angles (phi) to use for plotting. Default is 50.
         n_theta : int, default 50
             Number of latitude angles (theta) to use for plotting. Default is 50.
+        fig : matplotlib figure object, default None
+            handle to existing figure object. If None, a new figure will be created. If passed, the figure is not shown,
+            (one should use plt.show() afterward).
         **kwargs
             These parameters will be passed to matplotlib plot_surface() function.
 
@@ -410,7 +413,10 @@ class SphericalFunction:
         --------
         plot_xyz_sections : plot values of the function in X-Y, X-Z an Y-Z planes.
         """
-        fig = plt.figure()
+        if fig is None:
+            new_fig = plt.figure()
+        else:
+            new_fig = fig
         phi = np.linspace(0, 2 * np.pi, n_phi)
         theta = np.linspace(0, np.pi, n_theta)
         phi_grid, theta_grid = np.meshgrid(phi, theta, indexing='ij')
@@ -420,8 +426,10 @@ class SphericalFunction:
         values = self.eval(u)
         u_grid = u.reshape([*phi_grid.shape, 3])
         r_grid = values.reshape(phi_grid.shape)
-        ax = _plot3D(fig, u_grid, r_grid, **kwargs)
-        plt.show()
+        ax = _plot3D(new_fig, u_grid, r_grid, **kwargs)
+        ax.axis('equal')
+        if fig is not None:
+            plt.show()
         return fig, ax
 
     def plot_xyz_sections(self, n_theta=500, **kwargs):
