@@ -502,18 +502,18 @@ class SecondOrderTensor:
 
     def std(self, axis=None):
         """
-          Standard deviation
+        Standard deviation
 
-          Parameters
-          ----------
-          axis : int or None, default None
-              Axis to compute standard deviation along with.
-              If None, returns the overall standard deviation (std of flattened array)
+        Parameters
+        ----------
+        axis : int or None, default None
+            Axis to compute standard deviation along with.
+            If None, returns the overall standard deviation (std of flattened array)
 
-          Returns
-          -------
-          SecondOrderTensor
-              Tensor of standard deviation
+        Returns
+        -------
+        SecondOrderTensor
+            Tensor of standard deviation
 
         See Also
         --------
