@@ -18,6 +18,7 @@ print(E)
 # Now illustrate the spatial dependence
 E.plot_xyz_sections()   # As 2D sections...
 E.plot3D()                # ...or in 3D
+E.plot_as_pole_figure()     # or even with PF
 print(E.max())
 
 # Apply a random rotation on stiffness tensor
@@ -29,7 +30,7 @@ Crot.Young_modulus.plot3D()
 # Now let's consider the shear modulus
 G = C.shear_modulus
 G.plot_xyz_sections()   # Plot sections with min, max and mean
-G.plot3D(which='min')     # And plot it in 3D
+G.plot3D()     # And plot it in 3D
 print(G.min())
 print(G.max())
 
