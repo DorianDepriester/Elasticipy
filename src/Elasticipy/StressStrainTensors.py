@@ -34,6 +34,20 @@ class StrainTensor(SecondOrderTensor):
         """
         return self.I1
 
+    def elastic_energy(self, stress):
+        """
+        Compute the elastic energy.
+
+        Parameters
+        ----------
+        stress : StressTensor
+            Corresponding stress tensor
+
+        Returns
+        -------
+        Volumetric elastic energy
+        """
+        return 0.5 * self.ddot(stress)
 
 class StressTensor(SecondOrderTensor):
     """
@@ -138,3 +152,18 @@ class StressTensor(SecondOrderTensor):
         sphericalPart : spherical part of the stress
         """
         return -self.I1/3
+
+    def elastic_energy(self, strain):
+        """
+        Compute the elastic energy.
+
+        Parameters
+        ----------
+        strain : StrainTensor
+            Corresponding strain tensor
+
+        Returns
+        -------
+        Volumetric elastic energy
+        """
+        return 0.5 * self.ddot(strain)
