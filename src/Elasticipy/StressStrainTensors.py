@@ -1,8 +1,8 @@
 import numpy as np
-from Elasticipy.SecondOrderTensor import SecondOrderTensor
+from Elasticipy.SecondOrderTensor import SymmetricSecondOrderTensor
 
 
-class StrainTensor(SecondOrderTensor):
+class StrainTensor(SymmetricSecondOrderTensor):
     """
     Class for manipulating symmetric strain tensors or arrays of symmetric strain tensors.
 
@@ -49,7 +49,7 @@ class StrainTensor(SecondOrderTensor):
         """
         return 0.5 * self.ddot(stress)
 
-class StressTensor(SecondOrderTensor):
+class StressTensor(SymmetricSecondOrderTensor):
     """
     Class for manipulating stress tensors or arrays of stress tensors.
     """
