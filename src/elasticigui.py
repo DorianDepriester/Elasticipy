@@ -88,7 +88,7 @@ class ElasticityGUI(QMainWindow):
         # Layout principal
         main_layout = QVBoxLayout()
 
-        # Choix de la symétrie
+        # Symmetry selection
         self.symmetry_selector = QComboBox()
         self.symmetry_selector.addItems(["Isotropic", "Cubic", "Hexagonal", "Tetragonal",
                                          "Trigonal", "Orthorhombic", "Monoclinic", "Triclinic"])
@@ -96,19 +96,21 @@ class ElasticityGUI(QMainWindow):
         main_layout.addWidget(QLabel("Crystal symmetry:"))
         main_layout.addWidget(self.symmetry_selector)
 
+        # Space Group selection
         self.space_group_selector = QComboBox()
         self.space_group_selector.addItems(['', ''])
         self.space_group_selector.currentIndexChanged.connect(self.update_fields)
         main_layout.addWidget(QLabel("Space group symmetry:"))
         main_layout.addWidget(self.space_group_selector)
 
+        # Diad selection
         self.diag_selector = QComboBox()
         self.diag_selector.addItems(["diad || x2", "diad || x3"])
         self.diag_selector.currentIndexChanged.connect(self.update_fields)
         main_layout.addWidget(QLabel("Diad convention"))
         main_layout.addWidget(self.diag_selector)
 
-        # Champs de saisie pour les coefficients
+        # Matrix component
         self.coefficient_fields = {}
         grid = QGridLayout()
         for i in range(6):
@@ -136,6 +138,7 @@ class ElasticityGUI(QMainWindow):
         self.setCentralWidget(central_widget)
 
     def update_fields(self):
+        # Deactivate unused fields
         active_fields = self.selected_symmetry().active
         for (i, j), field in self.coefficient_fields.items():
             if (i, j) in active_fields:
@@ -143,16 +146,18 @@ class ElasticityGUI(QMainWindow):
             else:
                 field.setEnabled(False)
                 field.setText('')
-        if self.symmetry_selector.currentText() == "Trigonal" or self.symmetry_selector.currentText() == "Tetragonal":
+
+        # Turn on/off SG selection
+        selected_symmetry_name = self.symmetry_selector.currentText()
+        if selected_symmetry_name in ("Trigonal", "Tetragonal"):
+            # Turn on and change list of possible SGs
             self.space_group_selector.setEnabled(True)
             for i in range(2):
-                self.space_group_selector.setItemText(i, SPACE_GROUPS[self.symmetry_selector.currentText().lower()][i])
+                self.space_group_selector.setItemText(i, SPACE_GROUPS[selected_symmetry_name.lower()][i])
         else:
+            # Turn off
             self.space_group_selector.setEnabled(False)
-        if self.symmetry_selector.currentText() == "Monoclinic":
-            self.diag_selector.setEnabled(True)
-        else:
-            self.diag_selector.setEnabled(False)
+        self.diag_selector.setEnabled(selected_symmetry_name == "Monoclinic")
 
 
     def calculate_and_plot(self):
