@@ -103,9 +103,8 @@ class ElasticityGUI(QMainWindow):
         main_layout.addWidget(self.space_group_selector)
 
         self.diag_selector = QComboBox()
-        self.diag_selector.addItems([
-            "diad || x2", "diad || x3"
-        ])
+        self.diag_selector.addItems(["diad || x2", "diad || x3"])
+        self.diag_selector.currentIndexChanged.connect(self.update_fields)
         main_layout.addWidget(QLabel("Diad convention"))
         main_layout.addWidget(self.diag_selector)
 
@@ -139,13 +138,21 @@ class ElasticityGUI(QMainWindow):
     def update_fields(self):
         active_fields = self.selected_symmetry().active
         for (i, j), field in self.coefficient_fields.items():
-            field.setEnabled((i, j) in active_fields)
+            if (i, j) in active_fields:
+                field.setEnabled(True)
+            else:
+                field.setEnabled(False)
+                field.setText('')
         if self.symmetry_selector.currentText() == "Trigonal" or self.symmetry_selector.currentText() == "Tetragonal":
             self.space_group_selector.setEnabled(True)
             for i in range(2):
                 self.space_group_selector.setItemText(i, SPACE_GROUPS[self.symmetry_selector.currentText().lower()][i])
         else:
             self.space_group_selector.setEnabled(False)
+        if self.symmetry_selector.currentText() == "Monoclinic":
+            self.diag_selector.setEnabled(True)
+        else:
+            self.diag_selector.setEnabled(False)
 
 
     def calculate_and_plot(self):
