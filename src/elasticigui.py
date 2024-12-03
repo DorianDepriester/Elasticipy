@@ -4,7 +4,7 @@ from time import monotonic
 import numpy as np
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QComboBox, QGridLayout, QLabel,
-    QLineEdit, QPushButton, QVBoxLayout, QWidget
+    QLineEdit, QPushButton, QVBoxLayout, QHBoxLayout, QWidget
 )
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
@@ -73,6 +73,7 @@ SPACE_GROUPS = {'trigonal':   ["3, -3", "32, -3m, 3m"],
 class ElasticityGUI(QMainWindow):
     def __init__(self):
         super().__init__()
+        self.coefficient_fields = {}
         self.setWindowTitle("Elasticipy - GUI")
         self.initUI()
 
@@ -85,33 +86,37 @@ class ElasticityGUI(QMainWindow):
         return SYMMETRIES[symmetry.lower()]
 
     def initUI(self):
-        # Layout principal
+        # Main layout
         main_layout = QVBoxLayout()
+        # Symmetry, Space Group, and Diad Selection (aligned horizontally)
+        selectors_layout = QHBoxLayout()
 
         # Symmetry selection
         self.symmetry_selector = QComboBox()
         self.symmetry_selector.addItems(["Isotropic", "Cubic", "Hexagonal", "Tetragonal",
                                          "Trigonal", "Orthorhombic", "Monoclinic", "Triclinic"])
         self.symmetry_selector.currentIndexChanged.connect(self.update_fields)
-        main_layout.addWidget(QLabel("Crystal symmetry:"))
-        main_layout.addWidget(self.symmetry_selector)
+        selectors_layout.addWidget(QLabel("Crystal symmetry:"))
+        selectors_layout.addWidget(self.symmetry_selector)
 
         # Space Group selection
         self.space_group_selector = QComboBox()
         self.space_group_selector.addItems(['', ''])
         self.space_group_selector.currentIndexChanged.connect(self.update_fields)
-        main_layout.addWidget(QLabel("Space group symmetry:"))
-        main_layout.addWidget(self.space_group_selector)
+        selectors_layout.addWidget(QLabel("Space group symmetry:"))
+        selectors_layout.addWidget(self.space_group_selector)
 
         # Diad selection
         self.diag_selector = QComboBox()
         self.diag_selector.addItems(["diad || x2", "diad || x3"])
         self.diag_selector.currentIndexChanged.connect(self.update_fields)
-        main_layout.addWidget(QLabel("Diad convention"))
-        main_layout.addWidget(self.diag_selector)
+        selectors_layout.addWidget(QLabel("Diad convention:"))
+        selectors_layout.addWidget(self.diag_selector)
+
+        # Add selectors_layout to main layout
+        main_layout.addLayout(selectors_layout)
 
         # Matrix component
-        self.coefficient_fields = {}
         grid = QGridLayout()
         for i in range(6):
             for j in range(i, 6):
