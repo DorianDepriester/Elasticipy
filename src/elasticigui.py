@@ -61,10 +61,13 @@ monoclinic1=SymmetryRelationships(active_cells= active_cell_monoclinic_0 + [(0, 
 monoclinic2=SymmetryRelationships(active_cells= active_cell_monoclinic_0 + [(0, 5), (1, 5), (2, 5), (3, 4)])
 triclinic=SymmetryRelationships(active_cells=[(i, j) for i in range(6) for j in range(6)])
 
-SYMMETRIES = {'isotropic': isotropic, 'cubic': cubic, 'hexagonal': hexagonal,
+SYMMETRIES = {'isotropic': isotropic,
+              'cubic': cubic,
+              'hexagonal': hexagonal,
               'tetragonal_1':tetragonal_1, 'tetragonal_2':tetragonal_2,
               'trigonal_1':trigonal_1, 'trigonal_2':trigonal_2,
-              'orthorhombic': orthorhombic, 'monoclinic_1': monoclinic1, 'monoclinic_2': monoclinic2,
+              'orthorhombic': orthorhombic,
+              'monoclinic_1': monoclinic1, 'monoclinic_2': monoclinic2,
               'triclinic': triclinic}
 
 SPACE_GROUPS = {'trigonal':   ["3, -3", "32, -3m, 3m"],
@@ -127,17 +130,17 @@ class ElasticityGUI(QMainWindow):
                 grid.addWidget(field, i, j)
         main_layout.addLayout(grid)
 
-        # Bouton pour afficher
+        # Plot button
         self.calculate_button = QPushButton("Plot")
         self.calculate_button.clicked.connect(self.calculate_and_plot)
         main_layout.addWidget(self.calculate_button)
 
-        # Zone pour le graphique
+        # Display area
         self.figure = Figure()
         self.canvas = FigureCanvas(self.figure)
         main_layout.addWidget(self.canvas)
 
-        # Définit le widget principal
+        # Main widget
         central_widget = QWidget()
         central_widget.setLayout(main_layout)
         self.setCentralWidget(central_widget)
@@ -166,8 +169,7 @@ class ElasticityGUI(QMainWindow):
 
 
     def calculate_and_plot(self):
-        """Récupère les données, calcule et affiche."""
-        # Collecte des coefficients
+        """Collect entries and compute the stiffness tensor"""
         coefficients = np.zeros((6, 6))
         for (i, j), field in self.coefficient_fields.items():
             try:
@@ -175,11 +177,9 @@ class ElasticityGUI(QMainWindow):
             except ValueError:
                 coefficients[i, j] = 0
 
-        # Création du tenseur
         C = np.array(coefficients)
         stiff = StiffnessTensor(C + np.tril(C.T, -1))
 
-        # Exemple : Plot 3D
         E = stiff.Young_modulus
         self.figure.clear()
         E.plot3D(fig=self.figure)
