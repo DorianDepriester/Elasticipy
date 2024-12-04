@@ -702,7 +702,7 @@ class HyperSphericalFunction(SphericalFunction):
         else:
             r_grid = np.mean(values, axis=2)
         u_grid = u.reshape((n_phi, n_theta, n_psi, 3))
-        ax = _plot3D(fig, u_grid[:, :, 0, :], r_grid, **kwargs)
+        ax = _plot3D(new_fig, u_grid[:, :, 0, :], r_grid, **kwargs)
         if fig is None:
             plt.show()
         return new_fig, ax
