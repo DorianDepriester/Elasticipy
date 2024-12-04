@@ -430,7 +430,7 @@ class SphericalFunction:
         ax.axis('equal')
         if fig is not None:
             plt.show()
-        return fig, ax
+        return new_fig, ax
 
     def plot_xyz_sections(self, n_theta=500, **kwargs):
         """
