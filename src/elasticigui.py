@@ -148,13 +148,13 @@ class ElasticityGUI(QMainWindow):
         main_layout.addLayout(grid)
 
         #######################################################################################
-        # Plot area
+        # Bottom panel
         #######################################################################################
         bottom_layout = QHBoxLayout()
 
-        #######################################################################################
+        ############################################
         # Plotting options
-        #######################################################################################
+        ############################################
         left_panel_layout = QVBoxLayout()
 
         # E, G or nu selector
@@ -190,25 +190,31 @@ class ElasticityGUI(QMainWindow):
 
         # Fill space
         left_panel_layout.addStretch()
-
         bottom_layout.addLayout(left_panel_layout)
 
-        # Display area
+        ############################################
+        # Plotting area
+        ############################################
+        # Add separator between the top and the bottom panels
+        separator2 = QFrame()
+        separator2.setFrameShape(QFrame.HLine)
+        separator2.setFrameShadow(QFrame.Sunken)
+        main_layout.addWidget(separator2)
+
         self.figure = Figure()
         self.canvas = FigureCanvas(self.figure)
         bottom_layout.addWidget(self.canvas)
 
-        main_layout.addLayout(bottom_layout)
-
         #######################################################################################
         # Main widget
         #######################################################################################
+        main_layout.addLayout(bottom_layout)
         central_widget = QWidget()
         central_widget.setLayout(main_layout)
         self.setCentralWidget(central_widget)
 
         #######################################################################################
-        # At load, initialize symmetry at Triclinic
+        # Initialize at load
         #######################################################################################
         self.symmetry_selector.setCurrentText('Triclinic')
         self.plotting_selector.setCurrentText('Young modulus')
