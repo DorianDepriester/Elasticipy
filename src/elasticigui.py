@@ -1,5 +1,4 @@
 import sys
-from time import monotonic
 
 import numpy as np
 from PyQt5.QtWidgets import (
@@ -214,16 +213,16 @@ class ElasticityGUI(QMainWindow):
         self.figure.clear()
         requested_value = self.plotting_selector.currentText()
         if requested_value == "Young modulus":
-            E = stiff.Young_modulus
-            E.plot3D(fig=self.figure)
+            value = stiff.Young_modulus
+            kwargs_plot3D = {}
         else:
             if requested_value == 'Shear modulus':
                 value = stiff.shear_modulus
             else:
                 value = stiff.Poisson_ratio
             which_options = {'Mean': 'mean', 'Max': 'max', 'Min': 'min', 'Standard Deviation': 'std'}
-            which = which_options[self.which_selector.currentText()]
-            value.plot3D(fig=self.figure, which=which)
+            kwargs_plot3D = {'which': which_options[self.which_selector.currentText()]}
+        value.plot3D(fig=self.figure, **kwargs_plot3D)
         self.canvas.draw()
 
     def update_dependent_fields(self):
