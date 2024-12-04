@@ -472,7 +472,7 @@ class SphericalFunction:
             r = self.eval_spherical(angles)
             ax.plot(theta_polar, r, **kwargs)
             axs.append(ax)
-        if fig is not None:
+        if fig is None:
             new_fig.show()
         return new_fig, axs
 
