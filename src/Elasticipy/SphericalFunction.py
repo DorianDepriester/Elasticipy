@@ -701,7 +701,8 @@ class HyperSphericalFunction(SphericalFunction):
             plt.show()
         return new_fig, ax
 
-    def plot_xyz_sections(self, n_theta=500, n_psi=100, color_minmax='blue', alpha_minmax=0.2, color_mean='red'):
+    def plot_xyz_sections(self, n_theta=500, n_psi=100, color_minmax='blue', alpha_minmax=0.2, color_mean='red',
+                          fig=None):
         """
         Plots the XYZ sections using polar projections.
 
@@ -721,6 +722,8 @@ class HyperSphericalFunction(SphericalFunction):
             Alpha transparency level to use for the min/max fill (default is 0.2).
         color_mean : str, optional
             Color to use for plotting mean values (default is 'red').
+        fig : matplotlib.figure.Figure, optional
+            Handle to existing figure object. Default is None. If provided, it disables showing the figure.
 
         Returns
         -------
@@ -729,7 +732,10 @@ class HyperSphericalFunction(SphericalFunction):
         axs : list of matplotlib.axes._subplots.PolarAxesSubplot
             List of polar axis subplots.
         """
-        fig = plt.figure()
+        if fig is None:
+            new_fig = plt.figure()
+        else:
+            new_fig = fig
         theta_polar = np.linspace(0, 2 * np.pi, n_theta)
         titles = ('XY', 'XZ', 'YZ')
         handles, labels = [], []
@@ -754,9 +760,10 @@ class HyperSphericalFunction(SphericalFunction):
             axs.append(ax)
         handles.extend([line, area])
         labels.extend([line.get_label(), area.get_label()])
-        fig.legend(handles, labels, loc='upper center', ncol=2, bbox_to_anchor=(0.5, 0.95))
-        fig.show()
-        return fig, axs
+        new_fig.legend(handles, labels, loc='upper center', ncol=2, bbox_to_anchor=(0.5, 0.95))
+        if fig is None:
+            new_fig.show()
+        return new_fig, axs
 
     def plot_as_pole_figure(self, n_theta=50, n_phi=200, n_psi=50, which='mean', projection='lambert', fig=None,
                             plot_type='imshow', show=True, title=None, subplot_args=(), subplot_kwargs=None, **kwargs):
