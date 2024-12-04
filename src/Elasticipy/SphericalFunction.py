@@ -644,7 +644,7 @@ class HyperSphericalFunction(SphericalFunction):
             u, v = uniform_spherical_distribution(n_evals, seed=seed, return_orthogonal=True)
             return np.var(self.eval(u, v))
 
-    def plot3D(self, n_phi=50, n_theta=50, n_psi=50, which='mean', **kwargs):
+    def plot3D(self, n_phi=50, n_theta=50, n_psi=50, which='mean', fig=None, **kwargs):
         """
         Generate a 3D plot representing the evaluation of spherical harmonics.
 
@@ -664,6 +664,8 @@ class HyperSphericalFunction(SphericalFunction):
         which : str, optional
             Determines which statistical measure to plot ('mean', 'std', 'min', 'max'),
             default is 'mean'.
+        fig : matplotlib.figure.Figure, optional
+            Handle to existing figure object. Default is None. If provided, it disables showing the figure.
         kwargs : dict, optional
             Additional keyword arguments to customize the plot.
 
@@ -672,7 +674,10 @@ class HyperSphericalFunction(SphericalFunction):
         tuple
             A tuple containing the matplotlib figure and axes objects.
         """
-        fig = plt.figure()
+        if fig is None:
+            new_fig = plt.figure()
+        else:
+            new_fig = fig
         phi = np.linspace(0, 2 * np.pi, n_phi)
         theta = np.linspace(0, np.pi, n_theta)
         psi = np.linspace(0, np.pi, n_psi)
@@ -692,8 +697,9 @@ class HyperSphericalFunction(SphericalFunction):
             r_grid = np.mean(values, axis=2)
         u_grid = u.reshape((n_phi, n_theta, n_psi, 3))
         ax = _plot3D(fig, u_grid[:, :, 0, :], r_grid, **kwargs)
-        plt.show()
-        return fig, ax
+        if fig is None:
+            plt.show()
+        return new_fig, ax
 
     def plot_xyz_sections(self, n_theta=500, n_psi=100, color_minmax='blue', alpha_minmax=0.2, color_mean='red'):
         """
