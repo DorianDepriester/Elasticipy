@@ -75,6 +75,8 @@ SYMMETRIES = {'Isotropic': isotropic,
 SPACE_GROUPS = {'Trigonal':   ["3, -3", "32, -3m, 3m"],
                 'Tetragonal': ["4, -4, 4/m", "4mm, -42m, 422, 4/mmm"]}
 
+WHICH_OPTIONS = {'Mean': 'mean', 'Max': 'max', 'Min': 'min', 'Std. dev.': 'std'}
+
 class ElasticityGUI(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -180,7 +182,7 @@ class ElasticityGUI(QMainWindow):
         # 'which' selector
         which_layout = QHBoxLayout()
         self.which_selector = QComboBox()
-        self.which_selector.addItems(['Mean', 'Max', 'Min', 'Standard Deviation'])
+        self.which_selector.addItems(WHICH_OPTIONS.keys())
         label_value = QLabel("Value:")
         which_layout.addWidget(label_value)
        # label_value.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
@@ -270,8 +272,7 @@ class ElasticityGUI(QMainWindow):
                 value = stiff.shear_modulus
             else:
                 value = stiff.Poisson_ratio
-            which_options = {'Mean': 'mean', 'Max': 'max', 'Min': 'min', 'Standard Deviation': 'std'}
-            plot_kwargs = {'which': which_options[self.which_selector.currentText()]}
+            plot_kwargs = {'which': WHICH_OPTIONS[self.which_selector.currentText()]}
         if self.plot_style_selector.currentIndex() == 0:
             value.plot3D(fig=self.figure, **plot_kwargs)
         elif self.plot_style_selector.currentIndex() == 1:
