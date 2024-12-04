@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QComboBox, QGridLayout, QLabel,
     QLineEdit, QPushButton, QVBoxLayout, QHBoxLayout, QWidget, QFrame
 )
+from PyQt5 import QtCore
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 from Elasticipy.FourthOrderTensor import StiffnessTensor
@@ -93,7 +94,10 @@ class ElasticityGUI(QMainWindow):
     def initUI(self):
         # Main layout
         main_layout = QVBoxLayout()
-        # Symmetry, Space Group, and Diad Selection (aligned horizontally)
+
+        #######################################################################################
+        # Material's symmetry and other parameters
+        #######################################################################################
         selectors_layout = QHBoxLayout()
 
         # Symmetry selection
@@ -107,7 +111,7 @@ class ElasticityGUI(QMainWindow):
         self.space_group_selector = QComboBox()
         self.space_group_selector.addItems(['', ''])
         self.space_group_selector.currentIndexChanged.connect(self.update_fields)
-        selectors_layout.addWidget(QLabel("Space group symmetry:"))
+        selectors_layout.addWidget(QLabel("Space group:"))
         selectors_layout.addWidget(self.space_group_selector)
 
         # Diad selection
@@ -126,7 +130,9 @@ class ElasticityGUI(QMainWindow):
         main_layout.addLayout(selectors_layout)
         main_layout.addWidget(separator)
 
-        # Matrix component
+        #######################################################################################
+        # Matrix components
+        #######################################################################################
         grid = QGridLayout()
         for i in range(6):
             for j in range(i, 6):
@@ -137,26 +143,38 @@ class ElasticityGUI(QMainWindow):
                 grid.addWidget(field, i, j)
         main_layout.addLayout(grid)
 
-        # Line of plotting options
+        #######################################################################################
+        # Plotting options
+        #######################################################################################
         plotting_layout = QHBoxLayout()
 
+        # E, G or nu selector
         self.plotting_selector = QComboBox()
         self.plotting_selector.addItems(['Young modulus', 'Shear modulus', 'Poisson ratio'])
         self.plotting_selector.currentIndexChanged.connect(self.update_plotting_selectors)
-        plotting_layout.addWidget(QLabel("Parameter to plot:"))
+        label_parameter = QLabel("Parameter:")
+        plotting_layout.addWidget(label_parameter)
+        label_parameter.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
         plotting_layout.addWidget(self.plotting_selector)
 
+        # Plotting style
         self.plot_style_selector = QComboBox()
         self.plot_style_selector.addItems(['3D', 'XY, XZ and YZ sections', 'Pole Figure'])
         self.plot_style_selector.currentIndexChanged.connect(self.update_plotting_selectors)
-        plotting_layout.addWidget(QLabel("Plot type:"))
+        label_plot_type = QLabel("Plot type:")
+        plotting_layout.addWidget(label_plot_type)
+        label_plot_type.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
         plotting_layout.addWidget(self.plot_style_selector)
 
+        # 'which' selector
         self.which_selector = QComboBox()
         self.which_selector.addItems(['Mean', 'Max', 'Min', 'Standard Deviation'])
-        plotting_layout.addWidget(QLabel("Value:"))
+        label_value = QLabel("Value:")
+        plotting_layout.addWidget(label_value)
+        label_value.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
         plotting_layout.addWidget(self.which_selector)
 
+        # Plot button
         self.calculate_button = QPushButton("Plot")
         self.calculate_button.clicked.connect(self.calculate_and_plot)
         plotting_layout.addWidget(self.calculate_button)
@@ -168,12 +186,16 @@ class ElasticityGUI(QMainWindow):
         self.canvas = FigureCanvas(self.figure)
         main_layout.addWidget(self.canvas)
 
+        #######################################################################################
         # Main widget
+        #######################################################################################
         central_widget = QWidget()
         central_widget.setLayout(main_layout)
         self.setCentralWidget(central_widget)
 
-        # Initialize Selected symmetry to Triclinic
+        #######################################################################################
+        # At load, initialize symmetry at Triclinic
+        #######################################################################################
         self.symmetry_selector.setCurrentText('Triclinic')
 
     def update_fields(self):
