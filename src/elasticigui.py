@@ -61,17 +61,17 @@ monoclinic1=SymmetryRelationships(active_cells= active_cell_monoclinic_0 + [(0, 
 monoclinic2=SymmetryRelationships(active_cells= active_cell_monoclinic_0 + [(0, 5), (1, 5), (2, 5), (3, 4)])
 triclinic=SymmetryRelationships(active_cells=[(i, j) for i in range(6) for j in range(6)])
 
-SYMMETRIES = {'isotropic': isotropic,
-              'cubic': cubic,
-              'hexagonal': hexagonal,
-              'tetragonal_1':tetragonal_1, 'tetragonal_2':tetragonal_2,
-              'trigonal_1':trigonal_1, 'trigonal_2':trigonal_2,
-              'orthorhombic': orthorhombic,
-              'monoclinic_1': monoclinic1, 'monoclinic_2': monoclinic2,
-              'triclinic': triclinic}
+SYMMETRIES = {'Isotropic': isotropic,
+              'Cubic': cubic,
+              'Hexagonal': hexagonal,
+              'Tetragonal': [tetragonal_1, tetragonal_2],
+              'Trigonal': [trigonal_1, trigonal_2],
+              'Orthorhombic': orthorhombic,
+              'Monoclinic': [monoclinic1,  monoclinic2],
+              'Triclinic': triclinic}
 
-SPACE_GROUPS = {'trigonal':   ["3, -3", "32, -3m, 3m"],
-                'tetragonal': ["4, -4, 4/m", "4mm, -42m, 422, 4/mmm"]}
+SPACE_GROUPS = {'Trigonal':   ["3, -3", "32, -3m, 3m"],
+                'Tetragonal': ["4, -4, 4/m", "4mm, -42m, 422, 4/mmm"]}
 
 class ElasticityGUI(QMainWindow):
     def __init__(self):
@@ -81,12 +81,15 @@ class ElasticityGUI(QMainWindow):
         self.initUI()
 
     def selected_symmetry(self):
-        symmetry = self.symmetry_selector.currentText()
-        if symmetry == "Trigonal" or symmetry == "Tetragonal":
-            symmetry = symmetry + '_{}'.format(self.space_group_selector.currentIndex() + 1)
-        elif symmetry == "Monoclinic":
-            symmetry = symmetry + '_{}'.format(self.diag_selector.currentIndex() + 1)
-        return SYMMETRIES[symmetry.lower()]
+        symmetry_name = self.symmetry_selector.currentText()
+        symmetry = SYMMETRIES[symmetry_name]
+        if symmetry_name == "Trigonal" or symmetry_name == "Tetragonal":
+            space_group_index = self.space_group_selector.currentIndex()
+            symmetry = symmetry[space_group_index]
+        elif symmetry_name == "Monoclinic":
+            diad_index = self.diag_selector.currentIndex()
+            symmetry = symmetry[diad_index]
+        return symmetry
 
     def initUI(self):
         # Main layout
@@ -96,8 +99,7 @@ class ElasticityGUI(QMainWindow):
 
         # Symmetry selection
         self.symmetry_selector = QComboBox()
-        self.symmetry_selector.addItems(["Isotropic", "Cubic", "Hexagonal", "Tetragonal",
-                                         "Trigonal", "Orthorhombic", "Monoclinic", "Triclinic"])
+        self.symmetry_selector.addItems(SYMMETRIES.keys())
         self.symmetry_selector.currentIndexChanged.connect(self.update_fields)
         selectors_layout.addWidget(QLabel("Crystal symmetry:"))
         selectors_layout.addWidget(self.symmetry_selector)
@@ -161,7 +163,7 @@ class ElasticityGUI(QMainWindow):
             # Turn on and change list of possible SGs
             self.space_group_selector.setEnabled(True)
             for i in range(2):
-                self.space_group_selector.setItemText(i, SPACE_GROUPS[selected_symmetry_name.lower()][i])
+                self.space_group_selector.setItemText(i, SPACE_GROUPS[selected_symmetry_name][i])
         else:
             # Turn off
             self.space_group_selector.setEnabled(False)
