@@ -158,13 +158,11 @@ class ElasticityGUI(QMainWindow):
         left_panel_layout = QVBoxLayout()
 
         # E, G or nu selector
+        parameter_layout = QHBoxLayout()
         self.plotting_selector = QComboBox()
         self.plotting_selector.addItems(['Young modulus', 'Shear modulus', 'Poisson ratio'])
         self.plotting_selector.currentIndexChanged.connect(self.update_plotting_selectors)
-        label_parameter = QLabel("Parameter:")
-        parameter_layout = QHBoxLayout()
-        parameter_layout.addWidget(label_parameter)
-      #  label_parameter.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
+        parameter_layout.addWidget(QLabel("Parameter:"))
         parameter_layout.addWidget(self.plotting_selector)
         left_panel_layout.addLayout(parameter_layout)
 
@@ -173,9 +171,7 @@ class ElasticityGUI(QMainWindow):
         self.plot_style_selector = QComboBox()
         self.plot_style_selector.addItems(['3D', 'Sections', 'Pole Figure'])
         self.plot_style_selector.currentIndexChanged.connect(self.update_plotting_selectors)
-        label_plot_type = QLabel("Plot type:")
-        style_layout.addWidget(label_plot_type)
-       # label_plot_type.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
+        style_layout.addWidget(QLabel("Plot type:"))
         style_layout.addWidget(self.plot_style_selector)
         left_panel_layout.addLayout(style_layout)
 
@@ -183,9 +179,7 @@ class ElasticityGUI(QMainWindow):
         which_layout = QHBoxLayout()
         self.which_selector = QComboBox()
         self.which_selector.addItems(WHICH_OPTIONS.keys())
-        label_value = QLabel("Value:")
-        which_layout.addWidget(label_value)
-       # label_value.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
+        which_layout.addWidget(QLabel("Value:"))
         which_layout.addWidget(self.which_selector)
         left_panel_layout.addLayout(which_layout)
 
