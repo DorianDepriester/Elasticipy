@@ -215,6 +215,8 @@ class ElasticityGUI(QMainWindow):
         # At load, initialize symmetry at Triclinic
         #######################################################################################
         self.symmetry_selector.setCurrentText('Triclinic')
+        self.plotting_selector.setCurrentText('Young modulus')
+        self.which_selector.setEnabled(False)
 
     def update_fields(self):
         # Deactivate unused fields
