@@ -634,6 +634,71 @@ class StiffnessTensor(SymmetricTensor):
         matrix = _isotropic_matrix(C11, C12, C44)
         return StiffnessTensor(np.array(matrix), symmetry='isotropic', phase_name=phase_name)
 
+    @classmethod
+    def orthotropic(cls, Ex=None, Ey=None, Ez=None,
+                    nu_xy=None, nu_xz=None, nu_yz=None,
+                    Gxy=None, Gxz=None, Gyz=None, **kwargs):
+        """
+        Create a stiffness tensor corresponding to orthotropic symmetry, given the engineering constants.
+
+        Parameters
+        ----------
+        Ex : float, None
+            Young modulus along the x axis
+        Ey : float, None
+            Young modulus along the y axis
+        Ez : float, None
+            Young modulus along the z axis
+        nu_xy : float, None
+            Poisson ratio between x and y axes
+        nu_xz : float, None
+            Poisson ratio between x and z axes
+        nu_yz : float, None
+            Poisson ratio between y and z axes
+        Gxy : float, None
+            Shear modulus in the x-y plane
+        Gxz : float, None
+            Shear modulus in the x-z plane
+        Gyz : float
+            Shear modulus in the y-z plane
+        kwargs
+            Keyword arguments to pass to the StiffnessTensor constructor
+
+        Returns
+        -------
+        StiffnessTensor
+        """
+        S = ComplianceTensor.orthotropic(Ex=Ex, Ey=Ey, Ez=Ez, nu_xy=nu_xy, nu_xz=nu_xz, nu_yz=nu_yz,
+                                         Gxy=Gxy, Gxz=Gxz, Gyz=Gyz, **kwargs).inv()
+        return S.inv()
+
+    @classmethod
+    def transverse_isotropic(cls, Ex=None, Ez=None, nu_xy=None, nu_xz=None, Gxz=None, **kwargs):
+        """
+        Create a stiffness tensor corresponding to the transverse isotropic symmetry, given the engineering constants.
+
+        Parameters
+        ----------
+        Ex : float, None
+            Young modulus along the x axis
+        Ez : float, None
+            Young modulus along the y axis
+        nu_xy : float, None
+            Poisson ratio between x and y axes
+        nu_xz : float, None
+            Poisson ratio between x and z axes
+        Gxz : float, None
+            Shear modulus in the x-z plane
+        kwargs : dict
+            Keyword arguments to pass to the StiffnessTensor constructor
+
+        Returns
+        -------
+        StiffnessTensor
+        """
+        S = ComplianceTensor.transverse_isotropic(Ex=Ex, Ez=Ez, nu_xy=nu_xy, nu_xz=nu_xz, Gxz=Gxz, **kwargs)
+        return S.inv()
+
     def Christoffel_tensor(self, u):
         """
         Create the Christoffel tensor along a given direction, or set or directions.
@@ -802,3 +867,76 @@ class ComplianceTensor(StiffnessTensor):
         """
         return StiffnessTensor.isotropic(**kwargs).inv()
 
+    @classmethod
+    def orthotropic(cls, Ex=None, Ey=None, Ez=None,
+                    nu_xy=None, nu_xz=None, nu_yz=None,
+                    Gxy=None, Gxz=None, Gyz=None, **kwargs):
+        """
+        Create a compliance tensor corresponding to orthotropic symmetry, given the engineering constants.
+
+        Parameters
+        ----------
+        Ex : float, None
+            Young modulus along the x axis
+        Ey : float, None
+            Young modulus along the y axis
+        Ez : float, None
+            Young modulus along the z axis
+        nu_xy : float, None
+            Poisson ratio between x and y axes
+        nu_xz : float, None
+            Poisson ratio between x and z axes
+        nu_yz : float, None
+            Poisson ratio between y and z axes
+        Gxy : float, None
+            Shear modulus in the x-y plane
+        Gxz : float, None
+            Shear modulus in the x-z plane
+        Gyz : float
+            Shear modulus in the y-z plane
+        kwargs
+            Keyword arguments to pass to the ComplianceTensor constructor
+
+        Returns
+        -------
+        ComplianceTensor
+        """
+        tri_sup = np.array([[1/Ex, -nu_xy/Ey, -nu_xz/Ez, 0,     0,     0],
+                            [0,    1/Ey,      -nu_yz/Ez, 0,     0,     0],
+                            [0,    0,         1/Ez,      0,     0,     0],
+                            [0,    0,         0,         1/Gyz, 0,     0],
+                            [0,    0,         0,         0,     1/Gxz, 0],
+                            [0,    0,         0,         0,     0,     1/Gxy]])
+        matrix = tri_sup + np.tril(tri_sup.T, -1)
+        return ComplianceTensor(matrix, symmetry='orthotropic', **kwargs)
+
+    @classmethod
+    def transverse_isotropic(cls, Ex=None, Ez=None, nu_xy=None, nu_xz=None, Gxz=None, **kwargs):
+        """
+        Create a compliance tensor corresponding to the transverse isotropic symmetry, given the engineering constants.
+
+        Parameters
+        ----------
+        Ex : float, None
+           Young modulus along the x axis
+        Ez : float, None
+           Young modulus along the y axis
+        nu_xy : float, None
+           Poisson ratio between x and y axes
+        nu_xz : float, None
+           Poisson ratio between x and z axes
+        Gxz : float, None
+           Shear modulus in the x-z plane
+        kwargs : dict
+           Keyword arguments to pass to the ComplianceTensor constructor
+
+        Returns
+        -------
+        ComplianceTensor
+       """
+        Gxy = Ex / (2 * (1+nu_xy))
+        s = cls.orthotropic(Ex=Ex, Ey=Ex, Ez=Ez,
+                            nu_xy=nu_xy, nu_xz=nu_xz, nu_yz=nu_xz,
+                            Gxy=Gxy, Gxz=Gxz, Gyz=Gxz, **kwargs)
+        s.symmetry = 'transverse-isotropic'
+        return s
