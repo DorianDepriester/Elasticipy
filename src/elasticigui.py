@@ -144,47 +144,60 @@ class ElasticityGUI(QMainWindow):
         main_layout.addLayout(grid)
 
         #######################################################################################
+        # Plot area
+        #######################################################################################
+        plot_area = QHBoxLayout()
+
+        #######################################################################################
         # Plotting options
         #######################################################################################
-        plotting_layout = QHBoxLayout()
+        plotting_options_layout = QVBoxLayout()
 
         # E, G or nu selector
         self.plotting_selector = QComboBox()
         self.plotting_selector.addItems(['Young modulus', 'Shear modulus', 'Poisson ratio'])
         self.plotting_selector.currentIndexChanged.connect(self.update_plotting_selectors)
         label_parameter = QLabel("Parameter:")
-        plotting_layout.addWidget(label_parameter)
-        label_parameter.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
-        plotting_layout.addWidget(self.plotting_selector)
+        parameter_layout = QHBoxLayout()
+        parameter_layout.addWidget(label_parameter)
+      #  label_parameter.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
+        parameter_layout.addWidget(self.plotting_selector)
+        plotting_options_layout.addLayout(parameter_layout)
 
         # Plotting style
+        style_layout = QHBoxLayout()
         self.plot_style_selector = QComboBox()
         self.plot_style_selector.addItems(['3D', 'XY, XZ and YZ sections', 'Pole Figure'])
         self.plot_style_selector.currentIndexChanged.connect(self.update_plotting_selectors)
         label_plot_type = QLabel("Plot type:")
-        plotting_layout.addWidget(label_plot_type)
-        label_plot_type.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
-        plotting_layout.addWidget(self.plot_style_selector)
+        style_layout.addWidget(label_plot_type)
+       # label_plot_type.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
+        style_layout.addWidget(self.plot_style_selector)
+        plotting_options_layout.addLayout(style_layout)
 
         # 'which' selector
+        which_layout = QHBoxLayout()
         self.which_selector = QComboBox()
         self.which_selector.addItems(['Mean', 'Max', 'Min', 'Standard Deviation'])
         label_value = QLabel("Value:")
-        plotting_layout.addWidget(label_value)
-        label_value.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
-        plotting_layout.addWidget(self.which_selector)
+        which_layout.addWidget(label_value)
+       # label_value.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
+        which_layout.addWidget(self.which_selector)
+        plotting_options_layout.addLayout(which_layout)
 
         # Plot button
         self.calculate_button = QPushButton("Plot")
         self.calculate_button.clicked.connect(self.calculate_and_plot)
-        plotting_layout.addWidget(self.calculate_button)
+        plotting_options_layout.addWidget(self.calculate_button)
 
-        main_layout.addLayout(plotting_layout)
+        plot_area.addLayout(plotting_options_layout)
 
         # Display area
         self.figure = Figure()
         self.canvas = FigureCanvas(self.figure)
-        main_layout.addWidget(self.canvas)
+        plot_area.addWidget(self.canvas)
+
+        main_layout.addLayout(plot_area)
 
         #######################################################################################
         # Main widget
