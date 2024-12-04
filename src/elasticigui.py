@@ -4,7 +4,7 @@ from time import monotonic
 import numpy as np
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QComboBox, QGridLayout, QLabel,
-    QLineEdit, QPushButton, QVBoxLayout, QHBoxLayout, QWidget
+    QLineEdit, QPushButton, QVBoxLayout, QHBoxLayout, QWidget, QFrame
 )
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
@@ -118,8 +118,14 @@ class ElasticityGUI(QMainWindow):
         selectors_layout.addWidget(QLabel("Diad convention:"))
         selectors_layout.addWidget(self.diag_selector)
 
+        # Ajouter un séparateur horizontal
+        separator = QFrame()
+        separator.setFrameShape(QFrame.HLine)  # Ligne horizontale
+        separator.setFrameShadow(QFrame.Sunken)  # Optionnel : style ombré
+
         # Add selectors_layout to main layout
         main_layout.addLayout(selectors_layout)
+        main_layout.addWidget(separator)
 
         # Matrix component
         grid = QGridLayout()
