@@ -3,7 +3,7 @@ import sys
 import numpy as np
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QComboBox, QGridLayout, QLabel,
-    QLineEdit, QPushButton, QVBoxLayout, QHBoxLayout, QWidget, QFrame
+    QLineEdit, QPushButton, QVBoxLayout, QHBoxLayout, QWidget, QFrame, QMessageBox
 )
 from PyQt5 import QtCore
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
@@ -258,28 +258,32 @@ class ElasticityGUI(QMainWindow):
                 coefficients[i, j] = float(field.text())
             except ValueError:
                 coefficients[i, j] = 0
-
         C = np.array(coefficients)
-        stiff = StiffnessTensor(C + np.tril(C.T, -1))
+        Csym = C + np.tril(C.T, -1) # Rebuild the lower triangular part
 
-        self.figure.clear()
-        requested_value = self.plotting_selector.currentText()
-        if requested_value == "Young modulus":
-            value = stiff.Young_modulus
-            plot_kwargs = {}
+        if np.abs(np.linalg.det(Csym)) < 1e-5:
+            self.raise_singularity_error()
         else:
-            if requested_value == 'Shear modulus':
-                value = stiff.shear_modulus
+            stiff = StiffnessTensor(Csym)
+
+            self.figure.clear()
+            requested_value = self.plotting_selector.currentText()
+            if requested_value == "Young modulus":
+                value = stiff.Young_modulus
+                plot_kwargs = {}
             else:
-                value = stiff.Poisson_ratio
-            plot_kwargs = {'which': WHICH_OPTIONS[self.which_selector.currentText()]}
-        if self.plot_style_selector.currentIndex() == 0:
-            value.plot3D(fig=self.figure, **plot_kwargs)
-        elif self.plot_style_selector.currentIndex() == 1:
-            value.plot_xyz_sections(fig=self.figure)
-        else:
-            value.plot_as_pole_figure(fig=self.figure, **plot_kwargs)
-        self.canvas.draw()
+                if requested_value == 'Shear modulus':
+                    value = stiff.shear_modulus
+                else:
+                    value = stiff.Poisson_ratio
+                plot_kwargs = {'which': WHICH_OPTIONS[self.which_selector.currentText()]}
+            if self.plot_style_selector.currentIndex() == 0:
+                value.plot3D(fig=self.figure, **plot_kwargs)
+            elif self.plot_style_selector.currentIndex() == 1:
+                value.plot_xyz_sections(fig=self.figure)
+            else:
+                value.plot_as_pole_figure(fig=self.figure, **plot_kwargs)
+            self.canvas.draw()
 
     def update_dependent_fields(self):
         symmetry = self.selected_symmetry()
@@ -305,6 +309,11 @@ class ElasticityGUI(QMainWindow):
                     self.coefficient_fields[index].setText(f"{0.5*(C11-C12)}")
             except ValueError:
                 pass
+
+    def raise_singularity_error(self):
+        """Print a message error if the stiffness tensor is singular"""
+        error_message = "The stiffness tensor you entered is singular."
+        QMessageBox.critical(self, "Singular stiffness", error_message, QMessageBox.Ok)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
