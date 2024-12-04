@@ -8,6 +8,8 @@ from PyQt5.QtWidgets import (
 from PyQt5 import QtCore
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
+from numpy.polynomial.legendre import legtrim
+
 from Elasticipy.FourthOrderTensor import StiffnessTensor
 
 class SymmetryRelationships:
@@ -146,12 +148,12 @@ class ElasticityGUI(QMainWindow):
         #######################################################################################
         # Plot area
         #######################################################################################
-        plot_area = QHBoxLayout()
+        bottom_layout = QHBoxLayout()
 
         #######################################################################################
         # Plotting options
         #######################################################################################
-        plotting_options_layout = QVBoxLayout()
+        left_panel_layout = QVBoxLayout()
 
         # E, G or nu selector
         self.plotting_selector = QComboBox()
@@ -162,18 +164,18 @@ class ElasticityGUI(QMainWindow):
         parameter_layout.addWidget(label_parameter)
       #  label_parameter.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
         parameter_layout.addWidget(self.plotting_selector)
-        plotting_options_layout.addLayout(parameter_layout)
+        left_panel_layout.addLayout(parameter_layout)
 
         # Plotting style
         style_layout = QHBoxLayout()
         self.plot_style_selector = QComboBox()
-        self.plot_style_selector.addItems(['3D', 'XY, XZ and YZ sections', 'Pole Figure'])
+        self.plot_style_selector.addItems(['3D', 'Sections', 'Pole Figure'])
         self.plot_style_selector.currentIndexChanged.connect(self.update_plotting_selectors)
         label_plot_type = QLabel("Plot type:")
         style_layout.addWidget(label_plot_type)
        # label_plot_type.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
         style_layout.addWidget(self.plot_style_selector)
-        plotting_options_layout.addLayout(style_layout)
+        left_panel_layout.addLayout(style_layout)
 
         # 'which' selector
         which_layout = QHBoxLayout()
@@ -183,21 +185,24 @@ class ElasticityGUI(QMainWindow):
         which_layout.addWidget(label_value)
        # label_value.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
         which_layout.addWidget(self.which_selector)
-        plotting_options_layout.addLayout(which_layout)
+        left_panel_layout.addLayout(which_layout)
 
         # Plot button
         self.calculate_button = QPushButton("Plot")
         self.calculate_button.clicked.connect(self.calculate_and_plot)
-        plotting_options_layout.addWidget(self.calculate_button)
+        left_panel_layout.addWidget(self.calculate_button)
 
-        plot_area.addLayout(plotting_options_layout)
+        # Fill space
+        left_panel_layout.addStretch()
+
+        bottom_layout.addLayout(left_panel_layout)
 
         # Display area
         self.figure = Figure()
         self.canvas = FigureCanvas(self.figure)
-        plot_area.addWidget(self.canvas)
+        bottom_layout.addWidget(self.canvas)
 
-        main_layout.addLayout(plot_area)
+        main_layout.addLayout(bottom_layout)
 
         #######################################################################################
         # Main widget
