@@ -262,20 +262,20 @@ class ElasticityGUI(QMainWindow):
         requested_value = self.plotting_selector.currentText()
         if requested_value == "Young modulus":
             value = stiff.Young_modulus
-            kwargs_plot3D = {}
+            plot_kwargs = {}
         else:
             if requested_value == 'Shear modulus':
                 value = stiff.shear_modulus
             else:
                 value = stiff.Poisson_ratio
             which_options = {'Mean': 'mean', 'Max': 'max', 'Min': 'min', 'Standard Deviation': 'std'}
-            kwargs_plot3D = {'which': which_options[self.which_selector.currentText()]}
+            plot_kwargs = {'which': which_options[self.which_selector.currentText()]}
         if self.plot_style_selector.currentIndex() == 0:
-            value.plot3D(fig=self.figure, **kwargs_plot3D)
+            value.plot3D(fig=self.figure, **plot_kwargs)
         elif self.plot_style_selector.currentIndex() == 1:
             value.plot_xyz_sections(fig=self.figure)
         else:
-            value.plot_as_pole_figure(fig=self.figure)
+            value.plot_as_pole_figure(fig=self.figure, **plot_kwargs)
         self.canvas.draw()
 
     def update_dependent_fields(self):
