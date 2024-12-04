@@ -432,7 +432,7 @@ class SphericalFunction:
             plt.show()
         return new_fig, ax
 
-    def plot_xyz_sections(self, n_theta=500, **kwargs):
+    def plot_xyz_sections(self, n_theta=500, fig=None, **kwargs):
         """
         Plot XYZ sections of spherical data.
 
@@ -444,6 +444,8 @@ class SphericalFunction:
         ----------
         n_theta : int, optional
             Number of points to use for the polar plot angles. Default is 500.
+        fig : matplotlib figure object, default None
+            Handle to existing figure object. If None, a new figure will be created. If passed, the figure is not shown
         **kwargs : dict, optional
             Additional keyword arguments to pass to the plot function.
 
@@ -454,12 +456,15 @@ class SphericalFunction:
         axs : list of matplotlib.axes._subplots.PolarAxesSubplot
             List of axes objects for each plot.
         """
-        fig = plt.figure()
+        if fig is None:
+            new_fig = plt.figure()
+        else:
+            new_fig = fig
         theta_polar = np.linspace(0, 2*np.pi, n_theta)
         titles = ('XY', 'XZ', 'YZ')
         axs = []
         for i in range(0, 3):
-            ax = fig.add_subplot(1, 3, i+1, projection='polar')
+            ax = new_fig.add_subplot(1, 3, i+1, projection='polar')
             angles = np.zeros((n_theta, 2))
             phi, theta, ax = _create_xyz_section(ax, titles[i], theta_polar)
             angles[:, 0] = phi
@@ -467,8 +472,9 @@ class SphericalFunction:
             r = self.eval_spherical(angles)
             ax.plot(theta_polar, r, **kwargs)
             axs.append(ax)
-        fig.show()
-        return fig, axs
+        if fig is not None:
+            new_fig.show()
+        return new_fig, axs
 
     def plot_as_pole_figure(self, n_theta=50, n_phi=200, projection='lambert',
                             fig=None, plot_type='imshow', show=True, title=None,
@@ -741,7 +747,7 @@ class HyperSphericalFunction(SphericalFunction):
         handles, labels = [], []
         axs = []
         for i in range(0, 3):
-            ax = fig.add_subplot(1, 3, i+1, projection='polar')
+            ax = new_fig.add_subplot(1, 3, i+1, projection='polar')
             phi, theta, ax = _create_xyz_section(ax, titles[i], theta_polar)
             psi = np.linspace(0, np.pi, n_psi)
             phi_grid, psi_grid = np.meshgrid(phi, psi, indexing='ij')
