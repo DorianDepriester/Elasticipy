@@ -118,10 +118,10 @@ class ElasticityGUI(QMainWindow):
         selectors_layout.addWidget(QLabel("Diad convention:"))
         selectors_layout.addWidget(self.diag_selector)
 
-        # Ajouter un séparateur horizontal
+        # Add horizontal separator
         separator = QFrame()
-        separator.setFrameShape(QFrame.HLine)  # Ligne horizontale
-        separator.setFrameShadow(QFrame.Sunken)  # Optionnel : style ombré
+        separator.setFrameShape(QFrame.HLine)
+        separator.setFrameShadow(QFrame.Sunken)
 
         # Add selectors_layout to main layout
         main_layout.addLayout(selectors_layout)
@@ -138,10 +138,28 @@ class ElasticityGUI(QMainWindow):
                 grid.addWidget(field, i, j)
         main_layout.addLayout(grid)
 
-        # Plot button
+        # Line of plotting options
+        plotting_layout = QHBoxLayout()
+
+        self.plotting_selector = QComboBox()
+        self.plotting_selector.addItems(['Young modulus', 'Shear modulus', 'Poisson ratio'])
+        self.plotting_selector.currentIndexChanged.connect(self.update_plotting_selectors)
+        plotting_layout.addWidget(self.plotting_selector)
+
+        self.plot_style_selector = QComboBox()
+        self.plot_style_selector.addItems(['3D', 'XY, XZ and YZ sections', 'Pole Figure'])
+        self.plot_style_selector.currentIndexChanged.connect(self.update_plotting_selectors)
+        plotting_layout.addWidget(self.plot_style_selector)
+
+        self.which_selector = QComboBox()
+        self.which_selector.addItems(['Mean', 'Max', 'Min', 'Standard Deviation'])
+        plotting_layout.addWidget(self.which_selector)
+
         self.calculate_button = QPushButton("Plot")
         self.calculate_button.clicked.connect(self.calculate_and_plot)
-        main_layout.addWidget(self.calculate_button)
+        plotting_layout.addWidget(self.calculate_button)
+
+        main_layout.addLayout(plotting_layout)
 
         # Display area
         self.figure = Figure()
@@ -165,16 +183,21 @@ class ElasticityGUI(QMainWindow):
 
         # Turn on/off SG selection
         selected_symmetry_name = self.symmetry_selector.currentText()
-        if selected_symmetry_name in ("Trigonal", "Tetragonal"):
-            # Turn on and change list of possible SGs
+        trig_or_tetra = selected_symmetry_name in ("Trigonal", "Tetragonal")
+        self.space_group_selector.setEnabled(trig_or_tetra) # Turn on/off SG selector
+        if trig_or_tetra:
+            # Change list of possible SGs
             self.space_group_selector.setEnabled(True)
             for i in range(2):
                 self.space_group_selector.setItemText(i, SPACE_GROUPS[selected_symmetry_name][i])
-        else:
-            # Turn off
-            self.space_group_selector.setEnabled(False)
         self.diag_selector.setEnabled(selected_symmetry_name == "Monoclinic")
 
+    def update_plotting_selectors(self):
+        if (self.plotting_selector.currentText() == "Young modulus" or
+                self.plot_style_selector.currentText() == "Pole Figure"):
+            self.which_selector.setEnabled(False)
+        else:
+            self.which_selector.setEnabled(True)
 
     def calculate_and_plot(self):
         """Collect entries and compute the stiffness tensor"""
@@ -188,9 +211,19 @@ class ElasticityGUI(QMainWindow):
         C = np.array(coefficients)
         stiff = StiffnessTensor(C + np.tril(C.T, -1))
 
-        E = stiff.Young_modulus
         self.figure.clear()
-        E.plot3D(fig=self.figure)
+        requested_value = self.plotting_selector.currentText()
+        if requested_value == "Young modulus":
+            E = stiff.Young_modulus
+            E.plot3D(fig=self.figure)
+        else:
+            if requested_value == 'Shear modulus':
+                value = stiff.shear_modulus
+            else:
+                value = stiff.Poisson_ratio
+            which_options = {'Mean': 'mean', 'Max': 'max', 'Min': 'min', 'Standard Deviation': 'std'}
+            which = which_options[self.which_selector.currentText()]
+            value.plot3D(fig=self.figure, which=which)
         self.canvas.draw()
 
     def update_dependent_fields(self):
