@@ -222,7 +222,12 @@ class ElasticityGUI(QMainWindow):
                 value = stiff.Poisson_ratio
             which_options = {'Mean': 'mean', 'Max': 'max', 'Min': 'min', 'Standard Deviation': 'std'}
             kwargs_plot3D = {'which': which_options[self.which_selector.currentText()]}
-        value.plot3D(fig=self.figure, **kwargs_plot3D)
+        if self.plot_style_selector.currentIndex() == 0:
+            value.plot3D(fig=self.figure, **kwargs_plot3D)
+        elif self.plot_style_selector.currentIndex() == 1:
+            value.plot_xyz_sections(fig=self.figure)
+        else:
+            value.plot_as_pole_figure(fig=self.figure)
         self.canvas.draw()
 
     def update_dependent_fields(self):
