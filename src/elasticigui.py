@@ -143,15 +143,18 @@ class ElasticityGUI(QMainWindow):
         self.plotting_selector = QComboBox()
         self.plotting_selector.addItems(['Young modulus', 'Shear modulus', 'Poisson ratio'])
         self.plotting_selector.currentIndexChanged.connect(self.update_plotting_selectors)
+        plotting_layout.addWidget(QLabel("Parameter to plot:"))
         plotting_layout.addWidget(self.plotting_selector)
 
         self.plot_style_selector = QComboBox()
         self.plot_style_selector.addItems(['3D', 'XY, XZ and YZ sections', 'Pole Figure'])
         self.plot_style_selector.currentIndexChanged.connect(self.update_plotting_selectors)
+        plotting_layout.addWidget(QLabel("Plot type:"))
         plotting_layout.addWidget(self.plot_style_selector)
 
         self.which_selector = QComboBox()
         self.which_selector.addItems(['Mean', 'Max', 'Min', 'Standard Deviation'])
+        plotting_layout.addWidget(QLabel("Value:"))
         plotting_layout.addWidget(self.which_selector)
 
         self.calculate_button = QPushButton("Plot")
@@ -170,15 +173,20 @@ class ElasticityGUI(QMainWindow):
         central_widget.setLayout(main_layout)
         self.setCentralWidget(central_widget)
 
+        # Initialize Selected symmetry to Triclinic
+        self.symmetry_selector.setCurrentText('Triclinic')
+
     def update_fields(self):
         # Deactivate unused fields
         active_fields = self.selected_symmetry().active
         for (i, j), field in self.coefficient_fields.items():
             if (i, j) in active_fields:
                 field.setEnabled(True)
+                if field.text() == "0":
+                    field.setText('')
             else:
                 field.setEnabled(False)
-                field.setText('')
+                field.setText('0')
 
         # Turn on/off SG selection
         selected_symmetry_name = self.symmetry_selector.currentText()
@@ -193,7 +201,7 @@ class ElasticityGUI(QMainWindow):
 
     def update_plotting_selectors(self):
         if (self.plotting_selector.currentText() == "Young modulus" or
-                self.plot_style_selector.currentText() == "Pole Figure"):
+                self.plot_style_selector.currentIndex() == 1):
             self.which_selector.setEnabled(False)
         else:
             self.which_selector.setEnabled(True)
