@@ -24,7 +24,7 @@ class ElasticityGUI(QMainWindow):
         symmetry_name = self.symmetry_selector.currentText()
         symmetry = SYMMETRIES[symmetry_name]
         if symmetry_name == "Trigonal" or symmetry_name == "Tetragonal":
-            space_group_text = self.space_group_selector.currentText()
+            space_group_text = self.point_group_selector.currentText()
             try:
                 symmetry = symmetry[space_group_text]
             except KeyError:
@@ -52,11 +52,11 @@ class ElasticityGUI(QMainWindow):
         selectors_layout.addWidget(self.symmetry_selector)
 
         # Space Group selection
-        self.space_group_selector = QComboBox()
-        self.space_group_selector.addItems(['', ''])
-        self.space_group_selector.currentIndexChanged.connect(self.update_fields)
-        selectors_layout.addWidget(QLabel("Space group:"))
-        selectors_layout.addWidget(self.space_group_selector)
+        self.point_group_selector = QComboBox()
+        self.point_group_selector.addItems(['', ''])
+        self.point_group_selector.currentIndexChanged.connect(self.update_fields)
+        selectors_layout.addWidget(QLabel("Point group:"))
+        selectors_layout.addWidget(self.point_group_selector)
 
         # Diad selection
         self.diag_selector = QComboBox()
@@ -175,13 +175,13 @@ class ElasticityGUI(QMainWindow):
         # Turn on/off SG selection
         selected_symmetry_name = self.symmetry_selector.currentText()
         trig_or_tetra = selected_symmetry_name in ("Trigonal", "Tetragonal")
-        self.space_group_selector.setEnabled(trig_or_tetra) # Turn on/off SG selector
+        self.point_group_selector.setEnabled(trig_or_tetra) # Turn on/off SG selector
         if trig_or_tetra:
             # Change list of possible SGs
-            self.space_group_selector.setEnabled(True)
+            self.point_group_selector.setEnabled(True)
             space_groups = SYMMETRIES[selected_symmetry_name].keys()
             for i in range(len(space_groups)):
-                self.space_group_selector.setItemText(i, list(space_groups)[i])
+                self.point_group_selector.setItemText(i, list(space_groups)[i])
         self.diag_selector.setEnabled(selected_symmetry_name == "Monoclinic")
 
     def update_plotting_selectors(self):
