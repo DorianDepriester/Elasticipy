@@ -57,5 +57,5 @@ SYMMETRIES = {'Isotropic': isotropic,
               'Tetragonal': {"4, -4, 4/m": tetragonal_1, "4mm, -42m, 422, 4/mmm":tetragonal_2},
               'Trigonal': {"3, -3": trigonal_1, "32, -3m, 3m":trigonal_2},
               'Orthorhombic': orthorhombic,
-              'Monoclinic': {"Diad || x2": monoclinic1, "Diad || x3": monoclinic2},
+              'Monoclinic': {"Diad || y": monoclinic1, "Diad || z": monoclinic2},
               'Triclinic': triclinic}
