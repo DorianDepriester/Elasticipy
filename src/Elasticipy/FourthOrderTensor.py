@@ -528,11 +528,16 @@ class SymmetricTensor:
                                        phase_name=phase_name, prefix='C')
 
     @classmethod
-    def monoclinic(cls, *, C11=0., C12=0., C13=0., C22=0., C23=0., C33=0., C44=0., C55=0., C66=0., phase_name=None,
-                   **kwargs):
+    def monoclinic(cls, *, C11=0., C12=0., C13=0., C22=0., C23=0., C33=0., C44=0., C55=0., C66=0.,
+                   C15=None, C25=None, C35=None, C46=None,
+                   C16=None, C26=None, C36=None, C45=None,
+                   phase_name=None):
         """
         Create a fourth-order tensor from monoclinic symmetry. It automatically detects whether the components are given
         according to the Y or Z diad, depending on the input arguments.
+
+        For Diad || y, C15, C25, C35 and C46 must be provided.
+        For Diad || z, C16, C26, C36 and C45 must be provided.
 
         Parameters
         ----------
@@ -545,43 +550,33 @@ class SymmetricTensor:
         C44 : float
         C55 : float
         C66 : float
+        C15 : float, optional
+        C25 : float, optional
+        C35 : float, optional
+        C46 : float, optional
+        C16 : float, optional
+        C26 : float, optional
+        C36 : float, optional
+        C45 : float, optional
         phase_name : str, optional
             Name to display
-        kwargs : dict
-            Depending on the diad convention, one should also provide, either:
-                - C15, C25, C35 and C46 (Diad || y)
-                - C16, C26, C36 and C45 (Diad || z)
+
         Returns
         -------
         FourthOrderTensor
         """
-        if ('C15' in kwargs.keys()) and ('C16' in kwargs.keys()):
-            raise KeyError('C15 and C16 are mutually exclusive')
-        elif 'C15' in kwargs.keys():
-            diad = 'y'
-            try:
-                C15 = kwargs.pop('C15')
-                C25 = kwargs.pop('C25')
-                C35 = kwargs.pop('C35')
-                C46 = kwargs.pop('C46')
-            except KeyError:
-                raise KeyError('As C15 is provided, C25, C35 and C46 are required for Diad || y')
-            return cls.fromCrystalSymmetry(symmetry='monoclinic',diad=diad,
+        diad_y = not (None in (C15, C25, C35, C46))
+        diad_z = not (None in (C16, C26, C36, C45))
+        if diad_y and diad_z:
+            raise KeyError('Ambiguous diad. Provide either C15, C25, C35 and C46; or C16, C26, C36 and C45')
+        elif diad_y:
+            return cls.fromCrystalSymmetry(symmetry='monoclinic',diad='y',
                                            C11=C11, C12=C12, C13=C13, C22=C22, C23=C23, C33=C33, C44=C44, C55=C55, C66=C66,
-                                           C15=C15, C25=C25, C35=C35, C46=C46, phase_name=phase_name, prefix='C', **kwargs)
-        elif 'C16' in kwargs.keys():
-            diad = 'z'
-            try:
-                C16 = kwargs.pop('C16')
-                C26 = kwargs.pop('C26')
-                C36 = kwargs.pop('C36')
-                C45 = kwargs.pop('C45')
-            except KeyError:
-                raise KeyError('As C16 is provided, C26, C36 and C45 are required for Diad || z')
-            return cls.fromCrystalSymmetry(symmetry='monoclinic',diad=diad,
+                                           C15=C15, C25=C25, C35=C35, C46=C46, phase_name=phase_name, prefix='C')
+        elif diad_z:
+            return cls.fromCrystalSymmetry(symmetry='monoclinic',diad='z',
                                            C11=C11, C12=C12, C13=C13, C22=C22, C23=C23, C33=C33, C44=C44, C55=C55, C66=C66,
-                                           C16=C16, C26=C26, C36=C36, C45=C45, phase_name=phase_name, prefix='C',
-                                           **kwargs)
+                                           C16=C16, C26=C26, C36=C36, C45=C45, phase_name=phase_name, prefix='C')
         else:
             raise KeyError('For monoclinic symmetry, one should provide either C15, C25, C35 and C46, '
                            'or C16, C26, C36 and C45.')
