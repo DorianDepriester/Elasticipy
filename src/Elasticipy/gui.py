@@ -5,75 +5,11 @@ from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QComboBox, QGridLayout, QLabel,
     QLineEdit, QPushButton, QVBoxLayout, QHBoxLayout, QWidget, QFrame, QMessageBox
 )
-from PyQt5 import QtCore
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
-from numpy.polynomial.legendre import legtrim
 
+from Elasticipy.CrystalSymmetries import SYMMETRIES, SPACE_GROUPS
 from Elasticipy.FourthOrderTensor import StiffnessTensor
-
-class SymmetryRelationships:
-    def __init__(self, active_cells=(), equal_cells=(), opposite_cells=(), halfC11_C12=()):
-        self.active = active_cells
-        self.equal = equal_cells
-        self.opposite = opposite_cells
-        self.half = halfC11_C12
-
-isotropic=SymmetryRelationships(active_cells=[(0, 0), (0, 1)],
-                                equal_cells=[((0, 0), [(1, 1), (2, 2)]),
-                                             ((0, 1), [(0, 2), (1, 2)]),
-                                             ((3, 3), [(4, 4), (5, 5)])],
-                                halfC11_C12=[(3, 3), (4, 4), (5, 5)])
-cubic=SymmetryRelationships(active_cells=[(0, 0), (0, 1), (3, 3)],
-                            equal_cells=[((0, 0), [(1, 1), (2, 2)]),
-                                         ((0, 1), [(0, 2), (1, 2)]),
-                                         ((3, 3), [(4, 4), (5, 5)])])
-hexagonal=SymmetryRelationships(active_cells=[(0, 0), (0, 1), (0, 2), (2, 2), (3, 3)],
-                                equal_cells=[((0, 0), [(1, 1)]),
-                                             ((0, 2), [(1, 2)]),
-                                             ((3, 3), [(4, 4)])],
-                                halfC11_C12=[(5, 5)])
-tetragonal_1=SymmetryRelationships(active_cells=[(0, 0), (0, 1), (0, 2), (0, 5), (2, 2), (3, 3), (5, 5)],
-                                   equal_cells=[((0, 0), [(1, 1)]),
-                                                ((0, 2), [(1, 2)]),
-                                                ((3, 3), [(4, 4)])],
-                                   opposite_cells=[((0, 5), [(1, 5)])])
-tetragonal_2=SymmetryRelationships(active_cells=[(0, 0), (0, 1), (0, 2), (2, 2), (3, 3), (5, 5)],
-                                   equal_cells=[((0, 0), [(1, 1)]),
-                                                ((0, 2), [(1, 2)]),
-                                                ((3, 3), [(4, 4)])])
-trigonal_1=SymmetryRelationships(active_cells=[(0, 0), (0, 1), (0, 2), (0, 3), (0, 4), (2, 2), (3, 3)],
-                                 equal_cells=[((0, 0), [(1, 1)]),
-                                              ((0, 2), [(1, 2)]),
-                                              ((0, 3), [(4, 5)]),
-                                              ((3, 3), [(4, 4)]),],
-                                 opposite_cells=[((0, 3), [(1, 3)]),
-                                                 ((0, 4), [(1, 4), (3, 5)]),],
-                                 halfC11_C12=[(5, 5)])
-trigonal_2=SymmetryRelationships(active_cells=[(0, 0), (0, 1), (0, 2), (0, 3), (2, 2), (3, 3)],
-                                 equal_cells=[((0, 0), [(1, 1)]),
-                                              ((0, 2), [(1, 2)]),
-                                              ((3, 3), [(4, 4)]),
-                                              ((0, 3), [(4, 5)])],
-                                 opposite_cells=[((0, 3), [(1, 3)])],
-                                 halfC11_C12=[(5, 5)])
-orthorhombic=SymmetryRelationships(active_cells=[(0, 0), (0, 1), (0, 2), (1, 1), (1, 2), (2, 2), (3, 3), (4, 4), (5, 5)])
-active_cell_monoclinic_0 = [(0, 0), (0, 1), (0, 2), (1, 1), (1, 2), (2, 2), (3, 3), (4, 4), (5, 5)]
-monoclinic1=SymmetryRelationships(active_cells= active_cell_monoclinic_0 + [(0, 4), (1, 4), (2, 4), (3, 5)])
-monoclinic2=SymmetryRelationships(active_cells= active_cell_monoclinic_0 + [(0, 5), (1, 5), (2, 5), (3, 4)])
-triclinic=SymmetryRelationships(active_cells=[(i, j) for i in range(6) for j in range(6)])
-
-SYMMETRIES = {'Isotropic': isotropic,
-              'Cubic': cubic,
-              'Hexagonal': hexagonal,
-              'Tetragonal': [tetragonal_1, tetragonal_2],
-              'Trigonal': [trigonal_1, trigonal_2],
-              'Orthorhombic': orthorhombic,
-              'Monoclinic': [monoclinic1,  monoclinic2],
-              'Triclinic': triclinic}
-
-SPACE_GROUPS = {'Trigonal':   ["3, -3", "32, -3m, 3m"],
-                'Tetragonal': ["4, -4, 4/m", "4mm, -42m, 422, 4/mmm"]}
 
 WHICH_OPTIONS = {'Mean': 'mean', 'Max': 'max', 'Min': 'min', 'Std. dev.': 'std'}
 
@@ -222,7 +158,7 @@ class ElasticityGUI(QMainWindow):
 
     def update_fields(self):
         # Deactivate unused fields
-        active_fields = self.selected_symmetry().active
+        active_fields = self.selected_symmetry().required
         for (i, j), field in self.coefficient_fields.items():
             if (i, j) in active_fields:
                 field.setEnabled(True)
@@ -301,11 +237,11 @@ class ElasticityGUI(QMainWindow):
                         self.coefficient_fields[index].setText(f"{-ref_value}")
             except ValueError:
                 pass
-        if symmetry.half:
+        if symmetry.C11_C12:
             try:
                 C11 = float(self.coefficient_fields[(0, 0)].text())
                 C12 = float(self.coefficient_fields[(0, 1)].text())
-                for index in symmetry.half:
+                for index in symmetry.C11_C12:
                     self.coefficient_fields[index].setText(f"{0.5*(C11-C12)}")
             except ValueError:
                 pass
