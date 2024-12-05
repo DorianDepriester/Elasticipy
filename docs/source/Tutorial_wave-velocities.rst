@@ -12,7 +12,7 @@ We thus start by defining the stiffness tensor for forsterite:
 .. doctest::
 
     >>> from Elasticipy.FourthOrderTensor import StiffnessTensor
-    >>> C = StiffnessTensor.fromCrystalSymmetry(symmetry='orthorombic', phase_name='forsterite',
+    >>> C = StiffnessTensor.fromCrystalSymmetry(symmetry='orthorhombic', phase_name='forsterite',
     ...                                        C11=320, C12=68.2, C13=71.6, C22=196.5, C23=76.8,
     ...                                        C33=233.5, C44=64, C55=77, C66=78.7)
     >>> print(C)
@@ -23,7 +23,7 @@ We thus start by defining the stiffness tensor for forsterite:
      [  0.    0.    0.   64.    0.    0. ]
      [  0.    0.    0.    0.   77.    0. ]
      [  0.    0.    0.    0.    0.   78.7]]
-    Symmetry: orthorombic
+    Symmetry: orthorhombic
 
 And define the mass density:
 
