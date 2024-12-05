@@ -8,7 +8,7 @@ from PyQt5.QtWidgets import (
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 
-from Elasticipy.CrystalSymmetries import SYMMETRIES, SPACE_GROUPS
+from Elasticipy.CrystalSymmetries import SYMMETRIES
 from Elasticipy.FourthOrderTensor import StiffnessTensor
 
 WHICH_OPTIONS = {'Mean': 'mean', 'Max': 'max', 'Min': 'min', 'Std. dev.': 'std'}
@@ -24,10 +24,14 @@ class ElasticityGUI(QMainWindow):
         symmetry_name = self.symmetry_selector.currentText()
         symmetry = SYMMETRIES[symmetry_name]
         if symmetry_name == "Trigonal" or symmetry_name == "Tetragonal":
-            space_group_index = self.space_group_selector.currentIndex()
-            symmetry = symmetry[space_group_index]
+            space_group_text = self.space_group_selector.currentText()
+            try:
+                symmetry = symmetry[space_group_text]
+            except KeyError:
+                # If no SG is selected, just choose one
+                symmetry = list(symmetry.values())[0]
         elif symmetry_name == "Monoclinic":
-            diad_index = self.diag_selector.currentIndex()
+            diad_index = self.diag_selector.currentText()
             symmetry = symmetry[diad_index]
         return symmetry
 
@@ -56,7 +60,7 @@ class ElasticityGUI(QMainWindow):
 
         # Diad selection
         self.diag_selector = QComboBox()
-        self.diag_selector.addItems(["diad || x2", "diad || x3"])
+        self.diag_selector.addItems(SYMMETRIES['Monoclinic'].keys())
         self.diag_selector.currentIndexChanged.connect(self.update_fields)
         selectors_layout.addWidget(QLabel("Diad convention:"))
         selectors_layout.addWidget(self.diag_selector)
@@ -175,8 +179,9 @@ class ElasticityGUI(QMainWindow):
         if trig_or_tetra:
             # Change list of possible SGs
             self.space_group_selector.setEnabled(True)
-            for i in range(2):
-                self.space_group_selector.setItemText(i, SPACE_GROUPS[selected_symmetry_name][i])
+            space_groups = SYMMETRIES[selected_symmetry_name].keys()
+            for i in range(len(space_groups)):
+                self.space_group_selector.setItemText(i, list(space_groups)[i])
         self.diag_selector.setEnabled(selected_symmetry_name == "Monoclinic")
 
     def update_plotting_selectors(self):

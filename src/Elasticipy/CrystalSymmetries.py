@@ -54,11 +54,8 @@ triclinic=SymmetryRelationships(required_cells=[(i, j) for i in range(6) for j i
 SYMMETRIES = {'Isotropic': isotropic,
               'Cubic': cubic,
               'Hexagonal': hexagonal,
-              'Tetragonal': [tetragonal_1, tetragonal_2],
-              'Trigonal': [trigonal_1, trigonal_2],
+              'Tetragonal': {"4, -4, 4/m": tetragonal_1, "4mm, -42m, 422, 4/mmm":tetragonal_2},
+              'Trigonal': {"3, -3": trigonal_1, "32, -3m, 3m":trigonal_2},
               'Orthorhombic': orthorhombic,
-              'Monoclinic': [monoclinic1,  monoclinic2],
+              'Monoclinic': {"Diad || x2": monoclinic1, "Diad || x3": monoclinic2},
               'Triclinic': triclinic}
-
-SPACE_GROUPS = {'Trigonal':   ["3, -3", "32, -3m, 3m"],
-                'Tetragonal': ["4, -4, 4/m", "4mm, -42m, 422, 4/mmm"]}
