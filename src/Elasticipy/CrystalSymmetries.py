@@ -49,7 +49,7 @@ orthorhombic=SymmetryRelationships(
 active_cell_monoclinic_0 = [(0, 0), (0, 1), (0, 2), (1, 1), (1, 2), (2, 2), (3, 3), (4, 4), (5, 5)]
 monoclinic1=SymmetryRelationships(required_cells=active_cell_monoclinic_0 + [(0, 4), (1, 4), (2, 4), (3, 5)])
 monoclinic2=SymmetryRelationships(required_cells=active_cell_monoclinic_0 + [(0, 5), (1, 5), (2, 5), (3, 4)])
-triclinic=SymmetryRelationships(required_cells=[(i, j) for i in range(6) for j in range(6)])
+triclinic=SymmetryRelationships(required_cells=[(i, j) for i in range(6) for j in range(i, 6)])
 
 SYMMETRIES = {'Isotropic': isotropic,
               'Cubic': cubic,
