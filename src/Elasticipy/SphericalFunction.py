@@ -428,7 +428,7 @@ class SphericalFunction:
         r_grid = values.reshape(phi_grid.shape)
         ax = _plot3D(new_fig, u_grid, r_grid, **kwargs)
         ax.axis('equal')
-        if fig is not None:
+        if fig is None:
             plt.show()
         return new_fig, ax
 
