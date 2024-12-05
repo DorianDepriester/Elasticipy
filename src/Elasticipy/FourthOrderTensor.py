@@ -276,7 +276,7 @@ class SymmetricTensor:
     @classmethod
     def _matrixFromCrystalSymmetry(cls, symmetry='Triclinic', point_group=None, diad='y', prefix=None, **kwargs):
         if prefix is None:
-            prefix = cls.prefix
+            prefix = cls.component_prefix
         values = _parse_tensor_components(prefix, **kwargs)
         C = np.zeros((6, 6))
         symmetry = symmetry.capitalize()
