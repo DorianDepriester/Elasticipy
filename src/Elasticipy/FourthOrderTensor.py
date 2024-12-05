@@ -1,5 +1,6 @@
 import numpy as np
 import re
+
 from Elasticipy.SecondOrderTensor import SymmetricSecondOrderTensor
 from Elasticipy.StressStrainTensors import StrainTensor, StressTensor
 from Elasticipy.SphericalFunction import SphericalFunction, HyperSphericalFunction
@@ -404,6 +405,223 @@ class SymmetricTensor:
         """
         matrix = cls._matrixFromCrystalSymmetry(point_group=point_group, diad=diad, symmetry=symmetry, **kwargs)
         return cls(matrix, symmetry=symmetry, phase_name=phase_name)
+
+    @classmethod
+    def hexagonal(cls, *, C11=0., C12=0., C13=0., C33=0., C44=0., phase_name=None):
+        """
+        Create a fourth-order tensor from hexagonal symmetry.
+
+        Parameters
+        ----------
+        C11 : float
+        C12 : float
+        C13 : float
+        C33 : float
+        C44 : float
+        phase_name : str, optional
+            Phase name to display
+        Returns
+        -------
+        FourthOrderTensor
+        """
+        return cls.fromCrystalSymmetry(symmetry='hexagonal', C11=C11, C12=C12, C13=C13, C33=C33, C44=C44,
+                                       phase_name=phase_name)
+
+    @classmethod
+    def trigonal(cls, *, C11=0., C12=0., C13=0., C14=0., C33=0., C44=0., C15=0., phase_name=None):
+        """
+        Create a fourth-order tensor from trigonal symmetry.
+
+        Parameters
+        ----------
+        C11 : float
+        C12 : float
+        C13 : float
+        C14 : float
+        C33 : float
+        C44 : float
+        C15 : float, optional
+        phase_name : str, optional
+            Phase name to display
+        Returns
+        -------
+        FourthOrderTensor
+        """
+        return cls.fromCrystalSymmetry(point_group='3', C11=C11, C12=C12, C13=C13, C14=C14, C15=C15,
+                                       C33=C33, C44=C44, phase_name=phase_name)
+
+    @classmethod
+    def tetragonal(cls, *, C11=0., C12=0., C13=0., C33=0., C44=0., C16=0., C66=0., phase_name=None):
+        """
+        Create a fourth-order tensor from tetragonal symmetry.
+
+        Parameters
+        ----------
+        C11 : float
+        C12 : float
+        C13 : float
+        C33 : float
+        C44 : float
+        C66 : float
+        C16 : float, optional
+            16 component in Voigt notation (for point groups 4, -4 and 4/m only)
+        phase_name : str, optional
+            Phase name to display
+        Returns
+        -------
+        FourthOrderTensor
+        """
+        return cls.fromCrystalSymmetry(point_group='4', C11=C11, C12=C12, C13=C13, C16=C16,
+                                       C33=C33, C44=C44, C66=C66, phase_name=phase_name)
+
+    @classmethod
+    def cubic(cls, *, C11=0., C12=0., C44=0., phase_name=None):
+        """
+        Create a fourth-order tensor from cubic symmetry.
+
+        Parameters
+        ----------
+        C11 : float
+        C12 : float
+        C44 : float
+        phase_name : str, optional
+            Phase name to display
+        Returns
+        -------
+        StiffnessTensor
+        """
+        return cls.fromCrystalSymmetry(symmetry='cubic', C11=C11, C12=C12, C44=C44, phase_name=phase_name)
+
+    @classmethod
+    def orthorhombic(cls, *, C11=0., C12=0., C13=0., C22=0., C23=0., C33=0., C44=0., C55=0., C66=0., phase_name=None):
+        """
+        Create a fourth-order tensor from orthorhombic symmetry.
+
+        Parameters
+        ----------
+        C11 : float
+        C12 : float
+        C13 : float
+        C22 : float
+        C23 : float
+        C33 : float
+        C44 : float
+        C44 : float
+        C55 : float
+        C66 : float
+        phase_name : str, optional
+            Phase name to display
+
+        Returns
+        -------
+        FourthOrderTensor
+        """
+        return cls.fromCrystalSymmetry(symmetry='orthorhombic',
+                                       C11=C11, C12=C12, C13=C13, C22=C22, C23=C23, C33=C33, C44=C44, C55=C55, C66=C66,
+                                       phase_name=phase_name)
+
+    @classmethod
+    def monoclinic(cls, *, C11=0., C12=0., C13=0., C22=0., C23=0., C33=0., C44=0., C55=0., C66=0., phase_name=None,
+                   **kwargs):
+        """
+        Create a fourth-order tensor from monoclinic symmetry. It automatically detects whether the components are given
+        according to the Y or Z diad, depending on the input arguments.
+
+        Parameters
+        ----------
+        C11 : float
+        C12 : float
+        C13 : float
+        C22 : float
+        C23 : float
+        C33 : float
+        C44 : float
+        C55 : float
+        C66 : float
+        kwargs : dict
+            Depending on the diad convention, one should also provide, either:
+                - C15, C25, C35 and C46 (Diad || y)
+                - C16, C26, C36 and C45 (Diad || z)
+        Returns
+        -------
+        FourthOrderTensor
+        """
+        if ('C15' in kwargs.keys()) and ('C16' in kwargs.keys()):
+            raise KeyError('C15 and C16 are mutually exclusive')
+        elif 'C15' in kwargs.keys():
+            diad = 'y'
+            try:
+                C15 = kwargs.pop('C15')
+                C25 = kwargs.pop('C25')
+                C35 = kwargs.pop('C35')
+                C46 = kwargs.pop('C46')
+            except KeyError:
+                raise KeyError('As C15 is provided, C25, C35 and C46 are required for Diad || y')
+            return cls.fromCrystalSymmetry(symmetry='monoclinic',diad=diad,
+                                           C11=C11, C12=C12, C13=C13, C22=C22, C23=C23, C33=C33, C44=C44, C55=C55, C66=C66,
+                                           C15=C15, C25=C25, C35=C35, C46=C46, phase_name=phase_name, **kwargs)
+        elif 'C16' in kwargs.keys():
+            diad = 'z'
+            try:
+                C16 = kwargs.pop('C16')
+                C26 = kwargs.pop('C26')
+                C36 = kwargs.pop('C36')
+                C45 = kwargs.pop('C45')
+            except KeyError:
+                raise KeyError('As C16 is provided, C26, C36 and C45 are required for Diad || z')
+            return cls.fromCrystalSymmetry(symmetry='monoclinic',diad=diad,
+                                           C11=C11, C12=C12, C13=C13, C22=C22, C23=C23, C33=C33, C44=C44, C55=C55, C66=C66,
+                                           C16=C16, C26=C26, C36=C36, C45=C45, phase_name=phase_name, **kwargs)
+        else:
+            raise KeyError('For monoclinic symmetry, one should provide either C15, C25, C35 and C46, '
+                           'or C16, C26, C36 and C45.')
+
+    @classmethod
+    def triclinic(cls, C11=0., C12=0., C13=0., C14=0., C15=0., C16=0.,
+                  C22=0., C23=0., C24=0., C25=0., C26=0.,
+                  C33=0., C34=0., C35=0., C36=0.,
+                  C44=0., C45=0., C46=0.,
+                  C55=0., C56=0.,
+                  C66=0., phase_name=None):
+        """
+
+        Parameters
+        ----------
+        C11 : float
+        C12 : float
+        C13 : float
+        C14 : float
+        C15 : float
+        C16 : float
+        C22 : float
+        C23 : float
+        C24 : float
+        C25 : float
+        C26 : float
+        C33 : float
+        C34 : float
+        C35 : float
+        C36 : float
+        C44 : float
+        C45 : float
+        C46 : float
+        C55 : float
+        C56 : float
+        C66 : float
+        phase_name : str, optional
+            Name to display
+        Returns
+        -------
+        FourthOrderTensor
+        """
+        matrix=np.array([[C11, C12, C13, C14, C15, C16],
+                         [C12, C22, C23, C24, C25, C26],
+                         [C13, C23, C33, C34, C35, C36],
+                         [C14, C24, C34, C44, C45, C46],
+                         [C15, C25, C35, C45, C55, C56],
+                         [C16, C26, C36, C46, C56, C66]])
+        return cls(matrix, phase_name=phase_name)
+
 
 
 class StiffnessTensor(SymmetricTensor):
