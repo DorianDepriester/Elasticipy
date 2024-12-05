@@ -4,6 +4,7 @@ from Elasticipy.SecondOrderTensor import SymmetricSecondOrderTensor
 from Elasticipy.StressStrainTensors import StrainTensor, StressTensor
 from Elasticipy.SphericalFunction import SphericalFunction, HyperSphericalFunction
 from scipy.spatial.transform import Rotation
+from Elasticipy.CrystalSymmetries import SYMMETRIES
 
 
 def _parse_tensor_components(prefix, **kwargs):
@@ -14,6 +15,9 @@ def _parse_tensor_components(prefix, **kwargs):
         if match:
             value[match.group(1)] = v
     return value
+
+def _indices2str(ij):
+    return f'{ij[0]+1}{ij[1]+1}'
 
 
 def voigt_indices(i, j):
@@ -76,91 +80,6 @@ def _compute_unit_strain_along_direction(S, m, n, transverse=False):
         cosine = m_vec[:, i] * n_vec[:, j] * m_vec[:, k] * n_vec[:, ell]
     return np.einsum('pijkl,ijkl->p', cosine, S.full_tensor())
 
-
-def _matrixFromCrystalSymmetry(C11_C12_factor=0.5, component_prefix='C', symmetry='Triclinic', point_group=None,
-                               diad='x', **kwargs):
-    values = _parse_tensor_components(component_prefix, **kwargs)
-    C = np.zeros((6, 6))
-    symmetry = symmetry.lower()
-    if ((symmetry == 'tetragonal') or (symmetry == 'trigonal')) and (point_group is None):
-        raise ValueError('For tetragonal and trigonal symmetries, the point group is mandatory.')
-    tetra_1 = ['-42m', '422', '4mm', '4/mm']
-    tetra_2 = ['4', '-4', '4m']
-    trigo_1 = ['32', '3m', '-3m']
-    trigo_2 = ['3', '-3']
-    if point_group is not None:
-        if (point_group in tetra_1) or (point_group in tetra_2):
-            symmetry = 'tetragonal'
-        elif (point_group in trigo_1) or (point_group in trigo_2):
-            symmetry = 'trigonal'
-    try:
-        if symmetry == 'isotropic':
-            C[0, 0] = C[1, 1] = C[2, 2] = values['11']
-            C[0, 1] = C[0, 2] = C[1, 2] = values['12']
-            C[3, 3] = C[4, 4] = C[5, 5] = (C[0, 0] - C[0, 1]) * C11_C12_factor
-        elif symmetry == 'cubic':
-            C[0, 0] = C[1, 1] = C[2, 2] = values['11']
-            C[0, 1] = C[0, 2] = C[1, 2] = values['12']
-            C[3, 3] = C[4, 4] = C[5, 5] = values['44']
-        elif symmetry == 'hexagonal':
-            C[0, 0] = C[1, 1] = values['11']
-            C[0, 1] = values['12']
-            C[0, 2] = C[1, 2] = values['13']
-            C[2, 2] = values['33']
-            C[3, 3] = C[4, 4] = values['44']
-            C[5, 5] = (C[0, 0] - C[0, 1]) * C11_C12_factor
-        elif symmetry == 'tetragonal':
-            C[0, 0] = C[1, 1] = values['11']
-            C[0, 1] = values['12']
-            C[0, 2] = C[1, 2] = values['13']
-            C[2, 2] = values['33']
-            C[3, 3] = C[4, 4] = values['44']
-            C[5, 5] = values['66']
-            if point_group in tetra_2:
-                C[0, 5] = values['16']
-                C[1, 5] = -C[0, 5]
-        elif symmetry == 'trigonal':
-            C[0, 0] = C[1, 1] = values['11']
-            C[0, 1] = values['12']
-            C[0, 2] = C[1, 2] = values['13']
-            C[0, 3] = C[4, 5] = values['14']
-            C[1, 3] = -C[0, 3]
-            C[2, 2] = values['33']
-            C[3, 3] = C[4, 4] = values['44']
-            C[5, 5] = (C[0, 0] - C[0, 1]) * C11_C12_factor
-            if point_group in trigo_2:
-                C[1, 4] = values['25']
-                C[3, 5] = C[1, 4]
-                C[0, 4] = -C[1, 4]
-        else:  # Orthorombic, monoclinic or triclinic
-            C[0, 0], C[0, 1], C[0, 2] = values['11'], values['12'], values['13']
-            C[1, 1], C[1, 2] = values['22'], values['23']
-            C[2, 2] = values['33']
-            C[3, 3], C[4, 4], C[5, 5] = values['44'], values['55'], values['66']
-            if (symmetry == 'monoclinic') or (symmetry == 'triclinic'):
-                if (symmetry == 'monoclinic') and (diad == 'x'):
-                    C[0, 5], C[1, 5], C[2, 5] = values['16'], values['26'], values['36']
-                    C[3, 4] = values['45']
-                else:
-                    C[0, 4], C[1, 4], C[2, 4] = values['15'], values['25'], values['35']
-                    C[3, 5] = values['46']
-                if symmetry == 'triclinic':
-                    C[0, 3], C[1, 3], C[2, 3] = values['14'], values['24'], values['34']
-                    C[0, 4], C[1, 4], C[2, 4] = values['15'], values['25'], values['35']
-                    C[3, 5], C[4, 5] = values['46'], values['56']
-        return C + np.tril(C.T, -1)
-    except KeyError as key:
-        entry_error = component_prefix + key.args[0]
-        if (symmetry == 'tetragonal') or (symmetry == 'trigonal'):
-            err_msg = "For point group {}, keyword argument {} is required".format(point_group, entry_error)
-        elif symmetry == 'monoclinic':
-            err_msg = "For {} symmetry with diag='{}', keyword argument {} is required".format(symmetry, diad,
-                                                                                               entry_error)
-        else:
-            err_msg = "For {} symmetry, keyword argument {} is required".format(symmetry, entry_error)
-        raise ValueError(err_msg)
-
-
 def _isotropic_matrix(C11, C12, C44):
     return np.array([[C11, C12, C12, 0, 0, 0],
                      [C12, C11, C12, 0, 0, 0],
@@ -185,6 +104,7 @@ class SymmetricTensor:
     tensor_name = 'Symmetric'
     voigt_map = np.ones((6, 6))
     C11_C12_factor = 0.5
+    C46_C56_factor = 1.0
     component_prefix = 'C'
 
     def __init__(self, M, phase_name=None, symmetry='Triclinic', orientations=None):
@@ -353,7 +273,68 @@ class SymmetricTensor:
             return self.__class__(rotated_matrix)
 
     @classmethod
-    def fromCrystalSymmetry(cls, symmetry='Triclinic', point_group=None, diad='x', phase_name=None, **kwargs):
+    def _matrixFromCrystalSymmetry(cls, symmetry='Triclinic', point_group=None, diad='y', **kwargs):
+        values = _parse_tensor_components(cls.component_prefix, **kwargs)
+        C = np.zeros((6, 6))
+        symmetry = symmetry.capitalize()
+        if ((symmetry == 'tetragonal') or (symmetry == 'trigonal')) and (point_group is None):
+            raise ValueError('For tetragonal and trigonal symmetries, the point group is mandatory.')
+        tetra_1 = ['4', '-4', '4/m']
+        tetra_2 = ['4mm', '-42m', '422', '4/mmm']
+        trigo_1 = ['3', '-3']
+        trigo_2 = ['32', '-3m', '3m']
+        if point_group is not None:
+            if (point_group in tetra_1) or (point_group in tetra_2):
+                symmetry = 'Tetragonal'
+            elif (point_group in trigo_1) or (point_group in trigo_2):
+                symmetry = 'Trigonal'
+        symmetry_description = SYMMETRIES[symmetry]
+        if symmetry == 'Tetragonal':
+            if point_group in tetra_1:
+                symmetry_description = symmetry_description[', '.join(tetra_1)]
+            else:
+                symmetry_description = symmetry_description[', '.join(tetra_2)]
+        elif symmetry == 'Trigonal':
+            if point_group in trigo_1:
+                symmetry_description = symmetry_description[', '.join(trigo_1)]
+            else:
+                symmetry_description = symmetry_description[', '.join(trigo_2)]
+        elif symmetry == 'Monoclinic':
+            symmetry_description = symmetry_description["Diad || " + diad]
+        try:
+            for required_field in symmetry_description.required:
+                C[required_field] = values[_indices2str(required_field)]
+        except KeyError as key:
+            entry_error = cls.component_prefix + key.args[0]
+            if (symmetry == 'tetragonal') or (symmetry == 'trigonal'):
+                err_msg = "For point group {}, keyword argument {} is required".format(point_group, entry_error)
+            elif symmetry == 'monoclinic':
+                err_msg = "For {} symmetry with diag='{}', keyword argument {} is required".format(symmetry, diad,
+                                                                                                   entry_error)
+            else:
+                err_msg = "For {} symmetry, keyword argument {} is required".format(symmetry, entry_error)
+            raise ValueError(err_msg)
+
+        # Now apply relationships between components
+        for equality in symmetry_description.equal:
+            for index in equality[1]:
+                C[index] = C[equality[0]]
+        for opposite in symmetry_description.opposite:
+            for index in opposite[1]:
+                C[index] = -C[opposite[0]]
+        C11_C12 = symmetry_description.C11_C12
+        if C11_C12:
+            for index in C11_C12:
+                C[index] = (C[0, 0] - C[0, 1]) * cls.C11_C12_factor
+
+        if symmetry == 'Trigonal':
+            C[3, 5] = cls.C46_C56_factor * C[3, 5]
+            C[4, 5] = cls.C46_C56_factor * C[4, 5]
+
+        return C + np.tril(C.T, -1)
+
+    @classmethod
+    def fromCrystalSymmetry(cls, symmetry='Triclinic', point_group=None, diad='y', phase_name=None, **kwargs):
         """
         Create a fourth-order tensor from limited number of components, taking advantage of crystallographic symmetries
 
@@ -421,8 +402,7 @@ class SymmetricTensor:
          [  0.   0.   0.   0.   0.  12.]]
         Symmetry: monoclinic
         """
-        matrix = _matrixFromCrystalSymmetry(C11_C12_factor=cls.C11_C12_factor, component_prefix=cls.component_prefix,
-                                            point_group=point_group, diad=diad, symmetry=symmetry, **kwargs)
+        matrix = cls._matrixFromCrystalSymmetry(point_group=point_group, diad=diad, symmetry=symmetry, **kwargs)
         return cls(matrix, symmetry=symmetry, phase_name=phase_name)
 
 
@@ -811,6 +791,7 @@ class ComplianceTensor(StiffnessTensor):
     ))
     C11_C12_factor = 2.0
     component_prefix = 'S'
+    C46_C56_factor = 2.0
 
     def __init__(self, C, **kwargs):
         super().__init__(C, **kwargs)
