@@ -274,8 +274,10 @@ class SymmetricTensor:
             return self.__class__(rotated_matrix)
 
     @classmethod
-    def _matrixFromCrystalSymmetry(cls, symmetry='Triclinic', point_group=None, diad='y', **kwargs):
-        values = _parse_tensor_components(cls.component_prefix, **kwargs)
+    def _matrixFromCrystalSymmetry(cls, symmetry='Triclinic', point_group=None, diad='y', prefix=None, **kwargs):
+        if prefix is None:
+            prefix = cls.prefix
+        values = _parse_tensor_components(prefix, **kwargs)
         C = np.zeros((6, 6))
         symmetry = symmetry.capitalize()
         if ((symmetry == 'tetragonal') or (symmetry == 'trigonal')) and (point_group is None):
@@ -306,7 +308,7 @@ class SymmetricTensor:
             for required_field in symmetry_description.required:
                 C[required_field] = values[_indices2str(required_field)]
         except KeyError as key:
-            entry_error = cls.component_prefix + key.args[0]
+            entry_error = prefix + key.args[0]
             if (symmetry == 'tetragonal') or (symmetry == 'trigonal'):
                 err_msg = "For point group {}, keyword argument {} is required".format(point_group, entry_error)
             elif symmetry == 'monoclinic':
@@ -335,7 +337,8 @@ class SymmetricTensor:
         return C + np.tril(C.T, -1)
 
     @classmethod
-    def fromCrystalSymmetry(cls, symmetry='Triclinic', point_group=None, diad='y', phase_name=None, **kwargs):
+    def fromCrystalSymmetry(cls, symmetry='Triclinic', point_group=None, diad='y', phase_name=None, prefix=None,
+                            **kwargs):
         """
         Create a fourth-order tensor from limited number of components, taking advantage of crystallographic symmetries
 
@@ -349,11 +352,14 @@ class SymmetricTensor:
             Alignment convention. Sets whether x||a or y||b. Only used for monoclinic symmetry.
         phase_name : str, default None
             Name to use when printing the tensor
+        prefix : str, default None
+            Define the prefix to use when providing the components. By default, it is 'C' for stiffness tensors, 'S' for
+            compliance.
         kwargs
             Keywords describing all the necessary components, depending on the crystal's symmetry and the type of tensor.
             For Stiffness, they should be named as 'Cij' (e.g. C11=..., C12=...).
             For Comliance, they should be named as 'Sij' (e.g. S11=..., S12=...).
-            See examples below.
+            See examples below. The behaviour can be overriten with the prefix option (see above)
 
         Returns
         -------
@@ -403,7 +409,8 @@ class SymmetricTensor:
          [  0.   0.   0.   0.   0.  12.]]
         Symmetry: monoclinic
         """
-        matrix = cls._matrixFromCrystalSymmetry(point_group=point_group, diad=diad, symmetry=symmetry, **kwargs)
+        matrix = cls._matrixFromCrystalSymmetry(point_group=point_group, diad=diad, symmetry=symmetry, prefix=prefix,
+                                                **kwargs)
         return cls(matrix, symmetry=symmetry, phase_name=phase_name)
 
     @classmethod
@@ -425,7 +432,7 @@ class SymmetricTensor:
         FourthOrderTensor
         """
         return cls.fromCrystalSymmetry(symmetry='hexagonal', C11=C11, C12=C12, C13=C13, C33=C33, C44=C44,
-                                       phase_name=phase_name)
+                                       phase_name=phase_name, prefix='C')
 
     @classmethod
     def trigonal(cls, *, C11=0., C12=0., C13=0., C14=0., C33=0., C44=0., C15=0., phase_name=None):
@@ -448,7 +455,7 @@ class SymmetricTensor:
         FourthOrderTensor
         """
         return cls.fromCrystalSymmetry(point_group='3', C11=C11, C12=C12, C13=C13, C14=C14, C15=C15,
-                                       C33=C33, C44=C44, phase_name=phase_name)
+                                       C33=C33, C44=C44, phase_name=phase_name, prefix='C')
 
     @classmethod
     def tetragonal(cls, *, C11=0., C12=0., C13=0., C33=0., C44=0., C16=0., C66=0., phase_name=None):
@@ -472,7 +479,7 @@ class SymmetricTensor:
         FourthOrderTensor
         """
         return cls.fromCrystalSymmetry(point_group='4', C11=C11, C12=C12, C13=C13, C16=C16,
-                                       C33=C33, C44=C44, C66=C66, phase_name=phase_name)
+                                       C33=C33, C44=C44, C66=C66, phase_name=phase_name, prefix='C')
 
     @classmethod
     def cubic(cls, *, C11=0., C12=0., C44=0., phase_name=None):
@@ -490,7 +497,7 @@ class SymmetricTensor:
         -------
         StiffnessTensor
         """
-        return cls.fromCrystalSymmetry(symmetry='cubic', C11=C11, C12=C12, C44=C44, phase_name=phase_name)
+        return cls.fromCrystalSymmetry(symmetry='cubic', C11=C11, C12=C12, C44=C44, phase_name=phase_name, prefix='C')
 
     @classmethod
     def orthorhombic(cls, *, C11=0., C12=0., C13=0., C22=0., C23=0., C33=0., C44=0., C55=0., C66=0., phase_name=None):
@@ -518,7 +525,7 @@ class SymmetricTensor:
         """
         return cls.fromCrystalSymmetry(symmetry='orthorhombic',
                                        C11=C11, C12=C12, C13=C13, C22=C22, C23=C23, C33=C33, C44=C44, C55=C55, C66=C66,
-                                       phase_name=phase_name)
+                                       phase_name=phase_name, prefix='C')
 
     @classmethod
     def monoclinic(cls, *, C11=0., C12=0., C13=0., C22=0., C23=0., C33=0., C44=0., C55=0., C66=0., phase_name=None,
@@ -538,6 +545,8 @@ class SymmetricTensor:
         C44 : float
         C55 : float
         C66 : float
+        phase_name : str, optional
+            Name to display
         kwargs : dict
             Depending on the diad convention, one should also provide, either:
                 - C15, C25, C35 and C46 (Diad || y)
@@ -559,7 +568,7 @@ class SymmetricTensor:
                 raise KeyError('As C15 is provided, C25, C35 and C46 are required for Diad || y')
             return cls.fromCrystalSymmetry(symmetry='monoclinic',diad=diad,
                                            C11=C11, C12=C12, C13=C13, C22=C22, C23=C23, C33=C33, C44=C44, C55=C55, C66=C66,
-                                           C15=C15, C25=C25, C35=C35, C46=C46, phase_name=phase_name, **kwargs)
+                                           C15=C15, C25=C25, C35=C35, C46=C46, phase_name=phase_name, prefix='C', **kwargs)
         elif 'C16' in kwargs.keys():
             diad = 'z'
             try:
@@ -571,7 +580,8 @@ class SymmetricTensor:
                 raise KeyError('As C16 is provided, C26, C36 and C45 are required for Diad || z')
             return cls.fromCrystalSymmetry(symmetry='monoclinic',diad=diad,
                                            C11=C11, C12=C12, C13=C13, C22=C22, C23=C23, C33=C33, C44=C44, C55=C55, C66=C66,
-                                           C16=C16, C26=C26, C36=C36, C45=C45, phase_name=phase_name, **kwargs)
+                                           C16=C16, C26=C26, C36=C36, C45=C45, phase_name=phase_name, prefix='C',
+                                           **kwargs)
         else:
             raise KeyError('For monoclinic symmetry, one should provide either C15, C25, C35 and C46, '
                            'or C16, C26, C36 and C45.')
