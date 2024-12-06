@@ -256,7 +256,7 @@ class ElasticityGUI(QMainWindow):
         error_message = "The stiffness tensor you entered is singular."
         QMessageBox.critical(self, "Singular stiffness", error_message, QMessageBox.Ok)
 
-if __name__ == "__main__":
+def crystal_symmetry_plotter():
     app = QApplication(sys.argv)
     window = ElasticityGUI()
     window.show()
