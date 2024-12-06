@@ -430,6 +430,12 @@ class SymmetricTensor:
         Returns
         -------
         FourthOrderTensor
+
+        See Also
+        --------
+        transverse_isotropic : creates a transverse-isotropic tensor from engineering parameters
+        cubic : create a tensor from cubic symmetry
+        tetragonal : create a tensor from tetragonal symmetry
         """
         return cls.fromCrystalSymmetry(symmetry='hexagonal', C11=C11, C12=C12, C13=C13, C33=C33, C44=C44,
                                        phase_name=phase_name, prefix='C')
@@ -453,6 +459,11 @@ class SymmetricTensor:
         Returns
         -------
         FourthOrderTensor
+
+        See Also
+        --------
+        tetragonal : create a tensor from tetragonal symmetry
+        orthorhombic : create a tensor from orthorhombic symmetry
         """
         return cls.fromCrystalSymmetry(point_group='3', C11=C11, C12=C12, C13=C13, C14=C14, C15=C15,
                                        C33=C33, C44=C44, phase_name=phase_name, prefix='C')
@@ -474,9 +485,15 @@ class SymmetricTensor:
             16 component in Voigt notation (for point groups 4, -4 and 4/m only)
         phase_name : str, optional
             Phase name to display
+
         Returns
         -------
         FourthOrderTensor
+
+        See Also
+        --------
+        trigonal : create a tensor from trigonal symmetry
+        orthorhombic : create a tensor from orthorhombic symmetry
         """
         return cls.fromCrystalSymmetry(point_group='4', C11=C11, C12=C12, C13=C13, C16=C16,
                                        C33=C33, C44=C44, C66=C66, phase_name=phase_name, prefix='C')
@@ -496,6 +513,11 @@ class SymmetricTensor:
         Returns
         -------
         StiffnessTensor
+
+        See Also
+        --------
+        hexagonal : create a tensor from hexagonal symmetry
+        orthorhombic : create a tensor from orthorhombic symmetry
         """
         return cls.fromCrystalSymmetry(symmetry='cubic', C11=C11, C12=C12, C44=C44, phase_name=phase_name, prefix='C')
 
@@ -513,7 +535,6 @@ class SymmetricTensor:
         C23 : float
         C33 : float
         C44 : float
-        C44 : float
         C55 : float
         C66 : float
         phase_name : str, optional
@@ -522,6 +543,11 @@ class SymmetricTensor:
         Returns
         -------
         FourthOrderTensor
+
+        See Also
+        --------
+        monoclinic : create a tensor from monoclinic symmetry
+        orthorhombic : create a tensor from orthorhombic symmetry
         """
         return cls.fromCrystalSymmetry(symmetry='orthorhombic',
                                        C11=C11, C12=C12, C13=C13, C22=C22, C23=C23, C33=C33, C44=C44, C55=C55, C66=C66,
@@ -564,6 +590,11 @@ class SymmetricTensor:
         Returns
         -------
         FourthOrderTensor
+
+        See Also
+        --------
+        triclinic : create a tensor from triclinic symmetry
+        orthorhombic : create a tensor from orthorhombic symmetry
         """
         diad_y = not (None in (C15, C25, C35, C46))
         diad_z = not (None in (C16, C26, C36, C45))
@@ -618,6 +649,11 @@ class SymmetricTensor:
         Returns
         -------
         FourthOrderTensor
+
+        See Also
+        --------
+        monoclinic : create a tensor from monoclinic symmetry
+        orthorhombic : create a tensor from orthorhombic symmetry
         """
         matrix=np.array([[C11, C12, C13, C14, C15, C16],
                          [C12, C22, C23, C24, C25, C26],
@@ -800,6 +836,10 @@ class StiffnessTensor(SymmetricTensor):
         -------
             Corresponding isotropic stiffness tensor
 
+        See Also
+        --------
+        transverse_isotropic : create a transverse-isotropic tensor
+
         Examples
         --------
         On can check that the shear modulus for steel is around 82 GPa:
@@ -868,6 +908,10 @@ class StiffnessTensor(SymmetricTensor):
         Returns
         -------
         StiffnessTensor
+
+        See Also
+        --------
+        transverse_isotropic : create a stiffness tensor for transverse-isotropic symmetry
         """
         tri_sup = np.array([[1/Ex, -nu_xy/Ey, -nu_xz/Ez, 0,     0,     0],
                             [0,    1/Ey,      -nu_yz/Ez, 0,     0,     0],
@@ -901,11 +945,15 @@ class StiffnessTensor(SymmetricTensor):
         Returns
         -------
         StiffnessTensor
+
+        See Also
+        --------
+        orthotropic : create a stiffness tensor for orthotropic symmetry
         """
         Gxy = Ex / (2 * (1+nu_xy))
-        C = cls.orthotropic(Ex=Ex, Ey=Ex, Ez=Ez,
-                            nu_xy=nu_xy, nu_xz=nu_xz, nu_yz=nu_xz,
-                            Gxy=Gxy, Gxz=Gxz, Gyz=Gxz, **kwargs)
+        C = StiffnessTensor.orthotropic(Ex=Ex, Ey=Ex, Ez=Ez,
+                                        nu_xy=nu_xy, nu_xz=nu_xz, nu_yz=nu_xz,
+                                        Gxy=Gxy, Gxz=Gxz, Gyz=Gxz, **kwargs)
         C.symmetry = 'transverse-isotropic'
         return C
 
