@@ -4,8 +4,19 @@
 ![PyPI - License](https://img.shields.io/pypi/l/Elasticipy)
 ![ReadTheDoc](https://readthedocs.org/projects/elasticipy/badge/?version=latest)
 
-A python toolkit to manipulate elastic constants of materials. 
+A python toolkit to manipulate strain and strain tensors, and other linear elasticity-related tensors (e.g. stiffness). 
 This package also provides a collection of easy-to-use and very fast tools to work on stress and strain tensors.
+
+## Main features
+Among other features, this package implements:
+
+- Computation of elasticity tensors,
+- Analysis of elastic anisotropy and wave propagation,
+- Working with multidimensional arrays of strain and stress tensors,
+- Rotation of tensors,
+- Integration with crystal symmetry groups,
+- Visualization and tutorials for ease of use,
+- A graphical user interface to plot the spatial dependence of engineering constants.
 
 ## Installation
 Elasticipy can be installed with PIP:
@@ -14,7 +25,7 @@ pip install Elasticipy
 ````
 
 ## Documentation
-The full documentation is available on [ReadTheDoc](https://elasticipy.readthedocs.io/).
+Tutorials and full documentation are available on [ReadTheDoc](https://elasticipy.readthedocs.io/).
 
 ## Sources
-The source code is available on [GitHub](https://github.com/DorianDepriester/Elasticipy).
+The source code is available on [GitHub](https://github.com/DorianDepriester/Elasticipy) under the [MIT licence](https://github.com/DorianDepriester/Elasticipy/blob/c6c3d441a2d290ab8f4939992d5d753a1ad3bdb0/LICENSE).
