@@ -1,9 +1,7 @@
-Tutorial: extracting elasticity constants from the stiffness tensor
-===================================================================
+Extracting engineering constants from the stiffness tensor
+==========================================================
 
 
-Introduction
-------------
 This page illustrates how one can create stiffness (or compliance) tensors, manipulate them and plot some
 elasticity-related values (e.g. Young modulus).
 
@@ -94,7 +92,7 @@ In order to fully evidence the directional dependence of the Young moduli, we ca
         :width: 400
 
 It is advised to use interactive plot to be able to zoom/rotate the surface. For flat images (i.e. to put in
-document/articles), we can use plot the values as a Pole Figure (PF):
+document/articles), we can plot the values as a Pole Figure (PF):
 
     >>> E.plot_as_pole_figure() # doctest: +SKIP
 

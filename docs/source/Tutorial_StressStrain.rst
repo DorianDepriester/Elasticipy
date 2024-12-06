@@ -1,8 +1,6 @@
-Tutorial: working with stress and strain tensors
-========================================================
+Working with stress and strain tensors
+======================================
 
-Introduction
-------------
 This tutorial illustrates how we work on strain and stress tensors, and how Elasticipy handles arrays of tensors.
 
 Single tensors
@@ -202,4 +200,4 @@ Which yields the same results in terms of stress:
      [ 8.22419895e+01 -4.88440590e-01 -1.52733598e-01]
      [ 2.02619662e-01 -1.52733598e-01 -4.66942413e-02]]
 
-See :ref:`here<Tutorial: Averaging methods>` for further details about the averaging methods.
+See :ref:`here<Averaging methods>` for further details about the averaging methods.

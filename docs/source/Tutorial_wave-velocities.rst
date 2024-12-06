@@ -1,5 +1,5 @@
-Tutorial: computing wave velocities
-===================================
+Computing wave velocities
+=========================
 
 In this tutorial, we will see how one can compute the wave velocities in an (an)isotropic material, given its stiffness
 tensor and its mass density.
@@ -67,3 +67,4 @@ Now, we can plot all the velocities on three independent pole figures:
     We pass ``subplot_args`` to create the subplots. The option ``show=false`` temporary disables showing the figure;
     this is necessary here to be plot multiple figures at once.
 
+For further details about plotting options, see :ref:`here<plotting>`.

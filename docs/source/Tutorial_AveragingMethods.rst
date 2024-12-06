@@ -1,5 +1,5 @@
-Tutorial: Averaging methods
----------------------------
+Averaging methods
+-----------------
 
 This tutorial explains how to compute the Voigt, Reuss and Hill averages from a given stiffness tensor and a finite or
 an infinite set of rotations.
