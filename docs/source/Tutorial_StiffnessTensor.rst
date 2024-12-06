@@ -1,5 +1,5 @@
-Extracting engineering constants from the stiffness tensor
-==========================================================
+Computing and plotting engineering constants
+============================================
 
 
 This page illustrates how one can create stiffness (or compliance) tensors, manipulate them and plot some
