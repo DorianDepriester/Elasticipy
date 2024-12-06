@@ -120,7 +120,8 @@ Features of Elasticipy include:
 - Multidimensional arrays of strain and stress tensors,
 - Rotation of tensors,
 - Integration with crystal symmetry groups,
-- Visualization and tutorials for ease of use.
+- Visualization and tutorials for ease of use,
+- A graphical user interface to plot the spatial dependence of engineering constants
 
 Elasticipy streamlines the exploration of linear elasticity, making it accessible for applications in materials science,
 geophysics, and mechanical engineering.
@@ -137,6 +138,7 @@ To install this package, simply run::
    :maxdepth: 2
    :caption: Table of Contents
 
+   ./GUI.rst
    ./example_StressStrain.rst
    ./example_StiffnessTensor.rst
    ./Tutorial_AveragingMethods.rst
