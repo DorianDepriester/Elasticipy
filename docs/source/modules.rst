@@ -1,5 +1,5 @@
-Elasticipy
-==========
+Reference Manual
+================
 
 .. toctree::
    :maxdepth: 4
