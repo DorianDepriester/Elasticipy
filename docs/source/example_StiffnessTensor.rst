@@ -134,3 +134,8 @@ When plotting the X-Y, X-Z and Y-Z sections, the min, max and mean values are pl
 
     .. image:: ../_static/images/G_xyz_sections.png
         :width: 600
+
+.. note::
+
+    If you want to perform all the above tasks in a more interactive way, check out the
+    :ref:`GUI<gui>`!
