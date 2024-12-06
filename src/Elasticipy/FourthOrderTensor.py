@@ -1,12 +1,13 @@
 import numpy as np
 import re
+import os
 
 from Elasticipy.SecondOrderTensor import SymmetricSecondOrderTensor
 from Elasticipy.StressStrainTensors import StrainTensor, StressTensor
 from Elasticipy.SphericalFunction import SphericalFunction, HyperSphericalFunction
 from scipy.spatial.transform import Rotation
 from Elasticipy.CrystalSymmetries import SYMMETRIES
-
+from mp_api.client import MPRester
 
 def _parse_tensor_components(prefix, **kwargs):
     pattern = r'^{}(\d{{2}})$'.format(prefix)
@@ -420,11 +421,8 @@ class SymmetricTensor:
 
         Parameters
         ----------
-        C11 : float
-        C12 : float
-        C13 : float
-        C33 : float
-        C44 : float
+        C11, C12 , C13, C33, C44 : float
+            Components of the tensor, using the Voigt notation
         phase_name : str, optional
             Phase name to display
         Returns
@@ -447,13 +445,10 @@ class SymmetricTensor:
 
         Parameters
         ----------
-        C11 : float
-        C12 : float
-        C13 : float
-        C14 : float
-        C33 : float
-        C44 : float
+        C11, C12, C13, C14, C33, C44 : float
+            Components of the tensor, using the Voigt notation
         C15 : float, optional
+            C15 component of the tensor, only used for point groups 3 and -3.
         phase_name : str, optional
             Phase name to display
         Returns
@@ -475,14 +470,10 @@ class SymmetricTensor:
 
         Parameters
         ----------
-        C11 : float
-        C12 : float
-        C13 : float
-        C33 : float
-        C44 : float
-        C66 : float
+        C11,  C12, C13, C33, C44, C66 : float
+            Components of the tensor, using the Voigt notation
         C16 : float, optional
-            16 component in Voigt notation (for point groups 4, -4 and 4/m only)
+            C16 component in Voigt notation (for point groups 4, -4 and 4/m only)
         phase_name : str, optional
             Phase name to display
 
@@ -505,11 +496,10 @@ class SymmetricTensor:
 
         Parameters
         ----------
-        C11 : float
-        C12 : float
-        C44 : float
+        C11 , C12, C44 : float
         phase_name : str, optional
             Phase name to display
+
         Returns
         -------
         StiffnessTensor
@@ -528,15 +518,8 @@ class SymmetricTensor:
 
         Parameters
         ----------
-        C11 : float
-        C12 : float
-        C13 : float
-        C22 : float
-        C23 : float
-        C33 : float
-        C44 : float
-        C55 : float
-        C66 : float
+        C11, C12, C13, C22, C23, C33, C44, C55, C66 : float
+            Components of the tensor, using the Voigt notation
         phase_name : str, optional
             Phase name to display
 
@@ -567,23 +550,24 @@ class SymmetricTensor:
 
         Parameters
         ----------
-        C11 : float
-        C12 : float
-        C13 : float
-        C22 : float
-        C23 : float
-        C33 : float
-        C44 : float
-        C55 : float
-        C66 : float
+        C11, C12 , C13, C22, C23, C33, C44, C55, C66 : float
+            Components of the tensor, using the Voigt notation
         C15 : float, optional
+            C15 component of the tensor (if Diad || y)
         C25 : float, optional
+            C25 component of the tensor (if Diad || y)
         C35 : float, optional
+            C35 component of the tensor (if Diad || y)
         C46 : float, optional
+            C46 component of the tensor (if Diad || y)
         C16 : float, optional
+            C16 component of the tensor (if Diad || z)
         C26 : float, optional
+            C26 component of the tensor (if Diad || z)
         C36 : float, optional
+            C36 component of the tensor (if Diad || z)
         C45 : float, optional
+            C45 component of the tensor (if Diad || z)
         phase_name : str, optional
             Name to display
 
@@ -623,29 +607,11 @@ class SymmetricTensor:
 
         Parameters
         ----------
-        C11 : float
-        C12 : float
-        C13 : float
-        C14 : float
-        C15 : float
-        C16 : float
-        C22 : float
-        C23 : float
-        C24 : float
-        C25 : float
-        C26 : float
-        C33 : float
-        C34 : float
-        C35 : float
-        C36 : float
-        C44 : float
-        C45 : float
-        C46 : float
-        C55 : float
-        C56 : float
-        C66 : float
+        C11 , C12 , C13 , C14 , C15 , C16 , C22 , C23 , C24 , C25 , C26 , C33 , C34 , C35 , C36 , C44 , C45 , C46 , C55 , C56 , C66 : float
+            Components of the tensor
         phase_name : str, optional
             Name to display
+
         Returns
         -------
         FourthOrderTensor
@@ -1050,6 +1016,48 @@ class StiffnessTensor(SymmetricTensor):
             return fun
         return [SphericalFunction(make_fun(i)) for i in range(3)]
 
+    @classmethod
+    def from_MPRester(cls, ids, api_key=None):
+        """
+        Import stiffness tensor(s) from the Materials Project API, given their material ids.
+
+        You need to register to `<https://materialsproject.org>`_ first to get an API key. This key can be explicitly
+        passed as an argument (see below), or provided as a variable environment, named API_KEY.
+
+        Parameters
+        ----------
+        ids : str or list of str
+            ID(s) of the material to import (e.g. "mp-1048")
+        api_key : str, optional
+            API key to the Materials Project API. If not provided, it should be available as the API_KEY environment
+            variable.
+
+        Returns
+        -------
+        list of StiffnessTensor
+            If one of the requested material ids was not found, the corresponding value in the list will be None.
+        """
+        if api_key is None:
+            api_key = os.getenv('API_KEY')
+            if api_key is None:
+                raise ValueError('API must be provided either as an argument, or as an environment variable.')
+        if type(ids) is str:
+            Cdict = dict.fromkeys([ids])
+        else:
+            Cdict = dict.fromkeys(ids)
+        with MPRester(api_key=api_key) as mpr:
+            elasticity_doc = mpr.materials.elasticity.search(material_ids=ids)
+            for material in elasticity_doc:
+                matrix = material.elastic_tensor.ieee_format
+                symmetry = material.symmetry.crystal_system.value
+                phase_name = material.formula_pretty
+                key = str(material.material_id)
+                C = StiffnessTensor(matrix, symmetry=symmetry, phase_name=phase_name)
+                Cdict[key] = C
+            if isinstance(ids, str):
+                return C
+            else:
+                return [Cdict[id] for id in ids]
 
 class ComplianceTensor(StiffnessTensor):
     """
