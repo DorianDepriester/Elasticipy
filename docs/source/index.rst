@@ -115,13 +115,13 @@ Features of this package
 
 Features of Elasticipy include:
 
-- Computation of elasticity tensors in Voigt notation,
+- Computation of elasticity tensors,
 - Analysis of elastic anisotropy and wave propagation,
 - Multidimensional arrays of strain and stress tensors,
 - Rotation of tensors,
 - Integration with crystal symmetry groups,
 - Visualization and tutorials for ease of use,
-- A graphical user interface to plot the spatial dependence of engineering constants
+- A graphical user interface to plot the spatial dependence of engineering constants.
 
 Elasticipy streamlines the exploration of linear elasticity, making it accessible for applications in materials science,
 geophysics, and mechanical engineering.
