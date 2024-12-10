@@ -9,6 +9,8 @@ from scipy.spatial.transform import Rotation
 from Elasticipy.CrystalSymmetries import SYMMETRIES
 from mp_api.client import MPRester
 
+
+
 def _parse_tensor_components(prefix, **kwargs):
     pattern = r'^{}(\d{{2}})$'.format(prefix)
     value = dict()
@@ -1118,26 +1120,13 @@ class ComplianceTensor(StiffnessTensor):
         return self.inv().Hill_average()
 
     @classmethod
-    def isotropic(cls, **kwargs):
-        """
-        Create an isotropic compliance tensor for either E, nu, lame1 or lame2. Exactly two of these parameters must be
-        provided.
-
-        Parameters
-        ----------
-        kwargs : keyword arguments
-            E, nu, lame1 or lame2, passed to the StiffnessTensor.isotropic constructor
-
-        See Also
-        --------
-        fromCrystalSymmetry : Define a stiffness tensor, taking advantage of crystal symmetry
-        """
-        return StiffnessTensor.isotropic(**kwargs).inv()
+    def isotropic(cls, E=None, nu=None, lame1=None, lame2=None, phase_name=None):
+        return super().isotropic(E=E, nu=nu, lame1=lame1, lame2=lame2, phase_name=None).inv()
 
     @classmethod
-    def orthotropic(cls, **kwargs):
-        return super().orthotropic(**kwargs).inv()
+    def orthotropic(cls, *args, **kwargs):
+        return super().orthotropic(*args, **kwargs).inv()
 
     @classmethod
-    def transverse_isotropic(cls, **kwargs):
-        return super().transverse_isotropic(**kwargs).inv()
+    def transverse_isotropic(cls, *args, **kwargs):
+        return super().transverse_isotropic(*args, **kwargs).inv()
