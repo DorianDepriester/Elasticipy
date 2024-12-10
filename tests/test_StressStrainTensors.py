@@ -236,6 +236,35 @@ class TestStrainStressTensors(unittest.TestCase):
         stress = C_rotated * strain
         self.assertEqual(stress.shape, (n_ori,) + shape_strain)
 
+    def test_Voigt_notation_strain(self):
+        a = np.random.random((3, 4 , 6))
+        strain = Tensors.StrainTensor.from_Voigt(a)
+        for i in range(0, 3):
+            for j in range(0, 4):
+                for k in range(0, 6):
+                    if k<3:
+                        assert a[i,j,k] == strain[i,j].C[k,k]
+                    elif k==3:
+                        assert a[i,j,k] == 2*strain[i,j].C[1,2]
+                    elif k==4:
+                        assert a[i,j,k] == 2*strain[i,j].C[0,2]
+                    else:
+                        assert a[i,j,k] == 2*strain[i,j].C[0,1]
+
+    def test_Voigt_notation_stress(self):
+        a = np.random.random((3, 4 , 6))
+        stress = Tensors.StressTensor.from_Voigt(a)
+        for i in range(0, 3):
+            for j in range(0, 4):
+                for k in range(0, 6):
+                    if k<3:
+                        assert a[i,j,k] == stress[i,j].C[k,k]
+                    elif k==3:
+                        assert a[i,j,k] == stress[i,j].C[1,2]
+                    elif k==4:
+                        assert a[i,j,k] == stress[i,j].C[0,2]
+                    else:
+                        assert a[i,j,k] == stress[i,j].C[0,1]
 
 if __name__ == '__main__':
     unittest.main()
