@@ -10,7 +10,6 @@ from Elasticipy.CrystalSymmetries import SYMMETRIES
 from mp_api.client import MPRester
 
 
-
 def _parse_tensor_components(prefix, **kwargs):
     pattern = r'^{}(\d{{2}})$'.format(prefix)
     value = dict()
@@ -20,8 +19,9 @@ def _parse_tensor_components(prefix, **kwargs):
             value[match.group(1)] = v
     return value
 
+
 def _indices2str(ij):
-    return f'{ij[0]+1}{ij[1]+1}'
+    return f'{ij[0] + 1}{ij[1] + 1}'
 
 
 def voigt_indices(i, j):
@@ -83,6 +83,7 @@ def _compute_unit_strain_along_direction(S, m, n, transverse=False):
     else:
         cosine = m_vec[:, i] * n_vec[:, j] * m_vec[:, k] * n_vec[:, ell]
     return np.einsum('pijkl,ijkl->p', cosine, S.full_tensor())
+
 
 def _isotropic_matrix(C11, C12, C44):
     return np.array([[C11, C12, C12, 0, 0, 0],
@@ -587,12 +588,14 @@ class SymmetricTensor:
         if diad_y and diad_z:
             raise KeyError('Ambiguous diad. Provide either C15, C25, C35 and C46; or C16, C26, C36 and C45')
         elif diad_y:
-            return cls.fromCrystalSymmetry(symmetry='monoclinic',diad='y',
-                                           C11=C11, C12=C12, C13=C13, C22=C22, C23=C23, C33=C33, C44=C44, C55=C55, C66=C66,
+            return cls.fromCrystalSymmetry(symmetry='monoclinic', diad='y',
+                                           C11=C11, C12=C12, C13=C13, C22=C22, C23=C23, C33=C33, C44=C44, C55=C55,
+                                           C66=C66,
                                            C15=C15, C25=C25, C35=C35, C46=C46, phase_name=phase_name, prefix='C')
         elif diad_z:
-            return cls.fromCrystalSymmetry(symmetry='monoclinic',diad='z',
-                                           C11=C11, C12=C12, C13=C13, C22=C22, C23=C23, C33=C33, C44=C44, C55=C55, C66=C66,
+            return cls.fromCrystalSymmetry(symmetry='monoclinic', diad='z',
+                                           C11=C11, C12=C12, C13=C13, C22=C22, C23=C23, C33=C33, C44=C44, C55=C55,
+                                           C66=C66,
                                            C16=C16, C26=C26, C36=C36, C45=C45, phase_name=phase_name, prefix='C')
         else:
             raise KeyError('For monoclinic symmetry, one should provide either C15, C25, C35 and C46, '
@@ -623,14 +626,13 @@ class SymmetricTensor:
         monoclinic : create a tensor from monoclinic symmetry
         orthorhombic : create a tensor from orthorhombic symmetry
         """
-        matrix=np.array([[C11, C12, C13, C14, C15, C16],
-                         [C12, C22, C23, C24, C25, C26],
-                         [C13, C23, C33, C34, C35, C36],
-                         [C14, C24, C34, C44, C45, C46],
-                         [C15, C25, C35, C45, C55, C56],
-                         [C16, C26, C36, C46, C56, C66]])
+        matrix = np.array([[C11, C12, C13, C14, C15, C16],
+                           [C12, C22, C23, C24, C25, C26],
+                           [C13, C23, C33, C34, C35, C36],
+                           [C14, C24, C34, C44, C45, C46],
+                           [C15, C25, C35, C45, C55, C56],
+                           [C16, C26, C36, C46, C56, C66]])
         return cls(matrix, phase_name=phase_name)
-
 
 
 class StiffnessTensor(SymmetricTensor):
@@ -881,14 +883,14 @@ class StiffnessTensor(SymmetricTensor):
         --------
         transverse_isotropic : create a stiffness tensor for transverse-isotropic symmetry
         """
-        tri_sup = np.array([[1/Ex, -nu_xy/Ey, -nu_xz/Ez, 0,     0,     0],
-                            [0,    1/Ey,      -nu_yz/Ez, 0,     0,     0],
-                            [0,    0,         1/Ez,      0,     0,     0],
-                            [0,    0,         0,         1/Gyz, 0,     0],
-                            [0,    0,         0,         0,     1/Gxz, 0],
-                            [0,    0,         0,         0,     0,     1/Gxy]])
+        tri_sup = np.array([[1 / Ex, -nu_xy / Ey, -nu_xz / Ez, 0, 0, 0],
+                            [0, 1 / Ey, -nu_yz / Ez, 0, 0, 0],
+                            [0, 0, 1 / Ez, 0, 0, 0],
+                            [0, 0, 0, 1 / Gyz, 0, 0],
+                            [0, 0, 0, 0, 1 / Gxz, 0],
+                            [0, 0, 0, 0, 0, 1 / Gxy]])
         S = tri_sup + np.tril(tri_sup.T, -1)
-        return StiffnessTensor(np.linalg.inv(S), symmetry = 'orthotropic', **kwargs)
+        return StiffnessTensor(np.linalg.inv(S), symmetry='orthotropic', **kwargs)
 
     @classmethod
     def transverse_isotropic(cls, *, Ex, Ez, nu_xy, nu_xz, Gxz, **kwargs):
@@ -918,7 +920,7 @@ class StiffnessTensor(SymmetricTensor):
         --------
         orthotropic : create a stiffness tensor for orthotropic symmetry
         """
-        Gxy = Ex / (2 * (1+nu_xy))
+        Gxy = Ex / (2 * (1 + nu_xy))
         C = StiffnessTensor.orthotropic(Ex=Ex, Ey=Ex, Ez=Ez,
                                         nu_xy=nu_xy, nu_xz=nu_xz, nu_yz=nu_xz,
                                         Gxy=Gxy, Gxz=Gxz, Gyz=Gxz, **kwargs)
@@ -952,7 +954,7 @@ class StiffnessTensor(SymmetricTensor):
 
         """
         u_vec = np.atleast_2d(u)
-        u_vec = (u_vec.T/np.linalg.norm(u_vec, axis=1)).T
+        u_vec = (u_vec.T / np.linalg.norm(u_vec, axis=1)).T
         return np.einsum('inmj,pn,pm->pij', self.full_tensor(), u_vec, u_vec)
 
     def wave_velocity(self, rho):
@@ -1004,6 +1006,7 @@ class StiffnessTensor(SymmetricTensor):
                Communications (207), 2016, https://doi.org/10.1016/j.cpc.2016.06.014.
 
         """
+
         def make_fun(index):
             def fun(n):
                 Gamma = self.Christoffel_tensor(n)
@@ -1014,8 +1017,10 @@ class StiffnessTensor(SymmetricTensor):
                     eig_of_interest = np.median(eig, axis=-1)
                 else:
                     eig_of_interest = np.min(eig, axis=-1)
-                return np.sqrt(eig_of_interest/rho)
+                return np.sqrt(eig_of_interest / rho)
+
             return fun
+
         return [SphericalFunction(make_fun(i)) for i in range(3)]
 
     @classmethod
@@ -1060,6 +1065,7 @@ class StiffnessTensor(SymmetricTensor):
                 return C
             else:
                 return [Cdict[id] for id in ids]
+
 
 class ComplianceTensor(StiffnessTensor):
     """
