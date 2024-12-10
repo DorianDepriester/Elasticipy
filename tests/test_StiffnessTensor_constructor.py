@@ -3,7 +3,7 @@ from pytest import approx
 import pandas as pd
 import numpy as np
 
-from Elasticipy.FourthOrderTensor import StiffnessTensor
+from Elasticipy.FourthOrderTensor import StiffnessTensor, ComplianceTensor
 from scipy.spatial.transform import Rotation
 from Elasticipy.FourthOrderTensor import _indices2str
 from Elasticipy.CrystalSymmetries import SYMMETRIES
@@ -11,34 +11,39 @@ from Elasticipy.CrystalSymmetries import SYMMETRIES
 data_base = pd.read_json('MaterialsProject.json')
 rotations = Rotation.random(10000)
 
-def variant_selection(symmetry, point_group):
+def variant_selection(symmetry, variant_name):
     for variant_group in symmetry.keys():
         elements = [elem.strip() for elem in variant_group.split(",")]
-        if point_group in elements:
+        if variant_name in elements:
             return symmetry[variant_group]
     return None
 
 
-def crystal_symmetry_tester(symmetry_name, point_group=None):
+def crystal_symmetry_tester(symmetry_name, cls='stiffness', variant=None):
     symmetry = SYMMETRIES[symmetry_name]
-    if point_group is None:
+    if variant is None:
         materials_of_interest = data_base[data_base.symmetry == symmetry_name]
         required_fields = symmetry.required
     else:
-        materials_of_interest = data_base[data_base.point_group == point_group]
-        variant = variant_selection(symmetry, point_group)
+        materials_of_interest = data_base[data_base.point_group == variant]
+        variant = variant_selection(symmetry, variant)
         required_fields = variant.required
     for index, row in materials_of_interest.iterrows():
         matrix = np.array(row['C'])
+        if cls=='stiffness':
+            class_constructor = StiffnessTensor
+        else:
+            class_constructor = ComplianceTensor
+            matrix = np.linalg.inv(matrix)*1000
         kwargs = dict()
         for indices in required_fields:
             component_name = 'C' + _indices2str(indices)
             kwargs[component_name] = matrix[*indices]
-        constructor = getattr(StiffnessTensor, symmetry_name.lower())
+        constructor = getattr(class_constructor, symmetry_name.lower())
         C = constructor(**kwargs)
-        assert np.all(C.matrix == approx(matrix, abs=0.5))
+        assert np.all(C.matrix == approx(matrix, rel=0.5))
 
-class test_StiffnessConstructor(unittest.TestCase):
+class TestStiffnessConstructor(unittest.TestCase):
     def test_averages(self):
         rel = 5e-2
         for index, row in data_base.iterrows():
@@ -67,20 +72,38 @@ class test_StiffnessConstructor(unittest.TestCase):
         crystal_symmetry_tester('Hexagonal')
 
     def test_stiffness_trigonal(self):
-        crystal_symmetry_tester('Trigonal', point_group='32')
-        crystal_symmetry_tester('Trigonal', point_group='-3')
+        crystal_symmetry_tester('Trigonal', variant='32')
+        crystal_symmetry_tester('Trigonal', variant='-3')
 
     def test_stiffness_tetragonal(self):
-        crystal_symmetry_tester('Tetragonal', point_group='-42m')
-        crystal_symmetry_tester('Tetragonal', point_group='-4')
+        crystal_symmetry_tester('Tetragonal', variant='-42m')
+        crystal_symmetry_tester('Tetragonal', variant='-4')
 
     def test_stiffness_orthorhombic(self):
         crystal_symmetry_tester('Orthorhombic')
 
     def test_stiffness_monoclinic(self):
-        crystal_symmetry_tester('Monoclinic', 'Diad || y')
+        crystal_symmetry_tester('Monoclinic', variant='Diad || y')
 
+    def test_compliance_cubic(self):
+        crystal_symmetry_tester('Cubic', cls='compliance')
 
+    def test_compliance_hexagonal(self):
+        crystal_symmetry_tester('Hexagonal', cls='compliance')
+
+    def test_compliance_trigonal(self):
+        crystal_symmetry_tester('Trigonal', variant='32', cls='compliance')
+        crystal_symmetry_tester('Trigonal', variant='-3', cls='compliance')
+
+    def test_compliance_tetragonal(self):
+        crystal_symmetry_tester('Tetragonal', variant='-42m', cls='compliance')
+        crystal_symmetry_tester('Tetragonal', variant='-4', cls='compliance')
+
+    def test_compliance_orthorhombic(self):
+        crystal_symmetry_tester('Orthorhombic', cls='compliance')
+
+    def test_compliance_monoclinic(self):
+        crystal_symmetry_tester('Monoclinic', variant='Diad || y', cls='compliance')
 
 if __name__ == '__main__':
     unittest.main()
