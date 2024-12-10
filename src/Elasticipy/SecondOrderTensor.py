@@ -42,36 +42,22 @@ class SecondOrderTensor:
     name = 'Second-order tensor'
     "Name to use when printing the tensor"
 
-    voigt_map = [1, 1, 1, 1, 1, 1]
-    "List of factors to use for building a tensor from Voigt vector(s)"
-
     def __init__(self, matrix):
         """
         Create an array of second-order tensors.
 
         The input argument can be:
-            - an array of shape (3,3) defining all the component of the tensor;
-            - a stack of matrices, that is an array of shape (...,3,3);
-            - an array of shape (6);
-            - a stack of vectors of lenghts 6, that is an array of shape (...,6).
-        In the two last cases, it is assumed that the Voigt numbering convention is used.
+            - an array of shape (3,3) defining all the components of the tensor;
+            - a stack of matrices, that is an array of shape (...,3,3).
 
         Parameters
         ----------
         matrix : list or np.ndarray
-            (3,3) matrix, stack of (3,3) matrices, 6-length vector or stack of 6-length vectors
+            (3,3) matrix, stack of (3,3) matrices
         """
         matrix = np.array(matrix)
         shape = matrix.shape
-        if shape and (shape[-1] == 6):
-            new_shape = shape[:-1] + (3, 3)
-            unvoigted_matrix = np.zeros(new_shape)
-            voigt = [[0, 0], [1, 1], [2, 2], [1, 2], [0, 2], [0, 1]]
-            for i in range(6):
-                unvoigted_matrix[..., voigt[i][0], voigt[i][1]] = matrix[..., i]/self.voigt_map[i]
-                unvoigted_matrix[..., voigt[i][1], voigt[i][0]] = matrix[..., i]/self.voigt_map[i]
-            self.matrix = unvoigted_matrix
-        elif len(shape) > 1 and shape[-2:] == (3, 3):
+        if len(shape) > 1 and shape[-2:] == (3, 3):
             self.matrix = matrix
         else:
             raise ValueError('The input matrix must be of shape (3,3) or (...,3,3)')
@@ -768,6 +754,9 @@ class SecondOrderTensor:
 
 
 class SymmetricSecondOrderTensor(SecondOrderTensor):
+    voigt_map = [1, 1, 1, 1, 1, 1]
+    "List of factors to use for building a tensor from Voigt vector(s)"
+
     def __init__(self, mat):
         symmetric_matrix = 0.5 * (mat + np.swapaxes(mat, -2, -1))
         super().__init__(symmetric_matrix)
@@ -775,3 +764,41 @@ class SymmetricSecondOrderTensor(SecondOrderTensor):
     @classmethod
     def shear(cls, u, v, magnitude):
         return super().shear(u, v, magnitude) * 2
+
+    @classmethod
+    def from_Voigt(cls, array):
+        """
+        Construct a SymmetricSecondOrderTensor from a Voigt vector, or slices of Voigt vectors.
+
+        If the array is of shape (6,), a single tensor is returned. If the array is of shape (m,n,o,...,6), the tensor
+        will be of shape (m,n,o,...).
+
+        Parameters
+        ----------
+        array : np.ndarray or list
+            array to build the SymmetricSecondOrderTensor from. We must have array.ndim>0 and array.shape[-1]==6.
+        Returns
+        -------
+        SymmetricSecondOrderTensor
+
+        Examples
+        --------
+        >>> SymmetricSecondOrderTensor.from_Voigt([11, 22, 33, 23, 13, 12])
+        Second-order tensor
+        [[11. 12. 13.]
+         [12. 22. 23.]
+         [13. 23. 33.]]
+
+        """
+        array = np.asarray(array)
+        shape = array.shape
+        if shape and (shape[-1] == 6):
+            new_shape = shape[:-1] + (3, 3)
+            unvoigted_matrix = np.zeros(new_shape)
+            voigt = [[0, 0], [1, 1], [2, 2], [1, 2], [0, 2], [0, 1]]
+            for i in range(6):
+                unvoigted_matrix[..., voigt[i][0], voigt[i][1]] = array[..., i] / cls.voigt_map[i]
+                unvoigted_matrix[..., voigt[i][1], voigt[i][0]] = array[..., i] / cls.voigt_map[i]
+            return cls(unvoigted_matrix)
+        else:
+            raise ValueError("array must be of shape (6,) or (...,6) with Voigt vector")
