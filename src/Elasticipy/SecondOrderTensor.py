@@ -644,7 +644,7 @@ class SecondOrderTensor:
 
         Parameters
         ----------
-        shape : list or int, default ()
+        shape : tuple or int, default ()
             If not provided, it just creates a single identity tensor. Otherwise, the tensor array will be of the
             specified shape.
 
@@ -673,7 +673,7 @@ class SecondOrderTensor:
 
         Parameters
         ----------
-        shape : list or int, default ()
+        shape : tuple or int, default ()
             If not provided, it just creates a single tensor of ones. Otherwise, the tensor array will be of the
             specified shape.
 
@@ -701,7 +701,7 @@ class SecondOrderTensor:
 
         Parameters
         ----------
-        shape : list or int, default ()
+        shape : tuple or int, default ()
             If not provided, it just creates a single tensor of ones. Otherwise, the tensor array will be of the
             specified shape.
 
