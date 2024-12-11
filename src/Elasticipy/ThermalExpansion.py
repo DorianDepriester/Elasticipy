@@ -25,6 +25,25 @@ class ThermalExpansionTensor(SymmetricSecondOrderTensor):
             return StrainTensor(new_mat)
 
     def matmul(self, other):
+        """
+        Matrix like product with array of Rotations, resulting either in rotated ThermalExpansionTensor or StrainTensor.
+
+        Compute the product between the tensor and an array of Rotations or a numpy array in a "matrix-product" way,*
+        that is by computing each of the products. If T.shape=(m,n,o,...) and other.shape=(p,q,r,...), then::
+
+            T.matmul(other).shape = (m,n,o,...,p,q,r,...)
+
+        Parameters
+        ----------
+        other : np.ndarray or Rotation
+            Value to multiply by.
+        Returns
+        -------
+        ThermalExpansionTensor or StrainTensor
+            If other is a Rotation, the tensor is just rotated, thus returning a ThermalExpansionTensor.
+            If other is an array, it is assumed that it corresponds to the temperature increase, thus returning a
+            StrainTensor.
+        """
         if isinstance(other, Rotation):
             return super().matmul(other)
         else:
