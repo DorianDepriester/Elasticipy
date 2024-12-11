@@ -177,6 +177,8 @@ And get the stress back to the initial coordinate system:
 
     >>> sigma = sigma_rotated * rotations.inv()   # Go back to initial frame
 
+As opposed to the matmul operator (see above), we use ``*`` operator here to keep the same dimensionality (perform
+element-wise multiplication).
 Finally, we can estimate the mean stresses among all the orientations:
 
     >>> sigma_mean = sigma.mean(axis=1)     # Compute the mean over all orientations
