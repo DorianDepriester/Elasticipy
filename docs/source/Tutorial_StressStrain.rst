@@ -5,23 +5,20 @@ This tutorial illustrates how we work on strain and stress tensors, and how Elas
 
 Single tensors
 --------------
-Let's start with basic operations with the stress tensor. For instance, we can compute the von Mises and Tresca equivalent stresses:
+Let's start with basic operations with the stress tensor. For instance, we can compute the von Mises and Tresca
+equivalent stresses:
 
 
 .. doctest::
 
     >>> from Elasticipy.StressStrainTensors import StressTensor, StrainTensor
-    >>> stress = StressTensor([[0, 1, 0],
-    ...                       [1, 0, 0],
-    ...                       [0, 0, 0]])
+    >>> stress = StressTensor.shear([1, 0, 0], [0, 1, 0], 1.0) # Unit XY shear stress
     >>> print(stress.vonMises(), stress.Tresca())
     1.7320508075688772 2.0
 
-So now, let's have a look on the the strain tensor, and compute the principal strains and the volumetric change:
+So now, let's have a look on the strain tensor, and compute the principal strains and the volumetric change:
 
-    >>> strain = StrainTensor([[0, 1e-3, 0],
-    ...                   [1e-3, 0, 0],
-    ...                   [0, 0, 0]])
+    >>> strain = StrainTensor.shear([1,0,0], [0,1,0], 1e-3) # XY Shear strain with 1e-3 mag.
     >>> print(strain.principalStrains())
     [ 0.001 -0.001  0.   ]
     >>> print(strain.volumetricStrain())
