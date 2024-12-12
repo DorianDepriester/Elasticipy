@@ -7,7 +7,6 @@ from Elasticipy.StressStrainTensors import StrainTensor, StressTensor
 from Elasticipy.SphericalFunction import SphericalFunction, HyperSphericalFunction
 from scipy.spatial.transform import Rotation
 from Elasticipy.CrystalSymmetries import SYMMETRIES
-from mp_api.client import MPRester
 
 
 def _parse_tensor_components(prefix, **kwargs):
@@ -1044,10 +1043,15 @@ class StiffnessTensor(SymmetricTensor):
         list of StiffnessTensor
             If one of the requested material ids was not found, the corresponding value in the list will be None.
         """
+        try:
+            from mp_api.client import MPRester
+        except ImportError:
+            raise ModuleNotFoundError('mp_api module is required for this function.')
         if api_key is None:
             api_key = os.getenv('API_KEY')
             if api_key is None:
-                raise ValueError('API must be provided either as an argument, or as an environment variable.')
+                raise ValueError('API must be provided either as the ``api_key`` argument, or as an environment '
+                                 'variable.')
         if type(ids) is str:
             Cdict = dict.fromkeys([ids])
         else:
