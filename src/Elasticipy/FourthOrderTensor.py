@@ -1023,7 +1023,7 @@ class StiffnessTensor(SymmetricTensor):
         return [SphericalFunction(make_fun(i)) for i in range(3)]
 
     @classmethod
-    def from_MPRester(cls, ids, api_key=None):
+    def from_MaterialsProject(cls, ids, api_key=None):
         """
         Import stiffness tensor(s) from the Materials Project API, given their material ids.
 
