@@ -92,7 +92,6 @@ def _isotropic_matrix(C11, C12, C44):
                      [0, 0, 0, 0, C44, 0],
                      [0, 0, 0, 0, 0, C44]])
 
-
 class SymmetricTensor:
     """
     Template class for manipulating symmetric fourth-order tensors.
@@ -268,7 +267,6 @@ class SymmetricTensor:
         elif len(orientations.shape) == 2:
             return self * orientations
         else:
-            m = orientations
             mean_full_tensor = np.mean(self.full_tensor(), axis=0)
             ij, kl = np.indices((6, 6))
             i, j = unvoigt_index(ij).T
