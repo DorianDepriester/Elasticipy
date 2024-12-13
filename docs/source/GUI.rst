@@ -14,5 +14,5 @@ The figure bellow illustrates the Young's modulus of
 
 To launch this GUI, just run::
 
-    from Elasticipy.gui import crystal_symmetry_plotter
-    crystal_symmetry_plotter()
+    from Elasticipy.gui import crystal_elastic_plotter
+    crystal_elastic_plotter()
