@@ -1102,6 +1102,47 @@ class StiffnessTensor(SymmetricTensor):
             else:
                 return [Cdict[id] for id in ids]
 
+    @classmethod
+    def weighted_average(cls, Cs, volume_fractions, method):
+        """
+        Compute the weighted average of a list of stiffness tensors, with respect to a given method (Voigt, Reuss or
+        Hill).
+
+        Parameters
+        ----------
+        Cs : list of StiffnessTensor or list of ComplianceTensor or tuple of StiffnessTensor or tuple of ComplianceTensor
+            Series of tensors to compute the average from
+        volume_fractions : iterable of floats
+            Volume fractions of each phase
+        method : str, {'Voigt', 'Reuss', 'Hill'}
+            Method to use. It can be 'Voigt', 'Reuss', or 'Hill'.
+
+        Returns
+        -------
+        StiffnessTensor
+            Average tensor
+        """
+        if np.all([isinstance(a, ComplianceTensor) for a in Cs]):
+            Cs = [C.inv() for C in Cs]
+        if np.all([isinstance(a, StiffnessTensor) for a in Cs]):
+            method = method.capitalize()
+            if method == 'Voigt':
+                return np.average(Cs, weights=volume_fractions)
+            elif method == 'Reuss':
+                Ss = [C.inv() for C in Cs]
+                S_average = np.average(Ss, weights=volume_fractions)
+                return S_average.inv()
+            elif method == 'Hill':
+                C_voigt = cls.weighted_average(Cs, volume_fractions, 'Voigt')
+                C_reuss = cls.weighted_average(Cs, volume_fractions, 'Reuss')
+                return (C_voigt + C_reuss) * 0.5
+            else:
+                raise ValueError('Method must be either Voigt, Reuss or Hill.')
+        else:
+            raise ValueError('The first argument must be either a list of ComplianceTensors or '
+                             'a list of StiffnessTensor.')
+
+
 
 class ComplianceTensor(StiffnessTensor):
     """
@@ -1172,3 +1213,7 @@ class ComplianceTensor(StiffnessTensor):
     @classmethod
     def transverse_isotropic(cls, *args, **kwargs):
         return super().transverse_isotropic(*args, **kwargs).inv()
+    
+    @classmethod
+    def weighted_average(cls, *args):
+        return super().weighted_average(*args).inv()
