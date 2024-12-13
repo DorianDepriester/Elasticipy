@@ -1140,7 +1140,32 @@ class StiffnessTensor(SymmetricTensor):
             raise ValueError('The first argument must be either a list of ComplianceTensors or '
                              'a list of StiffnessTensor.')
 
+    @property
+    def universal_anisotropy(self):
+        """
+        Compute the universal anisotropy factor.
 
+        The larger the value, the more likely the material will behaviour in an anisotropic way. It was introduced in
+        [3]_.
+
+        Returns
+        -------
+        float
+
+        Notes
+        -----
+        .. [3] S. I. Ranganathan and M. Ostoja-Starzewski, Universal Elastic Anisotropy Index, Phys. Rev. Lett., 2008.
+        https://doi.org/10.1103/PhysRevLett.101.055504
+        """
+        Cvoigt = self.Voigt_average()
+        Gvoigt = Cvoigt.matrix[3,3]
+        Creuss = self.Reuss_average()
+        Greuss = Creuss.matrix[3, 3]
+        C = self.matrix
+        Kv = (C[0,0] + C[1,1] + C[2,2] + 2 * (C[0,1] + C[0,2] + C[1,2])) / 9
+        S = np.linalg.inv(C)
+        Kr = 1 / (S[0,0] + S[1,1] + S[2,2] + 2 * (S[0,1] + S[0,2] + S[1,2]))
+        return 5 * Gvoigt / Greuss + Kv / Kr - 6
 
 class ComplianceTensor(StiffnessTensor):
     """
