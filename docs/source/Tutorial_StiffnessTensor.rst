@@ -30,7 +30,7 @@ let's see its value along the x, y and z directions:
     >>> Ey = E.eval([0,1,0])
     >>> Ez = E.eval([0,0,1])
     >>> print((Ex, Ey, Ez))
-    (np.float64(124.52232440357189), np.float64(120.92120854784433), np.float64(96.13750721721384))
+    (124.52232440357189, 120.92120854784433, 96.13750721721384)
 
 Actually, a more compact syntax, and a faster way to do that, is to use:
 
