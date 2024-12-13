@@ -1145,17 +1145,25 @@ class StiffnessTensor(SymmetricTensor):
         """
         Compute the universal anisotropy factor.
 
-        The larger the value, the more likely the material will behaviour in an anisotropic way. It was introduced in
-        [3]_.
+        The larger the value, the more likely the material will behave in an anisotropic way.
 
         Returns
         -------
         float
+            The universal anisotropy factor.
 
         Notes
         -----
-        .. [3] S. I. Ranganathan and M. Ostoja-Starzewski, Universal Elastic Anisotropy Index, Phys. Rev. Lett., 2008.
-        https://doi.org/10.1103/PhysRevLett.101.055504
+        The universal anisotropy factor is defined as [3]_:
+
+        .. math::
+
+            5\\frac{G_v}{G_r} + \\frac{K_v}{K_r} - 6
+
+        References
+        ----------
+        .. [3] S. I. Ranganathan and M. Ostoja-Starzewski, Universal Elastic Anisotropy Index,
+           *Phys. Rev. Lett.*, 101(5), 055504, 2008. https://doi.org/10.1103/PhysRevLett.101.055504
         """
         Cvoigt = self.Voigt_average()
         Gvoigt = Cvoigt.matrix[3,3]
@@ -1240,3 +1248,17 @@ class ComplianceTensor(StiffnessTensor):
     @classmethod
     def weighted_average(cls, *args):
         return super().weighted_average(*args).inv()
+
+    @property
+    def universal_anisotropy(self):
+        """
+        Compute the universal anisotropy factor.
+
+        It is actually an alias for inv().universal_anisotropy.
+
+        Returns
+        -------
+        float
+            Universal anisotropy factor
+        """
+        return self.inv().universal_anisotropy
