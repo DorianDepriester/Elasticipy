@@ -9,3 +9,4 @@ Tutorials
     ./Tutorial_StiffnessTensor.rst
     ./Tutorial_AveragingMethods.rst
     ./Tutorial_wave-velocities.rst
+    ./Tutorial_MultiplePhases.rst
