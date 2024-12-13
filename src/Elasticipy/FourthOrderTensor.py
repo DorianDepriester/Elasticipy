@@ -731,6 +731,7 @@ class StiffnessTensor(SymmetricTensor):
         --------
         Reuss_average : compute the Reuss average
         Hill_average : compute the Voigt-Reuss-Hill average
+        average : generic function for calling either the Voigt, Reuss or Hill average
         """
         if self.orientations is None:
             c = self.matrix
@@ -760,6 +761,7 @@ class StiffnessTensor(SymmetricTensor):
         --------
         Voigt_average : compute the Voigt average
         Hill_average : compute the Voigt-Reuss-Hill average
+        average : generic function for calling either the Voigt, Reuss or Hill average
         """
         return self.inv().Reuss_average().inv()
 
@@ -777,10 +779,40 @@ class StiffnessTensor(SymmetricTensor):
         --------
         Voigt_average : compute the Voigt average
         Reuss_average : compute the Reuss average
+        average : generic function for calling either the Voigt, Reuss or Hill average
         """
         Reuss = self.Reuss_average()
         Voigt = self.Voigt_average()
         return (Reuss + Voigt) * 0.5
+
+    def average(self, method):
+        """
+        Compute either the Voigt, Reuss, or Hill average of the stiffness tensor.
+
+        This function is just a shortcut for Voigt_average(), Reuss_average(), or Hill_average() and Hill_average().
+
+        Parameters
+        ----------
+        method : str {'Voigt', 'Reuss', 'Hill'}
+        Method to use to compute the average.
+
+        Returns
+        -------
+        StiffnessTensor
+
+        See Also
+        --------
+        Voigt_average : compute the Voigt average
+        Reuss_average : compute the Reuss average
+        Hill_average : compute the Voigt-Reuss-Hill average
+        """
+        method = method.capitalize()
+        if method in ('Voigt', 'Reuss', 'Hill'):
+            fun = getattr(self, method + '_average')
+            return fun()
+        else:
+            raise NotImplementedError('Only Voigt, Reus, and Hill are implemented.')
+
 
     @classmethod
     def isotropic(cls, E=None, nu=None, lame1=None, lame2=None, phase_name=None):
