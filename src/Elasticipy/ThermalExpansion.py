@@ -179,3 +179,8 @@ class ThermalExpansionTensor(SymmetricSecondOrderTensor):
         ThermalExpansionTensor
         """
         return cls(np.diag([alpha_1, alpha_1, alpha_3]))
+
+    @property
+    def volumetric_coefficient(self):
+        """ Returns the volumetric thermal expansion coefficient."""
+        return self.I1
