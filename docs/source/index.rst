@@ -3,15 +3,19 @@ Welcome to Elasticipy's Documentation!
 
 .. image:: https://img.shields.io/pypi/v/Elasticpy?link=https%3A%2F%2Fpypi.org%2Fproject%2FElasticipy%2F
    :alt: PyPI - Version
+   :target: https://pypi.org/project/elasticipy/
 
 .. image:: https://img.shields.io/pypi/dm/Elasticpy
    :alt: PyPI - Downloads
+   :target: https://pypistats.org/packages/elasticipy
 
 .. image:: https://img.shields.io/pypi/l/Elasticipy
    :alt: PyPI - License
+   :target: https://github.com/DorianDepriester/Elasticipy/blob/main/LICENSE
 
 .. image:: https://readthedocs.org/projects/elasticipy/badge/?version=latest
    :alt: ReadTheDoc
+   :target: https://elasticipy.readthedocs.io/
 
 .. image:: https://zenodo.org/badge/876162900.svg
   :target: https://doi.org/10.5281/zenodo.14501849
