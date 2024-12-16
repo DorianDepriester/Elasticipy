@@ -631,6 +631,75 @@ class SymmetricTensor:
                            [C16, C26, C36, C46, C56, C66]])
         return cls(matrix, phase_name=phase_name)
 
+    def save_to_txt(self, filename, matrix_only=False):
+        """
+        Save the tensor to a text file.
+
+        Parameters
+        ----------
+        filename : str
+            Filename to save the tensor to.
+        matrix_only : bool, False
+            If true, only the components of tje stiffness tensor is saved (no data about phase nor symmetry)
+
+        See Also
+        --------
+        from_txt_file : create a tensor from text file
+
+        """
+        with open(filename, 'w') as f:
+            if not matrix_only:
+                if self.phase_name is not None:
+                    f.write(f"Phase Name: {self.phase_name}\n")
+                f.write(f"Symmetry: {self.symmetry}\n")
+            for row in self.matrix:
+                f.write("  " + "  ".join(f"{value:8.2f}" for value in row) + "\n")
+
+    @classmethod
+    def from_txt_file(cls, filename):
+        """
+        Load the tensor from a text file.
+
+        The two first lines can have data about phase name and symmetry, but this is not mandatory.
+
+        Parameters
+        ----------
+        filename : str
+            Filename to load the tensor from.
+
+        Returns
+        -------
+        SymmetricTensor
+            The reconstructed tensor read from the file.
+
+        See Also
+        --------
+        save_to_txt : create a tensor from text file
+
+        """
+        with open(filename, 'r') as f:
+            lines = f.readlines()
+
+        # Initialize defaults
+        phase_name = None
+        symmetry = 'Triclinic'
+        matrix_start_index = 0
+
+        # Parse phase name if available
+        if lines and lines[0].startswith("Phase Name:"):
+            phase_name = lines[0].split(": ", 1)[1].strip()
+            matrix_start_index += 1
+
+        # Parse symmetry if available
+        if len(lines) > matrix_start_index and lines[matrix_start_index].startswith("Symmetry:"):
+            symmetry = lines[matrix_start_index].split(": ", 1)[1].strip()
+            matrix_start_index += 1
+
+        # Parse matrix
+        matrix = np.loadtxt(lines[matrix_start_index:])
+
+        # Return the reconstructed object
+        return cls(matrix, phase_name=phase_name, symmetry=symmetry)
 
 class StiffnessTensor(SymmetricTensor):
     """
