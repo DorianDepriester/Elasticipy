@@ -1058,7 +1058,7 @@ class StiffnessTensor(SymmetricTensor):
         Import stiffness tensor(s) from the Materials Project API, given their material ids.
 
         You need to register to `<https://materialsproject.org>`_ first to get an API key. This key can be explicitly
-        passed as an argument (see below), or provided as a variable environment, named API_KEY.
+        passed as an argument (see below), or provided as an environment variable named MP_API_KEY.
 
         Parameters
         ----------
@@ -1077,11 +1077,6 @@ class StiffnessTensor(SymmetricTensor):
             from mp_api.client import MPRester
         except ImportError:
             raise ModuleNotFoundError('mp_api module is required for this function.')
-        if api_key is None:
-            api_key = os.getenv('API_KEY')
-            if api_key is None:
-                raise ValueError('API must be provided either as the ``api_key`` argument, or as an environment '
-                                 'variable.')
         if type(ids) is str:
             Cdict = dict.fromkeys([ids])
         else:
