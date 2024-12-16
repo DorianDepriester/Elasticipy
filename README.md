@@ -3,6 +3,8 @@
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/Elasticipy?link=https%3A%2F%2Fpypi.org%2Fproject%2FElasticipy%2F)
 ![PyPI - License](https://img.shields.io/pypi/l/Elasticipy)
 ![ReadTheDoc](https://readthedocs.org/projects/elasticipy/badge/?version=latest)
+[![DOI](https://zenodo.org/badge/876162900.svg)](https://doi.org/10.5281/zenodo.14501849)
+
 
 A python toolkit to manipulate strain and strain tensors, and other linear elasticity-related tensors (e.g. stiffness). 
 This package also provides a collection of easy-to-use and very fast tools to work on stress and strain tensors.
