@@ -11,3 +11,4 @@ Tutorials
     ./Tutorial_ThermalExpansion.rst
     ./Tutorial_wave-velocities.rst
     ./Tutorial_MultiplePhases.rst
+    ./Tutorial_ReadWriteFiles.rst
