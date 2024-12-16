@@ -1053,7 +1053,7 @@ class StiffnessTensor(SymmetricTensor):
         return [SphericalFunction(make_fun(i)) for i in range(3)]
 
     @classmethod
-    def from_MaterialsProject(cls, ids, api_key=None):
+    def from_theMaterialsProject(cls, ids, api_key=None):
         """
         Import stiffness tensor(s) from the Materials Project API, given their material ids.
 
@@ -1089,16 +1089,22 @@ class StiffnessTensor(SymmetricTensor):
         with MPRester(api_key=api_key) as mpr:
             elasticity_doc = mpr.materials.elasticity.search(material_ids=ids)
             for material in elasticity_doc:
-                matrix = material.elastic_tensor.ieee_format
-                symmetry = material.symmetry.crystal_system.value
-                phase_name = material.formula_pretty
                 key = str(material.material_id)
-                C = StiffnessTensor(matrix, symmetry=symmetry, phase_name=phase_name)
+                if material.elastic_tensor is not None:
+                    matrix = material.elastic_tensor.ieee_format
+                    symmetry = material.symmetry.crystal_system.value
+                    phase_name = material.formula_pretty
+                    C = StiffnessTensor(matrix, symmetry=symmetry, phase_name=phase_name)
+                else:
+                    C = None
                 Cdict[key] = C
-            if isinstance(ids, str):
-                return C
+            if elasticity_doc:
+                if isinstance(ids, str):
+                    return C
+                else:
+                    return [Cdict[id] for id in ids]
             else:
-                return [Cdict[id] for id in ids]
+                return None
 
     @classmethod
     def weighted_average(cls, Cs, volume_fractions, method):
