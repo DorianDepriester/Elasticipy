@@ -140,6 +140,8 @@ We can for instance compute the corresponding elastic energies:
     [ 0.          0.69357747  2.77430989  6.24219725 11.09723956 17.33943682
      24.96878901 33.98529616 44.38895825 56.17977528]
 
+.. _strain_rotations:
+
 Apply rotations
 ---------------
 Rotations can be applied on the tensors. If multiple rotations are applied at once, this results in tensor arrays.
