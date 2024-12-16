@@ -13,10 +13,12 @@ Among other features, this package implements:
 - Computation of elasticity tensors,
 - Analysis of elastic anisotropy and wave propagation,
 - Working with multidimensional arrays of strain and stress tensors,
+- Thermal expansion tensors,
 - Rotation of tensors,
 - Integration with crystal symmetry groups,
 - Visualization and tutorials for ease of use,
-- A graphical user interface to plot the spatial dependence of engineering constants.
+- A graphical user interface to plot the spatial dependence of engineering constants,
+- Compatibility with the [Materials Project](https://next-gen.materialsproject.org/) API.
 
 ## Installation
 Elasticipy can be installed with PIP:
