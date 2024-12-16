@@ -13,6 +13,9 @@ Welcome to Elasticipy's Documentation!
 .. image:: https://readthedocs.org/projects/elasticipy/badge/?version=latest
    :alt: ReadTheDoc
 
+.. image:: https://zenodo.org/badge/876162900.svg
+  :target: https://doi.org/10.5281/zenodo.14501849
+
 
 Purpose of this package
 -----------------------
