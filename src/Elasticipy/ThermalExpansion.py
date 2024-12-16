@@ -73,20 +73,20 @@ class ThermalExpansionTensor(SymmetricSecondOrderTensor):
         return cls(np.eye(3)*alpha)
 
     @classmethod
-    def orthotropic(cls, alpha_1, alpha_2, alpha_3):
+    def orthotropic(cls, alpha_11, alpha_22, alpha_33):
         """
         Create an orthotropic thermal expansion tensor.
 
         Parameters
         ----------
-        alpha_1, alpha_2, alpha_3 : float
-            Thermal expansion coefficient along the first, second and third axes, respectively.
+        alpha_11, alpha_22, alpha_33 : float
+            Thermal expansion coefficients along the first, second and third axes, respectively.
 
         Returns
         -------
         ThermalExpansionTensor
         """
-        return cls(np.diag([alpha_1, alpha_2, alpha_3]))
+        return cls(np.diag([alpha_11, alpha_22, alpha_33]))
 
     @classmethod
     def orthorhombic(cls, *args):
@@ -163,22 +163,22 @@ class ThermalExpansionTensor(SymmetricSecondOrderTensor):
         return cls(np.diag(mat))
 
     @classmethod
-    def transverse_isotropic(cls, alpha_1, alpha_3):
+    def transverse_isotropic(cls, alpha_11, alpha_33):
         """
         Create a thermal expansion tensor for transverse isotropic symmetry.
 
         Parameters
         ----------
-        alpha_1 : float
+        alpha_11 : float
             Thermal expansion coefficient along the first and second axes
-        alpha_3 : float
+        alpha_33 : float
             Thermal expansion coefficient along the third axis
 
         Returns
         -------
         ThermalExpansionTensor
         """
-        return cls(np.diag([alpha_1, alpha_1, alpha_3]))
+        return cls(np.diag([alpha_11, alpha_11, alpha_33]))
 
     @property
     def volumetric_coefficient(self):
