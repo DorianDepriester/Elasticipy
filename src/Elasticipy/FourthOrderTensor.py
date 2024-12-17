@@ -244,6 +244,16 @@ class SymmetricTensor:
         else:
             raise NotImplementedError
 
+    def __eq__(self, other):
+        if isinstance(other, SymmetricTensor):
+            return np.all(self.matrix == other.matrix) and np.all(self.orientations == other.orientations)
+        elif isinstance(other, np.ndarray) and other.shape == (6,6):
+            return np.all(self.matrix == other)
+        else:
+            raise NotImplementedError('The element to compare with must be a fourth-order tensor '
+                                      'or an array of shape (6,6).')
+
+
     def _orientation_average(self, orientations):
         """
         Rotate the tensor by a series of rotations, then evaluate its mean value.
