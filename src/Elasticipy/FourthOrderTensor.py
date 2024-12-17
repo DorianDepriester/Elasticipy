@@ -140,7 +140,7 @@ class SymmetricTensor:
 
     def __len__(self):
         if self.orientations is None:
-            return ()
+            return 1
         elif self.orientations.single:
             return 1
         else:
