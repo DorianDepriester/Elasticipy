@@ -17,7 +17,7 @@ Cmat = [[231, 127, 104, 0, -18, 0],
 C = StiffnessTensor(Cmat)
 
 
-class TestStrainStressTensors(unittest.TestCase):
+class TestStressStrainTensors(unittest.TestCase):
     def test_mult_by_stiffness(self):
         """
         Test Stiffness/Strain tensors product C*eps (which stands for C:E)
