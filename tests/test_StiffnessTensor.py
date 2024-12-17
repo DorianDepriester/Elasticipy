@@ -301,5 +301,12 @@ class TestStiffnessConstructor(unittest.TestCase):
             C = StiffnessTensor.monoclinic(**common_arguments)
         self.assertEqual(str(context.exception), expected_error)
 
+    def test_write_read_tensor(self):
+        C = StiffnessTensor.isotropic(E=210, nu=0.3)
+        filename = 'C_tmp.txt'
+        C.save_to_txt(filename)
+        C2 = StiffnessTensor.from_txt_file(filename)
+        np.testing.assert_allclose(C2.matrix, C.matrix, atol=1e-2)
+
 if __name__ == '__main__':
     unittest.main()
