@@ -6,14 +6,6 @@ from scipy.spatial.transform import Rotation
 class ThermalExpansionTensor(SymmetricSecondOrderTensor):
     name = 'Thermal expansion tensor'
 
-    def apply_temperature(self, T):
-        if isinstance(T, (float, int)):
-            eps_mat = self.matrix * T
-        else:
-            T = np.asarray(T)
-            eps_mat = np.einsum('ij,...->...ij', self.matrix, T)
-        return StrainTensor(eps_mat)
-
     def __mul__(self, other):
         if isinstance(other, Rotation):
             return super().__mul__(other)
