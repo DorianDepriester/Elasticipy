@@ -3,4 +3,3 @@ scipy
 matplotlib
 pytest
 setuptools
-PyQt5
