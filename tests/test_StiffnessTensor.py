@@ -314,5 +314,15 @@ class TestStiffnessConstructor(unittest.TestCase):
         assert C1 == C2
         assert C1 == C2.matrix
 
+    def test_add_sub(self):
+        C1 = StiffnessTensor.isotropic(E=200, nu=0.3)
+        C2 = StiffnessTensor.isotropic(E=100, nu=0.3)
+        C_plus = C1 + C2
+        assert C_plus.Young_modulus.mean() == approx(300)
+        C_minus = C1 - C2
+        assert C_minus.Young_modulus.mean() == approx(100)
+        C_plus_full = C1 + C2.full_tensor()
+        assert C_plus_full == C_plus
+
 if __name__ == '__main__':
     unittest.main()
