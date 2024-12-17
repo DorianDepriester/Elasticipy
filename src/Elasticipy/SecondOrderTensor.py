@@ -292,6 +292,12 @@ class SecondOrderTensor:
         else:
             raise ValueError('The input argument must be a tensor, an ndarray, a rotation or a scalar value.')
 
+    def __rmul__(self, other):
+        if isinstance(other, (float, int)):
+            return self.__mul__(other)
+        else:
+            raise NotImplementedError('Left multiplication is only implemented for scalar values.')
+
     def matmul(self, other):
         """
         Perform matrix-like product between tensor arrays. Each "product" is a matrix product between
