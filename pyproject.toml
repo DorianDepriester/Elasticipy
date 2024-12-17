@@ -44,7 +44,7 @@ local_scheme = "no-local-version"  # Optionnel, désactive les informations loca
 [tool.pytest.ini_options]
 addopts = "--cov=src/Elasticipy --cov-report=xml"
 
-[coverage]
+[tool.coverage.run]
 omit = [
     "src/Elasticipy/gui.py",
 ]
