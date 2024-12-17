@@ -40,3 +40,11 @@ Documentation = "https://elasticipy.readthedocs.io/"
 [tool.setuptools_scm]
 version_scheme = "post-release"  # Optionnel, ajuste la version entre les tags
 local_scheme = "no-local-version"  # Optionnel, désactive les informations locales dans les versions non taguées
+
+[tool.pytest.ini_options]
+addopts = "--cov=src/Elasticipy --cov-report=xml"
+
+[coverage]
+omit = [
+    "src/Elasticipy/gui.py",
+]
