@@ -298,6 +298,15 @@ class SecondOrderTensor:
         else:
             raise NotImplementedError('Left multiplication is only implemented for scalar values.')
 
+    def __eq__(self, other):
+        if isinstance(other, SecondOrderTensor):
+            return self == other.matrix
+        elif isinstance(other, np.ndarray):
+            if (other.shape == (3,3)) or (other.shape == self.shape + (3,3)):
+                return np.all(self.matrix == other, axis=(-2, -1))
+            else:
+                raise ValueError('The value to compare must be an array of shape {} or {}'.format(self.shape, self.shape + (3,3)))
+
     def matmul(self, other):
         """
         Perform matrix-like product between tensor arrays. Each "product" is a matrix product between
