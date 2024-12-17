@@ -259,5 +259,47 @@ class TestStiffnessConstructor(unittest.TestCase):
         assert approx(cs_2.mean()) == np.sqrt(G / rho)
         assert approx(cs_1.mean()) == np.sqrt(G / rho)
 
+    def test_len(self):
+        C = StiffnessTensor.isotropic(E=210000, nu=0.3)
+        assert len(C) == 1
+        assert len(C * rotations[0]) == 1
+        assert len(C * rotations) == 10000
+
+    def test_monoclinic(self):
+        common_arguments = {'C11':11, 'C12':12, 'C13':13, 'C22':22, 'C23':23, 'C33':33, 'C44':44, 'C55':55, 'C66':66}
+
+        # Check for Diad||y
+        C = StiffnessTensor.monoclinic(**common_arguments, C16=16, C26=26, C36=36, C45=45)
+        matrix = np.array([[11, 12, 13, 0, 0, 16],
+                           [12, 22, 23, 0, 0, 26],
+                           [13, 23, 33, 0, 0, 36],
+                           [0,  0,  0, 44, 45, 0],
+                           [0,  0,  0, 45, 55, 0],
+                           [16, 26, 36, 0, 0, 66]], dtype=np.float64)
+        np.testing.assert_array_equal(matrix, C.matrix)
+
+        # Check for Diad||z
+        C = StiffnessTensor.monoclinic(**common_arguments, C15=15, C25=25, C35=35, C46=46)
+        matrix = np.array([[11, 12, 13, 0, 15, 0],
+                           [12, 22, 23, 0,  25, 0],
+                           [13, 23, 33, 0,  35, 0],
+                           [0,  0,  0,  44, 0, 46],
+                           [15, 25, 35, 0,  55, 0],
+                           [0,  0,  0,  46, 0, 66]], dtype=np.float64)
+        np.testing.assert_array_equal(matrix, C.matrix)
+
+        # Check ambiguous cases
+        expected_error = "'Ambiguous diad. Provide either C15, C25, C35 and C46; or C16, C26, C36 and C45'"
+        with self.assertRaises(KeyError) as context:
+            C = StiffnessTensor.monoclinic(**common_arguments,
+                                          C15=15, C25=25, C35=35, C46=46, C16=16, C26=26, C36=36, C45=45)
+        self.assertEqual(str(context.exception), expected_error)
+
+        expected_error = ("'For monoclinic symmetry, one should provide either C15, C25, C35 and C46, "
+                          "or C16, C26, C36 and C45.'")
+        with self.assertRaises(KeyError) as context:
+            C = StiffnessTensor.monoclinic(**common_arguments)
+        self.assertEqual(str(context.exception), expected_error)
+
 if __name__ == '__main__':
     unittest.main()
