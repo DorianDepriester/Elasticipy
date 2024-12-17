@@ -7,10 +7,6 @@ jobs:
   test:
     name: Run tests and collect coverage
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        python-version: [3.10, 3.11, 3.12]
         
     steps:
       - name: Checkout
@@ -20,12 +16,14 @@ jobs:
 
       - name: Set up Python
         uses: actions/setup-python@v4
+        with: 
+            python-version: "3.10"
 
       - name: Install dependencies
         run: pip install pytest pytest-cov pandas
 
-      - name: Install project dependencies
-        run:  pip install -r requirements.txt
+      - name: Install project and its dependencies
+        run: pip install -e .[dev]  # Installe Elasticipy et les dépendances dev
 
       - name: Run tests
         run: pytest tests --cov=tests --cov-report=xml
