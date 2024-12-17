@@ -1,14 +1,17 @@
 import unittest
 import numpy as np
 from pytest import approx
-
+import os
 import pandas as pd
 from Elasticipy.FourthOrderTensor import StiffnessTensor, ComplianceTensor
 from scipy.spatial.transform import Rotation
 from Elasticipy.FourthOrderTensor import _indices2str
 from Elasticipy.CrystalSymmetries import SYMMETRIES
 
-data_base = pd.read_json('MaterialsProject.json')
+
+current_dir = os.path.dirname(os.path.abspath(__file__))
+file_path = os.path.join(current_dir, 'MaterialsProject.json')
+data_base = pd.read_json(file_path)
 rotations = Rotation.random(10000)
 
 def variant_selection(symmetry, variant_name):
