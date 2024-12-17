@@ -324,5 +324,22 @@ class TestStiffnessConstructor(unittest.TestCase):
         C_plus_full = C1 + C2.full_tensor()
         assert C_plus_full == C_plus
 
+    def test_repr(self):
+        C = StiffnessTensor.isotropic(E=210000, nu=0.3)
+        str = C.__repr__()
+        assert str == ('Stiffness tensor (in Voigt notation):\n'
+                       '[[282692.30769231 121153.84615385 121153.84615385      0.\n'
+                       '       0.              0.        ]\n'
+                       ' [121153.84615385 282692.30769231 121153.84615385      0.\n'
+                       '       0.              0.        ]\n'
+                       ' [121153.84615385 121153.84615385 282692.30769231      0.\n'
+                       '       0.              0.        ]\n'
+                       ' [     0.              0.              0.          80769.23076923\n'
+                       '       0.              0.        ]\n'
+                       ' [     0.              0.              0.              0.\n'
+                       '   80769.23076923      0.        ]\n'
+                       ' [     0.              0.              0.              0.\n'
+                       '       0.          80769.23076923]]\nSymmetry: isotropic')
+
 if __name__ == '__main__':
     unittest.main()
