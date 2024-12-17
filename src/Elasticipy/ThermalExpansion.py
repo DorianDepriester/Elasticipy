@@ -152,7 +152,7 @@ class ThermalExpansionTensor(SymmetricSecondOrderTensor):
         mat = [[alpha_11, alpha_12, alpha_13],
                [alpha_12, alpha_22, alpha_23],
                [alpha_13, alpha_23, alpha_33]]
-        return cls(np.diag(mat))
+        return cls(mat)
 
     @classmethod
     def transverse_isotropic(cls, alpha_11, alpha_33):
