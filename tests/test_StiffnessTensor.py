@@ -308,5 +308,11 @@ class TestStiffnessConstructor(unittest.TestCase):
         C2 = StiffnessTensor.from_txt_file(filename)
         np.testing.assert_allclose(C2.matrix, C.matrix, atol=1e-2)
 
+    def test_equality(self):
+        C1 = StiffnessTensor.isotropic(E=210000, nu=0.3)
+        C2 = StiffnessTensor.isotropic(E=210000, nu=0.3)
+        assert C1 == C2
+        assert C1 == C2.matrix
+
 if __name__ == '__main__':
     unittest.main()
