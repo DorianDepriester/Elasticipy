@@ -12,9 +12,11 @@ class TestThermalExpansion(unittest.TestCase):
         np.testing.assert_array_equal(alpha.matrix, np.diag([11, 11, 33]))
 
     def test_orthotropic(self):
-        alpha = ThEx.orthotropic(alpha_11=11, alpha_22=22, alpha_33=33)
+        alpha_orthotropic = ThEx.orthotropic(11, 22, 33)
+        alpha_orthorhombic= ThEx.orthorhombic(11, 22, 33)
         matrix = np.diag([11., 22., 33.])
-        np.testing.assert_array_equal(alpha.matrix, matrix)
+        np.testing.assert_array_equal(alpha_orthotropic.matrix, matrix)
+        np.testing.assert_array_equal(alpha_orthorhombic.matrix, matrix)
 
     def test_triclinic(self):
         alpha = ThEx.triclinic(alpha_11=11, alpha_12=12, alpha_13=13, alpha_22=22, alpha_23=23, alpha_33=33)
