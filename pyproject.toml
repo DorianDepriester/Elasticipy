@@ -24,6 +24,7 @@ dependencies = [
     "scipy",
     "matplotlib"
 ]
+requires-python = ">=3.6"
 
 dynamic = ["version"]
 
