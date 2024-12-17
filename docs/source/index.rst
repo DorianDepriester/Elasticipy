@@ -20,6 +20,9 @@ Welcome to Elasticipy's Documentation!
 .. image:: https://zenodo.org/badge/876162900.svg
   :target: https://doi.org/10.5281/zenodo.14501849
 
+.. image:: https://codecov.io/gh/DorianDepriester/Elasticipy/graph/badge.svg?token=VUZPEUPBH1
+   :target: https://codecov.io/gh/DorianDepriester/Elasticipy
+
 
 Purpose of this package
 -----------------------
