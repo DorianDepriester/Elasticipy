@@ -1,5 +1,4 @@
 import unittest
-from Elasticipy.FourthOrderTensor import ComplianceTensor, StiffnessTensor
 import numpy as np
 from pytest import approx
 
