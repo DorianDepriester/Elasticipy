@@ -26,7 +26,7 @@ jobs:
         run: pip install -e .[dev]  # Installe Elasticipy et les dépendances dev
 
       - name: Run tests
-        run: pytest tests --cov=tests --cov-report=xml
+        run: pytest tests --cov=src/Elasticipy --cov-report=xml
 
       - name: Upload results to Codecov
         uses: codecov/codecov-action@v5
