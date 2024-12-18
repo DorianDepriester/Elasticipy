@@ -39,10 +39,12 @@ class TestSphericalFunction(unittest.TestCase):
     def test_add_sub_mult(self):
         E_plus = E + E
         E_min = E - E
-        E_mult = 2 *E
+        E_mult = 2 * E
+        E_plus_one = E + 1
         assert E_plus.mean() == approx(2 * E_mean, rel=1e-3)
         assert E_min.mean() == approx(0)
         assert E_mult.mean() == approx(2 * E_mean, rel=1e-3)
+        assert E_plus_one.mean() == approx(E_mean + 1, rel=1e-3)
 
     def test_mean_std(self):
         assert E_mean == approx(E.mean(method='Monte Carlo', n_evals=10000), rel=1e-2)
