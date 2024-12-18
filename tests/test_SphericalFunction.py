@@ -13,7 +13,7 @@ E_std = 31.58751357560234
 G = C.shear_modulus # HypersphericalFunction
 G_mean = 47.07147379585229
 G_std = 14.14600864639266
-SEED = 123  # See used for Monte Carlo integrations (e.g. for G.mean())
+SEED = 123  # Used for Monte Carlo integrations (e.g. for G.mean())
 
 
 class TestSphericalFunction(unittest.TestCase):
