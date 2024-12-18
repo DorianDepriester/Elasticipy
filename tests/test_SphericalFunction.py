@@ -1,7 +1,6 @@
 import unittest
 from matplotlib import pyplot as plt
 import numpy as np
-from pymatgen.io.cp2k.inputs import E_Density_Cube
 
 from Elasticipy.FourthOrderTensor import StiffnessTensor
 from pytest import approx
