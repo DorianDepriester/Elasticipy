@@ -1,7 +1,7 @@
 Welcome to Elasticipy's Documentation!
 ======================================
 
-.. image:: https://img.shields.io/pypi/v/Elasticpy?link=https%3A%2F%2Fpypi.org%2Fproject%2FElasticipy%2F
+.. image:: https://img.shields.io/pypi/v/Elasticipy
    :alt: PyPI - Version
    :target: https://pypi.org/project/elasticipy/
 
