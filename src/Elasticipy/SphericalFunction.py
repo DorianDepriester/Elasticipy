@@ -166,6 +166,31 @@ class SphericalFunction:
         else:
             return self.__add__(-other)
 
+    def __mul__(self, other):
+        if isinstance(other, self.__class__):
+            def fun(*x):
+                return self.fun(*x) * other.fun(*x)
+        elif isinstance(other, (float, int, np.number)):
+            def fun(*x):
+                return self.fun(*x) * other
+        else:
+            raise NotImplemented
+        return self.__class__(fun)
+
+    def __rmul__(self, other):
+        return self.__mul__(other)
+
+    def __truediv__(self, other):
+        if isinstance(other, self.__class__):
+            def fun(*x):
+                return self.fun(*x) / other.fun(*x)
+        elif isinstance(other, (float, int, np.number)):
+            def fun(*x):
+                return self.fun(*x) / other
+        else:
+            raise NotImplemented
+        return self.__class__(fun)
+
     def eval(self, u):
         """
         Evaluate value along a given (set of) direction(s).
