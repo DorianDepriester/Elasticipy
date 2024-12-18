@@ -5,7 +5,7 @@ Welcome to Elasticipy's Documentation!
    :alt: PyPI - Version
    :target: https://pypi.org/project/elasticipy/
 
-.. image:: https://img.shields.io/pypi/dm/Elasticpy
+.. image:: https://img.shields.io/pypi/dm/Elasticipy
    :alt: PyPI - Downloads
    :target: https://pypistats.org/packages/elasticipy
 
