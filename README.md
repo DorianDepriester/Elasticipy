@@ -1,5 +1,5 @@
 # Elasticipy 
-[![PyPI - Version](https://img.shields.io/pypi/v/Elasticipy?link=https%3A%2F%2Fpypi.org%2Fproject%2FElasticipy%2F)](https://elasticipy.readthedocs.io/)
+[![PyPI - Version](https://img.shields.io/pypi/v/Elasticipy?link=https%3A%2F%2Fpypi.org%2Fproject%2FElasticipy%2F)](https://pypi.org/project/elasticipy/)
 [![PyPI - Downloads](https://img.shields.io/pypi/dm/Elasticipy?link=https%3A%2F%2Fpypi.org%2Fproject%2FElasticipy%2F)](https://pypistats.org/packages/elasticipy)
 [![PyPI - License](https://img.shields.io/pypi/l/Elasticipy)](https://github.com/DorianDepriester/Elasticipy/blob/main/LICENSE)
 [![ReadTheDoc](https://readthedocs.org/projects/elasticipy/badge/?version=latest)](https://elasticipy.readthedocs.io/)
