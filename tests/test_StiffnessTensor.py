@@ -341,5 +341,19 @@ class TestStiffnessConstructor(unittest.TestCase):
                        ' [     0.              0.              0.              0.\n'
                        '       0.          80769.23076923]]\nSymmetry: isotropic')
 
+    def test_weighted_average(self):
+        E1 = 100
+        E2 = 200
+        C1 = StiffnessTensor.isotropic(E=E1, nu=0.3)
+        C2 = StiffnessTensor.isotropic(E=E2, nu=0.3)
+        Cv = StiffnessTensor.weighted_average((C1, C2), [0.5, 0.5], method='Voigt')
+        Cr = StiffnessTensor.weighted_average((C1, C2), [0.5, 0.5], method='Reuss')
+        Ch = StiffnessTensor.weighted_average((C1, C2), [0.5, 0.5], method='Hill')
+        E_voigt = (E1 + E2) / 2
+        E_reuss = 2 / (1/E1 + 1/E2)
+        assert Cv.Young_modulus.mean() == approx(E_voigt)
+        assert Cr.Young_modulus.mean() == approx(E_reuss)
+        assert Ch.Young_modulus.mean() == approx(E_voigt/2 + E_reuss/2)
+
 if __name__ == '__main__':
     unittest.main()
