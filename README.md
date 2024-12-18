@@ -34,3 +34,14 @@ Tutorials and full documentation are available on [ReadTheDoc](https://elasticip
 
 ## Sources
 The source code is available on [GitHub](https://github.com/DorianDepriester/Elasticipy) under the [MIT licence](https://github.com/DorianDepriester/Elasticipy/blob/c6c3d441a2d290ab8f4939992d5d753a1ad3bdb0/LICENSE).
+
+## Tests and Code Coverage
+
+The project uses unit tests with `pytest` and coverage reports generated using `coverage`. These reports are hosted on 
+[codecov](https://app.codecov.io/gh/DorianDepriester/Elasticipy).
+
+### **Coverage Exclusions**
+Certain parts of the code, particularly those related to graphical user interfaces (GUIs) or visual plotting, are 
+**excluded from code coverage analysis**. This includes the following file:
+
+- **`src/Elasticipy/gui.py`**
