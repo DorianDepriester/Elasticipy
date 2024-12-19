@@ -9,6 +9,10 @@ Welcome to Elasticipy's Documentation!
    :alt: PyPI - Downloads
    :target: https://pypistats.org/packages/elasticipy
 
+.. image:: https://img.shields.io/badge/Hosted%20on%20-%20GitHub%20-%20blue
+   :alt: Static Badge
+   :target: https://github.com/DorianDepriester/Elasticipy
+
 .. image:: https://img.shields.io/pypi/l/Elasticipy
    :alt: PyPI - License
    :target: https://github.com/DorianDepriester/Elasticipy/blob/main/LICENSE
@@ -18,9 +22,11 @@ Welcome to Elasticipy's Documentation!
    :target: https://elasticipy.readthedocs.io/
 
 .. image:: https://zenodo.org/badge/876162900.svg
+  :alt: doi:10.5281/zenodo.14501849
   :target: https://doi.org/10.5281/zenodo.14501849
 
 .. image:: https://codecov.io/gh/DorianDepriester/Elasticipy/graph/badge.svg?token=VUZPEUPBH1
+   :alt: coverage
    :target: https://codecov.io/gh/DorianDepriester/Elasticipy
 
 
