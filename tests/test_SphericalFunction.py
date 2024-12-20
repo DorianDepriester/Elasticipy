@@ -47,8 +47,8 @@ class TestSphericalFunction(unittest.TestCase):
         assert E_plus_one.mean() == approx(E_mean + 1, rel=1e-3)
 
     def test_mean_std(self):
-        assert E_mean == approx(E.mean(method='Monte Carlo', n_evals=10000), rel=1e-2)
-        assert E_std == approx(E.std(method='Monte Carlo', n_evals=10000), rel=1e-2)
+        assert E_mean == approx(E.mean(method='Monte Carlo', n_evals=10000, seed=0), rel=1e-2)
+        assert E_std == approx(E.std(method='Monte Carlo', n_evals=10000, seed=0), rel=1e-2)
 
 
 class TestHyperSphericalFunction(unittest.TestCase):
