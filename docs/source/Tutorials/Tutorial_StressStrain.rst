@@ -166,7 +166,7 @@ Apply rotations
 ---------------
 Rotations can be applied on the tensors. If multiple rotations are applied at once, this results in tensor arrays.
 Rotations are defined by ``scipy.transform.Rotation``
-(see `here <https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.transform.Rotation.html>`_ for details).
+(see `here <https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.transform.Rotation.html>`__ for details).
 
     >>> from scipy.spatial.transform import Rotation
 
