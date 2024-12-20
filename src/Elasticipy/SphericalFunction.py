@@ -103,6 +103,7 @@ def uniform_spherical_distribution(n_evals, seed=None, return_orthogonal=False):
     else:
         rng = np.random.default_rng(seed)
     u = rng.normal(size=(n_evals, 3))
+    u /= np.linalg.norm(u, axis=1, keepdims=True)
     if return_orthogonal:
         if seed is not None:
             # Ensure that the seed used for generated v is not the same as that for u
@@ -567,7 +568,23 @@ class SphericalFunction:
             plt.show()
         return new_fig, ax
 
+    @classmethod
+    def ellipsoid(cls, a, b, c):
+        """Generate a Spherical function corresponding the the 'radii' of an ellipsoid. The ellipsoid has its
+        eigenvectors aligned with X, Y and Z.
 
+        This function is mainly meant for testing purposes.
+
+        Parameters
+        ----------
+        a, b, c : float
+            half-axes of the ellipsoid, along the X direction, Y and Z directions, respectively.
+        """
+        def fun(u):
+            u = np.atleast_2d(u)
+            u_x, u_y, u_z = (u.T / np.linalg.norm(u, axis=1))
+            return (u_x**2/a**2 + u_y**2/b**2 + u_z**2/c**2)**(-0.5)
+        return cls(fun)
 
 class HyperSphericalFunction(SphericalFunction):
     """
