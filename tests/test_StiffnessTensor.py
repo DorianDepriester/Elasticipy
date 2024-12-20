@@ -366,5 +366,21 @@ class TestStiffnessConstructor(unittest.TestCase):
         assert nu.eval([0, 0, 1], [0, 1, 0]) == approx(nu_zy)
         assert nu.eval([0, 0, 1], [1, 0, 0]) == approx(nu_zx)
 
+    def test_transverse_isotropic(self):
+        Ex, Ez = 100., 200.
+        nu_yx, nu_zx = 0.2, 0.3
+        Gxz = 80
+        C = StiffnessTensor.transverse_isotropic(Ex=Ex, Ez=Ez, nu_yx=nu_yx, nu_zx=nu_zx, Gxz=Gxz)
+        E = C.Young_modulus
+        assert E.eval([1,0,0]) == approx(Ex)
+        assert E.eval([0,1,0]) == approx(Ex)
+        assert E.eval([0,0,1]) == approx(Ez)
+        G = C.shear_modulus
+        assert G.eval([1, 0, 0], [0, 0, 1]) == approx(Gxz)
+        nu = C.Poisson_ratio
+        assert nu.eval([0,1,0], [1,0,0]) == approx(nu_yx)
+        assert nu.eval([0, 0, 1], [0, 1, 0]) == approx(nu_zx)
+        assert nu.eval([0, 0, 1], [1, 0, 0]) == approx(nu_zx)
+
 if __name__ == '__main__':
     unittest.main()
