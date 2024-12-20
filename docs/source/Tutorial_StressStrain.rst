@@ -140,6 +140,26 @@ We can for instance compute the corresponding elastic energies:
     [ 0.          0.69357747  2.77430989  6.24219725 11.09723956 17.33943682
      24.96878901 33.98529616 44.38895825 56.17977528]
 
+Another application of working with an array of stress tensor is to check whether a tensor field complies with the
+balance of linear momentum (see `here <https://en.wikiversity.org/wiki/Continuum_mechanics/Balance_of_linear_momentum>`_
+for details) or not. For instance, if we want to compute the divergence of ``sigma``:
+
+    >>> sigma.div()
+    array([[ 0.        , 11.11111111,  0.        ],
+           [ 0.        , 11.11111111,  0.        ],
+           [ 0.        , 11.11111111,  0.        ],
+           [ 0.        , 11.11111111,  0.        ],
+           [ 0.        , 11.11111111,  0.        ],
+           [ 0.        , 11.11111111,  0.        ],
+           [ 0.        , 11.11111111,  0.        ],
+           [ 0.        , 11.11111111,  0.        ],
+           [ 0.        , 11.11111111,  0.        ],
+           [ 0.        , 11.11111111,  0.        ]])
+
+Here, the *i*-th row provides the divergence vector for the *i*-th stress tensor.
+See `the full documentation <Elasticipy.SecondOrderTensor.html#Elasticipy.SecondOrderTensor.SecondOrderTensor.div>`_ for
+details about this of this function.
+
 .. _strain_rotations:
 
 Apply rotations
