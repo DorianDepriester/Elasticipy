@@ -51,6 +51,7 @@ The anisotropic case just works as before. For instance, if we consider carbon f
 
     >>> alpha = ThEx.transverse_isotropic(alpha_11=5.6e-6, alpha_33=-0.4e-6)
     >>> print(alpha)
+    Thermal expansion tensor
     [[ 5.6e-06  0.0e+00  0.0e+00]
      [ 0.0e+00  5.6e-06  0.0e+00]
      [ 0.0e+00  0.0e+00 -4.0e-07]]
@@ -61,6 +62,7 @@ align the fiber with the X axis:
     >>> from scipy.spatial.transform import Rotation
     >>> rotation = Rotation.from_euler('Y', 90, degrees=True) # Rotate of 90° around Y axis
     >>> alpha * rotation
+    Thermal expansion tensor
     [[-4.00000000e-07  0.00000000e+00  1.33226763e-21]
      [ 0.00000000e+00  5.60000000e-06  0.00000000e+00]
      [ 1.33226763e-21  0.00000000e+00  5.60000000e-06]]
@@ -86,10 +88,11 @@ For instance we can check out the maximum value for initial (0°) and final (2°
 
     >>> eps[:,0].max()    # 0 because it corresponds to 0°
     Strain tensor
-    [[ 0.  0. -0.]
-     [ 0.  0.  0.]
-     [-0.  0.  0.]]
+    [[ 0. -0. -0.]
+     [-0.  0. -0.]
+     [-0. -0.  0.]]
     >>> eps[:,-1].max()
+    Strain tensor
     [[1.12000000e-05 5.99947076e-06 5.99905095e-06]
      [5.99947076e-06 1.11999999e-05 5.99621436e-06]
      [5.99905095e-06 5.99621436e-06 1.11999992e-05]]
