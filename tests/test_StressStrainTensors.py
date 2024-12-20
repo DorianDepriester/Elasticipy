@@ -392,15 +392,21 @@ class TestStressStrainTensors(unittest.TestCase):
         s.C[0, 0] = a_11 * x + b_11 * y + c_11 * z
         s.C[0, 1] = a_12 * x + b_12 * y + c_12 * z
         s.C[1, 2] = a_23 * x + b_23 * y + c_23 * z
+        div_space = s.div(spacing=spacing)
+        div_nonspaced = s.div()
+        div_uniaxial = s.div(axes=0)
+        div_biaxial = s.div(axes=(0,1))
         expected_div_spaced = [a_11 + b_12, c_23, 0]
         expected_div_nonspaced = [a_11 * spacing[0] + b_12 * spacing[1], c_23 * spacing[2], 0]
-        div_space = s.div(spacing=spacing)
-        div_nonspace = s.div()
+        expected_div_uniaxial = [a_11 * spacing[0], 0, 0]
+        expected_div_biaxial = [a_11 * spacing[0] + b_12 * spacing[1], 0, 0]
         for i in range(0, shape[0]):
             for j in range(0, shape[1]):
                 for k in range(0, shape[2]):
-                    np.testing.assert_almost_equal(div_space[i,j,k], expected_div_spaced)
-                    np.testing.assert_almost_equal(div_nonspace[i, j, k], expected_div_nonspaced)
+                    np.testing.assert_almost_equal(div_space[i, j, k], expected_div_spaced)
+                    np.testing.assert_almost_equal(div_nonspaced[i, j, k], expected_div_nonspaced)
+                    np.testing.assert_almost_equal(div_uniaxial[i, j, k], expected_div_uniaxial)
+                    np.testing.assert_almost_equal(div_biaxial[i, j, k], expected_div_biaxial)
 
 
 
