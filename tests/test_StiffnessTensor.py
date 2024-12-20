@@ -139,20 +139,12 @@ class TestStiffnessConstructor(unittest.TestCase):
             matrix = row['C']
             symmetry = row['symmetry']
             C = StiffnessTensor(matrix, symmetry=symmetry)
-            Gvoigt = C.Voigt_average().shear_modulus.mean()
-            Greuss = C.Reuss_average().shear_modulus.mean()
-            Gvrh = C.Hill_average().shear_modulus.mean()
-            assert row['Gvoigt'] == approx(Gvoigt, rel=rel)
-            assert row['Greuss'] == approx(Greuss, rel=rel)
-            assert row['Gvrh'] == approx(Gvrh, rel=rel)
-
             C_rotated = C * rotations
-            Gvoigt = C_rotated.Voigt_average().shear_modulus.mean()
-            Greuss = C_rotated.Reuss_average().shear_modulus.mean()
-            Gvrh = C_rotated.Hill_average().shear_modulus.mean()
-            assert row['Gvoigt'] == approx(Gvoigt, rel=rel)
-            assert row['Greuss'] == approx(Greuss, rel=rel)
-            assert row['Gvrh'] == approx(Gvrh, rel=rel)
+            for method in ('voigt', 'reuss', 'hill'):
+                Gavg = C.average(method).shear_modulus.mean()
+                assert row['G' + method] == approx(Gavg, rel=rel)
+                Gavg = C_rotated.average(method).shear_modulus.mean()
+                assert row['G' + method] == approx(Gavg, rel=rel)
 
     def test_stiffness_cubic(self):
         crystal_symmetry_tester('Cubic')
