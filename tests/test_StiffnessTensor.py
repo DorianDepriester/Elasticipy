@@ -347,5 +347,24 @@ class TestStiffnessConstructor(unittest.TestCase):
         assert Cr.Young_modulus.mean() == approx(E_reuss)
         assert Ch.Young_modulus.mean() == approx(E_voigt/2 + E_reuss/2)
 
+    def test_orthotropic(self):
+        Ex, Ey, Ez = 100., 200., 300.
+        nu_yx, nu_zy, nu_zx = 0.2, 0.3, 0.4
+        G_xy, G_xz, G_yz = 50., 60., 70.
+        C = StiffnessTensor.orthotropic(Ex=Ex, Ey=Ey, Ez=Ez, nu_yx=nu_yx, nu_zx=nu_zx, nu_zy=nu_zy,
+                                        Gxy=G_xy, Gxz=G_xz, Gyz=G_yz)
+        E = C.Young_modulus
+        assert E.eval([1,0,0]) == approx(Ex)
+        assert E.eval([0,1,0]) == approx(Ey)
+        assert E.eval([0,0,1]) == approx(Ez)
+        G = C.shear_modulus
+        assert G.eval([1,0,0], [0,1,0]) == approx(G_xy)
+        assert G.eval([1, 0, 0], [0, 0, 1]) == approx(G_xz)
+        assert G.eval([0, 1, 0], [0, 0, 1]) == approx(G_yz)
+        nu = C.Poisson_ratio
+        assert nu.eval([0,1,0], [1,0,0]) == approx(nu_yx)
+        assert nu.eval([0, 0, 1], [0, 1, 0]) == approx(nu_zy)
+        assert nu.eval([0, 0, 1], [1, 0, 0]) == approx(nu_zx)
+
 if __name__ == '__main__':
     unittest.main()
