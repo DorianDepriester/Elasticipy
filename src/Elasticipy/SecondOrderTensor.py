@@ -121,7 +121,7 @@ class SecondOrderTensor:
 
         Returns
         -------
-        float
+        int
             number of dimensions
 
         See Also
@@ -766,6 +766,67 @@ class SecondOrderTensor:
             raise ValueError("u and v must be orthogonal")
         mat = _tensor_from_direction_magnitude(u, v, magnitude)
         return cls(mat)
+
+    def div(self, axes=None, spacing=1.):
+        """
+        Compute the divergence vector of the tensor array, along given axes.
+
+        If the tensor has n dimensions, the divergence vector will be computed along its m first axes, with
+        m = min(n, 3), except if specified in the ``axes`` parameter (see below).
+
+        Parameters
+        ----------
+        axes : list of int, tuple of int, int or None, default None
+            Indices of axes along which to compute the divergence vector. If None (default), the m first axes of the
+            array will be used to compute the derivatives.
+        spacing : float or np.ndarray or list, default 1.
+            Spacing between samples the in each direction. If a scalar value is provided, the spacing is assumed equal
+            in each direction. If an array or a list is provided, spacing[i] must return the spacing along the i-th
+            axis (spacing[i] can be float or np.ndarray).
+
+        Returns
+        -------
+            Divergence vector of the tensor array. If the tensor array is of shape (m,n,...,q), the divergence vector
+            will be of shape (m,n,...,q,3).
+
+        Notes
+        -----
+        The divergence of a tensor field :math:`\\mathbf{t}(\\mathbf{x})` is defined as:
+
+        .. math::
+
+            [\\nabla\\cdot\\mathbf{t}]_i = \\frac{\\partial t_{ij}}{\\partial x_j}
+
+        The main application of this operator is for balance of linear momentum of stress tensor:
+
+        .. math::
+
+            \\rho \\mathbf{\\gamma} = \\nabla\\cdot\\mathbf{\\sigma} + \\rho\\mathbf{b}
+
+        where :math:`\\mathbf{\\sigma}` is the stress tensor, :math:`\\mathbf{\\gamma}` is the acceleration,
+        :math:`\\mathbf{b}` is the body force density and :math:`\\rho` is the mass density.
+
+        In this function, the derivatives are computed with ``numpy.grad`` function.
+        """
+        ndim = min(self.ndim, 3)    # Even if the array has more than 3Ds, we restrict to 3D
+        if isinstance(spacing, (float, int)):
+            spacing = [spacing, spacing, spacing]
+        if axes is None:
+            axes = range(ndim)
+        elif isinstance(axes, int):
+            axes = (axes,)
+        elif not isinstance(axes, (tuple, list)):
+            raise TypeError("axes must be int, tuple of int, or list of int.")
+        if len(axes) > ndim:
+            error_msg = ("The number of axes must be less or equal to the number of dimensions ({}), "
+                         "and cannot exceed 3").format(self.ndim)
+            raise ValueError(error_msg)
+        else:
+            ndim = len(axes)
+        div = np.zeros(self.shape + (3,))
+        for dim in range(0, ndim):
+            div += np.gradient(self.C[:,dim], spacing[dim], axis=axes[dim])
+        return div
 
 
 class SymmetricSecondOrderTensor(SecondOrderTensor):
