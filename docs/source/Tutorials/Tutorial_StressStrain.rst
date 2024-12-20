@@ -1,5 +1,5 @@
-Working with stress and strain tensors
-======================================
+Stress and strain tensors
+=========================
 
 This tutorial illustrates how we work on strain and stress tensors, and how Elasticipy handles arrays of tensors.
 
@@ -140,7 +140,7 @@ We can for instance compute the corresponding elastic energies:
     [ 0.          0.69357747  2.77430989  6.24219725 11.09723956 17.33943682
      24.96878901 33.98529616 44.38895825 56.17977528]
 
-Another application of working with an array of stress tensor is to check whether a tensor field complies with the
+Another application of working with an array of stress tensors is to check whether a tensor field complies with the
 balance of linear momentum (see `here <https://en.wikiversity.org/wiki/Continuum_mechanics/Balance_of_linear_momentum>`_
 for details) or not. For instance, if we want to compute the divergence of ``sigma``:
 
@@ -158,14 +158,15 @@ for details) or not. For instance, if we want to compute the divergence of ``sig
 
 Here, the *i*-th row provides the divergence vector for the *i*-th stress tensor.
 See `the full documentation <Elasticipy.SecondOrderTensor.html#Elasticipy.SecondOrderTensor.SecondOrderTensor.div>`_ for
-details about this of this function.
+details about this function.
 
 .. _strain_rotations:
 
 Apply rotations
 ---------------
 Rotations can be applied on the tensors. If multiple rotations are applied at once, this results in tensor arrays.
-Rotations are defined by ``scipy.transform.Rotation``.
+Rotations are defined by ``scipy.transform.Rotation``
+(see `here <https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.transform.Rotation.html>`_ for details).
 
     >>> from scipy.spatial.transform import Rotation
 
