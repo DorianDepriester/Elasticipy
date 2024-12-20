@@ -377,6 +377,32 @@ class TestStressStrainTensors(unittest.TestCase):
             _ = a == d
         self.assertEqual(str(context.exception), expected_error)
 
+    def test_divergence(self):
+        spacing = [0.1, 0.2, 0.3]
+        x = np.arange(0, 1, spacing[0])
+        y = np.arange(0, 1, spacing[1])
+        z = np.arange(0, 1, spacing[2])
+        x, y, z = np.meshgrid(x, y, z, indexing='ij')
+        shape = x.shape
+        a_11, b_11, c_11 = 2., 3., -1.
+        a_12, b_12, c_12 = 4, -1., 2.
+        a_23, b_23, c_23 = 1, -1, 3.
+
+        s = SecondOrderTensor.zeros(shape=shape)
+        s.C[0, 0] = a_11 * x + b_11 * y + c_11 * z
+        s.C[0, 1] = a_12 * x + b_12 * y + c_12 * z
+        s.C[1, 2] = a_23 * x + b_23 * y + c_23 * z
+        expected_div_spaced = [a_11 + b_12, c_23, 0]
+        expected_div_nonspaced = [a_11 * spacing[0] + b_12 * spacing[1], c_23 * spacing[2], 0]
+        div_space = s.div(spacing=spacing)
+        div_nonspace = s.div()
+        for i in range(0, shape[0]):
+            for j in range(0, shape[1]):
+                for k in range(0, shape[2]):
+                    np.testing.assert_almost_equal(div_space[i,j,k], expected_div_spaced)
+                    np.testing.assert_almost_equal(div_nonspace[i, j, k], expected_div_nonspaced)
+
+
 
 
 
