@@ -799,6 +799,7 @@ class SecondOrderTensor:
 
         Returns
         -------
+        np.ndarray
             Divergence vector of the tensor array. If the tensor array is of shape (m,n,...,q), the divergence vector
             will be of shape (m,n,...,q,3).
 
@@ -836,6 +837,8 @@ class SecondOrderTensor:
             raise ValueError(error_msg)
         else:
             ndim = len(axes)
+        if max(axes) >= ndim:
+            raise IndexError("axes index must be in range of dimensions ({})".format(self.ndim))
         div = np.zeros(self.shape + (3,))
         for dim in range(0, ndim):
             div += np.gradient(self.C[:,dim], spacing[dim], axis=axes[dim])
