@@ -112,4 +112,4 @@ commands:
 
 leading to:
 
-.. image:: ../_static/images/plot_volumeFraction.png
+.. image:: images/plot_volumeFraction.png

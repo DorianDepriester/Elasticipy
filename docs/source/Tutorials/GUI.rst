@@ -9,7 +9,7 @@ the engineering properties.
 The figure bellow illustrates the Young's modulus of
 `monoclinic TiNi <https://next-gen.materialsproject.org/materials/mp-1048>`_:
 
-.. image:: ../_static/images/GUI.png
+.. image:: images/GUI.png
     :width: 600
 
 To launch this GUI, just run::

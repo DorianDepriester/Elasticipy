@@ -4,11 +4,11 @@ Tutorials
     :maxdepth: 2
     :caption: Table of Contents
 
-    ./GUI.rst
-    ./Tutorial_StressStrain.rst
-    ./Tutorial_StiffnessTensor.rst
-    ./Tutorial_AveragingMethods.rst
-    ./Tutorial_ThermalExpansion.rst
-    ./Tutorial_wave-velocities.rst
-    ./Tutorial_MultiplePhases.rst
-    ./Tutorial_ReadWriteFiles.rst
+    ./Tutorials/GUI.rst
+    ./Tutorials/Tutorial_StressStrain.rst
+    ./Tutorials/Tutorial_StiffnessTensor.rst
+    ./Tutorials/Tutorial_AveragingMethods.rst
+    ./Tutorials/Tutorial_ThermalExpansion.rst
+    ./Tutorials/Tutorial_wave-velocities.rst
+    ./Tutorials/Tutorial_MultiplePhases.rst
+    ./Tutorials/Tutorial_ReadWriteFiles.rst

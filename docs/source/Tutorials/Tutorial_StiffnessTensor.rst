@@ -88,7 +88,7 @@ In order to fully evidence the directional dependence of the Young moduli, we ca
 
     >>> E.plot3D() # doctest: +SKIP
 
-    .. image:: ../_static/images/E_plot3D.png
+    .. image:: images/E_plot3D.png
         :width: 400
 
 It is advised to use interactive plot to be able to zoom/rotate the surface. For flat images (i.e. to put in
@@ -96,14 +96,14 @@ document/articles), we can plot the values as a Pole Figure (PF):
 
     >>> E.plot_as_pole_figure() # doctest: +SKIP
 
-    .. image:: ../_static/images/E_PF.png
+    .. image:: images/E_PF.png
         :width: 400
 
 Alternatively, we can plot the Young moduli on X-Y, X-Z and Y-Z sections only:
 
     >>> E.plot_xyz_sections() # doctest: +SKIP
 
-    .. image:: ../_static/images/E_xyz_sections.png
+    .. image:: images/E_xyz_sections.png
         :width: 600
 
 Hyperspherical functions
@@ -114,14 +114,14 @@ plotting:
 
     >>> G.plot3D() # doctest: +SKIP
 
-    .. image:: ../_static/images/G_plot3D.png
+    .. image:: images/G_plot3D.png
         :width: 400
 
 Instead of the mean value, we can consider other statistics, e.g.:
 
     >>> G.plot3D(which='min')   # doctest: +SKIP
 
-    .. image:: ../_static/images/G_plot3D_min.png
+    .. image:: images/G_plot3D_min.png
         :width: 400
 
 This also works for ``max`` and ``std``. These parameters also apply for pole figures (see above).
@@ -130,7 +130,7 @@ When plotting the X-Y, X-Z and Y-Z sections, the min, max and mean values are pl
 
     >>> G.plot_xyz_sections() # doctest: +SKIP
 
-    .. image:: ../_static/images/G_xyz_sections.png
+    .. image:: images/G_xyz_sections.png
         :width: 600
 
 .. note::

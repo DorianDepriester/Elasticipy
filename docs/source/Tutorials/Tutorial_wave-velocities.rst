@@ -59,7 +59,7 @@ Now, we can plot all the velocities on three independent pole figures:
 >>> cs_fast.plot_as_pole_figure(subplot_args=(132,), title='s wave (fast)', fig=fig, show=False) # doctest: +SKIP
 >>> cs_slow.plot_as_pole_figure(subplot_args=(133,), title='s wave (slow)', fig=fig, show=True)  # doctest: +SKIP
 
-.. image:: ../_static/images/WaveVelocities.png
+.. image:: images/WaveVelocities.png
 
 
 .. note::
