@@ -956,7 +956,7 @@ class StiffnessTensor(SymmetricTensor):
         return StiffnessTensor(np.array(matrix), symmetry='isotropic', phase_name=phase_name)
 
     @classmethod
-    def orthotropic(cls, *, Ex, Ey, Ez, nu_xy, nu_xz, nu_yz, Gxy, Gxz, Gyz, **kwargs):
+    def orthotropic(cls, *, Ex, Ey, Ez, nu_yx, nu_zx, nu_zy, Gxy, Gxz, Gyz, **kwargs):
         """
         Create a stiffness tensor corresponding to orthotropic symmetry, given the engineering constants.
 
@@ -968,11 +968,11 @@ class StiffnessTensor(SymmetricTensor):
             Young modulus along the y axis
         Ez : float
             Young modulus along the z axis
-        nu_xy : float
+        nu_yx : float
             Poisson ratio between x and y axes
-        nu_xz : float
+        nu_zx : float
             Poisson ratio between x and z axes
-        nu_yz : float
+        nu_zy : float
             Poisson ratio between y and z axes
         Gxy : float
             Shear modulus in the x-y plane
@@ -991,12 +991,12 @@ class StiffnessTensor(SymmetricTensor):
         --------
         transverse_isotropic : create a stiffness tensor for transverse-isotropic symmetry
         """
-        tri_sup = np.array([[1 / Ex, -nu_xy / Ey, -nu_xz / Ez, 0, 0, 0],
-                            [0, 1 / Ey, -nu_yz / Ez, 0, 0, 0],
-                            [0, 0, 1 / Ez, 0, 0, 0],
-                            [0, 0, 0, 1 / Gyz, 0, 0],
-                            [0, 0, 0, 0, 1 / Gxz, 0],
-                            [0, 0, 0, 0, 0, 1 / Gxy]])
+        tri_sup = np.array([[1 / Ex, -nu_yx / Ey, -nu_zx / Ez, 0, 0, 0],
+                            [0, 1 / Ey, -nu_zy / Ez, 0, 0, 0],
+                            [0,      0,           1 / Ez,       0,          0,          0],
+                            [0,      0,           0,            1 / Gyz,    0,          0],
+                            [0,      0,           0,            0,          1 / Gxz,    0],
+                            [0,      0,           0,            0,          0,          1 / Gxy]])
         S = tri_sup + np.tril(tri_sup.T, -1)
         return StiffnessTensor(np.linalg.inv(S), symmetry='orthotropic', **kwargs)
 
@@ -1030,7 +1030,7 @@ class StiffnessTensor(SymmetricTensor):
         """
         Gxy = Ex / (2 * (1 + nu_xy))
         C = StiffnessTensor.orthotropic(Ex=Ex, Ey=Ex, Ez=Ez,
-                                        nu_xy=nu_xy, nu_xz=nu_xz, nu_yz=nu_xz,
+                                        nu_yx=nu_xy, nu_zx=nu_xz, nu_zy=nu_xz,
                                         Gxy=Gxy, Gxz=Gxz, Gyz=Gxz, **kwargs)
         C.symmetry = 'transverse-isotropic'
         return C
