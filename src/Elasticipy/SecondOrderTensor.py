@@ -298,7 +298,20 @@ class SecondOrderTensor:
         else:
             raise NotImplementedError('Left multiplication is only implemented for scalar values.')
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> np.ndarray:
+        """
+        Check whether the tensors in the tensor array are equal
+
+        Parameters
+        ----------
+        other : SecondOrderTensor or np.ndarray
+            Tensor to compare with
+
+        Returns
+        -------
+        np.array of bool
+            True element is True if the corresponding tensors are equal.
+        """
         if isinstance(other, SecondOrderTensor):
             return self == other.matrix
         elif isinstance(other, np.ndarray):
