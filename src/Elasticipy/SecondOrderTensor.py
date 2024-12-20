@@ -875,6 +875,7 @@ class SymmetricSecondOrderTensor(SecondOrderTensor):
 
         Examples
         --------
+        >>> from Elasticipy.SecondOrderTensor import SymmetricSecondOrderTensor
         >>> SymmetricSecondOrderTensor.from_Voigt([11, 22, 33, 23, 13, 12])
         Second-order tensor
         [[11. 12. 13.]
