@@ -1001,7 +1001,7 @@ class StiffnessTensor(SymmetricTensor):
         return StiffnessTensor(np.linalg.inv(S), symmetry='orthotropic', **kwargs)
 
     @classmethod
-    def transverse_isotropic(cls, *, Ex, Ez, nu_xy, nu_xz, Gxz, **kwargs):
+    def transverse_isotropic(cls, *, Ex, Ez, nu_yx, nu_zx, Gxz, **kwargs):
         """
         Create a stiffness tensor corresponding to the transverse isotropic symmetry, given the engineering constants.
 
@@ -1011,9 +1011,9 @@ class StiffnessTensor(SymmetricTensor):
             Young modulus along the x axis
         Ez : float
             Young modulus along the y axis
-        nu_xy : float
+        nu_yx : float
             Poisson ratio between x and y axes
-        nu_xz : float
+        nu_zx : float
             Poisson ratio between x and z axes
         Gxz : float
             Shear modulus in the x-z plane
@@ -1028,9 +1028,9 @@ class StiffnessTensor(SymmetricTensor):
         --------
         orthotropic : create a stiffness tensor for orthotropic symmetry
         """
-        Gxy = Ex / (2 * (1 + nu_xy))
+        Gxy = Ex / (2 * (1 + nu_yx))
         C = StiffnessTensor.orthotropic(Ex=Ex, Ey=Ex, Ez=Ez,
-                                        nu_yx=nu_xy, nu_zx=nu_xz, nu_zy=nu_xz,
+                                        nu_yx=nu_yx, nu_zx=nu_zx, nu_zy=nu_zx,
                                         Gxy=Gxy, Gxz=Gxz, Gyz=Gxz, **kwargs)
         C.symmetry = 'transverse-isotropic'
         return C
