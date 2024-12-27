@@ -45,7 +45,7 @@ Now, we can define 3 spherical functions, which correspond to velocities of:
 
     >>> cp, cs_fast, cs_slow = C.wave_velocity(rho)
 
-One can check that for a given direction (say, **x**)
+One can check that for a given direction (say, **x**), the velocities are arranged in the right order:
 
     >>> x = [1, 0, 0]
     >>> print(cp.eval(x), cs_fast.eval(x), cs_slow.eval(x))
