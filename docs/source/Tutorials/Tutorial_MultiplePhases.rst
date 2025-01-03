@@ -69,14 +69,14 @@ Upper bound of elastic moduli
 =============================
 Conversely, the upper bounds of elastic moduli is given by the Voigt averages. The commands above become:
 
-    >>> C_austenite_vavg = C_austenite.Hill_average()
-    >>> C_ferrite_vavg = C_ferrite.Hill_average()
+    >>> C_austenite_vavg = C_austenite.Voigt_average()
+    >>> C_ferrite_vavg = C_ferrite.Voigt_average()
     >>> C_voigt = StiffnessTensor.weighted_average((C_austenite_vavg, C_ferrite_vavg), (0.4, 0.6), 'Voigt')
 
 Which leads to:
 
     >>> print(C_voigt.Young_modulus.mean())
-    204.45867599496472
+    227.17330135891282
 
 Plotting the averages as functions of the volume fraction
 =========================================================
