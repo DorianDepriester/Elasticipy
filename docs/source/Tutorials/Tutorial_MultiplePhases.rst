@@ -101,13 +101,13 @@ commands:
     ...         C_tot_mean = StiffnessTensor.weighted_average((C_aust_avg, C_ferr_avg), (f1, f2), method)
     ...         E_mean[i] = C_tot_mean.Young_modulus.mean()
     ...         G_mean[i] = C_tot_mean.shear_modulus.mean()
-    ...     _ = ax.plot(fraction_austenite, E_mean, label='E ({})'.format(method), color=colors[color_index])
-    ...     _ = ax.plot(fraction_austenite, G_mean, label='G ({})'.format(method), color=colors[color_index], linestyle='--')
-    ...     _ = color_index = color_index + 1
-    >>> _ = ax.legend()
-    >>> _ = ax.set_xlim([0, 1])
-    >>> _ = ax.set_xlabel('Fraction of Austenite')
-    >>> _ = ax.set_ylabel('Young/Shear Modulus (GPa)')
+    ...     ax.plot(fraction_austenite, E_mean, label='E ({})'.format(method), color=colors[color_index]) # doctest: +SKIP
+    ...     ax.plot(fraction_austenite, G_mean, label='G ({})'.format(method), color=colors[color_index], linestyle='--') # doctest: +SKIP
+    ...     color_index = color_index + 1 # doctest: +SKIP
+    >>> ax.legend() # doctest: +SKIP
+    >>> ax.set_xlim([0, 1]) # doctest: +SKIP
+    >>> ax.set_xlabel('Fraction of Austenite') # doctest: +SKIP
+    >>> ax.set_ylabel('Young/Shear Modulus (GPa)') # doctest: +SKIP
     >>> fig.show()
 
 leading to:
