@@ -1,4 +1,6 @@
 import unittest
+from fileinput import filename
+
 from pytest import approx
 import numpy as np
 from scipy.spatial.transform import Rotation
@@ -428,7 +430,23 @@ class TestStressStrainTensors(unittest.TestCase):
                     new_mat = t_reshaped_back[i,j,k].matrix
                     np.testing.assert_array_equal(old_mat, new_mat)
 
+    def test_save_load_tensor(self):
+        """Test save and load data to/from file"""
 
+        # First, check with consistent shape
+        a = np.random.random((5, 4, 3, 3))
+        t = SecondOrderTensor(a)
+        file_name = 'test_save.npy'
+        t.save(file_name)
+        t2 = t.load_from_npy(file_name)
+        np.testing.assert_array_equal(t.matrix, t2.matrix)
+
+        # Now try with inconsistent shape
+        np.save(file_name, a[...,0])
+        expected_error = 'The shape of the array to load must be (...,3,3).'
+        with self.assertRaises(ValueError) as context:
+            _ = SecondOrderTensor.load_from_npy(file_name)
+        self.assertEqual(str(context.exception), expected_error)
 
 
 
