@@ -108,7 +108,7 @@ commands:
     >>> ax.set_xlim([0, 1]) # doctest: +SKIP
     >>> ax.set_xlabel('Fraction of Austenite') # doctest: +SKIP
     >>> ax.set_ylabel('Young/Shear Modulus (GPa)') # doctest: +SKIP
-    >>> fig.show()
+    >>> fig.show() # doctest: +SKIP
 
 leading to:
 
