@@ -868,6 +868,45 @@ class SecondOrderTensor:
             div += np.gradient(self.C[:,dim], spacing[dim], axis=axes[dim])
         return div
 
+    def save(self, file, **kwargs):
+        """
+        Save the tensor array as binary file (.npy format).
+
+        This function uses numpy.save function.
+
+        Parameters
+        ----------
+        file : file, str or pathlib.Path
+            File or filename to which the tensor is saved.
+        kwargs : dict
+            Keyword arguments passed to numpy.save()
+        """
+        np.save(file, self.matrix, **kwargs)
+
+    @classmethod
+    def load_from_npy(cls, file, **kwargs):
+        """
+        Load a tensor array for .npy file.
+
+        This function uses numpy.load()
+
+        Parameters
+        ----------
+        file : file, str or pathlib.Path
+            File to read to create the array
+        kwargs : dict
+            Keyword arguments passed to numpy.load()
+
+        Returns
+        -------
+        SecondOrderTensor
+            Tensor array
+        """
+        matrix = np.load(file, **kwargs)
+        if matrix.shape[-2:] != (3,3):
+            raise ValueError('The shape of the array to load must be (...,3,3).')
+        else:
+            return cls(matrix)
 
 class SymmetricSecondOrderTensor(SecondOrderTensor):
     voigt_map = [1, 1, 1, 1, 1, 1]
