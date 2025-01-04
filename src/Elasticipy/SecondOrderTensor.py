@@ -488,6 +488,24 @@ class SecondOrderTensor:
         """
         return self.__class__(self._flatten())
 
+    def reshape(self, shape, **kwargs):
+        """
+        Reshape the array of tensors
+
+        Parameters
+        ----------
+        shape : tuple
+            New shape of the array
+        kwargs : dict
+            Keyword arguments passed to numpy.reshape()
+        Returns
+        -------
+        SecondOrderTensor
+            Reshaped array
+        """
+        new_matrix = self.matrix.reshape(shape + (3,3,), **kwargs)
+        return self.__class__(new_matrix)
+
     def mean(self, axis=None):
         """
         Arithmetic mean value
