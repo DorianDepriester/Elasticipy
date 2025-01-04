@@ -62,7 +62,7 @@ available). For instance, to fetch data for `mp-1048 <https://next-gen.materials
 .. doctest::
 
     >>> api_key = '<Your API key>'
-    >>> StiffnessTensor.from_MP("mp-1048", api_key=api_key)
+    >>> StiffnessTensor.from_MP("mp-1048", api_key=api_key) # doctest: +SKIP
     Stiffness tensor (in Voigt notation) for TiNi:
     [[231. 127. 104.  -0. -18.   0.]
      [127. 240. 131.  -0.   1.   0.]
