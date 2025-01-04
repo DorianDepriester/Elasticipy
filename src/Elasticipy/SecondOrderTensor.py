@@ -485,6 +485,7 @@ class SecondOrderTensor:
         --------
         ndim : number of dimensions of the tensor array
         shape : shape of the tensor array
+        reshape : reshape a tensor array
         """
         return self.__class__(self._flatten())
 
@@ -498,10 +499,15 @@ class SecondOrderTensor:
             New shape of the array
         kwargs : dict
             Keyword arguments passed to numpy.reshape()
+
         Returns
         -------
         SecondOrderTensor
             Reshaped array
+
+        See Also
+        --------
+        flatten : flatten an array to 1D
         """
         new_matrix = self.matrix.reshape(shape + (3,3,), **kwargs)
         return self.__class__(new_matrix)
