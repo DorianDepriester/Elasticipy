@@ -409,6 +409,23 @@ class TestStressStrainTensors(unittest.TestCase):
                     np.testing.assert_almost_equal(div_biaxial[i, j, k], expected_div_biaxial)
 
 
+    def test_reshape(self):
+        """Test reshaping and 'un-reshaping' an array of tensors"""
+        init_shape = (6, 4, 5)
+        new_shape = (30, 4)
+        a = np.random.random(init_shape + (3, 3))
+        t = SecondOrderTensor(a)
+        t_reshaped = t.reshape(new_shape)
+        assert t_reshaped.shape == new_shape
+        t_reshaped_back = t_reshaped.reshape(init_shape)
+        for i in range(0, init_shape[0]):
+            for j in range(0, init_shape[1]):
+                for k in range(0, init_shape[2]):
+                    old_mat = a[i,j,k]
+                    new_mat = t_reshaped_back[i,j,k].matrix
+                    np.testing.assert_array_equal(old_mat, new_mat)
+
+
 
 
 
