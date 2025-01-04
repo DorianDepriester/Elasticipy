@@ -336,6 +336,7 @@ class TestStressStrainTensors(unittest.TestCase):
             np.testing.assert_array_equal(a_flat[p].matrix, a[i,j,k].matrix)
 
     def test_symmetric_skew_parts(self):
+        """Check the values returned by the symmetric and skew parts of a tensor"""
         shape = (2,3,4)
         a = SecondOrderTensor(np.random.random(shape + (3,3)))
         a_symm = a.symmetricPart()
@@ -348,6 +349,7 @@ class TestStressStrainTensors(unittest.TestCase):
                     np.testing.assert_array_equal(2 * a_skew[i, j, k].matrix, matrix - matrix.T)
 
     def test_equality(self):
+        """Test the == operator"""
         # Test equality for two tensors of the same shape
         shape = (3,4,5)
         a = SecondOrderTensor(np.random.random(shape + (3,3)))
@@ -378,6 +380,7 @@ class TestStressStrainTensors(unittest.TestCase):
         self.assertEqual(str(context.exception), expected_error)
 
     def test_divergence(self):
+        """Test the divergence operator"""
         spacing = [0.1, 0.2, 0.3]
         x = np.arange(0, 1, spacing[0])
         y = np.arange(0, 1, spacing[1])
