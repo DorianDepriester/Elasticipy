@@ -1,4 +1,6 @@
 import numpy as np
+import pandas
+import pandas as pd
 from scipy.spatial.transform import Rotation
 
 
@@ -915,6 +917,54 @@ class SecondOrderTensor:
             raise ValueError('The shape of the array to load must be (...,3,3).')
         else:
             return cls(matrix)
+
+    def save_as_txt(self, file, **kwargs):
+        """
+        Save the tensor array to human-readable text file.
+
+        The array must by 1D. The i-th row of the file will provide the components of the i-th tensor in of the array.
+        This function uses pandas.DataFrame.to_csv().
+
+        Parameters
+        ----------
+        file : file or str
+            File to dump tensor components to.
+        kwargs : dict
+            Keyword arguments passed to pandas.DataFrame.to_csv()
+        """
+        if self.ndim > 1:
+            raise ValueError('The array must be flatten before getting dumped to text file.')
+        else:
+            d = dict()
+            for i in range(3):
+                for j in range(3):
+                    key = '{}{}'.format(i+1, j+1)
+                    d[key] = self.C[i,j]
+            df = pd.DataFrame(d)
+            df.to_csv(file, index=False)
+
+    @classmethod
+    def load_from_txt(cls, file):
+        """
+        Load a tensor array from text file.
+
+        Parameters
+        ----------
+        file : str or file
+            Textfile to read the components from.
+
+        Returns
+        -------
+        SecondOrderTensor
+            Flat (1D) tensor constructed from the values given in the text file
+        """
+        df = pandas.read_csv(file)
+        tensor = cls.zeros((len(df)))
+        for i in range(3):
+            for j in range(3):
+                key = '{}{}'.format(i + 1, j + 1)
+                tensor.C[i, j] = df[key]
+        return tensor
 
 class SymmetricSecondOrderTensor(SecondOrderTensor):
     voigt_map = [1, 1, 1, 1, 1, 1]
