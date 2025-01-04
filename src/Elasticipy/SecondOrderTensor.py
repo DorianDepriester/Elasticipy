@@ -880,6 +880,10 @@ class SecondOrderTensor:
             File or filename to which the tensor is saved.
         kwargs : dict
             Keyword arguments passed to numpy.save()
+
+        See Also
+        --------
+        load_from_npy : load a tensor array from a numpy file
         """
         np.save(file, self.matrix, **kwargs)
 
@@ -901,6 +905,10 @@ class SecondOrderTensor:
         -------
         SecondOrderTensor
             Tensor array
+
+        See Also
+        --------
+        save : save the tensor array as a numpy file
         """
         matrix = np.load(file, **kwargs)
         if matrix.shape[-2:] != (3,3):
