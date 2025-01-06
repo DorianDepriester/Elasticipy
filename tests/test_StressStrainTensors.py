@@ -448,6 +448,22 @@ class TestStressStrainTensors(unittest.TestCase):
             _ = SecondOrderTensor.load_from_npy(file_name)
         self.assertEqual(str(context.exception), expected_error)
 
+    def test_save_load_csv(self):
+        # Check that when exporting/importing, we get the same tensor
+        a = np.random.random((10, 3, 3))
+        t = SecondOrderTensor(a)
+        file_name = 'test_textfile.txt'
+        t.save_as_txt(file_name)
+        t2 = SecondOrderTensor.load_from_txt(file_name)
+        np.testing.assert_array_almost_equal(t.matrix, t2.matrix)
+
+        # Try with non-flatten tensor
+        a = np.random.random((5, 3, 3, 3))
+        t = SecondOrderTensor(a)
+        expected_error = 'The array must be flatten before getting dumped to text file.'
+        with self.assertRaises(ValueError) as context:
+            t.save_as_txt(file_name)
+        self.assertEqual(str(context.exception), expected_error)
 
 
 if __name__ == '__main__':
