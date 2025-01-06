@@ -5,7 +5,7 @@ from scipy.spatial.transform import Rotation
 
 from Elasticipy.FourthOrderTensor import StiffnessTensor
 import Elasticipy.StressStrainTensors as Tensors
-from Elasticipy.SecondOrderTensor import SecondOrderTensor, SymmetricSecondOrderTensor
+from Elasticipy.SecondOrderTensor import SecondOrderTensor, SymmetricSecondOrderTensor, SkewSymmetricSecondOrderTensor
 
 Cmat = [[231, 127, 104, 0, -18, 0],
         [127, 240, 131, 0, 1, 0],
@@ -478,6 +478,28 @@ class TestStressStrainTensors(unittest.TestCase):
         upper_mat = sym_mat
         upper_mat[np.tril_indices(3, -1)] = 0 # Set lower part to zero
         t2 = SymmetricSecondOrderTensor(upper_mat)
+        assert t == t2
+
+        # Expect error in any other case
+        expected_error = ('The input array must be either slices of symmetric matrices, of slices of upper-diagonal '
+                          'matrices.')
+        with self.assertRaises(ValueError) as context:
+            _ = SymmetricSecondOrderTensor(mat)
+        self.assertEqual(str(context.exception), expected_error)
+
+    def test_skew_symmetric_tensor_constructor(self):
+        """Test constructor for symmetric second Order tensors"""
+
+        # When a symmetric matrix is passed to the constructor
+        mat = np.random.random((3,3))
+        skew_sym_mat = mat - mat.T
+        t = SkewSymmetricSecondOrderTensor(skew_sym_mat)
+        np.testing.assert_array_equal(t.matrix, skew_sym_mat)
+
+        # When an upper-diagonal matrix is passed to the constructor
+        upper_mat = skew_sym_mat
+        upper_mat[np.tril_indices(3)] = 0 # Set lower part to zero
+        t2 = SkewSymmetricSecondOrderTensor(upper_mat)
         assert t == t2
 
         # Expect error in any other case
