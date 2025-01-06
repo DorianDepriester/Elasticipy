@@ -30,6 +30,12 @@ def _tensor_from_direction_magnitude(u, v, magnitude):
     else:
         return magnitude * direction_matrix
 
+def _transpose_matrix(matrix):
+    return np.swapaxes(matrix, -1, -2)
+
+def _symmetric_part(matrix):
+    return 0.5 * (matrix + _transpose_matrix(matrix))
+
 class SecondOrderTensor:
     """
     Template class for manipulation of second order tensors or arrays of second order tensors
@@ -409,7 +415,7 @@ class SecondOrderTensor:
         return self.transposeArray()
 
     def _transposeTensor(self):
-        return np.swapaxes(self.matrix, -1, -2)
+        return _transpose_matrix(self.matrix)
 
     def transposeTensor(self):
         """
