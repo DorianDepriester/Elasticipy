@@ -929,7 +929,7 @@ class SecondOrderTensor:
         """
         Save the tensor array to human-readable text file.
 
-        The array must by 1D. The i-th row of the file will provide the components of the i-th tensor in of the array.
+        The array must be 1D. The i-th row of the file will provide the components of the i-th tensor in of the array.
         This function uses pandas.DataFrame.to_csv().
 
         Parameters
@@ -947,8 +947,10 @@ class SecondOrderTensor:
         else:
             d = dict()
             for i in range(3):
-                if isinstance(self, SymmetricSecondOrderTensor):
-                    r = range(i, 3)   # If the tensor is symmetric, there is no need to save the full matrix
+                if isinstance(self, SkewSymmetricSecondOrderTensor):
+                    r = range(i+1, 3)   # If the tensor is skew-symmetric, there is no need to save the full matrix
+                elif isinstance(self, SymmetricSecondOrderTensor):
+                    r = range(i, 3)     # Idem, except that we also need the diagonal
                 else:
                     r =range(3)
                 for j in r:
@@ -978,7 +980,9 @@ class SecondOrderTensor:
         df = pd.read_csv(file, **kwargs)
         matrix = np.zeros((len(df), 3, 3))
         for i in range(3):
-            if cls is SymmetricSecondOrderTensor:
+            if cls is SkewSymmetricSecondOrderTensor:
+                r = range(i+1, 3)
+            elif cls is SymmetricSecondOrderTensor:
                 r = range(i, 3)
             else:
                 r= range(3)
@@ -1055,3 +1059,18 @@ class SymmetricSecondOrderTensor(SecondOrderTensor):
             return cls(unvoigted_matrix)
         else:
             raise ValueError("array must be of shape (6,) or (...,6) with Voigt vector")
+
+
+class SkewSymmetricSecondOrderTensor(SecondOrderTensor):
+    def __init__(self, mat, force_skew_symmetry=False):
+        mat = np.asarray(mat, dtype=float)
+        mat_transposed = _transpose_matrix(mat)
+        if np.all(np.isclose(mat, -mat_transposed)) or force_skew_symmetry:
+            # The input matrix is symmetric
+            super().__init__(0.5 * (mat - mat_transposed))
+        elif np.all(mat[..., np.tril_indices(3)[0], np.tril_indices(3)[1]] == 0):
+            # The input matrix is upper-diagonal
+            super().__init__(mat - mat_transposed)
+        else:
+            raise ValueError('The input array must be either slices of skew-symmetric matrices, of slices of upper-'
+                             'diagonal matrices with zero-diagonal.')
