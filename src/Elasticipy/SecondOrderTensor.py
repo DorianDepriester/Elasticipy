@@ -947,7 +947,11 @@ class SecondOrderTensor:
         else:
             d = dict()
             for i in range(3):
-                for j in range(3):
+                if isinstance(self, SymmetricSecondOrderTensor):
+                    r = range(i, 3)   # If the tensor is symmetric, there is no need to save the full matrix
+                else:
+                    r =range(3)
+                for j in r:
                     key = name_prefix + '{}{}'.format(i+1, j+1)
                     d[key] = self.C[i,j]
             df = pd.DataFrame(d)
@@ -972,12 +976,16 @@ class SecondOrderTensor:
             Flat (1D) tensor constructed from the values given in the text file
         """
         df = pd.read_csv(file, **kwargs)
-        tensor = cls.zeros((len(df)))
+        matrix = np.zeros((len(df), 3, 3))
         for i in range(3):
-            for j in range(3):
+            if cls is SymmetricSecondOrderTensor:
+                r = range(i, 3)
+            else:
+                r= range(3)
+            for j in r:
                 key = name_prefix + '{}{}'.format(i + 1, j + 1)
-                tensor.C[i, j] = df[key]
-        return tensor
+                matrix[:, i, j] = df[key]
+        return cls(matrix)
 
 class SymmetricSecondOrderTensor(SecondOrderTensor):
     voigt_map = [1, 1, 1, 1, 1, 1]
