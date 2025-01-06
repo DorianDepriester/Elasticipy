@@ -984,6 +984,17 @@ class SymmetricSecondOrderTensor(SecondOrderTensor):
     "List of factors to use for building a tensor from Voigt vector(s)"
 
     def __init__(self, mat, force_symmetry=False):
+        """
+        Create a symmetric second-order tensor
+
+        Parameters
+        ----------
+        mat : list or numpy.ndarray
+            matrix or array to construct the symmetric tensor. It must be symmetric with respect to the two last indices
+            (mat[...,i,j]=mat[...,j,i]), or composed of slices of upper-diagonal matrices (mat[i,j]=0 for each i>j).
+        force_symmetry : bool, optional
+            If true, the symmetric part of the matrix will be used. It is mainly meant for debugging purpose.
+        """
         mat = np.asarray(mat, dtype=float)
         mat_transposed = _transpose_matrix(mat)
         if np.all(np.isclose(mat, mat_transposed)) or force_symmetry:
