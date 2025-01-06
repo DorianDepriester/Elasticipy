@@ -6,6 +6,7 @@ from scipy.spatial.transform import Rotation
 from Elasticipy.FourthOrderTensor import StiffnessTensor
 import Elasticipy.StressStrainTensors as Tensors
 from Elasticipy.SecondOrderTensor import SecondOrderTensor, SymmetricSecondOrderTensor, SkewSymmetricSecondOrderTensor
+from Elasticipy.StressStrainTensors import StrainTensor
 
 Cmat = [[231, 127, 104, 0, -18, 0],
         [127, 240, 131, 0, 1, 0],
@@ -513,16 +514,37 @@ class TestStressStrainTensors(unittest.TestCase):
         """Test basic operations between symmetric and skew-symmetric tensor, and check that the output classes are
         consistent."""
         mat = np.random.random((3,3))
-        sym_ten = SymmetricSecondOrderTensor(mat + mat.T)
-        skew_ten = SkewSymmetricSecondOrderTensor(mat - mat.T)
-        assert isinstance(sym_ten + 2 * sym_ten, SymmetricSecondOrderTensor)
-        assert isinstance(skew_ten + 2 * skew_ten, SkewSymmetricSecondOrderTensor)
-        assert isinstance(sym_ten + 2 * skew_ten, SecondOrderTensor)
-        assert isinstance(-sym_ten, SymmetricSecondOrderTensor)
-        assert isinstance(-skew_ten, SkewSymmetricSecondOrderTensor)
-        assert isinstance(skew_ten + 5, SecondOrderTensor)
-        assert isinstance(sym_ten + 5, SymmetricSecondOrderTensor)
+        strain = StrainTensor(mat + mat.T)
+        spin = SkewSymmetricSecondOrderTensor(mat - mat.T)
 
+        # Check with consistent add.sub
+        assert isinstance(strain + 2 * strain, StrainTensor)
+        assert isinstance(spin + 2 * spin, SkewSymmetricSecondOrderTensor)
+
+        # Check with inconsistent classes
+        a = strain + 2 * spin
+        assert (isinstance(a, SecondOrderTensor) and not isinstance(a, SymmetricSecondOrderTensor) and
+                not isinstance(a, SkewSymmetricSecondOrderTensor))
+
+        # Check negative values
+        assert isinstance(-strain, StrainTensor)
+        assert isinstance(-spin, SkewSymmetricSecondOrderTensor)
+
+        # Check when adding a scaler value
+        b = spin + 5
+        assert (isinstance(b, SecondOrderTensor) and not isinstance(b, SymmetricSecondOrderTensor) and
+                not isinstance(b, SkewSymmetricSecondOrderTensor))
+        assert isinstance(strain + 5, StrainTensor)
+
+        # Check when multiplying the tensor
+        c = strain * spin
+        assert (isinstance(c, SecondOrderTensor) and not isinstance(c, SymmetricSecondOrderTensor) and
+                not isinstance(c, SkewSymmetricSecondOrderTensor))
+
+        # Now check with rotations
+        rotations = Rotation.random(100)
+        assert isinstance(strain * rotations, StrainTensor)
+        assert isinstance(spin * rotations, SkewSymmetricSecondOrderTensor)
 
 if __name__ == '__main__':
     unittest.main()
