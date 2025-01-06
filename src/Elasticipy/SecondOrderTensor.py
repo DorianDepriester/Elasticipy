@@ -1001,7 +1001,7 @@ class SymmetricSecondOrderTensor(SecondOrderTensor):
     voigt_map = [1, 1, 1, 1, 1, 1]
     "List of factors to use for building a tensor from Voigt vector(s)"
 
-    name = 'Symmetric second order tensor'
+    name = 'Symmetric second-order tensor'
 
     def __init__(self, mat, force_symmetry=False):
         """
@@ -1070,7 +1070,7 @@ class SymmetricSecondOrderTensor(SecondOrderTensor):
 
 
 class SkewSymmetricSecondOrderTensor(SecondOrderTensor):
-    name = 'Skew-symmetric second order tensor'
+    name = 'Skew-symmetric second-order tensor'
 
     def __init__(self, mat, force_skew_symmetry=False):
         mat = np.asarray(mat, dtype=float)
