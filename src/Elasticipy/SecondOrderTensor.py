@@ -294,11 +294,7 @@ class SecondOrderTensor:
         """
         if isinstance(B, SecondOrderTensor):
             new_mat = np.matmul(self.matrix, B.matrix)
-            if isinstance(self, SymmetricSecondOrderTensor) and isinstance(B, SymmetricSecondOrderTensor):
-                # This is the only case where we can infer the property of the results from the input arguments.
-                return SymmetricSecondOrderTensor(new_mat)
-            else:
-                return SecondOrderTensor(new_mat)
+            return SecondOrderTensor(new_mat)
         elif isinstance(B, Rotation):
             rotation_matrices = B.as_matrix()
             transpose_matrices = B.inv().as_matrix()
