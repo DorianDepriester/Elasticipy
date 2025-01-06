@@ -293,11 +293,17 @@ class SecondOrderTensor:
         matmul : matrix-like multiplication of tensor arrays
         """
         if isinstance(B, SecondOrderTensor):
-            return SecondOrderTensor(np.matmul(self.matrix, B.matrix))
+            new_mat = np.matmul(self.matrix, B.matrix)
+            if isinstance(self, SymmetricSecondOrderTensor) and isinstance(B, SymmetricSecondOrderTensor):
+                # This is the only case where we can infer the property of the results from the input arguments.
+                return SymmetricSecondOrderTensor(new_mat)
+            else:
+                return SecondOrderTensor(new_mat)
         elif isinstance(B, Rotation):
             rotation_matrices = B.as_matrix()
             transpose_matrices = B.inv().as_matrix()
             new_matrix = np.matmul(np.matmul(transpose_matrices, self.matrix), rotation_matrices)
+            # In case of rotation, the property of the transformed tensor is kept
             return self.__class__(new_matrix)
         elif isinstance(B, (float, int)):
             return self.__class__(self.matrix * B)
