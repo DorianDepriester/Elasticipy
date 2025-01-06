@@ -7,7 +7,6 @@ from Elasticipy.FourthOrderTensor import StiffnessTensor
 import Elasticipy.StressStrainTensors as Tensors
 from Elasticipy.SecondOrderTensor import SecondOrderTensor, SymmetricSecondOrderTensor
 
-
 Cmat = [[231, 127, 104, 0, -18, 0],
         [127, 240, 131, 0, 1, 0],
         [104, 131, 175, 0, -3, 0],
@@ -439,6 +438,7 @@ class TestStressStrainTensors(unittest.TestCase):
         self.assertEqual(str(context.exception), expected_error)
 
     def test_save_load_csv(self):
+        """Test saving and reading a CSV file"""
         # Check that when exporting/importing, we get the same tensor
         a = np.random.random((10, 3, 3))
         t = SecondOrderTensor(a)
@@ -455,6 +455,27 @@ class TestStressStrainTensors(unittest.TestCase):
             t.save_as_txt(file_name)
         self.assertEqual(str(context.exception), expected_error)
 
+    def test_symmetric_tensor_constructor(self):
+        """Test constructor for symmetric second Order tensors"""
+
+        # When a symmetric matrix is passed to the constructor
+        mat = np.random.random((3,3))
+        sym_mat = mat + mat.T
+        t = SymmetricSecondOrderTensor(sym_mat)
+        np.testing.assert_array_equal(t.matrix, sym_mat)
+
+        # When an upper-diagonal matrix is passed to the constructor
+        upper_mat = sym_mat
+        upper_mat[np.tril_indices(3, -1)] = 0 # Set lower part to zero
+        t2 = SymmetricSecondOrderTensor(upper_mat)
+        assert t == t2
+
+        # Expect error in any other case
+        expected_error = ('The input array must be either slices of symmetric matrices, of slices of upper-diagonal '
+                          'matrices.')
+        with self.assertRaises(ValueError) as context:
+            _ = SymmetricSecondOrderTensor(mat)
+        self.assertEqual(str(context.exception), expected_error)
 
 if __name__ == '__main__':
     unittest.main()
