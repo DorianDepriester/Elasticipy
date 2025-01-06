@@ -94,7 +94,7 @@ class StressTensor(SymmetricSecondOrderTensor):
         float or np.ndarray
             J2 invariant
         """
-        return -self.deviatoricPart().I2
+        return -self.deviatoric_part().I2
 
     @property
     def J3(self):
@@ -106,7 +106,7 @@ class StressTensor(SymmetricSecondOrderTensor):
         float or np.ndarray
             J3 invariant
         """
-        return self.deviatoricPart().I3
+        return self.deviatoric_part().I3
 
     def vonMises(self):
         """

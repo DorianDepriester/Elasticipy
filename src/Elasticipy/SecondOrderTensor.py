@@ -617,23 +617,25 @@ class SecondOrderTensor:
         else:
             return self
 
-    def symmetricPart(self):
+    def _symmetric_part(self):
+        return 0.5 * (self.matrix + self._transposeTensor())
+
+    def symmetric_part(self):
         """
         Symmetric part of the tensor
 
         Returns
         -------
-        SecondOrderTensor
+        SymmetricSecondOrderTensor
             Symmetric tensor
 
         See Also
         --------
         skewPart : Skew-symmetric part of the tensor
         """
-        new_mat = 0.5 * (self.matrix + self._transposeTensor())
-        return self.__class__(new_mat)
+        return SymmetricSecondOrderTensor(self._symmetric_part())
 
-    def skewPart(self):
+    def skew_part(self):
         """
         Skew-symmetric part of the tensor
 
@@ -645,7 +647,7 @@ class SecondOrderTensor:
         new_mat = 0.5 * (self.matrix - self._transposeTensor())
         return self.__class__(new_mat)
 
-    def sphericalPart(self):
+    def spherical_part(self):
         """
         Spherical (hydrostatic) part of the tensor
 
@@ -662,7 +664,7 @@ class SecondOrderTensor:
         s = self.I1 / 3
         return self.eye(self.shape)*s
 
-    def deviatoricPart(self):
+    def deviatoric_part(self):
         """
         Deviatoric part of the tensor
 
@@ -674,7 +676,7 @@ class SecondOrderTensor:
         --------
         sphericalPart : spherical part of the tensor
         """
-        return self - self.sphericalPart()
+        return self - self.spherical_part()
 
     @classmethod
     def eye(cls, shape=()):
