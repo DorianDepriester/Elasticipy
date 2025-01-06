@@ -651,7 +651,7 @@ class SecondOrderTensor:
             Skew-symmetric tensor
         """
         new_mat = 0.5 * (self.matrix - self._transposeTensor())
-        return self.__class__(new_mat)
+        return SkewSymmetricSecondOrderTensor(new_mat)
 
     def spherical_part(self):
         """
@@ -995,6 +995,8 @@ class SymmetricSecondOrderTensor(SecondOrderTensor):
     voigt_map = [1, 1, 1, 1, 1, 1]
     "List of factors to use for building a tensor from Voigt vector(s)"
 
+    name = 'Symmetric second order tensor'
+
     def __init__(self, mat, force_symmetry=False):
         """
         Create a symmetric second-order tensor
@@ -1062,6 +1064,8 @@ class SymmetricSecondOrderTensor(SecondOrderTensor):
 
 
 class SkewSymmetricSecondOrderTensor(SecondOrderTensor):
+    name = 'Skew-symmetric second order tensor'
+
     def __init__(self, mat, force_skew_symmetry=False):
         mat = np.asarray(mat, dtype=float)
         mat_transposed = _transpose_matrix(mat)
