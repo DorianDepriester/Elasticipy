@@ -7,6 +7,7 @@ from Elasticipy.FourthOrderTensor import StiffnessTensor, ComplianceTensor
 from scipy.spatial.transform import Rotation
 from Elasticipy.FourthOrderTensor import _indices2str
 from Elasticipy.CrystalSymmetries import SYMMETRIES
+from Elasticipy.StressStrainTensors import StressTensor
 
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -381,6 +382,14 @@ class TestStiffnessConstructor(unittest.TestCase):
         assert nu.eval([0,1,0], [1,0,0]) == approx(nu_yx)
         assert nu.eval([0, 0, 1], [0, 1, 0]) == approx(nu_zx)
         assert nu.eval([0, 0, 1], [1, 0, 0]) == approx(nu_zx)
+
+    def test_straining_energy(self):
+        matrix = np.random.random((3,3))
+        stress = StressTensor(matrix + matrix.T)
+        strain = S * stress
+        e1 = stress.elastic_energy(strain)
+        e2 = strain.elastic_energy(stress)
+        np.testing.assert_approx_equal(e1, e2)
 
 if __name__ == '__main__':
     unittest.main()
