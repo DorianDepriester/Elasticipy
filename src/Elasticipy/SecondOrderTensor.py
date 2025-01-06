@@ -918,7 +918,7 @@ class SecondOrderTensor:
         else:
             return cls(matrix)
 
-    def save_as_txt(self, file, **kwargs):
+    def save_as_txt(self, file, name_prefix='', **kwargs):
         """
         Save the tensor array to human-readable text file.
 
@@ -929,6 +929,9 @@ class SecondOrderTensor:
         ----------
         file : file or str
             File to dump tensor components to.
+        name_prefix : str, optional
+            Prefix to add for naming the columns. For instance, name_prefix='E' will result in columns named E11, E12,
+            E13 etc.
         kwargs : dict
             Keyword arguments passed to pandas.DataFrame.to_csv()
         """
@@ -938,13 +941,13 @@ class SecondOrderTensor:
             d = dict()
             for i in range(3):
                 for j in range(3):
-                    key = '{}{}'.format(i+1, j+1)
+                    key = name_prefix + '{}{}'.format(i+1, j+1)
                     d[key] = self.C[i,j]
             df = pd.DataFrame(d)
-            df.to_csv(file, index=False)
+            df.to_csv(file, index=False, **kwargs)
 
     @classmethod
-    def load_from_txt(cls, file):
+    def load_from_txt(cls, file, **kwargs):
         """
         Load a tensor array from text file.
 
@@ -958,7 +961,7 @@ class SecondOrderTensor:
         SecondOrderTensor
             Flat (1D) tensor constructed from the values given in the text file
         """
-        df = pandas.read_csv(file)
+        df = pandas.read_csv(file, **kwargs)
         tensor = cls.zeros((len(df)))
         for i in range(3):
             for j in range(3):
