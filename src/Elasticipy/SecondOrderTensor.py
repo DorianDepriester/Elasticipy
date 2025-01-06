@@ -984,6 +984,7 @@ class SymmetricSecondOrderTensor(SecondOrderTensor):
     "List of factors to use for building a tensor from Voigt vector(s)"
 
     def __init__(self, mat, force_symmetry=False):
+        mat = np.asarray(mat, dtype=float)
         mat_transposed = _transpose_matrix(mat)
         if np.all(np.isclose(mat, mat_transposed)) or force_symmetry:
             # The input matrix is symmetric
