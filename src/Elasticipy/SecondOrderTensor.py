@@ -1,5 +1,4 @@
 import numpy as np
-import pandas
 import pandas as pd
 from scipy.spatial.transform import Rotation
 
@@ -964,7 +963,7 @@ class SecondOrderTensor:
         SecondOrderTensor
             Flat (1D) tensor constructed from the values given in the text file
         """
-        df = pandas.read_csv(file, **kwargs)
+        df = pd.read_csv(file, **kwargs)
         tensor = cls.zeros((len(df)))
         for i in range(3):
             for j in range(3):
