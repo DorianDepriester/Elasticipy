@@ -947,7 +947,7 @@ class SecondOrderTensor:
             df.to_csv(file, index=False, **kwargs)
 
     @classmethod
-    def load_from_txt(cls, file, **kwargs):
+    def load_from_txt(cls, file, name_prefix='', **kwargs):
         """
         Load a tensor array from text file.
 
@@ -955,6 +955,9 @@ class SecondOrderTensor:
         ----------
         file : str or file
             Textfile to read the components from.
+        name_prefix : str, optional
+            Prefix to add to each column when parsing the file. For instance, with name_prefix='E', the function will
+            look for columns names E11, E12, E13 etc.
 
         Returns
         -------
@@ -965,7 +968,7 @@ class SecondOrderTensor:
         tensor = cls.zeros((len(df)))
         for i in range(3):
             for j in range(3):
-                key = '{}{}'.format(i + 1, j + 1)
+                key = name_prefix + '{}{}'.format(i + 1, j + 1)
                 tensor.C[i, j] = df[key]
         return tensor
 
