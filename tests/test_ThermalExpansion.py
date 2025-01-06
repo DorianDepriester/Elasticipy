@@ -44,6 +44,7 @@ class TestThermalExpansion(unittest.TestCase):
 
     def test_volumetric(self):
         matrix = np.random.random((3,3))
+        matrix = matrix + matrix.T
         alpha = ThEx(matrix)
         assert np.trace(matrix) == alpha.volumetric_coefficient
 
