@@ -455,6 +455,16 @@ class TestStressStrainTensors(unittest.TestCase):
             t.save_as_txt(file_name)
         self.assertEqual(str(context.exception), expected_error)
 
+        # Now try with a symmetric tensor
+        a = np.random.random((10, 3, 3))
+        a = a + np.swapaxes(a, -1, -2)
+        t = SymmetricSecondOrderTensor(a)
+        file_name = 'test_symmetric_textfile.txt'
+        t.save_as_txt(file_name)
+        t2 = SymmetricSecondOrderTensor.load_from_txt(file_name)
+        np.testing.assert_array_almost_equal(t.matrix, t2.matrix)
+
+
     def test_symmetric_tensor_constructor(self):
         """Test constructor for symmetric second Order tensors"""
 
