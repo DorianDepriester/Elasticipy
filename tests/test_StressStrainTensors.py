@@ -509,5 +509,20 @@ class TestStressStrainTensors(unittest.TestCase):
             _ = SymmetricSecondOrderTensor(mat)
         self.assertEqual(str(context.exception), expected_error)
 
+    def test_add_sub_skew_symmetric_tensor(self):
+        """Test basic operations between symmetric and skew-symmetric tensor, and check that the output classes are
+        consistent."""
+        mat = np.random.random((3,3))
+        sym_ten = SymmetricSecondOrderTensor(mat + mat.T)
+        skew_ten = SkewSymmetricSecondOrderTensor(mat - mat.T)
+        assert isinstance(sym_ten + 2 * sym_ten, SymmetricSecondOrderTensor)
+        assert isinstance(skew_ten + 2 * skew_ten, SkewSymmetricSecondOrderTensor)
+        assert isinstance(sym_ten + 2 * skew_ten, SecondOrderTensor)
+        assert isinstance(-sym_ten, SymmetricSecondOrderTensor)
+        assert isinstance(-skew_ten, SkewSymmetricSecondOrderTensor)
+        assert isinstance(skew_ten + 5, SecondOrderTensor)
+        assert isinstance(sym_ten + 5, SymmetricSecondOrderTensor)
+
+
 if __name__ == '__main__':
     unittest.main()
