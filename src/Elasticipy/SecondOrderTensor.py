@@ -455,7 +455,7 @@ class SecondOrderTensor:
         matmul : matrix-like product between two tensor arrays.
 
         """
-        tensor_prod = self*other
+        tensor_prod = self.transposeTensor()*other
         return tensor_prod.trace()
 
     def _flatten(self):
