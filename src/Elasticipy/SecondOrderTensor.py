@@ -102,13 +102,22 @@ class SecondOrderTensor:
         else:
             raise NotImplementedError('The element to add must be a number, a numpy.ndarray or a tensor.')
 
+    def __radd__(self, other):
+        return self + other
+
     def __sub__(self, other):
         if type(self) == type(other):
             return self.__class__(self.matrix - other.matrix)
         elif isinstance(other, (int, float, np.ndarray)):
             return self.__class__(self.matrix - other)
         else:
-            raise NotImplementedError('The element to subtract must be a number, a ndarray or of the same class.')
+            raise NotImplementedError('The element to subtract must be a number, a numpy ndarray or a tensor.')
+
+    def __neg__(self):
+        return self.__class__(-self.matrix)
+
+    def __rsub__(self, other):
+        return -self + other
 
     @property
     def shape(self):
