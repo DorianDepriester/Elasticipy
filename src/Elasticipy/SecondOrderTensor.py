@@ -983,13 +983,20 @@ class SymmetricSecondOrderTensor(SecondOrderTensor):
     voigt_map = [1, 1, 1, 1, 1, 1]
     "List of factors to use for building a tensor from Voigt vector(s)"
 
-    def __init__(self, mat):
-        symmetric_matrix = 0.5 * (mat + np.swapaxes(mat, -2, -1))
-        super().__init__(symmetric_matrix)
-
-    @classmethod
-    def shear(cls, u, v, magnitude):
-        return super().shear(u, v, magnitude) * 2
+    def __init__(self, mat, force_symmetry=False):
+        mat_transposed = _transpose_matrix(mat)
+        if np.all(np.isclose(mat, mat_transposed)) or force_symmetry:
+            # The input matrix is symmetric
+            super().__init__(0.5 * (mat + mat_transposed))
+        elif np.all(mat[..., np.tril_indices(3, k=-1)[0], np.tril_indices(3, k=-1)[1]] == 0):
+            # The input matrix is upper-diagonal
+            lower_diagonal = np.zeros_like(mat)
+            triu_indices = np.triu_indices(3,1)
+            lower_diagonal[..., triu_indices[0], triu_indices[1]] = mat[..., triu_indices[0], triu_indices[1]]
+            super().__init__(mat + _transpose_matrix(lower_diagonal))
+        else:
+            raise ValueError('The input array must be either slices of symmetric matrices, of slices of upper-diagonal '
+                             'matrices.')
 
     @classmethod
     def from_Voigt(cls, array):
@@ -1025,7 +1032,6 @@ class SymmetricSecondOrderTensor(SecondOrderTensor):
             voigt = [[0, 0], [1, 1], [2, 2], [1, 2], [0, 2], [0, 1]]
             for i in range(6):
                 unvoigted_matrix[..., voigt[i][0], voigt[i][1]] = array[..., i] / cls.voigt_map[i]
-                unvoigted_matrix[..., voigt[i][1], voigt[i][0]] = array[..., i] / cls.voigt_map[i]
             return cls(unvoigted_matrix)
         else:
             raise ValueError("array must be of shape (6,) or (...,6) with Voigt vector")
