@@ -339,8 +339,8 @@ class TestStressStrainTensors(unittest.TestCase):
         """Check the values returned by the symmetric and skew parts of a tensor"""
         shape = (2,3,4)
         a = SecondOrderTensor(np.random.random(shape + (3,3)))
-        a_symm = a.symmetricPart()
-        a_skew = a.skewPart()
+        a_symm = a.symmetric_part()
+        a_skew = a.skew_part()
         for i in range(0, shape[0]):
             for j in range(0, shape[1]):
                 for k in range(0, shape[2]):
