@@ -92,9 +92,15 @@ class SecondOrderTensor:
         if type(self) == type(other):
             return self.__class__(self.matrix + other.matrix)
         elif isinstance(other, (int, float, np.ndarray)):
-            return self.__class__(self.matrix + other)
+            mat = self.matrix + other
+            if isinstance(self, SkewSymmetricSecondOrderTensor):
+                return SecondOrderTensor(mat)
+            else:
+                return self.__class__(mat)
+        elif isinstance(other, SecondOrderTensor):
+            return SecondOrderTensor(self.matrix + other.matrix)
         else:
-            raise NotImplementedError('The element to add must be a number, a ndarray or of the same class.')
+            raise NotImplementedError('The element to add must be a number, a numpy.ndarray or a tensor.')
 
     def __sub__(self, other):
         if type(self) == type(other):
