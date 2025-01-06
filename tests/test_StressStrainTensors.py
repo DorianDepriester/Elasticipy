@@ -46,7 +46,7 @@ class TestStressStrainTensors(unittest.TestCase):
         n_oris : int
             Number of random orientations to use
         """
-        random_tensor = Tensors.SymmetricSecondOrderTensor(np.random.random((3, 3)))
+        random_tensor = SecondOrderTensor(np.random.random((3, 3)))
         random_oris = Rotation.random(n_oris)
         eps_rotated = random_tensor * random_oris
         for i in range(n_oris):
@@ -60,20 +60,19 @@ class TestStressStrainTensors(unittest.TestCase):
         """
         shape = (1, 2, 3)
         random_matrix = np.random.random(shape + (3, 3))
-        random_tensor = Tensors.SymmetricSecondOrderTensor(random_matrix)
+        random_tensor = SecondOrderTensor(random_matrix)
         transposed_tensor = random_tensor.T
         for i in range(shape[0]):
             for j in range(shape[1]):
                 for k in range(shape[2]):
-                    sym_mat = 0.5 * (random_matrix[i, j, k] + random_matrix[i, j, k].T)
-                    np.testing.assert_array_equal(sym_mat, transposed_tensor[k, j, i].matrix)
+                    np.testing.assert_array_equal(random_matrix[i, j, k], transposed_tensor[k, j, i].matrix)
 
     def test_transpose_tensor(self):
         """
         Test transposing a tensor array
         """
         shape = (2, 3, 4)
-        tensor = Tensors.SymmetricSecondOrderTensor(np.random.random(shape + (3, 3)))
+        tensor = SecondOrderTensor(np.random.random(shape + (3, 3)))
         tensor_transposed = tensor.transposeTensor()
         for i in range(shape[0]):
             for j in range(shape[1]):
@@ -91,17 +90,15 @@ class TestStressStrainTensors(unittest.TestCase):
         shape = shape + (3, 3)
         matrix1 = np.random.random(shape)
         matrix2 = np.random.random(shape)
-        tensor_prod = Tensors.SymmetricSecondOrderTensor(matrix1) * Tensors.SymmetricSecondOrderTensor(matrix2)
+        tensor_prod = SecondOrderTensor(matrix1) * SecondOrderTensor(matrix2)
         for i in range(shape[0]):
             for j in range(shape[1]):
-                sym_mat1 = 0.5 * (matrix1[i, j] + matrix1[i, j].T)
-                sym_mat2 = 0.5 * (matrix2[i, j] + matrix2[i, j].T)
-                mat_prod = np.matmul(sym_mat1, sym_mat2)
+                mat_prod = np.matmul(matrix1[i, j], matrix2[i, j])
                 np.testing.assert_array_equal(tensor_prod[i, j].matrix, mat_prod)
 
         # Now, multiply a SymmetricSecondOrderTensor with an array of the same shape, and expect an element-wise
         # multiplication between the sliced matrix of the tensor and the values of the array
-        t = Tensors.SymmetricSecondOrderTensor(matrix1)
+        t = SecondOrderTensor(matrix1)
         random_array = np.random.random(t.shape)
         tensor_prod = t * random_array
         for i in range(shape[0]):
@@ -122,19 +119,17 @@ class TestStressStrainTensors(unittest.TestCase):
         """
         matrix1 = np.random.random((length1, 3, 3))
         matrix2 = np.random.random((length2, 3, 3))
-        rand_tensor1 = Tensors.SymmetricSecondOrderTensor(matrix1)
-        rand_tensor2 = Tensors.SymmetricSecondOrderTensor(matrix2)
+        rand_tensor1 = SecondOrderTensor(matrix1)
+        rand_tensor2 = SecondOrderTensor(matrix2)
         cross_prod_tensor = rand_tensor1.matmul(rand_tensor2)
         for i in range(0, length1):
-            sym_mat1 = 0.5 * (matrix1[i] + matrix1[i].T)
             for j in range(0, length2):
-                sym_mat2 = 0.5 * (matrix2[j] + matrix2[j].T)
-                mat_prod = np.matmul(sym_mat1, sym_mat2)
+                mat_prod = np.matmul(matrix1[i], matrix2[j])
                 np.testing.assert_array_equal(cross_prod_tensor[i, j].matrix, mat_prod)
 
     def test_matmul_rotation(self):
         m, n = 5, 100
-        random_tensor = SymmetricSecondOrderTensor(np.random.random((m,) + (3, 3)))
+        random_tensor = SecondOrderTensor(np.random.random((m,) + (3, 3)))
         random_oris = Rotation.random(n)
         array = random_tensor.matmul(random_oris)
         assert array.shape == (m, n)
@@ -150,8 +145,7 @@ class TestStressStrainTensors(unittest.TestCase):
         """
         shape = (5, 4, 3, 2)
         matrix = np.random.random(shape + (3, 3))
-        tensor = Tensors.SymmetricSecondOrderTensor(matrix)
-        matrix = 0.5 *(matrix + np.swapaxes(matrix, -2, -1))
+        tensor = SecondOrderTensor(matrix)
         mini = tensor.min()
         maxi = tensor.max()
         std = tensor.std()
@@ -181,15 +175,13 @@ class TestStressStrainTensors(unittest.TestCase):
         shape = (4, 3, 2)
         matrix1 = np.random.random(shape + (3, 3))
         matrix2 = np.random.random(shape + (3, 3))
-        tens1 = Tensors.SymmetricSecondOrderTensor(matrix1)
-        tens2 = Tensors.SymmetricSecondOrderTensor(matrix2)
+        tens1 = SecondOrderTensor(matrix1)
+        tens2 = SecondOrderTensor(matrix2)
         ddot = tens1.ddot(tens2)
         for i in range(0, shape[0]):
             for j in range(0, shape[1]):
                 for k in range(0, shape[2]):
-                    sym_mat1 = 0.5* (matrix1[i, j, k] + matrix1[i, j, k].T)
-                    sym_mat2 = 0.5* (matrix2[i, j, k] + matrix2[i, j, k].T)
-                    ddot_th = np.trace(np.matmul(sym_mat1, sym_mat2))
+                    ddot_th = np.trace(np.matmul(matrix1[i,j,k].T, matrix2[i,j,k]))
                     self.assertEqual(ddot_th, ddot[i, j, k])
 
     def test_vonMises_Tresca(self):
@@ -218,7 +210,7 @@ class TestStressStrainTensors(unittest.TestCase):
         n_strain = 50
         n_ori = 100
         matrix = np.random.random((n_strain, 3, 3))
-        eps = Tensors.StrainTensor(matrix)
+        eps = Tensors.StrainTensor(matrix, force_symmetry=True)
         ori = Rotation.random(n_ori)
         C_rotated = C * ori
         sigma = C_rotated * eps
@@ -324,7 +316,7 @@ class TestStressStrainTensors(unittest.TestCase):
         """Check flattening of a tensor array"""
         shape = (3,3,3)
         matrix = np.random.random(shape + (3,3))
-        a = Tensors.SymmetricSecondOrderTensor(matrix)
+        a = SecondOrderTensor(matrix)
         a_flat = a.flatten()
 
         # Fist, check that the shapes are consistent
