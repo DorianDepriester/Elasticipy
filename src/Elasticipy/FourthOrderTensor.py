@@ -1,6 +1,5 @@
 import numpy as np
 import re
-import os
 
 from Elasticipy.SecondOrderTensor import SymmetricSecondOrderTensor
 from Elasticipy.StressStrainTensors import StrainTensor, StressTensor
