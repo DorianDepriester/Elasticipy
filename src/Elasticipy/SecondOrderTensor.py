@@ -1061,7 +1061,7 @@ class SymmetricSecondOrderTensor(SecondOrderTensor):
         --------
         >>> from Elasticipy.SecondOrderTensor import SymmetricSecondOrderTensor
         >>> SymmetricSecondOrderTensor.from_Voigt([11, 22, 33, 23, 13, 12])
-        Second-order tensor
+        Symmetric second-order tensor
         [[11. 12. 13.]
          [12. 22. 23.]
          [13. 23. 33.]]
