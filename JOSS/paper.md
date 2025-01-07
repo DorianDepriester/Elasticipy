@@ -12,10 +12,10 @@ authors:
   - name: Dorian Depriester
     orcid: 0000-0002-2881-8942
     equal-contrib: false
-    affiliation: 1
+    affiliation: '1'
   - name: Régis Kubler
     orcid: 0000-0001-7781-5855
-    affiliation: 1
+    affiliation: '1'
 affiliations:
  - name: Arts et Métiers Institute of Technology, MSMP, Aix-en-Provence, F-13617, France
    index: 1
