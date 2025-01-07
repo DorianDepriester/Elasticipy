@@ -1025,6 +1025,28 @@ class SymmetricSecondOrderTensor(SecondOrderTensor):
             (mat[...,i,j]=mat[...,j,i]), or composed of slices of upper-diagonal matrices (mat[i,j]=0 for each i>j).
         force_symmetry : bool, optional
             If true, the symmetric part of the matrix will be used. It is mainly meant for debugging purpose.
+
+        Examples
+        --------
+        We can create a symmetric tensor by privoding the full matrix, as long it is symmetric:
+
+        >>> from Elasticipy.SecondOrderTensor import SymmetricSecondOrderTensor
+        >>> a = SymmetricSecondOrderTensor([[11, 12, 13],[12, 22, 23],[13, 23, 33]])
+        >>> print(a)
+        Symmetric second-order tensor
+        [[11. 12. 13.]
+         [12. 22. 23.]
+         [13. 23. 33.]]
+
+
+        Alternatively, we can pass the upper-diagonal part only:
+
+        >>> b = SymmetricSecondOrderTensor([[11, 12, 13],[0, 22, 23],[0, 0, 33]])
+
+        and check that a==b:
+
+        >>> a==b
+        True
         """
         mat = np.asarray(mat, dtype=float)
         mat_transposed = _transpose_matrix(mat)
@@ -1084,6 +1106,36 @@ class SkewSymmetricSecondOrderTensor(SecondOrderTensor):
     name = 'Skew-symmetric second-order tensor'
 
     def __init__(self, mat, force_skew_symmetry=False):
+        """Class constructor for skew-symmetric second-order tensors
+
+        Parameters
+        ----------
+        mat : list or numpy.ndarray
+            Input matrix, or slices of matrices. Each matrix should be skew-symmetric, or have zero-component on lower -
+            diagonal part (including the diagonal).
+
+        Examples
+        --------
+        One can construct a skew-symmetric tensor by providing the full skew-symmetric matrix:
+
+        >>> from Elasticipy.SecondOrderTensor import SkewSymmetricSecondOrderTensor
+        >>> a = SkewSymmetricSecondOrderTensor([[0, 12, 13],[-12, 0, 23],[-13, -23, 0]])
+        >>> print(a)
+        Skew-symmetric second-order tensor
+        [[  0.  12.  13.]
+         [-12.   0.  23.]
+         [-13. -23.   0.]]
+
+        Alternatively, one can pass the upper-diagonal part only:
+
+        >>> b = SkewSymmetricSecondOrderTensor([[0, 12, 13],[0, 0, 23],[0, 0, 0]])
+
+        and check that a==b:
+
+        >>> a==b
+        True
+
+        """
         mat = np.asarray(mat, dtype=float)
         mat_transposed = _transpose_matrix(mat)
         if np.all(np.isclose(mat, -mat_transposed)) or force_skew_symmetry:
