@@ -1255,29 +1255,20 @@ class StiffnessTensor(SymmetricTensor):
         Kr = 1 / (S[0,0] + S[1,1] + S[2,2] + 2 * (S[0,1] + S[0,2] + S[1,2]))
         return 5 * Gvoigt / Greuss + Kv / Kr - 6
 
-    def to_pymatgen(self, convert_GPa_to_eV=True):
+    def to_pymatgen(self):
         """
         Convert the stiffness tensor (from Elasticipy) to Python Materials Genomics (Pymatgen) format.
-
-        Parameters
-        ----------
-        convert_GPa_to_eV : bool, optional
-            If true, the components of the stiffness tensor (supposed to be in GPa) are converted to eV/A^3 (electron -
-            volt per cubic angstroms).
 
         Returns
         -------
         pymatgen.analysis.elasticity.elastic.ElasticTensor
+            Stiffness tensor for pymatgen
         """
         try:
             from pymatgen.analysis.elasticity import elastic as matgenElast
         except ImportError:
             raise ModuleNotFoundError('pymatgen module is required for this function.')
-        if convert_GPa_to_eV:
-            k = matgenElast.ElasticTensor.GPa_to_eV_A3
-        else:
-            k = 1.0
-        return matgenElast.ElasticTensor(self.full_tensor()*k)
+        return matgenElast.ElasticTensor(self.full_tensor())
 
 class ComplianceTensor(StiffnessTensor):
     """
@@ -1367,26 +1358,17 @@ class ComplianceTensor(StiffnessTensor):
         """
         return self.inv().universal_anisotropy
 
-    def to_pymatgen(self, convert_GPa_to_eV=True):
+    def to_pymatgen(self):
         """
         Convert the compliance tensor (from Elasticipy) to Python Materials Genomics (Pymatgen) format.
-
-        Parameters
-        ----------
-        convert_GPa_to_eV : bool, optional
-            If true, the components of the compliance tensor (supposed to be in per-GPa) are converted to A^3/eV
-            (cubic angstroms per electron-volt).
 
         Returns
         -------
         pymatgen.analysis.elasticity.elastic.Compliance
+            Compliance tensor for pymatgen
         """
         try:
             from pymatgen.analysis.elasticity import elastic as matgenElast
         except ImportError:
             raise ModuleNotFoundError('pymatgen module is required for this function.')
-        if convert_GPa_to_eV:
-            k = matgenElast.ElasticTensor.GPa_to_eV_A3
-        else:
-            k = 1.0
-        return matgenElast.ComplianceTensor(self.full_tensor()/k)
+        return matgenElast.ComplianceTensor(self.full_tensor())
