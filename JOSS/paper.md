@@ -17,13 +17,14 @@ authors:
     orcid: 0000-0001-7781-5855
     affiliation: '1'
 affiliations:
- - name: Arts et Métiers Institute of Technology, MSMP, Aix-en-Provence, F-13617, France
-   index: 1
+ - index: 1
+   name: Arts et Métiers Institute of Technology, MSMP, Aix-en-Provence, F-13617, France
    ror: 018pp1107
 date: 15 January 2025
 bibliography: paper.bib
 
 # Summary
+
 Elasticipy is a Python package designed to simplify the analysis of material elasticity properties. It enables the 
 computation, visualization, and analysis of elasticity tensors while incorporating crystal symmetries. By targeting a 
 diverse audience, Elasticipy is suitable for researchers, engineers, and educators looking to explore elastic behavior 
@@ -31,6 +32,7 @@ in materials. It is easy to install via PyPI and offers robust documentation, pr
 interface. 
 
 # Statement of Need
+
 Crystal elasticity analysis is crucial in fields such as materials science, physics, and engineering. Elasticity 
 tensors, which govern the stress-strain relationships in materials, are complex to compute and analyze, especially when 
 accounting for crystal symmetries. Existing software solutions often lack accessibility or do not fully support complex 
@@ -48,3 +50,5 @@ Unlike other software such as pymatgen [@pymatgen] or [@elate], Elasticipy empha
 integration with existing Python workflows. Its modular design and comprehensive documentation make it accessible for 
 both experts and non-specialists. In addition, it introduces the concept of *tensor arrays*, allowing to process thousands of tensors
 at once (e.g. rotation of tensors) in a user-friendly and highly efficient way.
+
+# References
