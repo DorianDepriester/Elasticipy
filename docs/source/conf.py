@@ -41,4 +41,5 @@ language = 'english'
 html_theme = "sphinx_rtd_theme"
 html_static_path = ['../_static']
 numpydoc_class_members_toctree = False
+autoclass_content = 'both'
 
