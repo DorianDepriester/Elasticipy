@@ -20,7 +20,7 @@ jobs:
             python-version: "3.12"
 
       - name: Install dependencies
-        run: pip install pytest pytest-cov pandas
+        run: pip install pytest pytest-cov pymatgen
 
       - name: Install project and its dependencies
         run: pip install -e .[dev]  # Installe Elasticipy et les dépendances dev
