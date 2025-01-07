@@ -1008,6 +1008,24 @@ class SecondOrderTensor:
                 matrix[:, i, j] = df[key]
         return cls(matrix)
 
+    def to_pymatgen(self):
+        try:
+            from Elasticipy.StressStrainTensors import StrainTensor, StressTensor
+            if isinstance(self, StrainTensor):
+                from pymatgen.analysis.elasticity import Strain as Constructor
+            elif isinstance(self, StressTensor):
+                from pymatgen.analysis.elasticity import Stress as Constructor
+            else:
+                from pymatgen.core.tensors import Tensor as Constructor
+        except ImportError:
+            raise ModuleNotFoundError('Module pymatgen is required for this function.')
+        if self.ndim > 1:
+            raise ValueError('The array must be flattened (1D tensor array) before converting to pytmatgen.')
+        if self.shape:
+            return [Constructor(self[i].matrix) for i in range(self.shape[0])]
+        else:
+            return Constructor(self.matrix)
+
 class SymmetricSecondOrderTensor(SecondOrderTensor):
     voigt_map = [1, 1, 1, 1, 1, 1]
     "List of factors to use for building a tensor from Voigt vector(s)"
