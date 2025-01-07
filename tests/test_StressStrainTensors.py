@@ -7,6 +7,7 @@ from Elasticipy.FourthOrderTensor import StiffnessTensor
 import Elasticipy.StressStrainTensors as Tensors
 from Elasticipy.SecondOrderTensor import SecondOrderTensor, SymmetricSecondOrderTensor, SkewSymmetricSecondOrderTensor
 from Elasticipy.StressStrainTensors import StrainTensor
+from pymatgen.analysis.elasticity import Strain as mgStrain
 
 Cmat = [[231, 127, 104, 0, -18, 0],
         [127, 240, 131, 0, 1, 0],
@@ -545,6 +546,33 @@ class TestStressStrainTensors(unittest.TestCase):
         rotations = Rotation.random(100)
         assert isinstance(strain * rotations, StrainTensor)
         assert isinstance(spin * rotations, SkewSymmetricSecondOrderTensor)
+
+    def test_to_pymatgen(self):
+        """Test convertion from Elasticipy to pymatgen"""
+        # First, try with a single tensor
+        a = np.random.random((3, 3))
+        a_sym = a + a.T
+        strain = StrainTensor(a_sym)
+        Strain_pymatgen = strain.to_pymatgen()
+        np.testing.assert_array_equal(Strain_pymatgen.__array__(), a_sym)
+
+        # Now try with a 1D array
+        n = 10
+        a=np.random.random((n, 3, 3))
+        a_sym = a + np.swapaxes(a, -1, -2)
+        strain = StrainTensor(a_sym)
+        Strain_pymatgen = strain.to_pymatgen()
+        for i in range(n):
+            np.testing.assert_array_equal(Strain_pymatgen[i].__array__(), a_sym[i])
+
+        # Finally, try with a multidimensional array
+        a = np.random.random((n, n, 3, 3))
+        a_sym = a + np.swapaxes(a, -1, -2)
+        strain = StrainTensor(a_sym)
+        expected_error = 'The array must be flattened (1D tensor array) before converting to pytmatgen.'
+        with self.assertRaises(ValueError) as context:
+            _ = strain.to_pymatgen()
+        self.assertEqual(str(context.exception), expected_error)
 
 if __name__ == '__main__':
     unittest.main()
