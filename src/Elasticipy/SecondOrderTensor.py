@@ -1009,6 +1009,24 @@ class SecondOrderTensor:
         return cls(matrix)
 
     def to_pymatgen(self):
+        """
+        Convert the second order object into an object compatible with pymatgen.
+
+        The object to use must be either a single tensor, or a flat tensor array. In the latter case, the output will be
+        a list of pymatgen's tensors.
+
+        Returns
+        -------
+        pymatgen.analysis.elasticity.Strain, pymatgen.analysis.elasticity.Stress, pymatgen.core.tensors.Tensor or list
+            The type of output depends on the type of object to use:
+                - if the object is of class StrainTensor, the output will be of class pymatgen.analysis.elasticity.Strain
+                - if the object is of class StressTensor, the output will be of class pymatgen.analysis.elasticity.Stress
+                - otherwise, the output will be of class pymatgen.core.tensors.Tensor
+
+        See Also
+        --------
+        flatten : Converts a tensor array to 1D tensor array
+        """
         try:
             from Elasticipy.StressStrainTensors import StrainTensor, StressTensor
             if isinstance(self, StrainTensor):
