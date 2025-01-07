@@ -1342,3 +1342,27 @@ class ComplianceTensor(StiffnessTensor):
             Universal anisotropy factor
         """
         return self.inv().universal_anisotropy
+
+    def to_pymatgen(self, convert_GPa_to_eV=True):
+        """
+        Convert the compliance tensor (from Elasticipy) to Python Materials Genomics (Pymatgen) format.
+
+        Parameters
+        ----------
+        convert_GPa_to_eV : bool, optional
+            If true, the components of the compliance tensor (supposed to be in per-GPa) are converted to A^3/eV
+            (cubic angstroms per electron-volt).
+
+        Returns
+        -------
+        pymatgen.analysis.elasticity.elastic.Compliance
+        """
+        try:
+            from pymatgen.analysis.elasticity import elastic as matgenElast
+        except ImportError:
+            raise ModuleNotFoundError('pymatgen module is required for this function.')
+        if convert_GPa_to_eV:
+            k = matgenElast.ElasticTensor.GPa_to_eV_A3
+        else:
+            k = 1.0
+        return matgenElast.ComplianceTensor(self.full_tensor()/k)
