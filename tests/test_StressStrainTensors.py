@@ -6,8 +6,8 @@ from scipy.spatial.transform import Rotation
 from Elasticipy.FourthOrderTensor import StiffnessTensor
 import Elasticipy.StressStrainTensors as Tensors
 from Elasticipy.SecondOrderTensor import SecondOrderTensor, SymmetricSecondOrderTensor, SkewSymmetricSecondOrderTensor
-from Elasticipy.StressStrainTensors import StrainTensor
-from pymatgen.analysis.elasticity import Strain as mgStrain
+from Elasticipy.StressStrainTensors import StrainTensor, StressTensor
+from pymatgen.analysis.elasticity import Strain as mgStrain, Stress as mgStress
 
 Cmat = [[231, 127, 104, 0, -18, 0],
         [127, 240, 131, 0, 1, 0],
@@ -559,21 +559,26 @@ class TestStressStrainTensors(unittest.TestCase):
 
         # Now try with a 1D array
         n = 10
-        a=np.random.random((n, 3, 3))
-        a_sym = a + np.swapaxes(a, -1, -2)
-        strain = StrainTensor(a_sym)
+        b = np.random.random((n, 3, 3))
+        b_sym = b + np.swapaxes(b, -1, -2)
+        strain = StrainTensor(b_sym)
         Strain_pymatgen = strain.to_pymatgen()
         for i in range(n):
-            np.testing.assert_array_equal(Strain_pymatgen[i].__array__(), a_sym[i])
+            np.testing.assert_array_equal(Strain_pymatgen[i].__array__(), b_sym[i])
 
         # Finally, try with a multidimensional array
-        a = np.random.random((n, n, 3, 3))
-        a_sym = a + np.swapaxes(a, -1, -2)
-        strain = StrainTensor(a_sym)
+        c = np.random.random((n, n, 3, 3))
+        c_sym = c + np.swapaxes(c, -1, -2)
+        strain = StrainTensor(c_sym)
         expected_error = 'The array must be flattened (1D tensor array) before converting to pytmatgen.'
         with self.assertRaises(ValueError) as context:
             _ = strain.to_pymatgen()
         self.assertEqual(str(context.exception), expected_error)
+
+        # Now check that this also works for stress
+        stress = StressTensor(a_sym)
+        stress_pymatgen = stress.to_pymatgen()
+        assert isinstance(stress_pymatgen, mgStress)
 
 if __name__ == '__main__':
     unittest.main()
