@@ -8,6 +8,7 @@ from scipy.spatial.transform import Rotation
 from Elasticipy.FourthOrderTensor import _indices2str
 from Elasticipy.CrystalSymmetries import SYMMETRIES
 from Elasticipy.StressStrainTensors import StressTensor
+from pymatgen.analysis.elasticity import elastic as mg
 
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -426,6 +427,19 @@ class TestStiffnessConstructor(unittest.TestCase):
         e1 = stress.elastic_energy(strain)
         e2 = strain.elastic_energy(stress)
         np.testing.assert_approx_equal(e1, e2)
+
+
+    def test_to_pymatgen(self):
+        """Test exporting stiffness and compliance to pymatgen format"""
+        C = S.inv()
+        Cvrh = C.Hill_average()
+        Cvrh_pymatgen = mg.ElasticTensor(Cvrh.full_tensor())
+        C_pymatgen = mg.ElasticTensor(C.full_tensor())
+        assert Cvrh_pymatgen.y_mod == approx(Cvrh.Young_modulus.mean()*1e9)
+        assert C_pymatgen.g_vrh == approx(Cvrh.shear_modulus.mean())
+
+        S_pymatgen = S.to_pymatgen()
+        np.testing.assert_array_almost_equal(S_pymatgen.voigt, np.linalg.inv(C_pymatgen.voigt))
 
 if __name__ == '__main__':
     unittest.main()
