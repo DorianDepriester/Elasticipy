@@ -555,6 +555,7 @@ class TestStressStrainTensors(unittest.TestCase):
         strain = StrainTensor(a_sym)
         Strain_pymatgen = strain.to_pymatgen()
         np.testing.assert_array_equal(Strain_pymatgen.__array__(), a_sym)
+        assert isinstance(Strain_pymatgen, mgStrain)
 
         # Now try with a 1D array
         n = 10
