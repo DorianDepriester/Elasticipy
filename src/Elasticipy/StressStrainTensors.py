@@ -49,6 +49,18 @@ class StrainTensor(SymmetricSecondOrderTensor):
         """
         return 0.5 * self.ddot(stress)
 
+    def to_pymatgen(self):
+        try:
+            from pymatgen.analysis.elasticity import Strain as mgStrain
+        except ImportError:
+            raise ModuleNotFoundError('Module pymatgen is required for this function.')
+        if self.ndim > 1:
+            raise ValueError('The array must be flattened (1D tensor array) before converting to pytmatgen.')
+        if self.shape:
+            return [mgStrain(self[i].matrix) for i in range(self.shape[0])]
+        else:
+            return mgStrain(self.matrix)
+
 class StressTensor(SymmetricSecondOrderTensor):
     """
     Class for manipulating stress tensors or arrays of stress tensors.
