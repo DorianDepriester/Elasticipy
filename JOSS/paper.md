@@ -11,6 +11,7 @@ tags:
 authors:
   - name: Dorian Depriester
     orcid: 0000-0002-2881-8942
+    equal-contrib: false
     affiliation: '1'
   - name: Régis Kubler
     orcid: 0000-0001-7781-5855
@@ -18,7 +19,8 @@ authors:
 affiliations:
  - index: 1
    name: Arts et Métiers Institute of Technology, MSMP, Aix-en-Provence, F-13617, France
-date: 2025-01-15
+   ror: 018pp1107
+date: 15 January 2025
 bibliography: paper.bib
 
 # Summary
