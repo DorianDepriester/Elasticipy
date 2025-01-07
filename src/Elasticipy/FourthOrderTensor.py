@@ -1335,7 +1335,7 @@ class ComplianceTensor(StiffnessTensor):
         return self.inv().Voigt_average().inv()
 
     def Hill_average(self):
-        return self.inv().Hill_average()
+        return self.inv().Hill_average().inv()
 
     @classmethod
     def isotropic(cls, E=None, nu=None, lame1=None, lame2=None, phase_name=None):
