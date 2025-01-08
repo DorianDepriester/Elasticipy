@@ -581,6 +581,7 @@ class TestStressStrainTensors(unittest.TestCase):
         assert isinstance(stress_pymatgen, mgStress)
 
     def test_rand(self):
+        """Test uniform random generation"""
         # Test two ways to define a rand tensor
         shape = (5,4)
         seed = 1324 # Ensure reproducibility
@@ -590,6 +591,7 @@ class TestStressStrainTensors(unittest.TestCase):
         assert np.all(t1==t2)
 
     def test_randn(self):
+        """Test normal random distribution"""
         shape = (50, 40, 30)
         mean = np.random.random((3,3))
         std = np.random.random((3,3))
