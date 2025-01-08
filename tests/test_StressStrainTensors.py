@@ -602,6 +602,15 @@ class TestStressStrainTensors(unittest.TestCase):
         np.testing.assert_array_almost_equal(tmean.matrix, mean, decimal=tol)
         np.testing.assert_array_almost_equal(tstd.matrix, std, decimal=tol)
 
+    def test_inv(self):
+        """Test inverse method"""
+        shape = (3,4)
+        matrix = np.random.random(shape + (3,3))
+        t = SecondOrderTensor(matrix)
+        tinv = t.inv()
+        for i in range(shape[0]):
+            for j in range(shape[1]):
+                np.testing.assert_array_almost_equal(tinv[i,j].matrix, np.linalg.inv(matrix[i,j]))
 
 if __name__ == '__main__':
     unittest.main()
