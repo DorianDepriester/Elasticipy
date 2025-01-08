@@ -580,5 +580,26 @@ class TestStressStrainTensors(unittest.TestCase):
         stress_pymatgen = stress.to_pymatgen()
         assert isinstance(stress_pymatgen, mgStress)
 
+    def test_rand(self):
+        # Test two ways to define a rand tensor
+        shape = (5,4)
+        seed = 1324 # Ensure reproducibility
+        t1 = SecondOrderTensor.rand(shape=shape, seed=seed)
+        rng = np.random.default_rng(seed)
+        t2 = SecondOrderTensor(rng.random(shape + (3,3)))
+        assert np.all(t1==t2)
+
+    def test_randn(self):
+        shape = (50, 40, 30)
+        mean = np.random.random((3,3))
+        std = np.random.random((3,3))
+        t = SecondOrderTensor.randn(mean=mean, std=std, shape=shape)
+        tmean = t.mean()
+        tstd = t.std()
+        tol = 1e-5
+        np.testing.assert_array_almost_equal(tmean.matrix, mean, decimal=tol)
+        np.testing.assert_array_almost_equal(tstd.matrix, std, decimal=tol)
+
+
 if __name__ == '__main__':
     unittest.main()
