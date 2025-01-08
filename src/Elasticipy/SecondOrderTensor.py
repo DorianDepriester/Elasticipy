@@ -853,6 +853,10 @@ class SecondOrderTensor:
             a = _symmetric_part(a)
         return cls(a)
 
+    def inv(self):
+        """Compute the reciprocal (inverse) tensor"""
+        return SecondOrderTensor(np.linalg.inv(self.matrix))
+
     @classmethod
     def randn(cls, mean=np.zeros((3,3)), std=np.ones((3,3)), shape=None, seed=None):
         """
