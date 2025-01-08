@@ -849,6 +849,8 @@ class SecondOrderTensor:
             shape = shape + (3,3)
         rng = np.random.default_rng(seed)
         a = rng.random(shape)
+        if issubclass(cls, SymmetricSecondOrderTensor):
+            a = _symmetric_part(a)
         return cls(a)
 
     @classmethod
@@ -883,6 +885,8 @@ class SecondOrderTensor:
         for i in range(0,3):
             for j in range(0,3):
                 mat[...,i,j] = rng.normal(mean[i,j], std[i,j], shape)
+        if issubclass(cls, SymmetricSecondOrderTensor):
+            mat = _symmetric_part(mat)
         return cls(mat)
 
     @classmethod
