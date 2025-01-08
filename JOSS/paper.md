@@ -34,10 +34,11 @@ interface.
 
 # Statement of Need
 
-Crystal elasticity analysis is crucial in fields such as materials science, physics, and engineering. Elasticity 
+Materials elasticity analysis is crucial in fields such as materials science, physics, and engineering. Elasticity 
 tensors, which govern the stress-strain relationships in materials, are complex to compute and analyze, especially when 
-accounting for crystal symmetries. Existing software solutions often lack accessibility or do not fully support complex 
-symmetry operations, making them challenging for non-specialist users or those seeking rapid prototyping and analysis.
+accounting for crystal or material symmetries. Existing software solutions often lack accessibility or do not fully 
+support complex symmetry operations, making them challenging for non-specialist users or those seeking rapid prototyping
+and analysis.
 
 Elasticipy addresses this gap by providing:
 
@@ -47,9 +48,10 @@ Elasticipy addresses this gap by providing:
 
   - Visualization tools for understanding directional elastic behavior.
 
-Unlike other software such as pymatgen [@pymatgen] or [@elate], Elasticipy emphasizes ease of use, flexibility, and 
+Unlike other software such as pymatgen [@pymatgen] or Elate [@elate], Elasticipy emphasizes ease of use, flexibility, and 
 integration with existing Python workflows. Its modular design and comprehensive documentation make it accessible for 
-both experts and non-specialists. In addition, it introduces the concept of *tensor arrays*, allowing to process thousands of tensors
-at once (e.g. rotation of tensors) in a user-friendly and highly efficient way.
+both experts and non-specialists. In addition, it introduces the concept of *tensor arrays*, allowing to process 
+thousands of tensors at once (e.g. rotation of tensors) in a user-friendly and highly efficient way, in a similar way as
+in MTEX [@pymatgen].
 
 # References
