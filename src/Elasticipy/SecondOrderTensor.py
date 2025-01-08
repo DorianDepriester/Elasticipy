@@ -807,6 +807,85 @@ class SecondOrderTensor:
         return cls(mat)
 
     @classmethod
+    def rand(cls, shape=None, seed=None):
+        """
+        Generate a tensor array, populated with random uniform values in [0,1).
+
+        Parameters
+        ----------
+        shape : tuple, optional
+            Shape of the tensor array. If not provided, a single tensor is returned
+        seed : int, optional
+            Sets the seed for random generation. Useful to ensure reproducibility
+
+        Returns
+        -------
+        SecondOrderTensor
+            Tensor or tensor array of uniform random value
+
+        See Also
+        --------
+        randn : Generate a random sample of tensors whose components follows a normal distribution
+
+        Examples
+        --------
+        Generate a single random tensor:
+
+        >>> from Elasticipy.SecondOrderTensor import SecondOrderTensor as tensor
+        >>> tensor.rand(seed=123)
+        Second-order tensor
+        [[0.68235186 0.05382102 0.22035987]
+         [0.18437181 0.1759059  0.81209451]
+         [0.923345   0.2765744  0.81975456]]
+
+        Now try with tensor array:
+        >>> t = tensor.rand(shape=(100,50))
+        >>> t.shape
+        (100,50)
+        """
+        if shape is None:
+            shape = (3,3)
+        else:
+            shape = shape + (3,3)
+        rng = np.random.default_rng(seed)
+        a = rng.random(shape)
+        return cls(a)
+
+    @classmethod
+    def randn(cls, mean=np.zeros((3,3)), std=np.ones((3,3)), shape=None, seed=None):
+        """
+        Generate a tensor array, populated with components follow a normal distribution.
+
+        Parameters
+        ----------
+        mean : list of numpy.ndarray, optional
+            (3,3) matrix providing the mean values of the components.
+        std : list of numpy.ndarray, optional
+            (3,3) matrix providing the standard deviations of the components.
+        shape : tuple, optional
+            Shape of the tensor array
+        seed : int, optional
+            Sets the seed for random generation. Useful to ensure reproducibility
+
+        Returns
+        -------
+        SecondOrderTensor
+            Tensor or tensor array of normal random value
+        """
+        if shape is None:
+            new_shape = (3,3)
+        else:
+            new_shape = shape + (3,3)
+        rng = np.random.default_rng(seed)
+        mat = np.zeros(new_shape)
+        mean = np.asarray(mean)
+        std = np.asarray(std)
+        for i in range(0,3):
+            for j in range(0,3):
+                mat[...,i,j] = rng.normal(mean[i,j], std[i,j], shape)
+        return cls(mat)
+
+    @classmethod
     def shear(cls, u, v, magnitude):
         """
         Create an array of tensors corresponding to shear state along two orthogonal directions.
