@@ -33,9 +33,9 @@ analyze these tensors, simplifying workflows for materials scientists an enginee
 # Statement of Need
 
 In continuum mechanics, the deformation of a material is described by the second-order strain tensor (usually denoted 
-$\mathbf{\varepsilon}$) whereas the stress is described by the second-order Cauchy's stress tensor ($\mathbf{\sigma}$).
-Under the linear elasticity assumption, the relationship between the $\mathbf{\varepsilon}$ and $\mathbf{\sigma}$ is 
-given through the fourth-order stiffness tensor $\mathbf{C}$ with:
+$\boldsymbol{\varepsilon}$) whereas the stress is described by the second-order Cauchy's stress tensor 
+($\boldsymbol{\sigma}$). Under the linear elasticity assumption, the relationship between the $\boldsymbol{\varepsilon}$
+and $\mathbf{\sigma}$ is given through the fourth-order stiffness tensor $\mathbf{C}$ with:
 
 $$\sigma_{ij}=C_{ijk\ell}\varepsilon_{k\ell}$$
 
