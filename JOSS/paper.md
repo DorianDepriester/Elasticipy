@@ -26,11 +26,9 @@ bibliography: paper.bib
 
 # Summary
 
-Elasticipy is a Python package designed to simplify the analysis of material elasticity properties. It enables the 
-computation, visualization, and analysis of elasticity tensors while incorporating crystal symmetries. By targeting a 
-diverse audience, Elasticipy is suitable for researchers, engineers, and educators looking to explore elastic behavior 
-in materials. It is easy to install via PyPI and offers robust documentation, practical tutorials, and a user-friendly 
-interface. 
+Elasticipy is a Python library designed to streamline the computation of elasticity tensors for materials and 
+crystalline materials, taking their specific symmetries into account. It provides tools to manipulate, visualize, and 
+analyze these tensors, simplifying workflows for materials scientists an engineers.
 
 # Statement of Need
 
@@ -42,25 +40,25 @@ and analysis.
 
 Elasticipy addresses this gap by providing:
 
-  - Intuitive Python-based APIs for defining and manipulating elasticity tensors.
+  - Intuitive Python-based APIs for defining and manipulating second- and fourth-order tensors, such as strain, stress
+and stiffness.
 
   - Support for standard crystal symmetry groups [@nye] to facilitate the definition of stiffness/compliance components. 
 
   - Visualization tools for understanding directional elastic behavior.
 
-Unlike other software such as pymatgen [@pymatgen] or Elate [@elate], Elasticipy emphasizes ease of use, flexibility, 
-and integration with existing Python workflows. Its modular design and comprehensive documentation make it accessible 
-for both experts and non-specialists. In addition, it introduces the concept of *tensor arrays*, allowing to process 
-thousands of tensors at once (e.g. rotation of tensors) in a user-friendly and highly efficient way, in a similar way as
-in MTEX [@pymatgen]. In order to highlight the performances of Elasticipy, \autoref{fig:compa} shows wall-time required 
-to compute the stress from the elastic strain (through the fourth-order stiffness tensor) and that for evaluating the von 
-Mises equivalent stress, as a function of the number of tensors to consider. This evidences that basic operations on 
-tensors are 1 to 2 orders of magnitude faster when using Elasticipy than when using pymatgen's implementation.
+Unlike other softwares such as pymatgen [@pymatgen] or Elate [@elate], Elasticipy emphasizes ease of use, flexibility, 
+and integration with existing Python workflows. In addition, it introduces the concept of *tensor arrays*, in a similar 
+way as in MTEX [@MTEX], allowing to process thousands of tensors at once (e.g. rotation of tensors) with simple syntax 
+and highly efficient way. In order to highlight the performances of Elasticipy, \autoref{fig:compa} shows the wall-time 
+required to perform two basic operations on tensors, as a function of the number of considered tensors. This evidences 
+that, when processing large number of tensors ($>10^3$), basic operations on tensors are 1 to 2 orders of magnitude 
+faster when using Elasticipy than when using pymatgen's implementation.
 
 ![Performance comparison between Elasticipy and pymatgen.\label{fig:compa}](ElasticipyVSpymatgen.png){ width=75% }
 
 Nevertheless, as tensor algebra is not the core of pymatgen, efforts have been made to allow conversions from pymatgen 
-to Elasticipy, and vice versa. It also allows direct imports of material data from 
-[the Materials Project](https://next-gen.materialsproject.org/) [@MaterialsProject] through its API.
+to Elasticipy, and vice versa. It also allows direct imports of elastic data from 
+[the Materials Project](https://next-gen.materialsproject.org/) [@MaterialsProject].
 
 # References
