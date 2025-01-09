@@ -10,7 +10,6 @@ from Elasticipy.CrystalSymmetries import SYMMETRIES
 from Elasticipy.StressStrainTensors import StressTensor
 from pymatgen.analysis.elasticity import elastic as mg
 
-
 current_dir = os.path.dirname(os.path.abspath(__file__))
 file_path = os.path.join(current_dir, 'MaterialsProject.json')
 data_base = pd.read_json(file_path)
@@ -448,5 +447,15 @@ class TestStiffnessConstructor(unittest.TestCase):
         C_Cu = StiffnessTensor.cubic(C11=186, C12=134, C44=77)
         np.testing.assert_array_almost_equal(C.matrix, C_Cu.matrix)
 
+    def test_getitem(self):
+        """Test indexing of stiffness tensor"""
+        S_rotated = S * rotations
+        S1 = S_rotated[0]
+        S2 = S * rotations[0]
+        np.testing.assert_array_almost_equal(S1.matrix, S2.matrix)
+        expected_error = 'The tensor has no orientation, therefore it cannot be indexed.'
+        with self.assertRaises(IndexError) as context:
+            _ = S[0]
+        self.assertEqual(str(context.exception), expected_error)
 if __name__ == '__main__':
     unittest.main()
