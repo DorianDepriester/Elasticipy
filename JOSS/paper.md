@@ -54,8 +54,12 @@ for both experts and non-specialists. In addition, it introduces the concept of 
 thousands of tensors at once (e.g. rotation of tensors) in a user-friendly and highly efficient way, in a similar way as
 in MTEX [@pymatgen]. In order to highlight the performances of Elasticipy, \autoref{fig:compa} shows CPU required to 
 compute the stress from the elastic strain (through the fourth-order stiffness tensor) and that for evaluating the von 
-Mises equivalent stress, as a function of the number of tensor to consider.
+Mises equivalent stress, as a function of the number of tensors to consider. This evidences that basic operations on 
+tensors is 1 to 2 orders of magnitude faster when using Elasticipy than when using pymatgen implementation.
 
 ![Performance comparison between Elasticipy and pymatgen.\label{fig:compa}](ElasticipyVSpymatgen.png){ width=75% }
+
+Nevertheless, as tensor algebra is not the core of pymatgen, efforts have been made to allow conversions from pymatgen 
+to Elasticipy, and vice versa.
 
 # References
