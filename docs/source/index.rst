@@ -29,6 +29,10 @@ Welcome to Elasticipy's Documentation!
    :alt: coverage
    :target: https://codecov.io/gh/DorianDepriester/Elasticipy
 
+.. image:: https://img.shields.io/pypi/pyversions/Elasticipy
+   :alt: PyPI - Python Version
+
+
 
 Purpose of this package
 -----------------------

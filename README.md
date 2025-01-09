@@ -5,6 +5,8 @@
 [![ReadTheDoc](https://readthedocs.org/projects/elasticipy/badge/?version=latest)](https://elasticipy.readthedocs.io/)
 [![DOI](https://zenodo.org/badge/876162900.svg)](https://doi.org/10.5281/zenodo.14501849)
 [![codecov](https://codecov.io/gh/DorianDepriester/Elasticipy/graph/badge.svg?token=VUZPEUPBH1)](https://codecov.io/gh/DorianDepriester/Elasticipy)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/Elasticipy)
+
 
 
 A python toolkit to manipulate strain and strain tensors, and other linear elasticity-related tensors (e.g. stiffness). 
