@@ -55,6 +55,6 @@ thousands of tensors at once (e.g. rotation of tensors) in a user-friendly and h
 in MTEX [@pymatgen]. In order to highlight the performances of Elasticipy, \autoref{fig:compa} shows CPU required to 
 compute the stress from the elastic strain (through the fourth-order stiffness tensor) and that for evaluating the von 
 Mises equivalent stress, as a function of the number of tensor to consider.
-![Performance comparison between Elasticipy and pymatgen.\label{fig:compa}](ElasticipyVSpymatgen.png)
+![Performance comparison between Elasticipy and pymatgen.\label{fig:compa}](ElasticipyVSpymatgen.png){width=75%}
 
 # References
