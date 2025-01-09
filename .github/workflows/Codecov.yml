@@ -31,6 +31,9 @@ jobs:
         run: pip install -e .[dev]  # Installe Elasticipy et les dépendances dev
 
       - name: Run tests
+        env:
+          MP_API_KEY: ${{ secrets.MP_TOKEN }}
+
         run: pytest tests
 
       - name: Upload results to Codecov
