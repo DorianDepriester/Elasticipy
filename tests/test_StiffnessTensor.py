@@ -441,5 +441,12 @@ class TestStiffnessConstructor(unittest.TestCase):
         S_pymatgen = S.to_pymatgen()
         np.testing.assert_array_almost_equal(S_pymatgen.voigt, np.linalg.inv(C_pymatgen.voigt))
 
+    def test_MaterialsProject(self):
+        """Test import from the Materials Project"""
+        # Try with cubic Cu
+        C = StiffnessTensor.from_MP("mp-30")
+        C_Cu = StiffnessTensor.cubic(C11=186, C12=134, C44=77)
+        np.testing.assert_array_almost_equal(C.matrix, C_Cu.matrix)
+
 if __name__ == '__main__':
     unittest.main()
