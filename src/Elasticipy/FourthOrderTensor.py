@@ -6,6 +6,7 @@ from Elasticipy.StressStrainTensors import StrainTensor, StressTensor
 from Elasticipy.SphericalFunction import SphericalFunction, HyperSphericalFunction
 from scipy.spatial.transform import Rotation
 from Elasticipy.CrystalSymmetries import SYMMETRIES
+from copy import deepcopy
 
 
 def _parse_tensor_components(prefix, **kwargs):
@@ -186,6 +187,11 @@ class SymmetricTensor:
         k, ell = unvoigt_index(kl).T
         rotated_matrix = rotated_tensor[i, j, k, ell] * self.voigt_map[ij, kl]
         return self.__class__(rotated_matrix)
+
+    def _unrotate(self):
+        unrotated_tensor = deepcopy(self)
+        unrotated_tensor.orientations = None
+        return unrotated_tensor
 
     def __add__(self, other):
         if isinstance(other, np.ndarray):
@@ -709,6 +715,12 @@ class SymmetricTensor:
 
         # Return the reconstructed object
         return cls(matrix, phase_name=phase_name, symmetry=symmetry)
+
+    def __getitem__(self, item):
+        if self.orientations is None:
+            raise IndexError('The tensor has no orientation, therefore it cannot be indexed.')
+        else:
+            return self._unrotate()*self.orientations[item]
 
 class StiffnessTensor(SymmetricTensor):
     """
