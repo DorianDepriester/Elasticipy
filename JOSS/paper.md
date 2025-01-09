@@ -41,9 +41,9 @@ and analysis.
 Elasticipy addresses this gap by providing:
 
   - Intuitive Python-based APIs for defining and manipulating second- and fourth-order tensors, such as strain, stress
-and stiffness.
+and stiffness;
 
-  - Support for standard crystal symmetry groups [@nye] to facilitate the definition of stiffness/compliance components. 
+  - Support for standard crystal symmetry groups [@nye] to facilitate the definition of stiffness/compliance components; 
 
   - Visualization tools for understanding directional elastic behavior.
 
@@ -51,7 +51,7 @@ Unlike other softwares such as pymatgen [@pymatgen] or Elate [@elate], Elasticip
 and integration with existing Python workflows. In addition, it introduces the concept of *tensor arrays*, in a similar 
 way as in MTEX [@MTEX], allowing to process thousands of tensors at once (e.g. rotation of tensors) with simple syntax 
 and highly efficient way. In order to highlight the performances of Elasticipy, \autoref{fig:compa} shows the wall-time 
-required to perform two basic operations on tensors, as a function of the number of considered tensors. This evidences 
+required to perform two basic operations on tensors, as functions of the number of considered tensors. This evidences 
 that, when processing large number of tensors ($>10^3$), basic operations on tensors are 1 to 2 orders of magnitude 
 faster when using Elasticipy than when using pymatgen's implementation.
 
