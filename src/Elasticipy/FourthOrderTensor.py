@@ -1214,13 +1214,15 @@ class StiffnessTensor(SymmetricTensor):
         if np.all([isinstance(a, ComplianceTensor) for a in Cs]):
             Cs = [C.inv() for C in Cs]
         if np.all([isinstance(a, StiffnessTensor) for a in Cs]):
+            C_stack = np.array([C.matrix for C in Cs])
             method = method.capitalize()
             if method == 'Voigt':
-                return np.average(Cs, weights=volume_fractions)
+                C_avg = np.average(C_stack, weights=volume_fractions, axis=0)
+                return StiffnessTensor(C_avg)
             elif method == 'Reuss':
-                Ss = [C.inv() for C in Cs]
-                S_average = np.average(Ss, weights=volume_fractions)
-                return S_average.inv()
+                S_stack = np.linalg.inv(C_stack)
+                S_avg = np.average(S_stack, weights=volume_fractions, axis=0)
+                return StiffnessTensor(np.linalg.inv(S_avg))
             elif method == 'Hill':
                 C_voigt = cls.weighted_average(Cs, volume_fractions, 'Voigt')
                 C_reuss = cls.weighted_average(Cs, volume_fractions, 'Reuss')
