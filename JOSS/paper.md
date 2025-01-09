@@ -52,14 +52,15 @@ Unlike other software such as pymatgen [@pymatgen] or Elate [@elate], Elasticipy
 and integration with existing Python workflows. Its modular design and comprehensive documentation make it accessible 
 for both experts and non-specialists. In addition, it introduces the concept of *tensor arrays*, allowing to process 
 thousands of tensors at once (e.g. rotation of tensors) in a user-friendly and highly efficient way, in a similar way as
-in MTEX [@pymatgen]. In order to highlight the performances of Elasticipy, \autoref{fig:compa} shows CPU required to 
-compute the stress from the elastic strain (through the fourth-order stiffness tensor) and that for evaluating the von 
+in MTEX [@pymatgen]. In order to highlight the performances of Elasticipy, \autoref{fig:compa} shows wall-time required 
+to compute the stress from the elastic strain (through the fourth-order stiffness tensor) and that for evaluating the von 
 Mises equivalent stress, as a function of the number of tensors to consider. This evidences that basic operations on 
-tensors is 1 to 2 orders of magnitude faster when using Elasticipy than when using pymatgen implementation.
+tensors are 1 to 2 orders of magnitude faster when using Elasticipy than when using pymatgen's implementation.
 
 ![Performance comparison between Elasticipy and pymatgen.\label{fig:compa}](ElasticipyVSpymatgen.png){ width=75% }
 
 Nevertheless, as tensor algebra is not the core of pymatgen, efforts have been made to allow conversions from pymatgen 
-to Elasticipy, and vice versa.
+to Elasticipy, and vice versa. It also allows direct imports of material data from 
+[the Materials Project](https://next-gen.materialsproject.org/) [@MaterialsProject] through its API.
 
 # References
