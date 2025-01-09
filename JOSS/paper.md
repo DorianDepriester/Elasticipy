@@ -57,8 +57,8 @@ faster when using Elasticipy than pymatgen.
 
 ![Performance comparison between Elasticipy and pymatgen.\label{fig:compa}](ElasticipyVSpymatgen.png){ width=75% }
 
-Nevertheless, as tensor algebra is not the core of pymatgen, efforts have been made to allow conversions from pymatgen 
-to Elasticipy, and vice versa. It also allows direct imports of elastic data from 
+Nevertheless, as tensor algebra is not the core of pymatgen, Elasticipy supports conversion to pymatgen, and vice versa. 
+It also allows direct imports of elastic data from 
 [the Materials Project](https://next-gen.materialsproject.org/) [@MaterialsProject].
 
 # References
