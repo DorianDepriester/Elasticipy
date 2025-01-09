@@ -32,7 +32,7 @@ analyze these tensors, simplifying workflows for materials scientists an enginee
 
 # Statement of Need
 
-Materials elasticity analysis is crucial in fields such as materials science, physics, and engineering. Elasticity 
+Strain analysis is crucial in fields such as materials science and engineering. Elasticity 
 tensors, which govern the stress-strain relationships in materials, are complex to compute and analyze, especially when 
 accounting for crystal or material symmetries. Existing software solutions often lack accessibility or do not fully 
 support complex symmetry operations, making them challenging for non-specialist users or those seeking rapid prototyping
@@ -47,13 +47,13 @@ and stiffness;
 
   - Visualization tools for understanding directional elastic behavior.
 
-Unlike other softwares such as pymatgen [@pymatgen] or Elate [@elate], Elasticipy emphasizes ease of use, flexibility, 
+Unlike other software such as pymatgen [@pymatgen] or Elate [@elate], Elasticipy emphasizes ease of use, flexibility, 
 and integration with existing Python workflows. In addition, it introduces the concept of *tensor arrays*, in a similar 
-way as in MTEX [@MTEX], allowing to process thousands of tensors at once (e.g. rotation of tensors) with simple syntax 
-and highly efficient way. In order to highlight the performances of Elasticipy, \autoref{fig:compa} shows the wall-time 
+way as in MTEX [@MTEX], allowing to process thousands of tensors at once (e.g. rotation of tensors) with simple and 
+highly efficient commands. In order to highlight the performances of Elasticipy, \autoref{fig:compa} shows the wall-time 
 required to perform two basic operations on tensors, as functions of the number of considered tensors. This evidences 
 that, when processing large number of tensors ($>10^3$), basic operations on tensors are 1 to 2 orders of magnitude 
-faster when using Elasticipy than when using pymatgen's implementation.
+faster when using Elasticipy than pymatgen.
 
 ![Performance comparison between Elasticipy and pymatgen.\label{fig:compa}](ElasticipyVSpymatgen.png){ width=75% }
 
