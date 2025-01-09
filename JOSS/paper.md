@@ -44,17 +44,18 @@ Elasticipy addresses this gap by providing:
 
   - Intuitive Python-based APIs for defining and manipulating elasticity tensors.
 
-  - Support for standard crystal symmetry groups, ensuring physically accurate tensor operations.
+  - Support for standard crystal symmetry groups [@nye] to facilitate the definition of stiffness/compliance components. 
 
   - Visualization tools for understanding directional elastic behavior.
 
-Unlike other software such as pymatgen [@pymatgen] or Elate [@elate], Elasticipy emphasizes ease of use, flexibility, and 
-integration with existing Python workflows. Its modular design and comprehensive documentation make it accessible for 
-both experts and non-specialists. In addition, it introduces the concept of *tensor arrays*, allowing to process 
+Unlike other software such as pymatgen [@pymatgen] or Elate [@elate], Elasticipy emphasizes ease of use, flexibility, 
+and integration with existing Python workflows. Its modular design and comprehensive documentation make it accessible 
+for both experts and non-specialists. In addition, it introduces the concept of *tensor arrays*, allowing to process 
 thousands of tensors at once (e.g. rotation of tensors) in a user-friendly and highly efficient way, in a similar way as
 in MTEX [@pymatgen]. In order to highlight the performances of Elasticipy, \autoref{fig:compa} shows CPU required to 
 compute the stress from the elastic strain (through the fourth-order stiffness tensor) and that for evaluating the von 
 Mises equivalent stress, as a function of the number of tensor to consider.
-![Performance comparison between Elasticipy and pymatgen.\label{fig:compa}](ElasticipyVSpymatgen.png){width=75%}
+
+![Performance comparison between Elasticipy and pymatgen.\label{fig:compa}](ElasticipyVSpymatgen.png){ width=75% }
 
 # References
