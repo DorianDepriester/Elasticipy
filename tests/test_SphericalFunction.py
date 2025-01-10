@@ -54,6 +54,9 @@ class TestSphericalFunction(unittest.TestCase):
         assert E_mean == approx(E.mean(method='Monte Carlo', n_evals=10000, seed=0), rel=1e-2)
         assert E_std == approx(E.std(method='Monte Carlo', n_evals=10000, seed=0), rel=1e-2)
 
+    def test_repr(self):
+        assert E.__repr__() == 'Spherical function\nMin=73.775, Max=197.50282485875343'
+
 
 class TestHyperSphericalFunction(unittest.TestCase):
     def test_plot3D(self):
