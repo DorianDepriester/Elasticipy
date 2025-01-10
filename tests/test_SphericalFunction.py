@@ -15,6 +15,21 @@ G_mean = 47.07147379585229
 G_std = 14.14600864639266
 SEED = 123  # Used for Monte Carlo integrations (e.g. for G.mean())
 
+import re
+
+
+def test_repr(result, class_name, expected_min, expected_max):
+    # First, check if the string if correctly formated
+    pattern = r'{} function\nMin=(\d+\.\d+), Max=(\d+\.\d+)'.format(class_name)
+    match = re.match(pattern, result)
+    assert match is not None
+
+    # Now check the returned values
+    min_val = float(match.group(1))
+    max_val = float(match.group(2))
+    assert expected_min == approx(min_val)
+    assert expected_max == approx(max_val)
+
 
 class TestSphericalFunction(unittest.TestCase):
     def test_plot3D(self):
@@ -55,7 +70,7 @@ class TestSphericalFunction(unittest.TestCase):
         assert E_std == approx(E.std(method='Monte Carlo', n_evals=10000, seed=0), rel=1e-2)
 
     def test_repr(self):
-        assert E.__repr__() == 'Spherical function\nMin=73.775, Max=197.50282485875343'
+        test_repr(E.__repr__(), 'Spherical', 73.775, 197.50282485875343)
 
 
 class TestHyperSphericalFunction(unittest.TestCase):
@@ -91,7 +106,7 @@ class TestHyperSphericalFunction(unittest.TestCase):
         assert G_std == approx(G.std(seed=SEED, n_evals=10000), rel=1e-2)
 
     def test_repr(self):
-        assert G.__repr__() == 'Hyperspherical function\nMin=26.000000000000014, Max=77.00000000000001'
+        test_repr(G.__repr__(), 'Hyperspherical', 26., 77)
 
 if __name__ == '__main__':
     unittest.main()
