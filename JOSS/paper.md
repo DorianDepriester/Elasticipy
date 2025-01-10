@@ -41,7 +41,35 @@ $$\sigma_{ij}=C_{ijk\ell}\varepsilon_{k\ell}$$
 
 where $\boldsymbol{C}_{ijk\ell}$ denotes the $ijk\ell$-th component of $\boldsymbol{C}$. Its value 
 depends on the material, whereas its shape (set of zero-components, or linear relationships between them) depend on the 
-material's symmetry [@nye].
+material's symmetry [@nye]. In order to simplify the above equation, one usually uses the so-called Voigt notation, 
+which reads:
+
+$$\begin{bmatrix}
+\sigma_{11}\\
+\sigma_{22}\\
+\sigma_{33}\\
+\sigma_{23}\\
+\sigma_{13}\\
+\sigma_{12}
+\end{bmatrix}
+=
+\begin{bmatrix}
+C_{1111}    & C_{1122}      & C_{1133}  & C_{1123} & C_{1113}  & C_{1112}\\
+            & C_{2222}      & C_{2233}  & C_{2223} & C_{2213}  & C_{2212}\\
+            &               & C_{3333}  & C_{3323} & C_{3313}  & C_{3312}\\
+            &               &           & C_{2323} & C_{2313}  & C_{2312}\\
+            & \mathrm{sym.} &           &          & C_{1313}  & C_{1312}\\
+            &           &               &          &           & C_{1212}\\
+\end{bmatrix}
+\begin{bmatrix}
+\varepsilon_{11}\\
+\varepsilon_{22}\\
+\varepsilon_{33}\\
+2\varepsilon_{23}\\
+2\varepsilon_{13}\\
+2\varepsilon_{12}
+\end{bmatrix}
+$$
 
 Existing software solutions often lack accessibility or do not fully support complex symmetry operations, making them 
 challenging for non-specialist users or those seeking rapid prototyping and analysis. Elasticipy addresses this gap by 
