@@ -412,6 +412,30 @@ class SphericalFunction:
         """
         return np.sqrt(self.var(**kwargs))
 
+    @classmethod
+    def spherical_grid(cls, n_phi, n_theta):
+        """
+        Create a set of vectors corresponding to a spherical grid (phi,theta), then flatten it.
+
+        Parameters
+        ----------
+        n_phi : int
+            Number of points for phi
+        n_theta : int
+            Number of points for theta
+
+        Returns
+        -------
+        numpy.ndarray
+            array of shape (n_phi*n_theta, 3)
+        """
+        phi = np.linspace(0, 2 * np.pi, n_phi)
+        theta = np.linspace(0, np.pi, n_theta)
+        phi_grid, theta_grid = np.meshgrid(phi, theta, indexing='ij')
+        phi = phi_grid.flatten()
+        theta = theta_grid.flatten()
+        return sph2cart(phi, theta)
+
     def plot3D(self, n_phi=50, n_theta=50, fig=None, **kwargs):
         """
         3D plotting of a spherical function
@@ -443,15 +467,10 @@ class SphericalFunction:
             new_fig = plt.figure()
         else:
             new_fig = fig
-        phi = np.linspace(0, 2 * np.pi, n_phi)
-        theta = np.linspace(0, np.pi, n_theta)
-        phi_grid, theta_grid = np.meshgrid(phi, theta, indexing='ij')
-        phi = phi_grid.flatten()
-        theta = theta_grid.flatten()
-        u = sph2cart(phi, theta)
+        u = self.spherical_grid(n_phi, n_theta)
         values = self.eval(u)
-        u_grid = u.reshape([*phi_grid.shape, 3])
-        r_grid = values.reshape(phi_grid.shape)
+        u_grid = u.reshape((n_phi, n_theta, 3))
+        r_grid = values.reshape((n_phi, n_theta))
         ax = _plot3D(new_fig, u_grid, r_grid, **kwargs)
         ax.axis('equal')
         if fig is None:
