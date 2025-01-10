@@ -39,11 +39,8 @@ and $\boldsymbol{\sigma}$ is given through the fourth-order stiffness tensor $\b
 
 $$\sigma_{ij}=C_{ijk\ell}\varepsilon_{k\ell}$$
 
-where $\boldsymbol{C}_{ijk\ell}$ denotes the $ijk\ell$-th component of $\boldsymbol{C}$. Its value 
-depends on the material, whereas its shape (set of zero-components, or linear relationships between them) depend on the 
-material's symmetry [@nye]. In order to simplify the above equation, one usually uses the so-called Voigt notation, 
+where $C_{ijk\ell}$ denotes the $ijk\ell$-th component of $\boldsymbol{C}$. In order to simplify the above equation, one usually uses the so-called Voigt notation, 
 which reads:
-
 $$\begin{bmatrix}
 \sigma_{11}\\
 \sigma_{22}\\
@@ -70,6 +67,11 @@ C_{1111}    & C_{1122}      & C_{1133}  & C_{1123} & C_{1113}  & C_{1112}\\
 2\varepsilon_{12}
 \end{bmatrix}
 $$
+
+The values of $\boldsymbol{C}$ depend on the material, whereas its shape (set of zero-components, or linear relationships 
+between them) depends on the material's symmetry [@nye]. 
+
+
 
 Existing software solutions often lack accessibility or do not fully support complex symmetry operations, making them 
 challenging for non-specialist users or those seeking rapid prototyping and analysis. Elasticipy addresses this gap by 
