@@ -36,15 +36,19 @@ class TestSphericalFunction(unittest.TestCase):
         np.testing.assert_allclose(ax.dataLim.intervalx, [-0.01578689775673263, 6.298972204936319])
         np.testing.assert_allclose(ax.dataLim.intervaly, [-0.0160285339468867, 1.5868248607417832])
 
-    def test_add_sub_mult(self):
+    def test_add_sub_mult_div(self):
         E_plus = E + E
         E_min = E - E
         E_mult = 2 * E
         E_plus_one = E + 1
+        E_div = E / E
+        E_div_two = E / 2
         assert E_plus.mean() == approx(2 * E_mean, rel=1e-3)
         assert E_min.mean() == approx(0)
         assert E_mult.mean() == approx(2 * E_mean, rel=1e-3)
         assert E_plus_one.mean() == approx(E_mean + 1, rel=1e-3)
+        assert E_div.mean() == approx(1, rel=1e-3)
+        assert E_div_two.mean() == approx(E_mean/2, rel=1e-3)
 
     def test_mean_std(self):
         assert E_mean == approx(E.mean(method='Monte Carlo', n_evals=10000, seed=0), rel=1e-2)
@@ -82,6 +86,7 @@ class TestHyperSphericalFunction(unittest.TestCase):
     def test_mean_std(self):
         assert G_mean == approx(G.mean(seed=SEED, n_evals=10000), rel=5e-3)
         assert G_std == approx(G.std(seed=SEED, n_evals=10000), rel=1e-2)
+
 
 
 if __name__ == '__main__':
