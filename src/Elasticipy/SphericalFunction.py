@@ -711,6 +711,34 @@ class HyperSphericalFunction(SphericalFunction):
             u, v = uniform_spherical_distribution(n_evals, seed=seed, return_orthogonal=True)
             return np.var(self.eval(u, v))
 
+    @classmethod
+    def spherical_grid(cls, n_phi, n_theta, n_psi):
+        """
+        Create a set of vectors corresponding to a hyperspherical grid (phi,theta, psi), then flatten it.
+
+        Parameters
+        ----------
+        n_phi : int
+            Number of points for phi
+        n_theta : int
+            Number of points for theta
+        n_psi : int
+            Number of points for psi
+
+        Returns
+        -------
+        numpy.ndarray
+            array of shape (n_phi*n_theta*n_psi, 3)
+        """
+        phi = np.linspace(0, 2 * np.pi, n_phi)
+        theta = np.linspace(0, np.pi, n_theta)
+        psi = np.linspace(0, np.pi, n_psi)
+        phi_grid, theta_grid, psi_grid = np.meshgrid(phi, theta, psi, indexing='ij')
+        phi = phi_grid.flatten()
+        theta = theta_grid.flatten()
+        psi = psi_grid.flatten()
+        return sph2cart(phi, theta, psi)
+
     def plot3D(self, n_phi=50, n_theta=50, n_psi=50, which='mean', fig=None, **kwargs):
         """
         Generate a 3D plot representing the evaluation of spherical harmonics.
@@ -745,14 +773,7 @@ class HyperSphericalFunction(SphericalFunction):
             new_fig = plt.figure()
         else:
             new_fig = fig
-        phi = np.linspace(0, 2 * np.pi, n_phi)
-        theta = np.linspace(0, np.pi, n_theta)
-        psi = np.linspace(0, np.pi, n_psi)
-        phi_grid, theta_grid, psi_grid = np.meshgrid(phi, theta, psi, indexing='ij')
-        phi = phi_grid.flatten()
-        theta = theta_grid.flatten()
-        psi = psi_grid.flatten()
-        u, v = sph2cart(phi, theta, psi)
+        u, v = self.spherical_grid(n_phi, n_theta, n_psi)
         values = self.eval(u, v).reshape((n_phi, n_theta, n_psi))
         if which == 'std':
             r_grid = np.std(values, axis=2)
