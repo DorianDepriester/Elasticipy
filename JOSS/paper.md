@@ -94,20 +94,15 @@ order to highlight the performances of Elasticipy, \autoref{fig:pymatgen} shows 
 operations on tensors, as functions of the number of considered tensors. This evidences that, when processing large 
 number of tensors ($>10^3$), basic operations on tensors are 1 to 2 orders of magnitude faster when using Elasticipy 
 than pymatgen. These performances are reached by taking advantage of `numpy`'s array broadcasting.
-
-![Performance comparison between Elasticipy and pymatgen.\label{fig:pymatgen}](ElasticipyVSpymatgen.png){ width=75% }
-
-
 Nevertheless, as tensor algebra is not the core of pymatgen, Elasticipy supports conversion to pymatgen, and vice versa,
 allowing to work with these packages altogether. 
 
-Given a stiffness tensor, \autoref{fig:elate} shows the wall-time required to compute the directional Young and shear
-modulus, depending on the number of considered direction and the method (Elate vs. Elasticipy).
+![Performance comparison between Elasticipy and pymatgen.\label{fig:pymatgen}](ElasticipyVSpymatgen.png){ width=75% }
 
-![Performance comparison between Elasticipy and Elate.\label{fig:Elate}](ElasticipyVSelate.png){ width=75% }
+Elasticipy also provides plotting tools inspired from Elate, as illustrated in \autoref{fig:Young}. Again, `numpy` 
+broadcasting allows such plots to be about twice faster with Elasticipy than with Elate.
 
-Again, it is clear that, when one wants to compute such engineering parameters along large of set directions (e.g. for 3D 
-plotting), Elasticipy is 10 to 20 faster than Elate. Conversely, Elate seems faster when this set is small, but in this 
-case, the CPU time should not be a matter of choice (as it is below 1 ms).
+![Directional Young modulus of monoclinic TiNi.\label{fig:Young}](Plot_E.png){ width=75% }
+
 
 # References
