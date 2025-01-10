@@ -90,7 +90,8 @@ class TestHyperSphericalFunction(unittest.TestCase):
         assert G_mean == approx(G.mean(seed=SEED, n_evals=10000), rel=5e-3)
         assert G_std == approx(G.std(seed=SEED, n_evals=10000), rel=1e-2)
 
-
+    def test_repr(self):
+        assert G.__repr__() == 'Hyperspherical function\nMin=26.0, Max=77.00000000000001'
 
 if __name__ == '__main__':
     unittest.main()
