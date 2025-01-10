@@ -18,7 +18,7 @@ SEED = 123  # Used for Monte Carlo integrations (e.g. for G.mean())
 import re
 
 
-def test_repr(result, class_name, expected_min, expected_max):
+def template_test_repr(result, class_name, expected_min, expected_max):
     # First, check if the string if correctly formated
     pattern = r'{} function\nMin=(\d+\.\d+), Max=(\d+\.\d+)'.format(class_name)
     match = re.match(pattern, result)
@@ -70,7 +70,7 @@ class TestSphericalFunction(unittest.TestCase):
         assert E_std == approx(E.std(method='Monte Carlo', n_evals=10000, seed=0), rel=1e-2)
 
     def test_repr(self):
-        test_repr(E.__repr__(), 'Spherical', 73.775, 197.50282485875343)
+        template_test_repr(E.__repr__(), 'Spherical', 73.775, 197.50282485875343)
 
 
 class TestHyperSphericalFunction(unittest.TestCase):
@@ -106,7 +106,7 @@ class TestHyperSphericalFunction(unittest.TestCase):
         assert G_std == approx(G.std(seed=SEED, n_evals=10000), rel=1e-2)
 
     def test_repr(self):
-        test_repr(G.__repr__(), 'Hyperspherical', 26., 77)
+        template_test_repr(G.__repr__(), 'Hyperspherical', 26., 77)
 
 if __name__ == '__main__':
     unittest.main()
