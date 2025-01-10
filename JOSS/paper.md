@@ -71,11 +71,13 @@ $$
 The values of $\boldsymbol{C}$ depend on the material, whereas its shape (set of zero-components, or linear relationships 
 between them) depends on the material's symmetry [@nye]. 
 
+Pymatgen [@pymatgen] provides some built-in functions to work on strain, stress and elasticity but lack some 
+functionalities about the tensor analysis. Conversely, Elate [@elate] is a project dedicated to analysis of stiffness 
+and compliance tensors (e.g. plotting directional engineering constants, such as Young modulus). It is implemented in 
+[the Materials Project](https://next-gen.materialsproject.org/) [@MaterialsProject].
 
-
-Existing software solutions often lack accessibility or do not fully support complex symmetry operations, making them 
-challenging for non-specialist users or those seeking rapid prototyping and analysis. Elasticipy addresses this gap by 
-providing:
+Therefore, the purpose of Elasticipy is to combine the functionalities of Pymatgen and Elate into a self-consistent 
+project. Its aim was to propose an easy-to-use and efficient tool with the following features:
 
   - intuitive Python-based APIs for defining and manipulating second- and fourth-order tensors, such as strain, stress
 and stiffness;
@@ -87,19 +89,25 @@ and stiffness;
   - a collection of built-in methods to easily and efficiently perform fundamental operations on tensors (rotations, 
 products, invariants, statistical analysis etc.).
 
-Unlike other software such as pymatgen [@pymatgen] or Elate [@elate], Elasticipy emphasizes ease of use, flexibility, 
-and integration with existing Python workflows. In addition, it introduces the concept of *tensor arrays*, in a similar 
-way as in MTEX [@MTEX], allowing to process thousands of tensors at once with simple and highly efficient commands. In 
-order to highlight the performances of Elasticipy, \autoref{fig:compa} shows the wall-time required to perform two basic 
+Therefore, Elasticipy introduces the concept of *tensor arrays*, in a similar way as in MTEX [@MTEX], allowing to process thousands of tensors at once with simple and highly efficient commands. In 
+order to highlight the performances of Elasticipy, \autoref{fig:pymatgen} shows the wall-time required to perform two basic 
 operations on tensors, as functions of the number of considered tensors. This evidences that, when processing large 
 number of tensors ($>10^3$), basic operations on tensors are 1 to 2 orders of magnitude faster when using Elasticipy 
-than pymatgen. These performances are reached by taking advantage of `numpy`'s array 
-broadcasting.
+than pymatgen. These performances are reached by taking advantage of `numpy`'s array broadcasting.
 
-![Performance comparison between Elasticipy and pymatgen.\label{fig:compa}](ElasticipyVSpymatgen.png){ width=75% }
+![Performance comparison between Elasticipy and pymatgen.\label{fig:pymatgen}](ElasticipyVSpymatgen.png){ width=75% }
+
 
 Nevertheless, as tensor algebra is not the core of pymatgen, Elasticipy supports conversion to pymatgen, and vice versa,
-allowing to work with these packages altogether. Elasticipy also allows direct imports of elastic data from 
-[the Materials Project](https://next-gen.materialsproject.org/) [@MaterialsProject].
+allowing to work with these packages altogether. 
+
+Given a stiffness tensor, \autoref{fig:elate} shows the wall-time required to compute the directional Young and shear
+modulus, depending on the number of considered direction and the method (Elate vs. Elasticipy).
+
+![Performance comparison between Elasticipy and Elate.\label{fig:Elate}](ElasticipyVSelate.png){ width=75% }
+
+Again, it is clear that, when one wants to compute such engineering parameters along large of set directions (e.g. for 3D 
+plotting), Elasticipy is 10 to 20 faster than Elate. Conversely, Elate seems faster when this set is small, but in this 
+case, the CPU time should not be a matter of choice (as it is below 1 ms).
 
 # References
