@@ -102,7 +102,7 @@ allowing to work with these packages altogether.
 Elasticipy also provides plotting tools inspired from Elate, as illustrated in \autoref{fig:Young}. Again, `numpy` 
 broadcasting allows such plots to be about twice faster with Elasticipy than with Elate.
 
-![Directional Young modulus of monoclinic TiNi.\label{fig:Young}](Plot_E.png){ width=75% }
+![Directional Young modulus of monoclinic TiNi (in GPa).\label{fig:Young}](Plot_E.png){ width=75% }
 
 
 # References
