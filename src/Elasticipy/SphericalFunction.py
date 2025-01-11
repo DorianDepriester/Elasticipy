@@ -6,6 +6,7 @@ from scipy import integrate as integrate
 from scipy import optimize
 from Elasticipy.PoleFigure import add_polefigure
 
+
 def sph2cart(*args):
     """
     Converts spherical/hyperspherical coordinates to cartesian coordinates.
@@ -343,6 +344,19 @@ class SphericalFunction:
             domain = self.domain.flatten()
             q = integrate.dblquad(fun, *domain)
             return q[0] / (2 * np.pi)
+        elif method == 'trapezoid':
+            n_theta = int(np.sqrt(n_evals) / 2)
+            n_phi = 4 * n_theta
+            phi = np.linspace(0, 2 * np.pi, n_phi)
+            theta = np.linspace(0, np.pi / 2, n_theta)
+            phi_grid, theta_grid = np.meshgrid(phi, theta, indexing='ij')
+            u = sph2cart(phi_grid.flatten(), theta_grid.flatten())
+            evals = self.eval(u)
+            evals_grid = evals.reshape((n_phi, n_theta))
+            sine = np.sin(theta_grid)
+            return integrate.trapezoid(
+                    integrate.trapezoid(evals_grid * sine, axis=0, x=phi),
+                x=theta) / (2 * np.pi)
         else:
             u = uniform_spherical_distribution(n_evals, seed=seed)
             return np.mean(self.eval(u))
@@ -654,6 +668,24 @@ class HyperSphericalFunction(SphericalFunction):
             domain = self.domain.flatten()
             q = integrate.tplquad(fun, *domain)
             return q[0] / (2 * np.pi ** 2)
+        elif method == 'trapezoid':
+            n = 2 * n_evals ** (1/3)
+            n_phi = int(n)
+            n_theta = int(n / 4)
+            n_psi = int(n / 2)
+            phi = np.linspace(0, 2 * np.pi, n_phi)
+            theta = np.linspace(0, np.pi / 2, n_theta)
+            psi = np.linspace(0, np.pi, n_psi)
+            phi_grid, theta_grid, psi_grid = np.meshgrid(phi, theta, psi, indexing='ij')
+            u, v = sph2cart(phi_grid.flatten(), theta_grid.flatten(), psi_grid.flatten())
+            evals = self.eval(u, v)
+            evals_grid = evals.reshape((n_phi, n_theta, n_psi))
+            sine = np.sin(theta_grid)
+            return integrate.trapezoid(
+                        integrate.trapezoid(
+                            integrate.trapezoid(evals_grid * sine, axis=0, x=phi),
+                        axis=0, x=theta),
+                    x=psi) / (2 * np.pi**2)
         else:
             u, v = uniform_spherical_distribution(n_evals, seed=seed, return_orthogonal=True)
             return np.mean(self.eval(u, v))

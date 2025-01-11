@@ -67,6 +67,7 @@ class TestComplianceTensor(unittest.TestCase):
         E = S.Young_modulus
         assert E.mean() == approx(101.994)
         assert E.std() == approx(48.48065)
+        assert E.mean(method='trapezoid') == approx(101.9855)
 
     def test_shear_modulus_eval(self):
         G = S.shear_modulus

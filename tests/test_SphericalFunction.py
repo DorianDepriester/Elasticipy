@@ -104,6 +104,7 @@ class TestHyperSphericalFunction(unittest.TestCase):
     def test_mean_std(self):
         assert G_mean == approx(G.mean(seed=SEED, n_evals=10000), rel=5e-3)
         assert G_std == approx(G.std(seed=SEED, n_evals=10000), rel=1e-2)
+        assert G_mean == approx(G.mean(method='trapezoid', n_evals=10000), rel=5e-3)
 
     def test_repr(self):
         template_test_repr(G.__repr__(), 'Hyperspherical', 26., 77)
