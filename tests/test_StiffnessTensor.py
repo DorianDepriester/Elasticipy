@@ -458,5 +458,6 @@ class TestStiffnessConstructor(unittest.TestCase):
         with self.assertRaises(IndexError) as context:
             _ = S[0]
         self.assertEqual(str(context.exception), expected_error)
+
 if __name__ == '__main__':
     unittest.main()
