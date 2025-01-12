@@ -689,23 +689,18 @@ class HyperSphericalFunction(SphericalFunction):
             q = integrate.tplquad(fun, *domain)
             return q[0] / (2 * np.pi ** 2)
         elif method == 'trapezoid':
-            n = 2 * n_evals ** (1/3)
-            n_phi = int(n)
-            n_theta = int(n / 4)
-            n_psi = int(n / 2)
-            phi = np.linspace(0, 2 * np.pi, n_phi)
-            theta = np.linspace(0, np.pi / 2, n_theta)
-            psi = np.linspace(0, np.pi, n_psi)
-            phi_grid, theta_grid, psi_grid = np.meshgrid(phi, theta, psi, indexing='ij')
-            u, v = sph2cart(phi_grid.flatten(), theta_grid.flatten(), psi_grid.flatten())
-            evals = self.eval(u, v)
-            evals_grid = evals.reshape((n_phi, n_theta, n_psi))
-            sine = np.sin(theta_grid)
+            angles, evals = self.evaluate_on_spherical_grid(n_evals)
+            phi, theta, psi = angles
+            sine = np.sin(theta)
+            if self.symmetry:
+                dom_size =  2 * np.pi**2
+            else:
+                dom_size = 4 * np.pi**2
             return integrate.trapezoid(
                         integrate.trapezoid(
-                            integrate.trapezoid(evals_grid * sine, axis=0, x=phi),
-                        axis=0, x=theta),
-                    x=psi) / (2 * np.pi**2)
+                            integrate.trapezoid(evals * sine, axis=0, x=phi[:,0,0]),
+                        axis=0, x=theta[0,:,0]),
+                    x=psi[0,0,:]) / dom_size
         else:
             u, v = uniform_spherical_distribution(n_evals, seed=seed, return_orthogonal=True)
             return np.mean(self.eval(u, v))
