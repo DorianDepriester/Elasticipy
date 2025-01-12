@@ -129,16 +129,19 @@ class SphericalFunction:
     name = 'Spherical function'
     """Bounds to consider in spherical coordinates"""
 
-    def __init__(self, fun):
+    def __init__(self, fun, symmetry=True):
         """
         Create a spherical function, that is, a function that depends on one direction only.
 
         Parameters
         ----------
-        fun : function
+        fun : callable
             Function to return
+        symmetry : bool, optional
+            Set to true if fun(u)==fun(-u)
         """
         self.fun = fun
+        self.symmetry = symmetry
 
     def __repr__(self):
         val_min, _ = self.min()
@@ -337,26 +340,24 @@ class SphericalFunction:
         The full integration over the unit sphere, used if method=='exact', takes advantage of numpy.integrate.dblquad.
         This algorithm is robust but usually slow. The Monte Carlo method can be 1000 times faster.
         """
+        if self.symmetry:
+            dom_size = 2 * np.pi
+        else:
+            dom_size = 4 * np.pi
         if method == 'exact':
             def fun(theta, phi):
                 return self.eval_spherical(phi, theta) * sin(theta)
 
             domain = self.domain.flatten()
             q = integrate.dblquad(fun, *domain)
-            return q[0] / (2 * np.pi)
+            return q[0] / dom_size
         elif method == 'trapezoid':
-            n_theta = int(np.sqrt(n_evals) / 2)
-            n_phi = 4 * n_theta
-            phi = np.linspace(0, 2 * np.pi, n_phi)
-            theta = np.linspace(0, np.pi / 2, n_theta)
-            phi_grid, theta_grid = np.meshgrid(phi, theta, indexing='ij')
-            u = sph2cart(phi_grid.flatten(), theta_grid.flatten())
-            evals = self.eval(u)
-            evals_grid = evals.reshape((n_phi, n_theta))
-            sine = np.sin(theta_grid)
+            angles, evals = self.evaluate_on_spherical_grid(n_evals)
+            phi, theta = angles
+            sine = np.sin(theta)
             return integrate.trapezoid(
-                    integrate.trapezoid(evals_grid * sine, axis=0, x=phi),
-                x=theta) / (2 * np.pi)
+                    integrate.trapezoid(evals * sine, axis=0, x=phi[:,0]),
+                x=theta[0,:]) / dom_size
         else:
             u = uniform_spherical_distribution(n_evals, seed=seed)
             return np.mean(self.eval(u))
@@ -426,29 +427,51 @@ class SphericalFunction:
         """
         return np.sqrt(self.var(**kwargs))
 
-    @classmethod
-    def spherical_grid(cls, n_phi, n_theta):
+    def evaluate_on_spherical_grid(self, n, return_in_spherical=True, use_symmetry=True):
         """
         Create a set of vectors corresponding to a spherical grid (phi,theta), then flatten it.
 
         Parameters
         ----------
-        n_phi : int
-            Number of points for phi
-        n_theta : int
-            Number of points for theta
+        n : int or tuple of int
+            If int, it give the overall number of evaluations over the quarter unit sphere. If tuple of int, they
+            correspond to the number of spherical angles (n_phi, n_theta).
+        return_in_spherical : bool, optional
+            If true, the first output argument will be the spherical coordinates (phi, theta). Otherwise, the cartersian
+            coordinates are returned
+        use_symmetry : whether to take consider the upper half-domain only, or the full sphere.
 
         Returns
         -------
+        tuple
+            Coordinates of evaluation, either in spherical of cartesian coordinates
         numpy.ndarray
-            array of shape (n_phi*n_theta, 3)
+            Grid of evaluated values
         """
+        symmetry = self.symmetry and use_symmetry
+        if isinstance(n, int):
+            if symmetry:
+                n_theta = int(np.sqrt(n)/ 2) + 1
+                n_phi = 4 * n_theta
+            else:
+                n_theta = int(np.sqrt(n / 2)) + 1
+                n_phi = 2 * n_theta
+        else:
+            n_phi, n_theta = n
+        if symmetry:
+            theta_max = np.pi / 2
+        else:
+            theta_max = np.pi
         phi = np.linspace(0, 2 * np.pi, n_phi)
-        theta = np.linspace(0, np.pi, n_theta)
+        theta = np.linspace(0, theta_max, n_theta)
         phi_grid, theta_grid = np.meshgrid(phi, theta, indexing='ij')
-        phi = phi_grid.flatten()
-        theta = theta_grid.flatten()
-        return sph2cart(phi, theta)
+        u = sph2cart(phi_grid.flatten(), theta_grid.flatten())
+        evals = self.eval(u)
+        evals_grid = evals.reshape((n_phi, n_theta))
+        if return_in_spherical:
+            return (phi_grid, theta_grid), evals_grid
+        else:
+            return u.reshape((n_phi, n_theta, 3)), evals_grid
 
     def plot3D(self, n_phi=50, n_theta=50, fig=None, **kwargs):
         """
@@ -481,11 +504,8 @@ class SphericalFunction:
             new_fig = plt.figure()
         else:
             new_fig = fig
-        u = self.spherical_grid(n_phi, n_theta)
-        values = self.eval(u)
-        u_grid = u.reshape((n_phi, n_theta, 3))
-        r_grid = values.reshape((n_phi, n_theta))
-        ax = _plot3D(new_fig, u_grid, r_grid, **kwargs)
+        u, evals = self.evaluate_on_spherical_grid((n_phi, n_theta), return_in_spherical=False, use_symmetry=False)
+        ax = _plot3D(new_fig, u, evals, **kwargs)
         ax.axis('equal')
         if fig is None:
             plt.show()
@@ -743,33 +763,57 @@ class HyperSphericalFunction(SphericalFunction):
             u, v = uniform_spherical_distribution(n_evals, seed=seed, return_orthogonal=True)
             return np.var(self.eval(u, v))
 
-    @classmethod
-    def spherical_grid(cls, n_phi, n_theta, n_psi):
+    def evaluate_on_spherical_grid(self, n, return_in_spherical=True, use_symmetry=True):
         """
-        Create a set of vectors corresponding to a hyperspherical grid (phi,theta, psi), then flatten it.
+        Create a set of vectors corresponding to a spherical grid (phi,theta), then flatten it.
 
         Parameters
         ----------
-        n_phi : int
-            Number of points for phi
-        n_theta : int
-            Number of points for theta
-        n_psi : int
-            Number of points for psi
+        n : int or tuple of int
+            If int, gives the overall number of evaluations over the unit hypersphere. If a tuple is passed, they gieve
+            the number of angles to consider for (hyper)spherical coordinates (n_phi, n_theta, n_psi).
+        return_in_spherical : bool, optional
+            If true, the first output argument will be the spherical coordinates (phi, theta). Otherwise, the cartersian
+            coordinates are returned
+        use_symmetry : bool, optional
+            Whether to use take advantage ot symmetry
 
         Returns
         -------
+        tuple
+            Coordinates of evaluation, either in spherical of cartesian coordinates
         numpy.ndarray
-            array of shape (n_phi*n_theta*n_psi, 3)
+            Grid of evaluated values
         """
+        symmetry = self.symmetry and use_symmetry
+        if isinstance(n, int):
+            if symmetry:
+                n_phi = int(2 * n ** (1 / 3)) + 1
+                n_theta = int(n_phi / 4) + 1
+                n_psi = int(n_phi / 2) + 1
+            else:
+                n_phi = int(4 * n ** (1 / 3)) + 1
+                n_theta = int(n_phi / 2) + 1
+                n_psi = int(n_phi / 2) + 1
+        else:
+            n_phi, n_theta, n_psi = n
+        if symmetry:
+            theta_max = np.pi / 2
+        else:
+            theta_max = np.pi
         phi = np.linspace(0, 2 * np.pi, n_phi)
-        theta = np.linspace(0, np.pi, n_theta)
+        theta = np.linspace(0, theta_max, n_theta)
         psi = np.linspace(0, np.pi, n_psi)
         phi_grid, theta_grid, psi_grid = np.meshgrid(phi, theta, psi, indexing='ij')
-        phi = phi_grid.flatten()
-        theta = theta_grid.flatten()
-        psi = psi_grid.flatten()
-        return sph2cart(phi, theta, psi)
+        u, v = sph2cart(phi_grid.flatten(), theta_grid.flatten(), psi_grid)
+        evals = self.eval(u, v)
+        evals_grid = evals.reshape((n_phi, n_theta, n_psi))
+        if return_in_spherical:
+            return (phi_grid, theta_grid, psi_grid), evals_grid
+        else:
+            u_r = u.reshape((n_phi, n_theta, n_psi, 3))
+            v_r = v.reshape((n_phi, n_theta, n_psi, 3))
+            return (u_r, v_r), evals_grid
 
     def plot3D(self, n_phi=50, n_theta=50, n_psi=50, which='mean', fig=None, **kwargs):
         """
@@ -805,8 +849,8 @@ class HyperSphericalFunction(SphericalFunction):
             new_fig = plt.figure()
         else:
             new_fig = fig
-        u, v = self.spherical_grid(n_phi, n_theta, n_psi)
-        values = self.eval(u, v).reshape((n_phi, n_theta, n_psi))
+        uv, values = self.evaluate_on_spherical_grid((n_phi, n_theta, n_psi), return_in_spherical=False, use_symmetry=False)
+        u, _ = uv
         if which == 'std':
             r_grid = np.std(values, axis=2)
         elif which == 'min':
@@ -815,8 +859,7 @@ class HyperSphericalFunction(SphericalFunction):
             r_grid = np.max(values, axis=2)
         else:
             r_grid = np.mean(values, axis=2)
-        u_grid = u.reshape((n_phi, n_theta, n_psi, 3))
-        ax = _plot3D(new_fig, u_grid[:, :, 0, :], r_grid, **kwargs)
+        ax = _plot3D(new_fig, u[:, :, 0, :], r_grid, **kwargs)
         if fig is None:
             plt.show()
         return new_fig, ax
