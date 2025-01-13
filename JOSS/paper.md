@@ -28,7 +28,8 @@ bibliography: paper.bib
 
 Elasticipy is a Python library designed to streamline the computation of elasticity tensors for materials and 
 crystalline materials, taking their specific symmetries into account. It provides tools to manipulate, visualize, and 
-analyze these tensors, simplifying workflows for materials scientists an engineers.
+analyze tensors --such as stress, strain and stiffness tensors-- simplifying workflows for materials scientists an 
+engineers.
 
 # Statement of Need
 
@@ -71,13 +72,13 @@ $$
 The values of $\boldsymbol{C}$ depend on the material, whereas its shape (set of zero-components, or linear relationships 
 between them) depends on the material's symmetry [@nye]. 
 
-Pymatgen [@pymatgen] provides some built-in functions to work on strain, stress and elasticity but lack some 
+Pymatgen [@pymatgen] provides some built-in functions to work on strain, stress and elasticity but lacks some 
 functionalities about the tensor analysis. Conversely, Elate [@elate] is a project dedicated to analysis of stiffness 
 and compliance tensors (e.g. plotting directional engineering constants, such as Young modulus). It is implemented in 
 [the Materials Project](https://next-gen.materialsproject.org/) [@MaterialsProject].
 
 Therefore, the purpose of Elasticipy is to combine the functionalities of Pymatgen and Elate into a self-consistent 
-project. Its aim was to propose an easy-to-use and efficient tool with the following features:
+project. Its aim is to propose an easy-to-use and efficient tool with the following features:
 
   - intuitive Python-based APIs for defining and manipulating second- and fourth-order tensors, such as strain, stress
 and stiffness;
@@ -89,18 +90,20 @@ and stiffness;
   - a collection of built-in methods to easily and efficiently perform fundamental operations on tensors (rotations, 
 products, invariants, statistical analysis etc.).
 
-Therefore, Elasticipy introduces the concept of *tensor arrays*, in a similar way as in MTEX [@MTEX], allowing to process thousands of tensors at once with simple and highly efficient commands. In 
-order to highlight the performances of Elasticipy, \autoref{fig:pymatgen} shows the wall-time required to perform two basic 
-operations on tensors, as functions of the number of considered tensors. This evidences that, when processing large 
-number of tensors ($>10^3$), basic operations on tensors are 1 to 2 orders of magnitude faster when using Elasticipy 
-than pymatgen. These performances are reached by taking advantage of `numpy`'s array broadcasting.
-Nevertheless, as tensor algebra is not the core of pymatgen, Elasticipy supports conversion to pymatgen, and vice versa,
-allowing to work with these packages altogether. 
+Therefore, Elasticipy introduces the concept of *tensor arrays*, in a similar way as in MTEX [@MTEX], allowing to 
+process thousands of tensors at once with simple and highly efficient commands. In order to highlight the performances 
+of Elasticipy, \autoref{fig:pymatgen} shows the wall-time required to perform two basic operations on tensors, as 
+functions of the number of considered tensors. This demonstrates that, when processing large datasets of tensors 
+($>10^3$), basic tensor operations on tensors are 1 to 2 orders of magnitude faster in Elasticipy compared to pymatgen. 
+These performances gains are achieved by leveraging `numpy`'s array broadcasting capabilities.
+However, as tensor algebra is not the primary focus of Pymatgen, Elasticipy is designed to complement rather than 
+replace it. Elasticipy supports seamless conversion between its own data structures and those of Pymatgen, allowing 
+users to integrate both tools and benefit from pymatgen's extensive features beyond tensor analysis.
 
 ![Performance comparison between Elasticipy and pymatgen.\label{fig:pymatgen}](ElasticipyVSpymatgen.png){ width=75% }
 
 Elasticipy also provides plotting tools inspired from Elate, as illustrated in \autoref{fig:Young}. Again, `numpy` 
-broadcasting allows such plots to be about twice faster with Elasticipy than with Elate.
+broadcasting allows such plots to be about twice faster with Elasticipy compared to Elate.
 
 ![Directional Young modulus of monoclinic TiNi (in GPa).\label{fig:Young}](Plot_E.png){ width=75% }
 
