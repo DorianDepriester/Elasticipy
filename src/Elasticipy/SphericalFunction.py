@@ -16,15 +16,18 @@ def sph2cart(*args):
     args : tuple
         (phi, theta) angles for spherical coordinates of direction u, where phi denotes the azimuth from X and theta is
         the colatitude angle from Z.
-        If a third argument is passed, it defines the third angle in hyperspherical coordinate system, that is
+        If a third argument is passed, it defines the third angle in hyperspherical coordinate system (psi), that is
         the orientation of the second vector v, orthogonal to u.
 
     Returns
     -------
-    np.ndarray
+    numpy.ndarray
         directions u expressed in cartesian coordinates system.
-    tuple of (np.ndarray, np.ndarray)
-        direction of the second vector, orthogonal to u, expressed in cartesian coordinates system.
+    tuple of numpy.ndarray, numpy.ndarray
+        If a third angle is passed, returns a tuple:
+        - The first element is `u`, the directions expressed in the cartesian coordinate system.
+        - The second element is `v`, the direction of the second vector orthogonal to `u`, also expressed in the
+        cartesian coordinate system.
     """
     phi, theta, *psi = args
     phi_vec = np.array(phi).flatten()
@@ -443,8 +446,9 @@ class SphericalFunction:
 
         Returns
         -------
-        tuple
-            Coordinates of evaluation, either in spherical of cartesian coordinates
+        numpy.ndarray or tuple
+            Coordinates of evaluation. If return_in_spherical==True, they will be returned as a tuple of angle (phi,
+            theta). Otherwise, they will be returned as numpy array.
         numpy.ndarray
             Grid of evaluated values
         """
@@ -483,7 +487,7 @@ class SphericalFunction:
             Number of azimuth angles (phi) to use for plotting. Default is 50.
         n_theta : int, default 50
             Number of latitude angles (theta) to use for plotting. Default is 50.
-        fig : matplotlib figure object, default None
+        fig : matplotlib.figure.Figure, default None
             handle to existing figure object. If None, a new figure will be created. If passed, the figure is not shown,
             (one should use plt.show() afterward).
         **kwargs
@@ -523,7 +527,7 @@ class SphericalFunction:
         ----------
         n_theta : int, optional
             Number of points to use for the polar plot angles. Default is 500.
-        fig : matplotlib figure object, default None
+        fig : matplotlib.figure.Figure, default None
             Handle to existing figure object. If None, a new figure will be created. If passed, the figure is not shown
         **kwargs : dict, optional
             Additional keyword arguments to pass to the plot function.
