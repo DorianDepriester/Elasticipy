@@ -95,13 +95,19 @@ class TestHyperSphericalFunction(unittest.TestCase):
         np.testing.assert_allclose(ax.dataLim.intervalx, [-0.01578689775673263, 6.298972204936319])
         np.testing.assert_allclose(ax.dataLim.intervaly, [-0.0160285339468867, 1.5868248607417832])
 
-    def test_add_sub_mult(self):
+    def test_add_sub_mult_div(self):
         G_plus = G + G
         G_min = G - G
         G_mult = 2 * G
+        Gplus_one = G + 1
+        G_div = G / G
+        G_div_two = G / 2
         assert G_plus.mean() == approx(2 * G_mean, rel=5e-3)
         assert G_min.mean() == approx(0)
         assert G_mult.mean() == approx(2 * G_mean, rel=5e-3)
+        assert Gplus_one.mean() == approx(G_mean + 1, rel=1e-3)
+        assert G_div.mean() == approx(1, rel=1e-3)
+        assert G_div_two.mean() == approx(G_mean/2, rel=1e-3)
 
     def test_mean_std(self):
         for method in ('trapezoid', 'Monte Carlo'):
