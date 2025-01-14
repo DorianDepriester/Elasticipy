@@ -374,8 +374,7 @@ class SphericalFunction:
             q = integrate.dblquad(fun, *domain)
             return q[0] / dom_size
         elif method == 'trapezoid':
-            angles, evals = self.evaluate_on_spherical_grid(n_evals)
-            phi, theta = angles
+            (phi, theta), evals = self.evaluate_on_spherical_grid(n_evals)
             dom_size = _integrate_over_unit_sphere(phi, theta)
             return _integrate_over_unit_sphere(phi, theta, values=evals) / dom_size
         else:
@@ -432,8 +431,7 @@ class SphericalFunction:
         elif method == 'trapezoid':
             if mean is None:
                 mean = self.mean(method="trapezoid")
-            angles, evals = self.evaluate_on_spherical_grid(n_evals)
-            phi, theta = angles
+            (phi, theta), evals = self.evaluate_on_spherical_grid(n_evals)
             dom_size = _integrate_over_unit_sphere(phi, theta)
             return _integrate_over_unit_sphere(phi, theta, values=(evals - mean)**2) / dom_size
         else:
