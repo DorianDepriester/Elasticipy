@@ -49,4 +49,4 @@ def linkcode_resolve(domain, info):
     if not info['module']:
         return None
     filename = info['module'].replace('.', '/')
-    return f"https://github.com/DorianDepriester/Elasticipy/blob/main/{filename}.py"
+    return f"https://github.com/DorianDepriester/Elasticipy/blob/main/src/{filename}.py"
