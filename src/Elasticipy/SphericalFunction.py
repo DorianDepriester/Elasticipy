@@ -376,10 +376,8 @@ class SphericalFunction:
         elif method == 'trapezoid':
             angles, evals = self.evaluate_on_spherical_grid(n_evals)
             phi, theta = angles
-            sine = np.sin(theta)
-            return integrate.trapezoid(
-                    integrate.trapezoid(evals * sine, axis=0, x=phi[:,0]),
-                x=theta[0,:]) / dom_size
+            dom_size = _integrate_over_unit_sphere(phi, theta)
+            return _integrate_over_unit_sphere(phi, theta, values=evals) / dom_size
         else:
             u = uniform_spherical_distribution(n_evals, seed=seed)
             return np.mean(self.eval(u))
@@ -436,10 +434,8 @@ class SphericalFunction:
                 mean = self.mean(method="trapezoid")
             angles, evals = self.evaluate_on_spherical_grid(n_evals)
             phi, theta = angles
-            sine = np.sin(theta)
-            return integrate.trapezoid(
-                    integrate.trapezoid((evals - mean)**2 * sine, axis=0, x=phi[:,0]),
-                x=theta[0,:]) / dom_size
+            dom_size = _integrate_over_unit_sphere(phi, theta)
+            return _integrate_over_unit_sphere(phi, theta, values=(evals - mean)**2) / dom_size
         else:
             u = uniform_spherical_distribution(n_evals, seed=seed)
             return np.var(self.eval(u))
