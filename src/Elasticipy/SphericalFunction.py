@@ -700,7 +700,7 @@ class HyperSphericalFunction(SphericalFunction):
         else:
             return values
 
-    def mean(self, method='Monte Carlo', n_evals=10000, seed=None):
+    def mean(self, method='trapezoid', n_evals=10000, seed=None):
         if method == 'exact':
             def fun(psi, theta, phi):
                 return self.eval_spherical(phi, theta, psi) * sin(theta)
@@ -763,7 +763,7 @@ class HyperSphericalFunction(SphericalFunction):
         else:
             return values
 
-    def var(self, method='Monte Carlo', n_evals=10000, mean=None, seed=None):
+    def var(self, method='trapezoid', n_evals=10000, mean=None, seed=None):
         if method == 'exact':
             if mean is None:
                 mean = self.mean()
