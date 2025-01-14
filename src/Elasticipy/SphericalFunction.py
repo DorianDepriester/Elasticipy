@@ -320,11 +320,12 @@ class SphericalFunction:
 
         Parameters
         ----------
-        method : str {'exact', 'Monte Carlo'}
-            If 'exact', the full integration is performed over the unit sphere (see Notes). If method=='Monte Carlo', the function is evaluated along a finite set of random directions. The
-            Monte Carlo method is usually very fast, compared to the exact method.
-        n_evals : int, default 10000
-            If method=='Monte Carlo', sets the number of random directions to use.
+        method : str {'exact', 'Monte Carlo', 'trapezoid'}, optional
+            If 'exact', the full integration is performed over the unit sphere (see Notes). If 'trapezoid', the trapeze
+            method is used to approximate the integral. If 'Monte Carlo', the function is evaluated along a finite set
+            of random directions.
+        n_evals : int, optional
+            If method=='Monte Carlo' or 'trapezoid', sets the number of unit directions to use.
         seed : int, default None
             Sets the seed for random sampling when using the Monte Carlo method. Useful when one wants to reproduce
             results.
@@ -371,14 +372,16 @@ class SphericalFunction:
 
         Parameters
         ----------
-        method : str {'exact', 'Monte Carlo'}
-            If 'exact', the full integration is performed over the unit sphere (see Notes). If method=='Monte Carlo', the function is evaluated along a finite set of random directions. The
-            Monte Carlo method is usually very fast, compared to the exact method.
-        n_evals : int, default 10000
-            If method=='Monte Carlo', sets the number of random directions to use.
-        mean : float, default None
-            If provided, and if method=='exact', skip estimation of mean value and use that provided instead.
-        seed : int, default None
+        method : str {'exact', 'Monte Carlo', 'trapezoid}, optional
+            If 'exact', the full integration is performed over the unit sphere (see Notes). If 'trapezoid', the trapeze
+            method is used to approximate the integral. If 'Monte Carlo', the function is evaluated along a finite set
+            of random directions.
+        n_evals : int, optional
+            If method=='Monte Carlo' or 'trapezoid', sets the number of unit directions to use.
+        mean : float, optional
+            If provided, skip estimation of mean value and use that provided instead (only used for exact and trapezoid
+            methods)
+        seed : int, optional
             Sets the seed for random sampling when using the Monte Carlo method. Useful when one wants to reproduce
             results.
 
