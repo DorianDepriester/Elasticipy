@@ -109,7 +109,7 @@ class TestComplianceTensor(unittest.TestCase):
         averages = [S.Voigt_average(), S.Reuss_average(), S.Hill_average()]
         E_mean_th = [151.738, 75.76, 114.45]
         G_mean_th = [55.653, 26.596, 41.124]
-        nu_mean_th = [0.36325, 0.4242, 0.3915]
+        nu_mean_th = [0.36325, 0.42424242, 0.3915]
         for i, average in enumerate(averages):
             assert approx(average.Young_modulus.mean(), rel=1e-4) == E_mean_th[i]
             assert approx(average.shear_modulus.mean(), rel=1e-4) == G_mean_th[i]
