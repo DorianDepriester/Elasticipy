@@ -66,10 +66,10 @@ class TestSphericalFunction(unittest.TestCase):
         assert E_div_two.mean() == approx(E_mean/2, rel=1e-3)
 
     def test_mean_std(self):
-        assert E_mean == approx(E.mean(method='Monte Carlo', n_evals=10000, seed=0), rel=1e-2)
-        assert E_std == approx(E.std(method='Monte Carlo', n_evals=10000, seed=0), rel=1e-2)
-        assert E_mean == approx(E.mean(method='trapezoid', n_evals=10000, seed=0), rel=1e-2)
-        assert E_std == approx(E.std(method='trapezoid', n_evals=10000, seed=0), rel=1e-2)
+        for method in ('trapezoid', 'Monte Carlo'):
+            assert E_mean == approx(E.mean(method=method, seed=SEED), rel=1e-2)
+            assert E_std == approx(E.std(method=method, seed=SEED), rel=1e-2)
+
 
     def test_repr(self):
         template_test_repr(E.__repr__(), 'Spherical', 73.775, 197.50282485875343)
@@ -104,10 +104,10 @@ class TestHyperSphericalFunction(unittest.TestCase):
         assert G_mult.mean(seed=SEED, n_evals=10000) == approx(2 * G_mean, rel=5e-3)
 
     def test_mean_std(self):
-        assert G_mean == approx(G.mean(seed=SEED, n_evals=10000), rel=5e-3)
-        assert G_std == approx(G.std(seed=SEED, n_evals=10000), rel=1e-2)
-        assert G_mean == approx(G.mean(method='trapezoid', n_evals=10000), rel=5e-3)
-        assert G_std == approx(G.std(method='trapezoid', n_evals=10000), rel=5e-3)
+        for method in ('trapezoid', 'Monte Carlo'):
+            assert G_mean == approx(G.mean(method=method, seed=SEED), rel=5e-3)
+            assert G_std  == approx(G.std( method=method, seed=SEED), rel=5e-2)
+
 
     def test_repr(self):
         template_test_repr(G.__repr__(), 'Hyperspherical', 26., 77)
