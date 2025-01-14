@@ -65,7 +65,7 @@ class TestComplianceTensor(unittest.TestCase):
 
     def test_young_modulus_stats(self):
         E = S.Young_modulus
-        assert E.mean() == approx(101.994)
+        assert E.mean(method='exact') == approx(101.994)
         assert E.std() == approx(48.48065)
         assert E.mean(method='trapezoid') == approx(101.9855, rel=1e-3)
 
@@ -211,8 +211,9 @@ class TestStiffnessConstructor(unittest.TestCase):
     def test_young_modulus_stats(self):
         """Test statistics for Young moduli"""
         E = S.Young_modulus
-        assert E.mean() == approx(101.994)
+        assert E.mean(method='exact') == approx(101.994)
         assert E.std() == approx(48.48065)
+        assert E.mean() == approx(101.9942123)
 
     def test_shear_modulus_eval(self):
         """Test shear moduli estimations"""

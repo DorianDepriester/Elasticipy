@@ -332,7 +332,7 @@ class SphericalFunction:
         results = self._global_minimizer(fun)
         return -results.fun, sph2cart(*results.x)
 
-    def mean(self, method='exact', n_evals=10000, seed=None):
+    def mean(self, method='trapezoid', n_evals=10000, seed=None):
         """
         Estimate the mean value along all directions in the 3D space.
 
@@ -381,7 +381,7 @@ class SphericalFunction:
             u = uniform_spherical_distribution(n_evals, seed=seed)
             return np.mean(self.eval(u))
 
-    def var(self, method='exact', n_evals=10000, mean=None, seed=None):
+    def var(self, method='trapezoid', n_evals=10000, mean=None, seed=None):
         """
         Estimate the variance along all directions in the 3D space
 
