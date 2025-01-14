@@ -774,6 +774,21 @@ class HyperSphericalFunction(SphericalFunction):
             domain = self.domain.flatten()
             q = integrate.tplquad(fun, *domain)
             return q[0] / (2 * np.pi ** 2)
+        if method == 'trapezoid':
+            angles, evals = self.evaluate_on_spherical_grid(n_evals)
+            phi, theta, psi = angles
+            sine = np.sin(theta)
+            if self.symmetry:
+                dom_size = 2 * np.pi ** 2
+            else:
+                dom_size = 4 * np.pi ** 2
+            if mean is None:
+                mean = self.mean(method='trapezoid')
+            return integrate.trapezoid(
+                integrate.trapezoid(
+                    integrate.trapezoid((evals - mean)**2 * sine, axis=0, x=phi[:, 0, 0]),
+                    axis=0, x=theta[0, :, 0]),
+                x=psi[0, 0, :]) / dom_size
         else:
             u, v = uniform_spherical_distribution(n_evals, seed=seed, return_orthogonal=True)
             return np.var(self.eval(u, v))
