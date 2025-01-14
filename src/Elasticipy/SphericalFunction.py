@@ -118,6 +118,24 @@ def uniform_spherical_distribution(n_evals, seed=None, return_orthogonal=False):
     else:
         return u
 
+def _integrate_over_unit_sphere(phi, theta, values=None, psi=None):
+    sine = np.sin(theta)
+    if values is None:
+        values = np.ones(phi.shape)
+    if psi is None:
+        return integrate.trapezoid(
+                    integrate.trapezoid(
+                        values * sine, axis=0, x=phi[:, 0]
+                    ), axis=0, x=theta[0, :])
+    else:
+        return integrate.trapezoid(
+                    integrate.trapezoid(
+                        integrate.trapezoid(
+                            values * sine, axis=0, x=phi[:, 0, 0]
+                        ), axis=0, x=theta[0, :, 0])
+                , x=psi[0,0,:])
+
+
 
 class SphericalFunction:
     """
@@ -700,7 +718,7 @@ class HyperSphericalFunction(SphericalFunction):
         else:
             return values
 
-    def mean(self, method='trapezoid', n_evals=10000, seed=None):
+    def mean(self, method='trapezoid', n_evals=int(1e6), seed=None):
         if method == 'exact':
             def fun(psi, theta, phi):
                 return self.eval_spherical(phi, theta, psi) * sin(theta)
@@ -711,16 +729,9 @@ class HyperSphericalFunction(SphericalFunction):
         elif method == 'trapezoid':
             angles, evals = self.evaluate_on_spherical_grid(n_evals)
             phi, theta, psi = angles
-            sine = np.sin(theta)
-            if self.symmetry:
-                dom_size =  2 * np.pi**2
-            else:
-                dom_size = 4 * np.pi**2
-            return integrate.trapezoid(
-                        integrate.trapezoid(
-                            integrate.trapezoid(evals * sine, axis=0, x=phi[:,0,0]),
-                        axis=0, x=theta[0,:,0]),
-                    x=psi[0,0,:]) / dom_size
+            dom_size = _integrate_over_unit_sphere(phi, theta, psi=psi)
+            integral = _integrate_over_unit_sphere(phi, theta, psi=psi, values=evals)
+            return integral / dom_size
         else:
             u, v = uniform_spherical_distribution(n_evals, seed=seed, return_orthogonal=True)
             return np.mean(self.eval(u, v))
@@ -763,7 +774,7 @@ class HyperSphericalFunction(SphericalFunction):
         else:
             return values
 
-    def var(self, method='trapezoid', n_evals=10000, mean=None, seed=None):
+    def var(self, method='trapezoid', n_evals=int(1e6), mean=None, seed=None):
         if method == 'exact':
             if mean is None:
                 mean = self.mean()
@@ -777,18 +788,10 @@ class HyperSphericalFunction(SphericalFunction):
         if method == 'trapezoid':
             angles, evals = self.evaluate_on_spherical_grid(n_evals)
             phi, theta, psi = angles
-            sine = np.sin(theta)
-            if self.symmetry:
-                dom_size = 2 * np.pi ** 2
-            else:
-                dom_size = 4 * np.pi ** 2
+            dom_size = _integrate_over_unit_sphere(phi, theta, psi=psi)
             if mean is None:
                 mean = self.mean(method='trapezoid')
-            return integrate.trapezoid(
-                integrate.trapezoid(
-                    integrate.trapezoid((evals - mean)**2 * sine, axis=0, x=phi[:, 0, 0]),
-                    axis=0, x=theta[0, :, 0]),
-                x=psi[0, 0, :]) / dom_size
+            return _integrate_over_unit_sphere(phi, theta, psi=psi, values=(evals - mean)**2) / dom_size
         else:
             u, v = uniform_spherical_distribution(n_evals, seed=seed, return_orthogonal=True)
             return np.var(self.eval(u, v))
