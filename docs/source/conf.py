@@ -29,7 +29,8 @@ extensions = [
    'sphinx.ext.viewcode',
    'sphinx.ext.githubpages',
    'sphinx.ext.autosectionlabel',
-   'sphinx.ext.mathjax' ]
+   'sphinx.ext.mathjax',
+   'sphinx.ext.linkcode']
 templates_path = ['_templates']
 exclude_patterns = []
 
@@ -43,3 +44,10 @@ html_static_path = ['../_static']
 numpydoc_class_members_toctree = False
 autoclass_content = 'both'
 
+def linkcode_resolve(domain, info):
+    if domain != 'py':
+        return None
+    if not info['module']:
+        return None
+    filename = info['module'].replace('.', '/')
+    return f"https://github.com/DorianDepriester/Elasticipy/blob/main/{filename}.py"
