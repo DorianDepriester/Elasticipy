@@ -99,9 +99,9 @@ class TestHyperSphericalFunction(unittest.TestCase):
         G_plus = G + G
         G_min = G - G
         G_mult = 2 * G
-        assert G_plus.mean(seed=SEED, n_evals=10000) == approx(2 * G_mean, rel=5e-3)
-        assert G_min.mean(seed=SEED, n_evals=10000) == approx(0)
-        assert G_mult.mean(seed=SEED, n_evals=10000) == approx(2 * G_mean, rel=5e-3)
+        assert G_plus.mean() == approx(2 * G_mean, rel=5e-3)
+        assert G_min.mean() == approx(0)
+        assert G_mult.mean() == approx(2 * G_mean, rel=5e-3)
 
     def test_mean_std(self):
         for method in ('trapezoid', 'Monte Carlo'):
