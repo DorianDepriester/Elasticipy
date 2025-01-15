@@ -464,7 +464,7 @@ class SphericalFunction:
             If int, it give the overall number of evaluations over the quarter unit sphere. If tuple of int, they
             correspond to the number of spherical angles (n_phi, n_theta).
         return_in_spherical : bool, optional
-            If true, the first output argument will be the spherical coordinates (phi, theta). Otherwise, the cartersian
+            If true, the first output argument will be the spherical coordinates (phi, theta). Otherwise, the cartesian
             coordinates are returned
         use_symmetry : whether to take consider the upper half-domain only, or the full sphere.
 
@@ -472,9 +472,9 @@ class SphericalFunction:
         -------
         numpy.ndarray or tuple
             Coordinates of evaluation. If return_in_spherical==True, they will be returned as a tuple of angle (phi,
-            theta). Otherwise, they will be returned as numpy array.
+            theta). Otherwise, they will be returned as a numpy array of shape (n_phi, n_theta, 3).
         numpy.ndarray
-            Grid of evaluated values
+            Grid of evaluated values of shape (n_phi, n_theta, 3).
         """
         symmetry = self.symmetry and use_symmetry
         if isinstance(n, int):
