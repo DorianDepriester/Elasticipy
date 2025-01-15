@@ -414,13 +414,9 @@ class SphericalFunction:
         The full integration over the unit sphere, used if method=='exact', takes advantage of numpy.integrate.dblquad.
         This algorithm is robust but usually slow. The Monte Carlo method can be 1000 times faster.
         """
-        if self.symmetry:
-            dom_size = 2 * np.pi
-        else:
-            dom_size = 4 * np.pi
         if method == 'exact':
             if mean is None:
-                mean = self.mean()
+                mean = self.mean(method='exact')
 
             def fun(theta, phi):
                 return (self.eval_spherical(phi, theta) - mean) ** 2 * sin(theta)
@@ -430,7 +426,7 @@ class SphericalFunction:
             return q[0] / (2 * np.pi)
         elif method == 'trapezoid':
             if mean is None:
-                mean = self.mean(method="trapezoid")
+                mean = self.mean(method="trapezoid", n_evals=n_evals)
             (phi, theta), evals = self.evaluate_on_spherical_grid(n_evals)
             dom_size = _integrate_over_unit_sphere(phi, theta)
             return _integrate_over_unit_sphere(phi, theta, values=(evals - mean)**2) / dom_size
@@ -770,7 +766,7 @@ class HyperSphericalFunction(SphericalFunction):
     def var(self, method='trapezoid', n_evals=int(1e6), mean=None, seed=None):
         if method == 'exact':
             if mean is None:
-                mean = self.mean()
+                mean = self.mean(method='exact')
 
             def fun(psi, theta, phi):
                 return (mean - self.eval_spherical(phi, theta, psi)) ** 2 * sin(theta)
@@ -782,7 +778,7 @@ class HyperSphericalFunction(SphericalFunction):
             (phi, theta, psi), evals = self.evaluate_on_spherical_grid(n_evals)
             dom_size = _integrate_over_unit_sphere(phi, theta, psi=psi)
             if mean is None:
-                mean = self.mean(method='trapezoid')
+                mean = self.mean(method='trapezoid', n_evals=n_evals)
             return _integrate_over_unit_sphere(phi, theta, psi=psi, values=(evals - mean)**2) / dom_size
         else:
             u, v = uniform_spherical_distribution(n_evals, seed=seed, return_orthogonal=True)
