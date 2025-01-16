@@ -156,7 +156,6 @@ class TestComplianceTensor(unittest.TestCase):
         self.assertEqual(str(context.exception), expected_error)
 
 
-
 class TestStiffnessConstructor(unittest.TestCase):
     def test_averages(self):
         """Check that the Voigt, Reuss and Hill averages are consistent with those provided by MP."""
@@ -503,6 +502,12 @@ class TestStiffnessConstructor(unittest.TestCase):
         eig_vals = np.linalg.eigvals(S)
         expected_error = 'The input matrix is not definite positive (eigenvalues: {})'.format(eig_vals)
         self.assertEqual(str(context.exception), expected_error)
+
+    def test_universal_anisotropy(self):
+        C11, C12, C44 = 173, 33, 18
+        C = StiffnessTensor.cubic(C11=C11, C12=C12, C44=C44)
+        Z = 2 * C44 / (C11 - C12)
+        assert 6/5 * (Z**0.5 - Z**(-0.5))**2 == approx(C.universal_anisotropy)
 
 if __name__ == '__main__':
     unittest.main()
