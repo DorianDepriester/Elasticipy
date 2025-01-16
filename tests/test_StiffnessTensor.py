@@ -112,9 +112,9 @@ class TestComplianceTensor(unittest.TestCase):
         G_mean_th = [55.653, 26.596, 41.124]
         nu_mean_th = [0.36325, 0.42424242, 0.3915]
         for i, average in enumerate(averages):
-            assert approx(average.Young_modulus.mean(), rel=1e-4) == E_mean_th[i]
-            assert approx(average.shear_modulus.mean(), rel=1e-4) == G_mean_th[i]
-            assert approx(average.Poisson_ratio.mean(), rel=1e-4) == nu_mean_th[i]
+            assert approx(average.Young_modulus.eval([1,0,0]), rel=1e-4) == E_mean_th[i]
+            assert approx(average.shear_modulus.eval([1,0,0],[0,1,0]), rel=1e-4) == G_mean_th[i]
+            assert approx(average.Poisson_ratio.eval([1,0,0],[0,1,0]), rel=1e-4) == nu_mean_th[i]
 
     def test_isotropic(self, E=210000, nu=0.28):
         C = StiffnessTensor.isotropic(E=E, nu=nu)
