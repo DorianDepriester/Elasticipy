@@ -3,6 +3,7 @@ import numpy as np
 from pytest import approx
 import os
 import pandas as pd
+
 from Elasticipy.FourthOrderTensor import StiffnessTensor, ComplianceTensor
 from scipy.spatial.transform import Rotation
 from Elasticipy.FourthOrderTensor import _indices2str
@@ -132,6 +133,28 @@ class TestComplianceTensor(unittest.TestCase):
         G = C.shear_modulus.mean()
         assert approx(cs_2.mean()) == np.sqrt(G / rho)
         assert approx(cs_1.mean()) == np.sqrt(G / rho)
+
+    def test_symmetry(self):
+        S = np.random.random((6, 6))
+        with self.assertRaises(ValueError) as context:
+            _ = ComplianceTensor(S)
+        self.assertEqual(str(context.exception), 'The input matrix must be symmetric')
+
+    def test_positive_definite(self):
+        S = np.array([
+            [2, -1, 0, 0, 0, 0],
+            [-1, 2, -1, 0, 0, 0],
+            [0, -1, 2, -1, 0, 0],
+            [0, 0, -1, 2, -1, 0],
+            [0, 0, 0, -1, 2, -1],
+            [0, 0, 0, 0, -1, 0]
+        ])
+        with self.assertRaises(ValueError) as context:
+            _ = ComplianceTensor(S)
+        eig_vals = np.linalg.eigvals(S)
+        expected_error = 'The input matrix is not definite positive (eigenvalues: {})'.format(eig_vals)
+        self.assertEqual(str(context.exception), expected_error)
+
 
 
 class TestStiffnessConstructor(unittest.TestCase):
@@ -458,6 +481,27 @@ class TestStiffnessConstructor(unittest.TestCase):
         expected_error = 'The tensor has no orientation, therefore it cannot be indexed.'
         with self.assertRaises(IndexError) as context:
             _ = S[0]
+        self.assertEqual(str(context.exception), expected_error)
+
+    def test_symmetry(self):
+        S = np.random.random((6, 6))
+        with self.assertRaises(ValueError) as context:
+            _ = StiffnessTensor(S)
+        self.assertEqual(str(context.exception), 'The input matrix must be symmetric')
+
+    def test_positive_definite(self):
+        S = np.array([
+            [2, -1, 0, 0, 0, 0],
+            [-1, 2, -1, 0, 0, 0],
+            [0, -1, 2, -1, 0, 0],
+            [0, 0, -1, 2, -1, 0],
+            [0, 0, 0, -1, 2, -1],
+            [0, 0, 0, 0, -1, 0]
+        ])
+        with self.assertRaises(ValueError) as context:
+            _ = StiffnessTensor(S)
+        eig_vals = np.linalg.eigvals(S)
+        expected_error = 'The input matrix is not definite positive (eigenvalues: {})'.format(eig_vals)
         self.assertEqual(str(context.exception), expected_error)
 
 if __name__ == '__main__':
