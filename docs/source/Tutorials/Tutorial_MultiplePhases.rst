@@ -63,7 +63,7 @@ both the aforementioned tensors, weighted by the volume fraction of each phase (
 Now we can check out the lower bound for the Young modulus:
 
     >>> print(C_reuss.Young_modulus.mean())
-    179.16068408455897
+    179.16068408455902
 
 Upper bound of elastic moduli
 =============================
@@ -76,7 +76,7 @@ Conversely, the upper bounds of elastic moduli is given by the Voigt averages. T
 Which leads to:
 
     >>> print(C_voigt.Young_modulus.mean())
-    227.17330135891282
+    227.17330135891277
 
 Plotting the averages as functions of the volume fraction
 =========================================================
