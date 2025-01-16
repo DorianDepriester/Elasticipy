@@ -92,6 +92,14 @@ def _isotropic_matrix(C11, C12, C44):
                      [0, 0, 0, 0, C44, 0],
                      [0, 0, 0, 0, 0, C44]])
 
+def _check_definite_positive(mat):
+    try:
+        np.linalg.cholesky(mat)
+    except np.linalg.LinAlgError:
+        eigen_val = np.linalg.eigvals(mat)
+        raise ValueError('The input matrix is not definite positive (eigenvalues: {})'.format(eigen_val))
+
+
 class SymmetricTensor:
     """
     Template class for manipulating symmetric fourth-order tensors.
@@ -110,9 +118,12 @@ class SymmetricTensor:
     C46_C56_factor = 1.0
     component_prefix = 'C'
 
-    def __init__(self, M, phase_name=None, symmetry='Triclinic', orientations=None):
+    def __init__(self, M, phase_name=None, symmetry='Triclinic', orientations=None,
+                 check_symmetry=True, check_positive_definite=False):
         """
-        Construct of stiffness tensor from a (6,6) matrix
+        Construct of stiffness tensor from a (6,6) matrix.
+
+        The input matrix must be symmetric, otherwise an error is thrown (except if check_symmetry==False, see below)
 
         Parameters
         ----------
@@ -121,8 +132,21 @@ class SymmetricTensor:
         phase_name : str, default None
             Name to display
         symmetry : str, default Triclinic
+            Name of the crystal's symmetry
+        check_symmetry : bool, optional
+            Whether to check or not that the input matrix is symmetric.
+        check_positive_definite : bool, optional
+            Whether to check or not that the input matrix is definite positive
         """
-        self.matrix = np.array(M)
+        M = np.asarray(M)
+        if M.shape != (6,6):
+            raise ValueError('The input matrix must of shape (6,6)')
+        if check_symmetry and not np.all(np.isclose(M, M.T)):
+            raise ValueError('The input matrix must be symmetric')
+        if check_positive_definite:
+            _check_definite_positive(M)
+
+        self.matrix = M
         self.phase_name = phase_name
         self.symmetry = symmetry
         self.orientations = orientations
@@ -729,8 +753,8 @@ class StiffnessTensor(SymmetricTensor):
     tensor_name = 'Stiffness'
     C11_C12_factor = 0.5
 
-    def __init__(self, S, **kwargs):
-        super().__init__(S, **kwargs)
+    def __init__(self, S, check_positive_definite=True, **kwargs):
+        super().__init__(S, check_positive_definite=check_positive_definite, **kwargs)
 
     def __mul__(self, other):
         if isinstance(other, StrainTensor):
@@ -1296,8 +1320,8 @@ class ComplianceTensor(StiffnessTensor):
     component_prefix = 'S'
     C46_C56_factor = 2.0
 
-    def __init__(self, C, **kwargs):
-        super().__init__(C, **kwargs)
+    def __init__(self, C, check_positive_definite=True, **kwargs):
+        super().__init__(C, check_positive_definite=check_positive_definite, **kwargs)
 
     def __mul__(self, other):
         if isinstance(other, StressTensor):
