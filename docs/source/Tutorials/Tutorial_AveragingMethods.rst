@@ -57,7 +57,7 @@ behaviour. In this case, the aforementioned averages can be estimated as follows
     >>> E_Reuss = C_Reuss.Young_modulus
     >>> E_Hill = C_Hill.Young_modulus
     >>> print(E_Voigt.mean(), E_Reuss.mean(), E_Hill.mean())
-    145.66862361382906 76.13802022165396 111.6769053248696
+    145.66862361382908 76.13802022165397 111.67690532486962
 
 
 Finite number of orientations
