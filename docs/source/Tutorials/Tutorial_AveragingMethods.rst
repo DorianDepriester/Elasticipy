@@ -88,4 +88,27 @@ Let's see how the Young modulus is distributed over space:
 
     >>> C_Hill.Young_modulus.plot3D() # doctest: +SKIP
 
+.. image:: images/E_hill_fiber.png
+    :width: 400
+
 It is thus clear that the fiber along the *z* axis results in a transverse-isotropic behavior in the X-Y plane.
+
+Plotting Voigt, Reuss and Hill averages at once
+===============================================
+
+Above, we have only used the Hill average for estimating the macroscopic elastic response. In order to evidence the
+influence of the method (namely Voigt, Reuss or Hill), we can plot the directional Young moduli on orthogonal
+sections (see :ref:`here<plotting>` for details) for each of the aforementioned methods as follows:
+
+    >>> for method in ['Reuss', 'Hill', 'Voigt']:
+    ...     C_avg = C_rotated.average(method)
+    ...     if method == 'Reuss':
+    ...         fig, axs = C_avg.Young_modulus.plot_xyz_sections(label='Reuss') # Create fig and axes (sections)
+    ...     else:
+    ...         fig, axs = C_avg.Young_modulus.plot_xyz_sections(fig=fig, axs=axs, label=method) # Use existing axes
+    >>> axs[-1].legend() # doctest: +SKIP
+
+which gives:
+
+
+.. image:: images/E_VRH_sections.png
