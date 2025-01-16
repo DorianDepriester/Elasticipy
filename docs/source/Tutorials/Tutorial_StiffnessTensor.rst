@@ -52,7 +52,10 @@ deviation of the Young modulus:
     >>> print(E_std / E_mean)
     0.45580071168605646
 
+Another way to evidence anisotropy is to use the universal anisotropy factor [1]_:
 
+    >>> C.universal_anisotropy
+    5.14100955164141
 
 Shear moduli and Poisson ratios
 -------------------------------
@@ -135,3 +138,7 @@ When plotting the X-Y, X-Z and Y-Z sections, the min, max and mean values are pl
 
     If you want to perform all the above tasks in a more interactive way, check out the
     :ref:`GUI<gui>`!
+
+
+.. [1] S. I. Ranganathan and M. Ostoja-Starzewski, Universal Elastic Anisotropy Index,
+           *Phys. Rev. Lett.*, 101(5), 055504, 2008. https://doi.org/10.1103/PhysRevLett.101.055504
