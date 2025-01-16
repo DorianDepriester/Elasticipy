@@ -539,7 +539,7 @@ class SphericalFunction:
             plt.show()
         return new_fig, ax
 
-    def plot_xyz_sections(self, n_theta=500, fig=None, **kwargs):
+    def plot_xyz_sections(self, n_theta=500, fig=None, axs=None, **kwargs):
         """
         Plot XYZ sections of spherical data.
 
@@ -553,6 +553,8 @@ class SphericalFunction:
             Number of points to use for the polar plot angles. Default is 500.
         fig : matplotlib.figure.Figure, default None
             Handle to existing figure object. If None, a new figure will be created. If passed, the figure is not shown
+        axs : tuple of matplotlib.projections.polar.PolarAxes, optional
+            If provided, use these axes to plot the sections, instead of creating new ones.
         **kwargs : dict, optional
             Additional keyword arguments to pass to the plot function.
 
@@ -569,19 +571,22 @@ class SphericalFunction:
             new_fig = fig
         theta_polar = np.linspace(0, 2*np.pi, n_theta)
         titles = ('XY', 'XZ', 'YZ')
-        axs = []
+        axs_new = []
         for i in range(0, 3):
-            ax = new_fig.add_subplot(1, 3, i+1, projection='polar')
+            if axs is None:
+                ax = new_fig.add_subplot(1, 3, i+1, projection='polar')
+            else:
+                ax = axs[i]
             angles = np.zeros((n_theta, 2))
             phi, theta, ax = _create_xyz_section(ax, titles[i], theta_polar)
             angles[:, 0] = phi
             angles[:, 1] = theta
             r = self.eval_spherical(angles)
             ax.plot(theta_polar, r, **kwargs)
-            axs.append(ax)
+            axs_new.append(ax)
         if fig is None:
             new_fig.show()
-        return new_fig, axs
+        return new_fig, axs_new
 
     def plot_as_pole_figure(self, n_theta=50, n_phi=200, projection='lambert',
                             fig=None, plot_type='imshow', show=True, title=None,
