@@ -50,10 +50,8 @@ deviation of the Young modulus:
     >>> E_mean = E.mean()
     >>> E_std = E.std()
     >>> print(E_std / E_mean)
-    0.4557834880061245
+    0.45580071168605646
 
-Note that this may take a couple seconds (because of near-exact integration of the Young moduli over all the unit
-sphere).
 
 
 Shear moduli and Poisson ratios
