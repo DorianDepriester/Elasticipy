@@ -13,6 +13,7 @@ authors:
     orcid: 0000-0002-2881-8942
     equal-contrib: false
     affiliation: '1'
+    corresponding: true
   - name: Régis Kubler
     orcid: 0000-0001-7781-5855
     affiliation: '1'
@@ -72,8 +73,8 @@ $$
 The values of $\boldsymbol{C}$ depend on the material, whereas its shape (set of zero-components, or linear 
 relationships between them) depends on the material's symmetry [@nye], as outlined in \autoref{fig:Nye} . 
 
-![Pattern of stiffness and compliance tensors of crystals, depending on their symmetry [@nye]. 
-With courtesy of Pr. Pamela Burnley\label{fig:Nye}](Nye.png)
+![Patterns of stiffness and compliance tensors of crystals, depending on their symmetry [@nye]. 
+With courtesy of Pr. Pamela Burnley.\label{fig:Nye}](Nye.png)
 
 
 Pymatgen [@pymatgen] provides some built-in functions to work on strain, stress and elasticity but lacks some 
@@ -91,14 +92,16 @@ and stiffness;
 
   - visualization tools for understanding directional elastic behavior (Young modulus, shear modulus and Poisson ratio);
 
-  - a collection of built-in methods to easily and efficiently perform fundamental operations on tensors (rotations, 
-products, invariants, statistical analysis etc.).
+  - a collection of built-in methods to easily and efficiently perform fundamental operations on tensors (rotations 
+[@meanElastic], products, invariants, statistical analysis etc.);
+
+  - averaging techniques (e.g. Voigt--Reuss--Hill [@hill]) for textured and non-textured polycrystalline aggregates.
 
 Therefore, Elasticipy introduces the concept of *tensor arrays*, in a similar way as in MTEX [@MTEX], allowing to 
 process thousands of tensors at once with simple and highly efficient commands. In order to highlight the performances 
 of Elasticipy, \autoref{fig:pymatgen} shows the wall-time required to perform two basic operations on tensors, as 
 functions of the number of considered tensors. This demonstrates that, when processing large datasets of tensors 
-($>10^3$), basic tensor operations on tensors are 1 to 2 orders of magnitude faster in Elasticipy compared to pymatgen. 
+($>10^3$), basic tensor operations are 1 to 2 orders of magnitude faster in Elasticipy compared to pymatgen. 
 These performances gains are achieved by leveraging `numpy`'s array broadcasting capabilities.
 However, as tensor algebra is not the primary focus of Pymatgen, Elasticipy is designed to complement rather than 
 replace it. Elasticipy supports seamless conversion between its own data structures and those of Pymatgen, allowing 
