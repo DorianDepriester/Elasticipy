@@ -37,9 +37,9 @@ engineers.
 In continuum mechanics, the deformation of a material is described by the second-order strain tensor (usually denoted 
 $\boldsymbol{\varepsilon}$) whereas the stress is described by the second-order Cauchy's stress tensor 
 ($\boldsymbol{\sigma}$). Under the linear elasticity assumption, the relationship between the elastic strain $\boldsymbol{\varepsilon}$
-and $\boldsymbol{\sigma}$ is given through the fourth-order stiffness tensor $\boldsymbol{C}$ with:
+and $\boldsymbol{\sigma}$, known as the generalized Hooke's law, is given through the fourth-order stiffness tensor $\boldsymbol{C}$ with:
 
-$$\sigma_{ij}=C_{ijk\ell}\varepsilon_{k\ell}$$
+$$\sigma_{ij}=C_{ijk\ell}\varepsilon_{k\ell}\label{eq:Hooke}$$
 
 where $C_{ijk\ell}$ denotes the $ijk\ell$-th component of $\boldsymbol{C}$. In order to simplify the above equation, one usually uses the so-called Voigt notation, 
 which reads:
@@ -97,7 +97,7 @@ and stiffness;
 
   - averaging techniques (e.g. Voigt--Reuss--Hill [@hill]) for textured and non-textured polycrystalline aggregates.
 
-In order to evidence some features detailed above, \autoref{Young}.a) illustrates the directional Young modulus of 
+In order to evidence some of these features, \autoref{Young}.a) illustrates the directional Young modulus of 
 copper (Cu) single crystal as a 3D surface, whereas \autoref{Young}.b) shows the same values as a pole figure (Lambert 
 projection). In \autoref{Young}.c), the Young modulus of a polycrystalline Cu displaying a $\boldsymbol{z}$ fiber 
 texture has been estimated with different averaging methods (namely Voigt, Reuss and Hill [@hill]), then plotted as 
@@ -107,18 +107,21 @@ as orthogonal sections.
 Young modulus of Cu polycrystal with $\boldsymbol{z}$ fiber texture, plotted in three orthogonal sections, depending on the
 averaging method. \label{fig:Young}](YoungModulus.png)
 
-In addition, Elasticipy introduces the concept of *tensor arrays*, in a similar way as in MTEX [@MTEX], allowing to 
+Elasticipy also introduces the concept of *tensor arrays*, in a similar way as in MTEX [@MTEX], allowing to 
 process several tensors at once with simple and highly efficient commands. In order to highlight the performances 
-of Elasticipy, \autoref{fig:pymatgen} shows the wall-time required to perform two basic operations on tensors, as 
+of Elasticipy, \autoref{fig:pymatgen} shows the wall-time required to perform two basic operations on tensors (namely, 
+apply the generalized Hooke's law \eqref{eq:Hooke} and compute the von Mises equivalent stress) , as 
 functions of the number of considered tensors. This demonstrates that, when processing large datasets of tensors 
 ($n>10^3$), basic tensor operations are 1 to 2 orders of magnitude faster in Elasticipy compared to pymatgen. 
 These performances gains are achieved by leveraging `numpy`'s array broadcasting capabilities.
 However, as tensor algebra is not the primary focus of Pymatgen, Elasticipy is designed to complement rather than 
 replace it. Elasticipy supports seamless conversion between its own data structures and those of Pymatgen, allowing 
-users to integrate both tools and benefit from pymatgen's extensive features beyond tensor analysis.
+users to integrate both tools and benefit from pymatgen's extensive features beyond tensor analysis. Elasticipy is also
+compatible with orix [@orix], a Python library for analysing orientations and crystal symmetry.
 
 ![Performance comparison between Elasticipy and pymatgen.\label{fig:pymatgen}](ElasticipyVSpymatgen.png){ width=75% }
 
-
+It is worth mentioning that Elasticipy provides a full framework for working on tensors, allowing to extend the analyses
+beyond linear elasticity problems (e.g. plasticity) with ease.
 
 # References
