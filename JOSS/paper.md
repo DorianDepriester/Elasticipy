@@ -39,7 +39,7 @@ $\boldsymbol{\varepsilon}$) whereas the stress is described by the second-order 
 ($\boldsymbol{\sigma}$). Under the linear elasticity assumption, the relationship between the elastic strain $\boldsymbol{\varepsilon}$
 and $\boldsymbol{\sigma}$, known as the generalized Hooke's law, is given through the fourth-order stiffness tensor $\boldsymbol{C}$ with:
 
-$$\sigma_{ij}=C_{ijk\ell}\varepsilon_{k\ell}\label{eq:Hooke}$$
+$$\sigma_{ij}=C_{ijk\ell}\varepsilon_{k\ell} \label{eq:Hooke}$$
 
 where $C_{ijk\ell}$ denotes the $ijk\ell$-th component of $\boldsymbol{C}$. In order to simplify the above equation, one usually uses the so-called Voigt notation, 
 which reads:
@@ -97,9 +97,9 @@ and stiffness;
 
   - averaging techniques (e.g. Voigt--Reuss--Hill [@hill]) for textured and non-textured polycrystalline aggregates.
 
-In order to evidence some of these features, \autoref{Young}.a) illustrates the directional Young modulus of 
-copper (Cu) single crystal as a 3D surface, whereas \autoref{Young}.b) shows the same values as a pole figure (Lambert 
-projection). In \autoref{Young}.c), the Young modulus of a polycrystalline Cu displaying a $\boldsymbol{z}$ fiber 
+In order to evidence some of these features, \autoref{fig:Young}.a) illustrates the directional Young modulus of 
+copper (Cu) single crystal as a 3D surface, whereas \autoref{fig:Young}.b) shows the same values as a pole figure (Lambert 
+projection). In \autoref{fig:Young}.c), the Young modulus of a polycrystalline Cu displaying a $\boldsymbol{z}$ fiber 
 texture has been estimated with different averaging methods (namely Voigt, Reuss and Hill [@hill]), then plotted as 
 as orthogonal sections.
 
