@@ -186,7 +186,10 @@ class SymmetricTensor:
         if self.orientations is None:
             return m
         else:
-            ori = self.orientations.as_matrix()
+            if isinstance(self.orientations, Rotation):
+                ori = self.orientations.as_matrix()
+            else:
+                ori = self.orientations.to_matrix()
             rotated_tensors = np.einsum('qim,qjn,qko,qlp,mnop->qijkl', ori, ori, ori, ori, m)
             return rotated_tensors
 
@@ -196,7 +199,7 @@ class SymmetricTensor:
 
         Parameters
         ----------
-        rotation : Rotation
+        rotation : Rotation or orix.quaternion.rotation.Rotation
             Rotation to apply
 
         Returns
@@ -204,7 +207,10 @@ class SymmetricTensor:
         SymmetricTensor
             Rotated tensor
         """
-        rot_mat = rotation.as_matrix()
+        if isinstance(rotation, Rotation):
+            rot_mat = rotation.as_matrix()
+        else:
+            rot_mat = rotation.to_matrix()
         rotated_tensor = np.einsum('im,jn,ko,lp,mnop->ijkl', rot_mat, rot_mat, rot_mat, rot_mat, self.full_tensor())
         ij, kl = np.indices((6, 6))
         i, j = unvoigt_index(ij).T
@@ -258,11 +264,14 @@ class SymmetricTensor:
                 return self.rotate(other)
             else:
                 return self.__class__(self.matrix, symmetry=self.symmetry, orientations=other)
+        elif hasattr(other, "to_matrix") and callable(getattr(other, "to_matrix")):
+            return self.__class__(self.matrix, symmetry=self.symmetry, orientations=other)
         else:
             return self.__class__(self.matrix * other, symmetry=self.symmetry)
 
     def __rmul__(self, other):
-        if isinstance(other, (Rotation, float, int, np.number)):
+        if (isinstance(other, (Rotation, float, int, np.number)) or
+                (hasattr(other, "to_matrix") and callable(getattr(other, "to_matrix")))):
             return self * other
         else:
             raise NotImplementedError('A fourth order tensor can be left-multiplied by rotations or scalar only.')
