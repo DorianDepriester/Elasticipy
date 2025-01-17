@@ -97,6 +97,8 @@ and stiffness;
 
   - averaging techniques (e.g. Voigt--Reuss--Hill [@hill]) for textured and non-textured polycrystalline aggregates.
 
+Different plotting options are presented in \autoref{fig:Young}
+
 Therefore, Elasticipy introduces the concept of *tensor arrays*, in a similar way as in MTEX [@MTEX], allowing to 
 process several tensors at once with simple and highly efficient commands. In order to highlight the performances 
 of Elasticipy, \autoref{fig:pymatgen} shows the wall-time required to perform two basic operations on tensors, as 
@@ -112,7 +114,9 @@ users to integrate both tools and benefit from pymatgen's extensive features bey
 Elasticipy also provides plotting tools inspired from Elate, as illustrated in \autoref{fig:Young}. Again, `numpy` 
 broadcasting allows such plots to be about twice faster with Elasticipy compared to Elate.
 
-![Directional Young modulus of monoclinic TiNi (in GPa).\label{fig:Young}](Plot_E.png){ width=75% }
+![Directional Young modulus of Cu single crystal as a 3D surface (a) or a pole figure in Lambert projection (b); 
+Young modulus of Cu polycrystal with $\boldsymbol{z}$ fiber texture, plotted in three orthogonal sections, depending on the
+averaging method. \label{fig:Young}](YoungModulus.png)
 
 
 # References
