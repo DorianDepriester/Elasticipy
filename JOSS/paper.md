@@ -73,7 +73,7 @@ The values of $\boldsymbol{C}$ depend on the material, whereas its shape (set of
 relationships between them) depends on the material's symmetry [@nye], as outlined in \autoref{fig:Nye} . 
 
 ![Pattern of stiffness and compliance tensors of crystals, depending on their symmetry [@nye]. 
-With courtesy of Pr. Pamela Burnley\label{fig:Nye}](Nye.png){ width=75% }
+With courtesy of Pr. Pamela Burnley\label{fig:Nye}](Nye.png)
 
 
 Pymatgen [@pymatgen] provides some built-in functions to work on strain, stress and elasticity but lacks some 
