@@ -69,8 +69,12 @@ C_{1111}    & C_{1122}      & C_{1133}  & C_{1123} & C_{1113}  & C_{1112}\\
 \end{bmatrix}
 $$
 
-The values of $\boldsymbol{C}$ depend on the material, whereas its shape (set of zero-components, or linear relationships 
-between them) depends on the material's symmetry [@nye]. 
+The values of $\boldsymbol{C}$ depend on the material, whereas its shape (set of zero-components, or linear 
+relationships between them) depends on the material's symmetry [@nye], as outlined in \autoref{fig:Nye} . 
+
+![Pattern of stiffness and compliance tensors of crystals, depending on their symmetry [@nye]. 
+With courtesy of Pr. Pamela Burnley\label{fig:Nye}](Nye.png){ width=75% }
+
 
 Pymatgen [@pymatgen] provides some built-in functions to work on strain, stress and elasticity but lacks some 
 functionalities about the tensor analysis. Conversely, Elate [@elate] is a project dedicated to analysis of stiffness 
