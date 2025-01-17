@@ -97,13 +97,21 @@ and stiffness;
 
   - averaging techniques (e.g. Voigt--Reuss--Hill [@hill]) for textured and non-textured polycrystalline aggregates.
 
-Different plotting options are presented in \autoref{fig:Young}
+In order to evidence some features detailed above, \autoref{Young}.a) illustrates the directional Young modulus of 
+copper (Cu) single crystal as a 3D surface, whereas \autoref{Young}.b) shows the same values as a pole figure (Lambert 
+projection). In \autoref{Young}.c), the Young modulus of a polycrystalline Cu displaying a $\boldsymbol{z}$ fiber 
+texture has been estimated with different averaging methods (namely Voigt, Reuss and Hill [@hill]), then plotted as 
+as orthogonal sections.
 
-Therefore, Elasticipy introduces the concept of *tensor arrays*, in a similar way as in MTEX [@MTEX], allowing to 
+![Young modulus (GPa) of Cu single crystal as a 3D surface (a) or a pole figure (b); 
+Young modulus of Cu polycrystal with $\boldsymbol{z}$ fiber texture, plotted in three orthogonal sections, depending on the
+averaging method. \label{fig:Young}](YoungModulus.png)
+
+In addition, Elasticipy introduces the concept of *tensor arrays*, in a similar way as in MTEX [@MTEX], allowing to 
 process several tensors at once with simple and highly efficient commands. In order to highlight the performances 
 of Elasticipy, \autoref{fig:pymatgen} shows the wall-time required to perform two basic operations on tensors, as 
 functions of the number of considered tensors. This demonstrates that, when processing large datasets of tensors 
-($>10^3$), basic tensor operations are 1 to 2 orders of magnitude faster in Elasticipy compared to pymatgen. 
+($n>10^3$), basic tensor operations are 1 to 2 orders of magnitude faster in Elasticipy compared to pymatgen. 
 These performances gains are achieved by leveraging `numpy`'s array broadcasting capabilities.
 However, as tensor algebra is not the primary focus of Pymatgen, Elasticipy is designed to complement rather than 
 replace it. Elasticipy supports seamless conversion between its own data structures and those of Pymatgen, allowing 
@@ -111,12 +119,6 @@ users to integrate both tools and benefit from pymatgen's extensive features bey
 
 ![Performance comparison between Elasticipy and pymatgen.\label{fig:pymatgen}](ElasticipyVSpymatgen.png){ width=75% }
 
-Elasticipy also provides plotting tools inspired from Elate, as illustrated in \autoref{fig:Young}. Again, `numpy` 
-broadcasting allows such plots to be about twice faster with Elasticipy compared to Elate.
-
-![Directional Young modulus of Cu single crystal as a 3D surface (a) or a pole figure in Lambert projection (b); 
-Young modulus of Cu polycrystal with $\boldsymbol{z}$ fiber texture, plotted in three orthogonal sections, depending on the
-averaging method. \label{fig:Young}](YoungModulus.png)
 
 
 # References
