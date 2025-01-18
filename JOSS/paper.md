@@ -39,7 +39,7 @@ $\boldsymbol{\varepsilon}$) whereas the stress is described by the second-order 
 ($\boldsymbol{\sigma}$). Under the linear elasticity assumption, the relationship between the elastic strain $\boldsymbol{\varepsilon}$
 and $\boldsymbol{\sigma}$, known as the generalized Hooke's law, is given through the fourth-order stiffness tensor $\boldsymbol{C}$ with:
 
-$$\sigma_{ij}=C_{ijk\ell}\varepsilon_{k\ell} \label{eq:Hooke}$$
+[$$\sigma_{ij}=C_{ijk\ell}\varepsilon_{k\ell}$$]{label="eq:Hooke"}
 
 where $C_{ijk\ell}$ denotes the $ijk\ell$-th component of $\boldsymbol{C}$. In order to simplify the above equation, one usually uses the so-called Voigt notation, 
 which reads:
