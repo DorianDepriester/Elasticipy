@@ -151,13 +151,14 @@ rotations = Rotation.from_euler('ZXZ', Euler_angles)             # Bunge-Euler a
 C_rotated = C * rotations
 ````
 
-Then, the (Voigt--Reuss)--Hill [@hill] average can be computed as follows:
+Then, the Voigt--Reuss--Hill [@hill] average can be computed as follows:
 
 ````python
 C_VRH = C_rotated.Hill_average()
 ````
 
 Finally, the corresponding Young moduli can be plotted in orthogonal sections, as shown in \autoref{fig:Young}.c), with:
+
 ````python
 C_VRH.Young_modulus.plot_xyz_sections()
 ````
