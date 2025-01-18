@@ -71,16 +71,16 @@ C_{1111}    & C_{1122}      & C_{1133}  & C_{1123} & C_{1113}  & C_{1112}\\
 $$
 
 The values of $\boldsymbol{C}$ depend on the material, whereas its shape (set of zero-components, or linear 
-relationships between them) depends on the material's symmetry [@nye], as outlined in \autoref{fig:Nye} . 
-
-![Patterns of stiffness and compliance tensors of crystals, depending on their symmetry [@nye]. 
-With courtesy of Pr. Pamela Burnley.\label{fig:Nye}](Nye.png)
-
+relationships between them) depends on the material's symmetry [@nye], as outlined in \autoref{fig:Nye}. 
 
 Pymatgen [@pymatgen] provides some built-in functions to work on strain, stress and elasticity but lacks some 
 functionalities about the tensor analysis. Conversely, Elate [@elate] is a project dedicated to analysis of stiffness 
 and compliance tensors (e.g. plotting directional engineering constants, such as Young modulus). It is implemented in 
 [the Materials Project](https://next-gen.materialsproject.org/) [@MaterialsProject].
+
+![Patterns of stiffness and compliance tensors of crystals, depending on their symmetry [@nye]. 
+With courtesy of Pr. Pamela Burnley.\label{fig:Nye}](Nye.png)
+
 
 Therefore, the purpose of Elasticipy is to combine the functionalities of Pymatgen and Elate into a consistent 
 project dedicated to continuum mechanics. Its aim is to propose an easy-to-use and efficient tool with the following features:
