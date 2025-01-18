@@ -123,43 +123,6 @@ compatible with orix [@orix], a Python library for analysing orientations and cr
 It is worth mentioning that Elasticipy provides a full framework for working on tensors, allowing to extend the analyses
 beyond linear elasticity problems (e.g. plasticity) with ease.
 
-# Usage
-## Plot directional engineering constants
 
-\autoref{fig:Young}.a) and \autoref{fig:Young}.b) were rendered with the following syntax:
-
-````python
-from Elasticipy.FourthOrderTensor import StiffnessTensor
-C = StiffnessTensor.cubic(C11=186, C12=134, C44=77)
-E = C.Young_modulus
-E.plot3D(n_phi=500, n_theta=500)
-E.plot_as_pole_figure()
-````
-
-## Create array of rotated stiffness tensors and compute average
-
-When considering a finite set of orientations, an array of stiffness tensors can be built to account for the rotations:
-
-````python
-from scipy.spatial.transform import Rotation
-import numpy as np
-n = 10000
-phi1 = np.random.random(n)*2*np.pi                               # Random sampling from 0 to 2pi
-Euler_angles = np.array([phi1,  np.zeros(n),  np.zeros(n)]).T    # Random Euler angles corresponding to Fibre texture
-rotations = Rotation.from_euler('ZXZ', Euler_angles)             # Bunge-Euler angles
-C_rotated = C * rotations
-````
-
-Then, the Voigt--Reuss--Hill [@hill] average can be computed as follows:
-
-````python
-C_VRH = C_rotated.Hill_average()
-````
-
-Finally, the corresponding Young moduli can be plotted in orthogonal sections, as shown in \autoref{fig:Young}.c), with:
-
-````python
-C_VRH.Young_modulus.plot_xyz_sections()
-````
 
 # References
