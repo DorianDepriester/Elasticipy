@@ -1,3 +1,4 @@
+---
 title: 'Elasticipy: A Python package for elasticity and tensor analysis'
 tags:
   - Python
@@ -38,7 +39,7 @@ $\boldsymbol{\varepsilon}$) whereas the stress is described by the second-order 
 ($\boldsymbol{\sigma}$). Under the linear elasticity assumption, the relationship between the elastic strain $\boldsymbol{\varepsilon}$
 and $\boldsymbol{\sigma}$, known as the generalized Hooke's law, is given through the fourth-order stiffness tensor $\boldsymbol{C}$ with:
 
-$$\sigma_{ij}=C_{ijk\ell}\varepsilon_{k\ell}$$
+[$$\sigma_{ij}=C_{ijk\ell}\varepsilon_{k\ell}$$]{label="eq:Hooke"}
 
 where $C_{ijk\ell}$ denotes the $ijk\ell$-th component of $\boldsymbol{C}$. In order to simplify the above equation, one usually uses the so-called Voigt notation, 
 which reads:
@@ -109,7 +110,7 @@ averaging method. \label{fig:Young}](YoungModulus.png)
 Elasticipy also introduces the concept of *tensor arrays*, in a similar way as in MTEX [@MTEX], allowing to 
 process several tensors at once with simple and highly efficient commands. In order to highlight the performances 
 of Elasticipy, \autoref{fig:pymatgen} shows the wall-time required to perform two basic operations on tensors (namely, 
-apply the generalized Hooke's law and compute the von Mises equivalent stress) , as 
+apply the generalized Hooke's law \eqref{eq:Hooke} and compute the von Mises equivalent stress) , as 
 functions of the number of considered tensors. This demonstrates that, when processing large datasets of tensors 
 ($n>10^3$), basic tensor operations are 1 to 2 orders of magnitude faster in Elasticipy compared to pymatgen. 
 These performances gains are achieved by leveraging `numpy`'s array broadcasting capabilities.
@@ -122,7 +123,5 @@ compatible with orix [@orix], a Python library for analysing orientations and cr
 
 It is worth mentioning that Elasticipy provides a full framework for working on tensors, allowing to extend the analyses
 beyond linear elasticity problems (e.g. plasticity) with ease.
-
-
 
 # References
