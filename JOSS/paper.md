@@ -128,7 +128,7 @@ beyond linear elasticity problems (e.g. plasticity) with ease.
 
 ## Plot directional engineering constants
 
-\autoref{fig:Young}.a) and \autoref{fig:Young}.b) were rendered with the following syntax:
+\autoref{fig:Young}.a) and b) were rendered with the following syntax:
 
 ````python
 from Elasticipy.FourthOrderTensor import StiffnessTensor
@@ -146,13 +146,13 @@ When considering a finite set of orientations, an array of stiffness tensors can
 from scipy.spatial.transform import Rotation
 import numpy as np
 n = 10000
-phi1 = np.random.random(n)*2*np.pi                               # Random sampling from 0 to 2pi
-Euler_angles = np.array([phi1,  np.zeros(n),  np.zeros(n)]).T    # Random Euler angles corresponding to Fibre texture
+phi1 = np.random.random(n)*2*np.pi  # Random sampling from 0 to 2pi
+Euler_angles = np.array([phi1,  np.zeros(n),  np.zeros(n)]).T    # Fibre texture
 rotations = Rotation.from_euler('ZXZ', Euler_angles)             # Bunge-Euler angles
-C_rotated = C * rotations
+C_rotated = C * rotations   # n-lenght tensor array
 ````
 
-Then, the Voigt--Reuss--Hill average [@hill] can be computed as follows:
+Then, the Voigt--Reuss--Hill average [@hill] can be computed from the tensor array:
 
 ````python
 C_VRH = C_rotated.Hill_average()
