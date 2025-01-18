@@ -110,7 +110,7 @@ averaging method. \label{fig:Young}](YoungModulus.png)
 Elasticipy also introduces the concept of *tensor arrays*, in a similar way as in MTEX [@MTEX], allowing to 
 process several tensors at once with simple and highly efficient commands. In order to highlight the performances 
 of Elasticipy, \autoref{fig:pymatgen} shows the wall-time required to perform two basic operations on tensors (namely, 
-apply the generalized Hooke's law \eqref{eq:Hooke} and compute the von Mises equivalent stress) , as 
+apply the generalized Hooke's law and compute the von Mises equivalent stress) , as 
 functions of the number of considered tensors. This demonstrates that, when processing large datasets of tensors 
 ($n>10^3$), basic tensor operations are 1 to 2 orders of magnitude faster in Elasticipy compared to pymatgen. 
 These performances gains are achieved by leveraging `numpy`'s array broadcasting capabilities.
