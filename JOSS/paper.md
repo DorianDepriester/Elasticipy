@@ -76,7 +76,8 @@ relationships between them) depends on the material's symmetry [@nye], as outlin
 Pymatgen [@pymatgen] provides some built-in functions to work on strain, stress and elasticity but lacks some 
 functionalities about the tensor analysis. Conversely, Elate [@elate] is a project dedicated to analysis of stiffness 
 and compliance tensors (e.g. plotting directional engineering constants, such as Young modulus). It is implemented in 
-[the Materials Project](https://next-gen.materialsproject.org/) [@MaterialsProject].
+[the Materials Project](https://next-gen.materialsproject.org/) [@MaterialsProject]. AnisoVis is similar to Elate, but*
+works on MATLAB\textsuperscript{\textregistered} [@AnisoVis].
 
 ![Patterns of stiffness and compliance tensors of crystals, depending on their symmetry [@nye]. 
 With courtesy of Pr. Pamela Burnley.\label{fig:Nye}](Nye.png)
