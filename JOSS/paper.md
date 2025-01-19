@@ -76,8 +76,8 @@ relationships between them) depends on the material's symmetry [@nye], as outlin
 Pymatgen [@pymatgen] provides some built-in functions to work on strain, stress and elasticity but lacks some 
 functionalities about the tensor analysis. Conversely, Elate [@elate] is a project dedicated to analysis of stiffness 
 and compliance tensors (e.g. plotting directional engineering constants, such as Young modulus). It is implemented in 
-[the Materials Project](https://next-gen.materialsproject.org/) [@MaterialsProject]. AnisoVis is similar to Elate, but*
-works on MATLAB\textsuperscript{\textregistered} [@AnisoVis].
+[the Materials Project](https://next-gen.materialsproject.org/) [@MaterialsProject]. AnisoVis [@AnisoVis] is similar to 
+Elate, but works on MATLAB\textsuperscript{\textregistered}.
 
 ![Patterns of stiffness and compliance tensors of crystals, depending on their symmetry [@nye]. 
 With courtesy of Pr. Pamela Burnley.\label{fig:Nye}](Nye.png)
@@ -139,7 +139,7 @@ E.plot3D(n_phi=500, n_theta=500)
 E.plot_as_pole_figure()
 ````
 
-## Create array of rotated stiffness tensors and compute average
+## Create an array of rotated stiffness tensors and compute average
 
 When considering a finite set of orientations, an array of stiffness tensors can be built to account for the rotations:
 
@@ -148,9 +148,9 @@ from scipy.spatial.transform import Rotation
 import numpy as np
 n = 10000
 phi1 = np.random.random(n)*2*np.pi  # Random sampling from 0 to 2pi
-Euler_angles = np.array([phi1,  np.zeros(n),  np.zeros(n)]).T    # Fibre texture
-rotations = Rotation.from_euler('ZXZ', Euler_angles)             # Bunge-Euler angles
-C_rotated = C * rotations   # n-lenght tensor array
+Euler_angles = np.array([phi1,  np.zeros(n),  np.zeros(n)]).T # Fibre texture
+rotations = Rotation.from_euler('ZXZ', Euler_angles) # Bunge-Euler angles
+C_rotated = C * rotations # n-lenght tensor array
 ````
 
 Then, the Voigt--Reuss--Hill average [@hill] can be computed from the tensor array:
