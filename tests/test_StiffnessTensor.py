@@ -518,7 +518,7 @@ class TestStiffnessConstructor(unittest.TestCase):
         C_rotated_full = C_rotated.full_tensor()
         for i in range(n):
             rot_mat = orix_rotations.to_matrix()[i]
-            tensor_i = np.einsum('mi,nj,ok,pl,mnop -> ijkl', rot_mat, rot_mat, rot_mat, rot_mat, C.full_tensor())
+            tensor_i = np.einsum('im,jn,ko,lp,mnop -> ijkl', rot_mat, rot_mat, rot_mat, rot_mat, C.full_tensor())
             np.testing.assert_array_almost_equal(C_rotated_full[i], tensor_i)
 
 if __name__ == '__main__':

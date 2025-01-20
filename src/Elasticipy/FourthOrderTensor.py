@@ -206,7 +206,7 @@ class SymmetricTensor:
             return m
         else:
             ori = _rotation_to_matrix(self.orientations)
-            rotated_tensors = np.einsum('qmi,qnj,qok,qpl,mnop->qijkl', ori, ori, ori, ori, m)
+            rotated_tensors = np.einsum('qim,qjn,qko,qlp,mnop->qijkl', ori, ori, ori, ori, m)
             return rotated_tensors
 
     def rotate(self, rotation):
@@ -225,7 +225,7 @@ class SymmetricTensor:
         """
         if _is_single_rotation(rotation):
             rot_mat = _rotation_to_matrix(rotation)
-            rotated_tensor = np.einsum('mi,nj,ok,pl,mnop->ijkl', rot_mat, rot_mat, rot_mat, rot_mat, self.full_tensor())
+            rotated_tensor = np.einsum('im,jn,ko,lp,mnop->ijkl', rot_mat, rot_mat, rot_mat, rot_mat, self.full_tensor())
             ij, kl = np.indices((6, 6))
             i, j = unvoigt_index(ij).T
             k, ell = unvoigt_index(kl).T
