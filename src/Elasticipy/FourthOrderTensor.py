@@ -1,7 +1,7 @@
 import numpy as np
 import re
 
-from Elasticipy.SecondOrderTensor import SymmetricSecondOrderTensor
+from Elasticipy.SecondOrderTensor import SymmetricSecondOrderTensor, rotation_to_matrix, is_orix_rotation
 from Elasticipy.StressStrainTensors import StrainTensor, StressTensor
 from Elasticipy.SphericalFunction import SphericalFunction, HyperSphericalFunction
 from scipy.spatial.transform import Rotation
@@ -98,26 +98,18 @@ def _check_definite_positive(mat):
         eigen_val = np.linalg.eigvals(mat)
         raise ValueError('The input matrix is not definite positive (eigenvalues: {})'.format(eigen_val))
 
-def _is_orix_rotation(other):
-    return hasattr(other, "to_matrix") and callable(getattr(other, "to_matrix"))
 
 def _is_single_rotation(rotation):
     if isinstance(rotation, Rotation):
         return rotation.single
-    elif _is_orix_rotation(rotation):
+    elif is_orix_rotation(rotation):
         return rotation.size == 1
     else:
         raise TypeError('The input argument must be of class scipy.transform.Rotation or '
                         'orix.quaternion.rotation.Rotation')
 
 def _rotate_tensor(full_tensor, rotation):
-    if isinstance(rotation, Rotation):
-        rot_mat = rotation.as_matrix()
-    elif _is_orix_rotation(rotation):
-        rot_mat = rotation.to_matrix()
-    else:
-        raise TypeError('The input argument must be of class scipy.transform.Rotation or '
-                        'orix.quaternion.rotation.Rotation')
+    rot_mat = rotation_to_matrix(rotation)
     str_ein =  '...im,...jn,...ko,...lp,mnop->...ijkl'
     return np.einsum(str_ein, rot_mat, rot_mat, rot_mat, rot_mat, full_tensor)
 
@@ -274,7 +266,7 @@ class SymmetricTensor:
                     return np.einsum('ijkl,...kl->...ij', self.full_tensor(), other)
                 else:
                     return np.einsum('qijkl,...kl->q...ij', self.full_tensor(), other)
-        elif isinstance(other, Rotation) or _is_orix_rotation(other):
+        elif isinstance(other, Rotation) or is_orix_rotation(other):
             if _is_single_rotation(other):
                 return self.rotate(other)
             else:

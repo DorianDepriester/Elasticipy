@@ -295,9 +295,8 @@ class SecondOrderTensor:
         if isinstance(B, SecondOrderTensor):
             new_mat = np.matmul(self.matrix, B.matrix)
             return SecondOrderTensor(new_mat)
-        elif isinstance(B, Rotation):
-            rotation_matrices = B.as_matrix()
-            transpose_matrices = B.inv().as_matrix()
+        elif isinstance(B, Rotation) or is_orix_rotation(B):
+            rotation_matrices, transpose_matrices = rotation_to_matrix(B, return_transpose=True)
             new_matrix = np.matmul(np.matmul(transpose_matrices, self.matrix), rotation_matrices)
             # In case of rotation, the property of the transformed tensor is kept
             return self.__class__(new_matrix)
@@ -374,8 +373,8 @@ class SecondOrderTensor:
         """
         if isinstance(other, SecondOrderTensor):
             other_matrix = other.matrix
-        elif isinstance(other, Rotation):
-            other_matrix = other.as_matrix()
+        elif isinstance(other, Rotation) or is_orix_rotation(Rotation):
+            other_matrix = rotation_to_matrix(other)
         else:
             other_matrix = other
         matrix = self.matrix
@@ -386,7 +385,7 @@ class SecondOrderTensor:
         matrix_expanded = matrix.reshape(shape_matrix + (1,) * extra_dim_other + (3, 3))
         other_expanded = other_matrix.reshape((1,) * extra_dim_matrix + shape_other + (3, 3))
         if isinstance(other, Rotation):
-            other_expanded_t = np.swapaxes(other_expanded, -1, -2)
+            other_expanded_t = _transpose_matrix(other_expanded)
             new_mat = np.matmul(np.matmul(other_expanded_t, matrix_expanded), other_expanded)
             return self.__class__(np.squeeze(new_mat))
         else:
@@ -1270,3 +1269,47 @@ class SkewSymmetricSecondOrderTensor(SecondOrderTensor):
         else:
             raise ValueError('The input array must be either slices of skew-symmetric matrices, of slices of upper-'
                              'diagonal matrices with zero-diagonal.')
+
+
+def rotation_to_matrix(rotation, return_transpose=False):
+    """
+    Converts a rotation to slices of matrices
+
+    Parameters
+    ----------
+    rotation : scipy.spatial.Rotation or orix.quaternion.Rotation
+        Object to convert
+    return_transpose : bool, optional
+        If true, it will also return the transpose matrix as a 2nd output argument
+    Returns
+    -------
+    numpy.ndarray or tuple
+        Rotation matrices
+    """
+    if isinstance(rotation, Rotation):
+        matrix = rotation.as_matrix()
+    elif is_orix_rotation(rotation):
+        matrix = rotation.to_matrix()
+    else:
+        raise TypeError('The input argument must be of class scipy.transform.Rotation or '
+                        'orix.quaternion.rotation.Rotation')
+    if return_transpose:
+        return matrix, _transpose_matrix(matrix)
+    else:
+        return matrix
+
+
+def is_orix_rotation(other):
+    """
+    Check whether the argument is a rotation from Orix by looking at the existing methods.
+
+    Parameters
+    ----------
+    other : any
+        object to test
+    Returns
+    -------
+    bool
+        True if other.to_matrix() exists
+    """
+    return hasattr(other, "to_matrix") and callable(getattr(other, "to_matrix"))
