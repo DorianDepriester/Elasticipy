@@ -521,5 +521,14 @@ class TestStiffnessConstructor(unittest.TestCase):
             tensor_i = np.einsum('im,jn,ko,lp,mnop -> ijkl', rot_mat, rot_mat, rot_mat, rot_mat, C.full_tensor())
             np.testing.assert_array_almost_equal(C_rotated_full[i], tensor_i)
 
+    def test_eval_along_null_direction(self):
+        E = S.Young_modulus
+        directions = ([0,0,0],
+                      np.array([[1,0,0], [0,1,0], [0,0,0]]))
+        for direction in directions:
+            with self.assertRaises(ValueError) as context:
+                _ = E.eval(direction)
+            self.assertEqual(str(context.exception), 'The input vector cannot be zeros')
+
 if __name__ == '__main__':
     unittest.main()
