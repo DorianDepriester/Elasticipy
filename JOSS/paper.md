@@ -69,7 +69,7 @@ C_{1111}    & C_{1122}      & C_{1133}  & C_{1123} & C_{1113}  & C_{1112}\\
 \end{bmatrix}
 $$
 
-The values of $\boldsymbol{C}$ depend on the material, whereas its shape (set of zero-components, or linear 
+The values of $\boldsymbol{C}$ depend on the material, whereas its pattern (set of zero-components, or linear 
 relationships between them) depends on the material's symmetry [@nye], as outlined in \autoref{fig:Nye}. 
 
 Pymatgen [@pymatgen] provides some built-in functions to work on strain, stress and elasticity but lacks some 
@@ -83,7 +83,7 @@ With courtesy of Pr. Pamela Burnley.\label{fig:Nye}](Nye.png)
 
 
 Therefore, the purpose of Elasticipy is to combine the functionalities of Pymatgen and Elate into a consistent 
-project dedicated to continuum mechanics. Its aim is to propose an easy-to-use and efficient tool with the following features:
+Python project dedicated to continuum mechanics. Its aim is to propose an easy-to-use and efficient tool with the following features:
 
   - intuitive Python-based APIs for defining and manipulating second- and fourth-order tensors, such as strain, stress
 and stiffness;
@@ -95,7 +95,7 @@ and stiffness;
   - a collection of built-in methods to easily and efficiently perform fundamental operations on tensors (rotations 
 [@meanElastic], products, invariants, statistical analysis etc.);
 
-  - averaging techniques (e.g. Voigt--Reuss--Hill [@hill]) for textured and non-textured polycrystalline aggregates.
+  - averaging techniques, such as Voigt--Reuss--Hill [@hill], for textured and non-textured polycrystalline aggregates.
 
 In order to evidence some of these features, \autoref{fig:Young}.a) illustrates the directional Young modulus of 
 copper (Cu) single crystal as a 3D surface, whereas \autoref{fig:Young}.b) shows the same values as a pole figure (Lambert 
@@ -121,8 +121,11 @@ compatible with orix [@orix], a Python library for analysing orientations and cr
 
 ![Performance comparison between Elasticipy and pymatgen.\label{fig:pymatgen}](ElasticipyVSpymatgen.png){ width=75% }
 
+
+# Possible extensions
+
 It is worth mentioning that Elasticipy provides a full framework for working on tensors, allowing to extend the analyses
-beyond linear elasticity problems (e.g. plasticity) with ease.
+beyond linear elasticity problems (e.g. plasticity) with ease. It already implements thermal expansion.
 
 # Usage
 
@@ -171,8 +174,9 @@ will create a tensor array corresponding to evenly-spaced strain along $[1,0,0]$
 
 ````python
 from Elasticipy.StressStrainTensors import StrainTensor
-m = 1000    # length of tensor array
-strain = StrainTensor.tensile([1,0,0], np.linspace(0,0.1, m))
+m = 1000                     # length of tensor array
+mag = np.linspace(0, 0.1, m) # Strain magnitude
+strain = StrainTensor.tensile([1,0,0], mag)
 stress = C * strain
 ````
 
