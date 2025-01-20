@@ -25,7 +25,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pytest pytest-cov codecov pymatgen
+          pip install pytest pytest-cov codecov pymatgen orix
 
       - name: Install project and its dependencies
         run: pip install -e .[dev]  # Installe Elasticipy et les dépendances dev
