@@ -8,7 +8,6 @@ from scipy.spatial.transform import Rotation
 from Elasticipy.CrystalSymmetries import SYMMETRIES
 from copy import deepcopy
 
-
 def _parse_tensor_components(prefix, **kwargs):
     pattern = r'^{}(\d{{2}})$'.format(prefix)
     value = dict()
@@ -99,6 +98,26 @@ def _check_definite_positive(mat):
         eigen_val = np.linalg.eigvals(mat)
         raise ValueError('The input matrix is not definite positive (eigenvalues: {})'.format(eigen_val))
 
+def _is_orix_rotation(other):
+    return hasattr(other, "to_matrix") and callable(getattr(other, "to_matrix"))
+
+def _rotation_to_matrix(rotation):
+    if isinstance(rotation, Rotation):
+        return rotation.as_matrix()
+    elif _is_orix_rotation(rotation):
+        return rotation.to_matrix()
+    else:
+        raise TypeError('The input argument must be of class scipy.transform.Rotation or '
+                        'orix.quaternion.rotation.Rotation')
+
+def _is_single_rotation(rotation):
+    if isinstance(rotation, Rotation):
+        return rotation.single
+    elif _is_orix_rotation(rotation):
+        return rotation.size == 1
+    else:
+        raise TypeError('The input argument must be of class scipy.transform.Rotation or '
+                        'orix.quaternion.rotation.Rotation')
 
 class SymmetricTensor:
     """
@@ -186,11 +205,8 @@ class SymmetricTensor:
         if self.orientations is None:
             return m
         else:
-            if isinstance(self.orientations, Rotation):
-                ori = self.orientations.as_matrix()
-            else:
-                ori = self.orientations.to_matrix()
-            rotated_tensors = np.einsum('qim,qjn,qko,qlp,mnop->qijkl', ori, ori, ori, ori, m)
+            ori = _rotation_to_matrix(self.orientations)
+            rotated_tensors = np.einsum('qmi,qnj,qok,qpl,mnop->qijkl', ori, ori, ori, ori, m)
             return rotated_tensors
 
     def rotate(self, rotation):
@@ -207,16 +223,16 @@ class SymmetricTensor:
         SymmetricTensor
             Rotated tensor
         """
-        if isinstance(rotation, Rotation):
-            rot_mat = rotation.as_matrix()
+        if _is_single_rotation(rotation):
+            rot_mat = _rotation_to_matrix(rotation)
+            rotated_tensor = np.einsum('mi,nj,ok,pl,mnop->ijkl', rot_mat, rot_mat, rot_mat, rot_mat, self.full_tensor())
+            ij, kl = np.indices((6, 6))
+            i, j = unvoigt_index(ij).T
+            k, ell = unvoigt_index(kl).T
+            rotated_matrix = rotated_tensor[i, j, k, ell] * self.voigt_map[ij, kl]
+            return self.__class__(rotated_matrix)
         else:
-            rot_mat = rotation.to_matrix()
-        rotated_tensor = np.einsum('im,jn,ko,lp,mnop->ijkl', rot_mat, rot_mat, rot_mat, rot_mat, self.full_tensor())
-        ij, kl = np.indices((6, 6))
-        i, j = unvoigt_index(ij).T
-        k, ell = unvoigt_index(kl).T
-        rotated_matrix = rotated_tensor[i, j, k, ell] * self.voigt_map[ij, kl]
-        return self.__class__(rotated_matrix)
+            raise ValueError('The rotation to apply must be single')
 
     def _unrotate(self):
         unrotated_tensor = deepcopy(self)
@@ -259,13 +275,11 @@ class SymmetricTensor:
                     return np.einsum('ijkl,...kl->...ij', self.full_tensor(), other)
                 else:
                     return np.einsum('qijkl,...kl->q...ij', self.full_tensor(), other)
-        elif isinstance(other, Rotation):
-            if other.single:
+        elif isinstance(other, Rotation) or _is_orix_rotation(other):
+            if _is_single_rotation(other):
                 return self.rotate(other)
             else:
                 return self.__class__(self.matrix, symmetry=self.symmetry, orientations=other)
-        elif hasattr(other, "to_matrix") and callable(getattr(other, "to_matrix")):
-            return self.__class__(self.matrix, symmetry=self.symmetry, orientations=other)
         else:
             return self.__class__(self.matrix * other, symmetry=self.symmetry)
 
