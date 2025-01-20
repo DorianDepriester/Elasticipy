@@ -66,10 +66,12 @@ def _compute_unit_strain_along_direction(S, m, n, transverse=False):
     n_vec = np.atleast_2d(n)
     if not isinstance(S, ComplianceTensor):
         S = S.inv()
-    if np.any(np.linalg.norm(m_vec) < 1e-9) or np.any(np.linalg.norm(n_vec) < 1e-9):
+    norm_1 = np.linalg.norm(m_vec, axis=1)
+    norm_2 =  np.linalg.norm(n_vec, axis=1)
+    if np.any(norm_1 < 1e-9) or np.any(norm_2 < 1e-9):
         raise ValueError('The input vector cannot be zeros')
-    m_vec = (m_vec.T / np.linalg.norm(m_vec, axis=1)).T
-    n_vec = (n_vec.T / np.linalg.norm(n_vec, axis=1)).T
+    m_vec = (m_vec.T / norm_1).T
+    n_vec = (n_vec.T / norm_2).T
 
     indices = np.indices((3, 3, 3, 3))
     i, j, k, ell = indices[0], indices[1], indices[2], indices[3]
