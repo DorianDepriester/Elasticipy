@@ -1,4 +1,3 @@
----
 title: 'Elasticipy: A Python package for elasticity and tensor analysis'
 tags:
   - Python
@@ -27,7 +26,7 @@ bibliography: paper.bib
 
 # Summary
 
-Elasticipy is a Python library designed to streamline the computation of elasticity tensors for materials and 
+Elasticipy is a Python library designed to streamline computation and manipulation of elasticity tensors for materials and 
 crystalline materials, taking their specific symmetries into account. It provides tools to manipulate, visualize, and 
 analyze tensors --such as stress, strain and stiffness tensors-- simplifying workflows for materials scientists an 
 engineers.
@@ -39,7 +38,7 @@ $\boldsymbol{\varepsilon}$) whereas the stress is described by the second-order 
 ($\boldsymbol{\sigma}$). Under the linear elasticity assumption, the relationship between the elastic strain $\boldsymbol{\varepsilon}$
 and $\boldsymbol{\sigma}$, known as the generalized Hooke's law, is given through the fourth-order stiffness tensor $\boldsymbol{C}$ with:
 
-[$$\sigma_{ij}=C_{ijk\ell}\varepsilon_{k\ell}$$]{label="eq:Hooke"}
+$$\sigma_{ij}=C_{ijk\ell}\varepsilon_{k\ell}$$
 
 where $C_{ijk\ell}$ denotes the $ijk\ell$-th component of $\boldsymbol{C}$. In order to simplify the above equation, one usually uses the so-called Voigt notation, 
 which reads:
@@ -165,5 +164,23 @@ Finally, the corresponding Young moduli can be plotted in orthogonal sections, a
 C_VRH.Young_modulus.plot_xyz_sections()
 ````
 
+## Arrays of stress/strain tensor
+
+Efforts have been made to provide out-of-the-box simple syntaxes for common operations. For example, the following
+will create a tensor array corresponding to evenly-spaced strain along $[1,0,0]$ axis:
+
+````python
+from Elasticipy.StressStrainTensors import StrainTensor
+m = 1000    # length of tensor array
+strain = StrainTensor.tensile([1,0,0], np.linspace(0,0.1, m))
+stress = C * strain
+````
+
+Given the stiffness tensor ``C`` (see above), one can compute the corresponding stress array with:
+````python
+stress = C * strain
+````
+Finally, ``stress.von_Mises()`` returns an array of length ``n`` and data type ``float64``, gathering all the von Mises 
+equivalent stresses.
 
 # References
