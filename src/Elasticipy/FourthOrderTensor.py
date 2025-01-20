@@ -119,6 +119,14 @@ def _is_single_rotation(rotation):
         raise TypeError('The input argument must be of class scipy.transform.Rotation or '
                         'orix.quaternion.rotation.Rotation')
 
+def _rotate_tensor(full_tensor, rotation):
+    rot_mat = _rotation_to_matrix(rotation)
+    if rot_mat.ndim == 2:
+        str_ein =  'im,jn,ko,lp,mnop->ijkl'
+    else:
+        str_ein =  'qim,qjn,qko,qlp,mnop->qijkl'
+    return np.einsum(str_ein, rot_mat, rot_mat, rot_mat, rot_mat, full_tensor)
+
 class SymmetricTensor:
     """
     Template class for manipulating symmetric fourth-order tensors.
@@ -205,9 +213,7 @@ class SymmetricTensor:
         if self.orientations is None:
             return m
         else:
-            ori = _rotation_to_matrix(self.orientations)
-            rotated_tensors = np.einsum('qim,qjn,qko,qlp,mnop->qijkl', ori, ori, ori, ori, m)
-            return rotated_tensors
+            return _rotate_tensor(m, self.orientations)
 
     def rotate(self, rotation):
         """
@@ -224,8 +230,7 @@ class SymmetricTensor:
             Rotated tensor
         """
         if _is_single_rotation(rotation):
-            rot_mat = _rotation_to_matrix(rotation)
-            rotated_tensor = np.einsum('im,jn,ko,lp,mnop->ijkl', rot_mat, rot_mat, rot_mat, rot_mat, self.full_tensor())
+            rotated_tensor = _rotate_tensor(self.full_tensor(), rotation)
             ij, kl = np.indices((6, 6))
             i, j = unvoigt_index(ij).T
             k, ell = unvoigt_index(kl).T
