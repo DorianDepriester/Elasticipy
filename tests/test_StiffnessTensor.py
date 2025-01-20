@@ -10,6 +10,7 @@ from Elasticipy.FourthOrderTensor import _indices2str
 from Elasticipy.CrystalSymmetries import SYMMETRIES
 from Elasticipy.StressStrainTensors import StressTensor
 from pymatgen.analysis.elasticity import elastic as mg
+from orix.quaternion import Rotation as orix_rot
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 file_path = os.path.join(current_dir, 'MaterialsProject.json')
@@ -508,6 +509,17 @@ class TestStiffnessConstructor(unittest.TestCase):
         C = StiffnessTensor.cubic(C11=C11, C12=C12, C44=C44)
         Z = 2 * C44 / (C11 - C12)
         assert 6/5 * (Z**0.5 - Z**(-0.5))**2 == approx(C.universal_anisotropy)
+
+    def test_orix(self):
+        n=5
+        orix_rotations = orix_rot.random(n)
+        C = S.inv()
+        C_rotated = C * orix_rotations
+        C_rotated_full = C_rotated.full_tensor()
+        for i in range(n):
+            rot_mat = orix_rotations.to_matrix()[i]
+            tensor_i = np.einsum('mi,nj,ok,pl,mnop -> ijkl', rot_mat, rot_mat, rot_mat, rot_mat, C.full_tensor())
+            np.testing.assert_array_almost_equal(C_rotated_full[i], tensor_i)
 
 if __name__ == '__main__':
     unittest.main()
