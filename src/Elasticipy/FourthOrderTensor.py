@@ -101,15 +101,6 @@ def _check_definite_positive(mat):
 def _is_orix_rotation(other):
     return hasattr(other, "to_matrix") and callable(getattr(other, "to_matrix"))
 
-def _rotation_to_matrix(rotation):
-    if isinstance(rotation, Rotation):
-        return rotation.as_matrix()
-    elif _is_orix_rotation(rotation):
-        return rotation.to_matrix()
-    else:
-        raise TypeError('The input argument must be of class scipy.transform.Rotation or '
-                        'orix.quaternion.rotation.Rotation')
-
 def _is_single_rotation(rotation):
     if isinstance(rotation, Rotation):
         return rotation.single
@@ -120,7 +111,13 @@ def _is_single_rotation(rotation):
                         'orix.quaternion.rotation.Rotation')
 
 def _rotate_tensor(full_tensor, rotation):
-    rot_mat = _rotation_to_matrix(rotation)
+    if isinstance(rotation, Rotation):
+        rot_mat = rotation.as_matrix()
+    elif _is_orix_rotation(rotation):
+        rot_mat = rotation.to_matrix()
+    else:
+        raise TypeError('The input argument must be of class scipy.transform.Rotation or '
+                        'orix.quaternion.rotation.Rotation')
     if rot_mat.ndim == 2:
         str_ein =  'im,jn,ko,lp,mnop->ijkl'
     else:
