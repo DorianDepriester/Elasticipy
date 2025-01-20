@@ -118,10 +118,7 @@ def _rotate_tensor(full_tensor, rotation):
     else:
         raise TypeError('The input argument must be of class scipy.transform.Rotation or '
                         'orix.quaternion.rotation.Rotation')
-    if rot_mat.ndim == 2:
-        str_ein =  'im,jn,ko,lp,mnop->ijkl'
-    else:
-        str_ein =  'qim,qjn,qko,qlp,mnop->qijkl'
+    str_ein =  '...im,...jn,...ko,...lp,mnop->...ijkl'
     return np.einsum(str_ein, rot_mat, rot_mat, rot_mat, rot_mat, full_tensor)
 
 class SymmetricTensor:
