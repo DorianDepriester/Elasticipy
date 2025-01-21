@@ -1295,10 +1295,12 @@ class ComplianceTensor(StiffnessTensor):
     Class for manipulating compliance tensors
     """
     tensor_name = 'Compliance'
-    voigt_map = np.vstack((
-        np.hstack((np.ones((3, 3)), 2 * np.ones((3, 3)))),
-        np.hstack((2 * np.ones((3, 3)), 4 * np.ones((3, 3))))
-    ))
+    voigt_map = np.array([[1., 1., 1., 2., 2., 2.],
+                          [1., 1., 1., 2., 2., 2.],
+                          [1., 1., 1., 2., 2., 2.],
+                          [2., 2., 2., 4., 4., 4.],
+                          [2., 2., 2., 4., 4., 4.],
+                          [2., 2., 2., 4., 4., 4.]])
     C11_C12_factor = 2.0
     component_prefix = 'S'
     C46_C56_factor = 2.0
