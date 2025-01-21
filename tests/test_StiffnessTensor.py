@@ -167,9 +167,9 @@ class TestStiffnessConstructor(unittest.TestCase):
             C = StiffnessTensor(matrix, symmetry=symmetry)
             C_rotated = C * rotations
             for method in ('voigt', 'reuss', 'hill'):
-                Gavg = C.average(method).shear_modulus.mean()
+                Gavg = C.average(method).shear_modulus.mean(n_evals=10000)
                 assert row['G' + method] == approx(Gavg, rel=rel)
-                Gavg = C_rotated.average(method).shear_modulus.mean()
+                Gavg = C_rotated.average(method).shear_modulus.mean(n_evals=10000)
                 assert row['G' + method] == approx(Gavg, rel=rel)
 
     def test_stiffness_cubic(self):
