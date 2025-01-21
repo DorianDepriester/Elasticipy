@@ -133,7 +133,8 @@ class SymmetricTensor:
         Parameters
         ----------
         M : np.ndarray
-            (6,6) matrix corresponding to the stiffness tensor, written using the Voigt notation
+            (6,6) matrix corresponding to the stiffness tensor, written using the Voigt notation, or array of shape
+            (3,3,3,3).
         phase_name : str, default None
             Name to display
         symmetry : str, default Triclinic
@@ -144,14 +145,18 @@ class SymmetricTensor:
             Whether to check or not that the input matrix is definite positive
         """
         M = np.asarray(M)
-        if M.shape != (6,6):
+        if M.shape == (6,6):
+            matrix = M
+        elif M.shape == (3,3,3,3):
+            matrix = self._full_to_matrix(M)
+        else:
             raise ValueError('The input matrix must of shape (6,6)')
-        if check_symmetry and not np.all(np.isclose(M, M.T)):
+        if check_symmetry and not np.all(np.isclose(matrix, matrix.T)):
             raise ValueError('The input matrix must be symmetric')
         if check_positive_definite:
-            _check_definite_positive(M)
+            _check_definite_positive(matrix)
 
-        self.matrix = M
+        self.matrix = matrix
         self.phase_name = phase_name
         self.symmetry = symmetry
         self.orientations = orientations
