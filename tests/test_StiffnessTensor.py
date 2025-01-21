@@ -480,7 +480,7 @@ class TestStiffnessConstructor(unittest.TestCase):
         # Now try with a list of entries
         Cs = StiffnessTensor.from_MP(("mp-30", "mp-1048"))
         assert len(Cs) == 2
-        np.testing.assert_array_almost_equal(Cs[0], C_Cu.matrix)
+        np.testing.assert_array_almost_equal(Cs[0].matrix, C_Cu.matrix)
 
 
     def test_getitem(self):
