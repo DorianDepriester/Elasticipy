@@ -3,6 +3,7 @@ import numpy as np
 from pytest import approx
 import os
 import pandas as pd
+from sympy.stats.sampling.sample_numpy import numpy
 
 from Elasticipy.FourthOrderTensor import StiffnessTensor, ComplianceTensor
 from scipy.spatial.transform import Rotation
@@ -163,6 +164,11 @@ class TestComplianceTensor(unittest.TestCase):
                 with self.assertRaises(ValueError) as context:
                     _ = ComplianceTensor(m)
                 self.assertEqual(str(context.exception), 'The input matrix must of shape (6,6)')
+
+    def test_full_tensor_as_input(self):
+        a = ComplianceTensor.isotropic(E=210, nu=0.3)
+        b = ComplianceTensor(a.full_tensor())
+        np.testing.assert_array_almost_equal(a.matrix, b.matrix)
 
 class TestStiffnessConstructor(unittest.TestCase):
     def test_averages(self):
@@ -557,6 +563,11 @@ class TestStiffnessConstructor(unittest.TestCase):
         K = E / (3 * (1 - 2*nu))
         beta = Ciso.linear_compressibility.mean()
         assert K == approx(1 / (3*beta))
+
+    def test_full_tensor_as_input(self):
+        a = StiffnessTensor.isotropic(E=210, nu=0.3)
+        b = StiffnessTensor(a.full_tensor())
+        assert a == b
 
 if __name__ == '__main__':
     unittest.main()
