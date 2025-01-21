@@ -265,7 +265,7 @@ class SymmetricTensor:
             if _is_single_rotation(other):
                 return self.rotate(other)
             else:
-                return self.__class__(self.matrix, symmetry=self.symmetry, orientations=other)
+                return self.__class__(self.matrix, symmetry=self.symmetry, orientations=other, phase_name=self.phase_name)
         else:
             return self.__class__(self.matrix * other, symmetry=self.symmetry)
 
