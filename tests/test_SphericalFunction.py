@@ -1,10 +1,11 @@
 import unittest
 from matplotlib import pyplot as plt
 import numpy as np
-from sympy.physics.units.definitions.dimension_definitions import angle
 
 from Elasticipy.FourthOrderTensor import StiffnessTensor
 from pytest import approx
+
+from Elasticipy.SphericalFunction import HyperSphericalFunction
 
 C = StiffnessTensor.cubic(C11=186, C12=134, C44=77)
 E = C.Young_modulus # SphericalFunction
@@ -157,6 +158,17 @@ class TestHyperSphericalFunction(unittest.TestCase):
             with self.assertRaises(ValueError) as context:
                 _ = G.eval(*direction)
             self.assertEqual(str(context.exception), 'The two directions must be orthogonal.')
+
+    def test_eval_spherical(self):
+        assert G.eval_spherical([0,0,0]) == approx(G.eval([0,0,1], [1,0,0]))
+        assert G.eval_spherical([0, 0, 90], degrees=True) == approx(G.eval([0, 0, 1], [0, 1, 0]))
+
+    def test_exact_mean(self):
+        def fun(u,v):
+            return [1.0]
+
+        a = HyperSphericalFunction(fun)
+        assert a.mean(method='exact') == approx(1.0)
 
 if __name__ == '__main__':
     unittest.main()
