@@ -208,14 +208,14 @@ class SphericalFunction:
         return self.__mul__(other)
 
     def __truediv__(self, other):
-        if isinstance(other, self.__class__):
+        if type(other) is self.__class__:
             def fun(*x):
                 return self.fun(*x) / other.fun(*x)
         elif isinstance(other, (float, int, np.number)):
             def fun(*x):
                 return self.fun(*x) / other
         else:
-            raise NotImplemented
+            raise NotImplementedError('A SphericalFunction can only be divided by a scalar value of another SphericalFunction.')
         return self.__class__(fun)
 
     def eval(self, u):
