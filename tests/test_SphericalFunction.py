@@ -72,6 +72,10 @@ class TestSphericalFunction(unittest.TestCase):
         with self.assertRaises(NotImplementedError) as context:
             _ = E + G
         self.assertEqual(str(context.exception), expected_error)
+        expected_error = 'A Spherical function can only be multiplied by another Spherical function or a scalar value.'
+        with self.assertRaises(NotImplementedError) as context:
+            _ = E * G
+        self.assertEqual(str(context.exception), expected_error)
 
     def test_mean_std(self):
         for method in ('exact', 'trapezoid', 'Monte Carlo'):
