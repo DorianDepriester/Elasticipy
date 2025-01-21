@@ -300,35 +300,13 @@ class SymmetricTensor:
                                       'or an array of shape (6,6).')
 
 
-    def _orientation_average(self, orientations):
-        """
-        Rotate the tensor by a series of rotations, then evaluate its mean value.
-
-        Parameters
-        ----------
-        orientations : np.ndarray or Rotation
-            If an array is provided, it must be of shape [m, 3, 3], where orientations[i,:,:] gives i-th the orientation
-            matrix
-
-        Returns
-        -------
-        SymmetricTensor
-            Mean tensor
-
-        """
-        if isinstance(orientations, Rotation):
-            orientations = orientations.as_matrix()
-        if len(orientations.shape) == 2:
-            raise ValueError('The orientation must be a 3x3 or a Nx3x3 matrix')
-        elif len(orientations.shape) == 2:
-            return self * orientations
-        else:
-            mean_full_tensor = np.mean(self.full_tensor(), axis=0)
-            ij, kl = np.indices((6, 6))
-            i, j = unvoigt_index(ij).T
-            k, ell = unvoigt_index(kl).T
-            rotated_matrix = mean_full_tensor[i, j, k, ell] * self.voigt_map[ij, kl]
-            return self.__class__(rotated_matrix)
+    def _orientation_average(self):
+        mean_full_tensor = np.mean(self.full_tensor(), axis=0)
+        ij, kl = np.indices((6, 6))
+        i, j = unvoigt_index(ij).T
+        k, ell = unvoigt_index(kl).T
+        mean_matrix = mean_full_tensor[i, j, k, ell] * self.voigt_map[ij, kl]
+        return self.__class__(mean_matrix)
 
     @classmethod
     def _matrixFromCrystalSymmetry(cls, symmetry='Triclinic', point_group=None, diad='y', prefix=None, **kwargs):
@@ -890,7 +868,7 @@ class StiffnessTensor(SymmetricTensor):
             mat = _isotropic_matrix(C11, C12, C44)
             return StiffnessTensor(mat, symmetry='isotropic', phase_name=self.phase_name)
         else:
-            return self._orientation_average(self.orientations)
+            return self._orientation_average()
 
     def Reuss_average(self):
         """
@@ -1390,7 +1368,7 @@ class ComplianceTensor(StiffnessTensor):
             mat = _isotropic_matrix(S11, S12, S44)
             return ComplianceTensor(mat, symmetry='isotropic', phase_name=self.phase_name)
         else:
-            return self._orientation_average(self.orientations)
+            return self._orientation_average()
 
     def Voigt_average(self):
         return self.inv().Voigt_average().inv()
