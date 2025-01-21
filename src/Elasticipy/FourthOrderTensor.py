@@ -62,29 +62,17 @@ def unvoigt_index(i):
 
 
 def _compute_unit_strain_along_direction(S, m, n, direction='longitudinal'):
-    m_vec = np.atleast_2d(m)
-    n_vec = np.atleast_2d(n)
     if not isinstance(S, ComplianceTensor):
         S = S.inv()
-    norm_1 = np.linalg.norm(m_vec, axis=1)
-    norm_2 =  np.linalg.norm(n_vec, axis=1)
-    if np.any(norm_1 < 1e-9) or np.any(norm_2 < 1e-9):
-        raise ValueError('The input vector cannot be zeros')
-    m_vec = (m_vec.T / norm_1).T
-    n_vec = (n_vec.T / norm_2).T
-
-    dot = np.abs(np.einsum('ij,ij->i', m_vec, n_vec))
-    if np.any(np.logical_and(dot > 1e-9, dot < (1 - 1e-9))):
-        raise ValueError('The two directions must be either equal or orthogonal.')
     if direction == 'transverse':
         ein_str = 'ijkl,pi,pj,pk,pl->p'
-        return np.einsum(ein_str, S.full_tensor(), m_vec, m_vec, n_vec, n_vec)
+        return np.einsum(ein_str, S.full_tensor(), m, m, n, n)
     elif direction =='longitudinal':
         ein_str = 'ijkl,pi,pk,pj,pl->p'
-        return np.einsum(ein_str, S.full_tensor(), m_vec, m_vec, n_vec, n_vec)
+        return np.einsum(ein_str, S.full_tensor(), m, m, n, n)
     else:
         ein_str = 'ijkk,pi,pj->p'
-        return np.einsum(ein_str, S.full_tensor(), m_vec, m_vec)
+        return np.einsum(ein_str, S.full_tensor(), m, m)
 
 
 def _isotropic_matrix(C11, C12, C44):
