@@ -378,6 +378,17 @@ class TestStiffnessConstructor(unittest.TestCase):
         C_plus_full = C1 + C2.full_tensor()
         assert C_plus_full == C_plus
 
+    def test_mul_rmul(self):
+        C = StiffnessTensor.isotropic(E=200, nu=0.3)
+        C1 = C * 2
+        C2 = 2 * C
+        assert C1 == C2
+
+    def test_div(self):
+        C = StiffnessTensor.isotropic(E=200, nu=0.3)
+        Cdiv = C/2
+        np.testing.assert_array_equal(Cdiv.matrix, C.matrix/2)
+
     def test_repr(self):
         """Test printing out the tensor"""
         C = StiffnessTensor.isotropic(E=210000, nu=0.3)
