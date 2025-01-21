@@ -191,6 +191,13 @@ class SymmetricTensor:
         else:
             return _rotate_tensor(m, self.orientations)
 
+    @classmethod
+    def _full_to_matrix(cls, full_tensor):
+        ij, kl = np.indices((6, 6))
+        i, j = unvoigt_index(ij).T
+        k, ell = unvoigt_index(kl).T
+        return full_tensor[i, j, k, ell] * cls.voigt_map[ij, kl]
+
     def rotate(self, rotation):
         """
         Apply a single rotation to a tensor, and return its component into the rotated frame.
@@ -207,10 +214,7 @@ class SymmetricTensor:
         """
         if _is_single_rotation(rotation):
             rotated_tensor = _rotate_tensor(self.full_tensor(), rotation)
-            ij, kl = np.indices((6, 6))
-            i, j = unvoigt_index(ij).T
-            k, ell = unvoigt_index(kl).T
-            rotated_matrix = rotated_tensor[i, j, k, ell] * self.voigt_map[ij, kl]
+            rotated_matrix = self._full_to_matrix(rotated_tensor)
             return self.__class__(rotated_matrix)
         else:
             raise ValueError('The rotation to apply must be single')
@@ -225,11 +229,7 @@ class SymmetricTensor:
             if other.shape == (6, 6):
                 mat = self.matrix + other
             elif other.shape == (3, 3, 3, 3):
-                ten = self.full_tensor() + other
-                ij, kl = np.indices((6, 6))
-                i, j = unvoigt_index(ij).T
-                k, ell = unvoigt_index(kl).T
-                mat = ten[i, j, k, ell] * self.voigt_map[ij, kl]
+                mat = self._full_to_matrix(self.full_tensor() + other)
             else:
                 raise ValueError('The input argument must be either a 6x6 matrix or a (3,3,3,3) array.')
         elif isinstance(other, SymmetricTensor):
@@ -288,10 +288,7 @@ class SymmetricTensor:
 
     def _orientation_average(self):
         mean_full_tensor = np.mean(self.full_tensor(), axis=0)
-        ij, kl = np.indices((6, 6))
-        i, j = unvoigt_index(ij).T
-        k, ell = unvoigt_index(kl).T
-        mean_matrix = mean_full_tensor[i, j, k, ell] * self.voigt_map[ij, kl]
+        mean_matrix = self._full_to_matrix(mean_full_tensor)
         return self.__class__(mean_matrix)
 
     @classmethod
