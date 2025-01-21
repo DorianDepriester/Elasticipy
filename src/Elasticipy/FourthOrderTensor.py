@@ -79,10 +79,11 @@ def _compute_unit_strain_along_direction(S, m, n, transverse=False):
     if np.any(np.logical_and(dot > 1e-9, dot < (1 - 1e-9))):
         raise ValueError('The two directions must be either equal or orthogonal.')
     if transverse:
-        cosine = m_vec[:, i] * m_vec[:, j] * n_vec[:, k] * n_vec[:, ell]
+        ein_str = 'pi,pj,pk,pl'
     else:
-        cosine = m_vec[:, i] * n_vec[:, j] * m_vec[:, k] * n_vec[:, ell]
-    return np.einsum('pijkl,ijkl->p', cosine, S.full_tensor())
+        ein_str = 'pi,pk,pj,pl'
+    ein_str = 'ijkl,' + ein_str + '->p'
+    return np.einsum(ein_str, S.full_tensor(), m_vec, m_vec, n_vec, n_vec)
 
 
 def _isotropic_matrix(C11, C12, C44):
@@ -844,6 +845,14 @@ class StiffnessTensor(SymmetricTensor):
             return -eps2 / eps1
 
         return HyperSphericalFunction(compute_PoissonRatio)
+
+    @property
+    def linear_compressibility(self):
+        def compute_linear_compressibility(n):
+            return _compute_unit_strain_along_direction(self, n, n)
+
+        return SphericalFunction(compute_linear_compressibility)
+
 
     def Voigt_average(self):
         """
