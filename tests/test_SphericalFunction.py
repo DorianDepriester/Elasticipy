@@ -66,7 +66,7 @@ class TestSphericalFunction(unittest.TestCase):
         assert E_div_two.mean() == approx(E_mean/2, rel=1e-3)
 
     def test_mean_std(self):
-        for method in ('trapezoid', 'Monte Carlo'):
+        for method in ('exact', 'trapezoid', 'Monte Carlo'):
             assert E_mean == approx(E.mean(method=method, seed=SEED), rel=1e-2)
             assert E_std == approx(E.std(method=method, seed=SEED), rel=1e-2)
 
