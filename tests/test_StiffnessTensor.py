@@ -393,6 +393,10 @@ class TestStiffnessConstructor(unittest.TestCase):
         C_plus_full = C1 + C2.full_tensor()
         assert C_plus_full == C_plus
 
+        with self.assertRaises(ValueError) as context:
+            _ = C1 + C2.inv()
+        self.assertEqual(str(context.exception), 'The two tensors to add must be of the same class.')
+
     def test_mul_rmul(self):
         C = StiffnessTensor.isotropic(E=200, nu=0.3)
         C1 = C * 2
