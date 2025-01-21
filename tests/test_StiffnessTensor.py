@@ -156,6 +156,13 @@ class TestComplianceTensor(unittest.TestCase):
         expected_error = 'The input matrix is not definite positive (eigenvalues: {})'.format(eig_vals)
         self.assertEqual(str(context.exception), expected_error)
 
+    def test_input_matrix(self):
+        for n in range(1,8):
+            m = np.ones(shape=(n,n))
+            if n != 6:
+                with self.assertRaises(ValueError) as context:
+                    _ = ComplianceTensor(m)
+                self.assertEqual(str(context.exception), 'The input matrix must of shape (6,6)')
 
 class TestStiffnessConstructor(unittest.TestCase):
     def test_averages(self):
