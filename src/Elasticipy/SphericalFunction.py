@@ -193,14 +193,15 @@ class SphericalFunction:
             return self.__add__(-other)
 
     def __mul__(self, other):
-        if isinstance(other, self.__class__):
+        if type(other) is self.__class__:
             def fun(*x):
                 return self.fun(*x) * other.fun(*x)
         elif isinstance(other, (float, int, np.number)):
             def fun(*x):
                 return self.fun(*x) * other
         else:
-            raise NotImplemented
+            msg_error = 'A {} can only be multiplied by another {} or a scalar value.'.format(self.name, self.name)
+            raise NotImplementedError(msg_error)
         return self.__class__(fun)
 
     def __rmul__(self, other):
