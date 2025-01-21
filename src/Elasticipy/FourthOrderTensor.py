@@ -279,8 +279,7 @@ class SymmetricTensor:
             return self.__class__(self.matrix * other, symmetry=self.symmetry)
 
     def __rmul__(self, other):
-        if (isinstance(other, (Rotation, float, int, np.number)) or
-                (hasattr(other, "to_matrix") and callable(getattr(other, "to_matrix")))):
+        if isinstance(other, (Rotation, float, int, np.number)) or is_orix_rotation(other):
             return self * other
         else:
             raise NotImplementedError('A fourth order tensor can be left-multiplied by rotations or scalar only.')
