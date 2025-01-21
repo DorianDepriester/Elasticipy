@@ -13,6 +13,8 @@ from Elasticipy.StressStrainTensors import StressTensor
 from pymatgen.analysis.elasticity import elastic as mg
 from orix.quaternion import Rotation as orix_rot
 
+from Examples.Example_StressStrain_arrays import C_rotated
+
 current_dir = os.path.dirname(os.path.abspath(__file__))
 file_path = os.path.join(current_dir, 'MaterialsProject.json')
 data_base = pd.read_json(file_path)
@@ -419,6 +421,22 @@ class TestStiffnessConstructor(unittest.TestCase):
                        '   80769.23076923      0.        ]\n'
                        ' [     0.              0.              0.              0.\n'
                        '       0.          80769.23076923]]\nSymmetry: isotropic')
+
+        C = StiffnessTensor.cubic(C11=200, C12=100, C44=400, phase_name='Cu')
+        str_Cu = ('Stiffness tensor (in Voigt notation) for Cu:\n'
+                       '[[200. 100. 100.   0.   0.   0.]\n'
+                       ' [100. 200. 100.   0.   0.   0.]\n'
+                       ' [100. 100. 200.   0.   0.   0.]\n'
+                       ' [  0.   0.   0. 400.   0.   0.]\n'
+                       ' [  0.   0.   0.   0. 400.   0.]\n'
+                       ' [  0.   0.   0.   0.   0. 400.]]\n'
+                       'Symmetry: cubic')
+        assert C.__repr__() == str_Cu
+
+        C_rotated = C * rotations
+        assert C_rotated.__repr__() == str_Cu + '\n{} orientations'.format(len(rotations))
+
+
 
     def test_weighted_average(self):
         """Test averaging two phases"""
