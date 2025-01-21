@@ -23,7 +23,8 @@ Among other features, this package implements:
 - Integration with crystal symmetry groups,
 - Visualization and tutorials for ease of use,
 - A graphical user interface to plot the spatial dependence of engineering constants,
-- Compatibility with the [Materials Project](https://next-gen.materialsproject.org/) API.
+- Compatibility with the [Materials Project](https://next-gen.materialsproject.org/) API, [pymatgen](https://pymatgen.org/) and 
+[orix](https://orix.readthedocs.io/).
 
 ## Installation
 Elasticipy can be installed with PIP:
