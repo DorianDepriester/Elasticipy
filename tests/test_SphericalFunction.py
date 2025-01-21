@@ -1,10 +1,10 @@
 import unittest
 from matplotlib import pyplot as plt
 import numpy as np
+from sympy.physics.units.definitions.dimension_definitions import angle
 
 from Elasticipy.FourthOrderTensor import StiffnessTensor
 from pytest import approx
-
 
 C = StiffnessTensor.cubic(C11=186, C12=134, C44=77)
 E = C.Young_modulus # SphericalFunction
@@ -92,6 +92,11 @@ class TestSphericalFunction(unittest.TestCase):
 
     def test_repr(self):
         template_test_repr(E.__repr__(), 'Spherical', 73.775, 197.50282485875343)
+
+    def test_eval_spherical(self):
+        assert E.eval_spherical([0, 0], degrees=True) == approx(E.eval([0, 0, 1]))
+        assert E.eval_spherical([0, 90], degrees=True) == approx(E.eval([1, 0, 0]))
+        assert E.eval_spherical([90, 90], degrees=True) == approx(E.eval([0, 1, 0]))
 
 
 class TestHyperSphericalFunction(unittest.TestCase):
