@@ -172,7 +172,7 @@ class SphericalFunction:
         return s
 
     def __add__(self, other):
-        if isinstance(other, self.__class__):
+        if type(other) is self.__class__:
             def fun(*x):
                 return self.fun(*x) + other.fun(*x)
             return self.__class__(fun)
