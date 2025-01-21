@@ -61,7 +61,7 @@ def unvoigt_index(i):
     return inverse_voigt_mat[i]
 
 
-def _compute_unit_strain_along_direction(S, m, n, transverse=False):
+def _compute_unit_strain_along_direction(S, m, n, direction='longitudinal'):
     m_vec = np.atleast_2d(m)
     n_vec = np.atleast_2d(n)
     if not isinstance(S, ComplianceTensor):
@@ -76,12 +76,15 @@ def _compute_unit_strain_along_direction(S, m, n, transverse=False):
     dot = np.abs(np.einsum('ij,ij->i', m_vec, n_vec))
     if np.any(np.logical_and(dot > 1e-9, dot < (1 - 1e-9))):
         raise ValueError('The two directions must be either equal or orthogonal.')
-    if transverse:
-        ein_str = 'pi,pj,pk,pl'
+    if direction == 'transverse':
+        ein_str = 'ijkl,pi,pj,pk,pl->p'
+        return np.einsum(ein_str, S.full_tensor(), m_vec, m_vec, n_vec, n_vec)
+    elif direction =='longitudinal':
+        ein_str = 'ijkl,pi,pk,pj,pl->p'
+        return np.einsum(ein_str, S.full_tensor(), m_vec, m_vec, n_vec, n_vec)
     else:
-        ein_str = 'pi,pk,pj,pl'
-    ein_str = 'ijkl,' + ein_str + '->p'
-    return np.einsum(ein_str, S.full_tensor(), m_vec, m_vec, n_vec, n_vec)
+        ein_str = 'ijkk,pi,pj->p'
+        return np.einsum(ein_str, S.full_tensor(), m_vec, m_vec)
 
 
 def _isotropic_matrix(C11, C12, C44):
@@ -839,15 +842,23 @@ class StiffnessTensor(SymmetricTensor):
 
         def compute_PoissonRatio(m, n):
             eps1 = _compute_unit_strain_along_direction(self, m, m)
-            eps2 = _compute_unit_strain_along_direction(self, m, n, transverse=True)
+            eps2 = _compute_unit_strain_along_direction(self, m, n, direction='transverse')
             return -eps2 / eps1
 
         return HyperSphericalFunction(compute_PoissonRatio)
 
     @property
     def linear_compressibility(self):
+        """
+        Compute the directional linear compressibility.
+
+        Returns
+        -------
+        SphericalFunction
+            Directional linear compressibility
+        """
         def compute_linear_compressibility(n):
-            return _compute_unit_strain_along_direction(self, n, n)
+            return _compute_unit_strain_along_direction(self, n, n, direction='spherical')
 
         return SphericalFunction(compute_linear_compressibility)
 
