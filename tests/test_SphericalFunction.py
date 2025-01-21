@@ -130,5 +130,21 @@ class TestHyperSphericalFunction(unittest.TestCase):
     def test_repr(self):
         template_test_repr(G.__repr__(), 'Hyperspherical', 26., 77)
 
+    def test_eval_along_null_direction(self):
+        directions = ([0,0,0],
+                      np.array([[1,0,0], [0,1,0], [0,0,0]]))
+        for direction in directions:
+            with self.assertRaises(ValueError) as context:
+                _ = E.eval(direction)
+            self.assertEqual(str(context.exception), 'The input vector cannot be zeros')
+
+    def test_eval_along_parallel_directions(self):
+        directions = [([1, 0, 0], [1, 1, 0]), (np.array([[1, 0, 0], [0, 1, 0]]),
+                                               np.array([[0, 1, 0], [0, 1, 1]]))]
+        for direction in directions:
+            with self.assertRaises(ValueError) as context:
+                _ = G.eval(*direction)
+            self.assertEqual(str(context.exception), 'The two directions must be orthogonal.')
+
 if __name__ == '__main__':
     unittest.main()

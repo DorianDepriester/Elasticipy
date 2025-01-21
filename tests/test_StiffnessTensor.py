@@ -543,23 +543,6 @@ class TestStiffnessConstructor(unittest.TestCase):
             tensor_i = np.einsum('im,jn,ko,lp,mnop -> ijkl', rot_mat, rot_mat, rot_mat, rot_mat, C.full_tensor())
             np.testing.assert_array_almost_equal(C_rotated_full[i], tensor_i)
 
-    def test_eval_along_null_direction(self):
-        E = S.Young_modulus
-        directions = ([0,0,0],
-                      np.array([[1,0,0], [0,1,0], [0,0,0]]))
-        for direction in directions:
-            with self.assertRaises(ValueError) as context:
-                _ = E.eval(direction)
-            self.assertEqual(str(context.exception), 'The input vector cannot be zeros')
-
-    def test_eval_along_parallel_directions(self):
-        G = S.shear_modulus
-        directions = [([1, 0, 0], [1, 1, 0]), (np.array([[1, 0, 0], [0, 1, 0]]),
-                                               np.array([[0, 1, 0], [0, 1, 1]]))]
-        for direction in directions:
-            with self.assertRaises(ValueError) as context:
-                _ = G.eval(*direction)
-            self.assertEqual(str(context.exception), 'The two directions must be either equal or orthogonal.')
 
     def test_linear_compressibility(self):
         E, nu = 210, 0.3
