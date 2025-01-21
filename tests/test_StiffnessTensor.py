@@ -550,5 +550,12 @@ class TestStiffnessConstructor(unittest.TestCase):
                 _ = G.eval(*direction)
             self.assertEqual(str(context.exception), 'The two directions must be either equal or orthogonal.')
 
+    def test_linear_compressibility(self):
+        E, nu = 210, 0.3
+        Ciso = StiffnessTensor.isotropic(E=E, nu=nu)
+        K = E / (3 * (1 - 2*nu))
+        beta = Ciso.linear_compressibility.mean()
+        assert K == approx(1 / (3*beta))
+
 if __name__ == '__main__':
     unittest.main()
