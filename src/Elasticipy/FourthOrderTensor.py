@@ -339,19 +339,8 @@ class SymmetricTensor:
                 symmetry_description = symmetry_description[', '.join(trigo_2)]
         elif symmetry == 'Monoclinic':
             symmetry_description = symmetry_description["Diad || " + diad]
-        try:
-            for required_field in symmetry_description.required:
-                C[required_field] = values[_indices2str(required_field)]
-        except KeyError as key:
-            entry_error = prefix + key.args[0]
-            if (symmetry == 'tetragonal') or (symmetry == 'trigonal'):
-                err_msg = "For point group {}, keyword argument {} is required".format(point_group, entry_error)
-            elif symmetry == 'monoclinic':
-                err_msg = "For {} symmetry with diag='{}', keyword argument {} is required".format(symmetry, diad,
-                                                                                                   entry_error)
-            else:
-                err_msg = "For {} symmetry, keyword argument {} is required".format(symmetry, entry_error)
-            raise ValueError(err_msg)
+        for required_field in symmetry_description.required:
+            C[required_field] = values[_indices2str(required_field)]
 
         # Now apply relationships between components
         for equality in symmetry_description.equal:
