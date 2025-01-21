@@ -238,7 +238,12 @@ class SphericalFunction:
         --------
         eval_spherical : evaluate the function along a given direction given using the spherical coordinates
         """
-        values = self.fun(u)
+        u_vec = np.atleast_2d(u)
+        norm = np.linalg.norm(u_vec, axis=1)
+        if np.any(norm < 1e-9):
+            raise ValueError('The input vector cannot be zeros')
+        u_vec = (u_vec.T / norm).T
+        values = self.fun(u_vec)
         if isinstance(u, list) and np.array(u).shape == (3,):
             return values[0]
         else:
@@ -691,7 +696,18 @@ class HyperSphericalFunction(SphericalFunction):
         --------
         eval_spherical : evaluate the function along a direction defined by its spherical coordinates.
         """
-        values = self.fun(u, *args)
+        m_vec = np.atleast_2d(u)
+        n_vec = np.atleast_2d(*args)
+        norm_1 = np.linalg.norm(m_vec, axis=1)
+        norm_2 = np.linalg.norm(n_vec, axis=1)
+        if np.any(norm_1 < 1e-9) or np.any(norm_2 < 1e-9):
+            raise ValueError('The input vector cannot be zeros')
+        m_vec = (m_vec.T / norm_1).T
+        n_vec = (n_vec.T / norm_2).T
+        dot = np.abs(np.einsum('ij,ij->i', m_vec, n_vec))
+        if np.any(dot > 1e-9):
+            raise ValueError('The two directions must be orthogonal.')
+        values = self.fun(m_vec, n_vec)
         if np.array(u).shape == (3,) and not isinstance(u, np.ndarray):
             return values[0]
         else:
