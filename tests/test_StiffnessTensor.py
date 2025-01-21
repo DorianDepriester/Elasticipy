@@ -477,6 +477,12 @@ class TestStiffnessConstructor(unittest.TestCase):
         C_Cu = StiffnessTensor.cubic(C11=186, C12=134, C44=77)
         np.testing.assert_array_almost_equal(C.matrix, C_Cu.matrix)
 
+        # Now try with a list of entries
+        Cs = StiffnessTensor.from_MP(("mp-30", "mp-1048"))
+        assert len(Cs) == 2
+        np.testing.assert_array_almost_equal(Cs[0], C_Cu.matrix)
+
+
     def test_getitem(self):
         """Test indexing of stiffness tensor"""
         S_rotated = S * rotations
