@@ -68,13 +68,20 @@ class TestSphericalFunction(unittest.TestCase):
         assert E_div.mean() == approx(1, rel=1e-3)
         assert E_div_two.mean() == approx(E_mean/2, rel=1e-3)
         assert E_square.eval([1,0,0]) == approx(E.eval([1,0,0])**2, rel=1e-3)
+
         expected_error = 'A Spherical function can only be added to another Spherical function or a scalar value.'
         with self.assertRaises(NotImplementedError) as context:
             _ = E + G
         self.assertEqual(str(context.exception), expected_error)
+
         expected_error = 'A Spherical function can only be multiplied by another Spherical function or a scalar value.'
         with self.assertRaises(NotImplementedError) as context:
             _ = E * G
+        self.assertEqual(str(context.exception), expected_error)
+
+        expected_error ='A SphericalFunction can only be divided by a scalar value of another SphericalFunction.'
+        with self.assertRaises(NotImplementedError) as context:
+            _ = E / G
         self.assertEqual(str(context.exception), expected_error)
 
     def test_mean_std(self):
