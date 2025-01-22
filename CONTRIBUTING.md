@@ -10,20 +10,16 @@ All types of contributions are encouraged and valued. See the [Table of Contents
 > - Tweet about it
 > - Refer this project in your project's readme
 > - Mention the project at local meetups and tell your friends/colleagues
+> - cite the following DOI: [10.5281/zenodo.14501849](https://doi.org/10.5281/zenodo.14501849)
 
 <!-- omit in toc -->
 ## Table of Contents
 
 - [Code of Conduct](#code-of-conduct)
 - [I Have a Question](#i-have-a-question)
-  - [I Want To Contribute](#i-want-to-contribute)
+- [I Want To Contribute](#i-want-to-contribute)
   - [Reporting Bugs](#reporting-bugs)
   - [Suggesting Enhancements](#suggesting-enhancements)
-  - [Your First Code Contribution](#your-first-code-contribution)
-  - [Improving The Documentation](#improving-the-documentation)
-- [Styleguides](#styleguides)
-  - [Commit Messages](#commit-messages)
-- [Join The Project Team](#join-the-project-team)
 
 
 ## Code of Conduct
@@ -47,21 +43,6 @@ If you then still feel the need to ask a question and need clarification, we rec
 - Provide project and platform versions (nodejs, npm, etc), depending on what seems relevant.
 
 We will then take care of the issue as soon as possible.
-
-<!--
-You might want to create a separate issue tag for questions and include it in this description. People should then tag their issues accordingly.
-
-Depending on how large the project is, you may want to outsource the questioning, e.g. to Stack Overflow or Gitter. You may add additional contact and information possibilities:
-- IRC
-- Slack
-- Gitter
-- Stack Overflow tag
-- Blog
-- FAQ
-- Roadmap
-- E-Mail List
-- Forum
--->
 
 ## I Want To Contribute
 
@@ -105,9 +86,6 @@ Once it's filed:
 - A team member will try to reproduce the issue with your provided steps. If there are no reproduction steps or no obvious way to reproduce the issue, the team will ask you for those steps and mark the issue as `needs-repro`. Bugs with the `needs-repro` tag will not be addressed until they are reproduced.
 - If the team is able to reproduce the issue, it will be marked `needs-fix`, as well as possibly other tags (such as `critical`), and the issue will be left to be [implemented by someone](#your-first-code-contribution).
 
-<!-- You might want to create an issue template for bugs and errors that can be used as a guide and that defines the structure of the information to be included. If you do so, reference it here in the description. -->
-
-
 ### Suggesting Enhancements
 
 This section guides you through submitting an enhancement suggestion for Elasticipy, **including completely new features and minor improvements to existing functionality**. Following these guidelines will help maintainers and the community to understand your suggestion and find related suggestions.
@@ -130,29 +108,6 @@ Enhancement suggestions are tracked as [GitHub issues](https://github.com/Dorian
 - **Describe the current behavior** and **explain which behavior you expected to see instead** and why. At this point you can also tell which alternatives do not work for you.
 - You may want to **include screenshots or screen recordings** which help you demonstrate the steps or point out the part which the suggestion is related to. You can use [LICEcap](https://www.cockos.com/licecap/) to record GIFs on macOS and Windows, and the built-in [screen recorder in GNOME](https://help.gnome.org/users/gnome-help/stable/screen-shot-record.html.en) or [SimpleScreenRecorder](https://github.com/MaartenBaert/ssr) on Linux. <!-- this should only be included if the project has a GUI -->
 - **Explain why this enhancement would be useful** to most Elasticipy users. You may also want to point out the other projects that solved it better and which could serve as inspiration.
-
-<!-- You might want to create an issue template for enhancement suggestions that can be used as a guide and that defines the structure of the information to be included. If you do so, reference it here in the description. -->
-
-### Your First Code Contribution
-<!-- TODO
-include Setup of env, IDE and typical getting started instructions?
-
--->
-
-### Improving The Documentation
-<!-- TODO
-Updating, improving and correcting the documentation
-
--->
-
-## Styleguides
-### Commit Messages
-<!-- TODO
-
--->
-
-## Join The Project Team
-<!-- TODO -->
 
 <!-- omit in toc -->
 ## Attribution
