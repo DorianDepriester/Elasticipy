@@ -168,7 +168,7 @@ class SecondOrderTensor:
 
     def eig(self):
         """
-        Eigenvalues of the tensor
+        Compute the eigenvalues and eigenvectors of the tensor
 
         Returns
         -------
@@ -182,6 +182,17 @@ class SecondOrderTensor:
         principalDirections : return only the principal directions (without eigenvalues)
         """
         return np.linalg.eig(self.matrix)
+
+    def eigvals(self):
+        """
+        Compute the eigenvalues of the tensor, without computing the associated eigenvectors
+
+        Returns
+        -------
+        numpy.ndarray
+            Eigenvalues
+        """
+        return np.linalg.eigvals(self.matrix)
 
     def principalDirections(self):
         """
@@ -1225,6 +1236,9 @@ class SymmetricSecondOrderTensor(SecondOrderTensor):
 
     def eig(self):
         return np.linalg.eigh(self.matrix)
+
+    def eigvals(self):
+        return np.linalg.eigvalsh(self.matrix)
 
 
 class SkewSymmetricSecondOrderTensor(SecondOrderTensor):
