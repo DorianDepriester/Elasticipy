@@ -21,7 +21,7 @@ class StrainTensor(SymmetricSecondOrderTensor):
         np.ndarray
             Principal strain values
         """
-        return self.eig()[0]
+        return self.eigvals()
 
     def volumetricStrain(self):
         """
