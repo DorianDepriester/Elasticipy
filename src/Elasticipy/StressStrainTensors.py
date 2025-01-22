@@ -67,7 +67,7 @@ class StressTensor(SymmetricSecondOrderTensor):
         np.ndarray
             Principal stresses
         """
-        return np.real(self.eig()[0])
+        return self.eigvals()
 
     @property
     def J1(self):
@@ -138,7 +138,7 @@ class StressTensor(SymmetricSecondOrderTensor):
         vonMises : von Mises equivalent stress
         """
         ps = self.principal_stresses()
-        return np.max(ps, axis=-1) - np.min(ps, axis=-1)
+        return ps[...,-1] - ps[...,0]
 
     def hydrostaticPressure(self):
         """
