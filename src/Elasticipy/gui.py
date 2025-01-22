@@ -100,7 +100,7 @@ class ElasticityGUI(QMainWindow):
         # E, G or nu selector
         parameter_layout = QHBoxLayout()
         self.plotting_selector = QComboBox()
-        self.plotting_selector.addItems(['Young modulus', 'Shear modulus', 'Poisson ratio'])
+        self.plotting_selector.addItems(['Young modulus', 'Shear modulus', 'Poisson ratio', 'Linear compressibility'])
         self.plotting_selector.currentIndexChanged.connect(self.update_plotting_selectors)
         parameter_layout.addWidget(QLabel("Parameter:"))
         parameter_layout.addWidget(self.plotting_selector)
@@ -186,6 +186,7 @@ class ElasticityGUI(QMainWindow):
 
     def update_plotting_selectors(self):
         if (self.plotting_selector.currentText() == "Young modulus" or
+            self.plotting_selector.currentText() == "Linear compressibility" or
                 self.plot_style_selector.currentIndex() == 1):
             self.which_selector.setEnabled(False)
         else:
@@ -211,6 +212,9 @@ class ElasticityGUI(QMainWindow):
             requested_value = self.plotting_selector.currentText()
             if requested_value == "Young modulus":
                 value = stiff.Young_modulus
+                plot_kwargs = {}
+            elif requested_value == 'Linear compressibility':
+                value = stiff.linear_compressibility
                 plot_kwargs = {}
             else:
                 if requested_value == 'Shear modulus':
