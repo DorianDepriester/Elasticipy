@@ -38,9 +38,9 @@ for ni in n:
 
 
 fig, ax = plt.subplots()
-ax.plot(n, t_stress_mg, label='Stiffness-strain product (pymatgen)', marker="s")
-ax.plot(n, t_stress_elast, label='Stiffness-strain product (Elasticipy)', marker="o")
-ax.plot(n, t_vm_mg, label='von Mises eq. stress (pymatgen)', linestyle='dotted', marker="s")
+ax.plot(n, t_stress_mg, label="Generalized Hooke's law (Pymatgen)", marker="s")
+ax.plot(n, t_stress_elast, label="Generalized Hooke's law (Elasticipy)", marker="o")
+ax.plot(n, t_vm_mg, label='von Mises eq. stress (Pymatgen)', linestyle='dotted', marker="s")
 ax.plot(n, t_vm_elast, label='von Mises eq. stress  (Elasticipy)', linestyle='dotted', marker="o")
 plt.legend()
 plt.xscale('log')
