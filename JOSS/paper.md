@@ -29,7 +29,7 @@ bibliography: paper.bib
 
 Elasticipy is a Python library designed to streamline computation and manipulation of elasticity tensors for materials and 
 crystalline materials, taking their specific symmetries into account. It provides tools to manipulate, visualize, and 
-analyze tensors --such as stress, strain and stiffness tensors-- simplifying workflows for materials scientists an 
+analyze tensors --such as stress, strain and stiffness tensors-- simplifying workflows for materials scientists and 
 engineers.
 
 # Statement of Need
@@ -39,9 +39,13 @@ $\boldsymbol{\varepsilon}$) whereas the stress is described by the second-order 
 ($\boldsymbol{\sigma}$). Under the linear elasticity assumption, the relationship between the elastic strain $\boldsymbol{\varepsilon}$
 and $\boldsymbol{\sigma}$, known as the generalized Hooke's law, is given through the fourth-order stiffness tensor $\boldsymbol{C}$ with:
 
+$$\boldsymbol{\sigma}=\boldsymbol{C}:\boldsymbol{\varepsilon}$$
+
+where "$:$" denotes the tensor product contrated twice, so that:
+
 $$\sigma_{ij}=C_{ijk\ell}\varepsilon_{k\ell}$$
 
-where $C_{ijk\ell}$ denotes the $ijk\ell$-th component of $\boldsymbol{C}$. In order to simplify the above equation, one usually uses the so-called Voigt notation, 
+In order to simplify the above equations, one usually uses the so-called Voigt notation, 
 which reads:
 $$\begin{bmatrix}
 \sigma_{11}\\
@@ -96,29 +100,30 @@ and stiffness;
   - a collection of built-in methods to easily and efficiently perform fundamental operations on tensors (rotations 
 [@meanElastic], products, invariants, statistical analysis etc.);
 
-  - averaging techniques, such as Voigt--Reuss--Hill [@hill], for textured and non-textured polycrystalline aggregates.
+  - averaging techniques, such as Voigt--Reuss--Hill [@hill], for textured and non-textured polycrystalline 
+multiphased aggregates.
 
 In order to evidence some of these features, \autoref{fig:Young}.a) illustrates the directional Young modulus of 
 copper (Cu) single crystal as a 3D surface, whereas \autoref{fig:Young}.b) shows the same values as a pole figure (Lambert 
-projection). In \autoref{fig:Young}.c), the Young modulus of a polycrystalline Cu displaying a $\boldsymbol{z}$ fiber 
+projection). In \autoref{fig:Young}.c), the Young modulus of a polycrystalline Cu displaying a perfect $[001]$ fiber 
 texture has been estimated with different averaging methods (namely Voigt, Reuss and Hill [@hill]), then plotted as 
-as orthogonal sections.
+orthogonal sections.
 
 ![Young modulus (GPa) of Cu single crystal as a 3D surface (a) or a pole figure (b); 
-Young modulus of Cu polycrystal with $\boldsymbol{z}$ fiber texture, plotted in three orthogonal sections, depending on the
+Young modulus of Cu polycrystal with $[001]$ fiber texture, plotted in three orthogonal sections, depending on the
 averaging method. \label{fig:Young}](YoungModulus.png)
 
 Elasticipy also introduces the concept of *tensor arrays*, in a similar way as in MTEX [@MTEX], allowing to 
 process several tensors at once with simple and highly efficient commands. In order to highlight the performances 
 of Elasticipy, \autoref{fig:pymatgen} shows the wall-time required to perform two basic operations on tensors (namely, 
-apply the generalized Hooke's law and compute the von Mises equivalent stress) , as 
+apply the generalized Hooke's law and compute the von Mises equivalent stress) as 
 functions of the number of considered tensors. This demonstrates that, when processing large datasets of tensors 
-($n>10^3$), basic tensor operations are 1 to 2 orders of magnitude faster in Elasticipy compared to pymatgen. 
-These performances gains are achieved by leveraging `numpy`'s array broadcasting capabilities.
+($n>10^3$), basic tensor operations are 1 to 2 orders of magnitude faster in Elasticipy compared to Pymatgen. 
+These performance gains are achieved by leveraging `numpy`'s array broadcasting capabilities.
 However, as tensor algebra is not the primary focus of Pymatgen, Elasticipy is designed to complement rather than 
 replace it. Elasticipy supports seamless conversion between its own data structures and those of Pymatgen, allowing 
-users to integrate both tools and benefit from pymatgen's extensive features beyond tensor analysis. Elasticipy is also
-compatible with orix [@orix], a Python library for analysing orientations and crystal symmetry.
+users to integrate both tools and benefit from Pymatgen's extensive features beyond tensor analysis. Elasticipy is also
+compatible with Orix [@orix], a Python library for analysing orientations and crystal symmetry.
 
 ![Performance comparison between Elasticipy and pymatgen.\label{fig:pymatgen}](ElasticipyVSpymatgen.png){ width=75% }
 
@@ -126,7 +131,8 @@ compatible with orix [@orix], a Python library for analysing orientations and cr
 # Possible extensions
 
 It is worth mentioning that Elasticipy provides a full framework for working on tensors, allowing to extend the analyses
-beyond linear elasticity problems (e.g. plasticity) with ease. It already implements thermal expansion.
+to other averaging methods (e.g. self-consistent models), possibly beyond linear elasticity problems (e.g. plasticity) 
+with ease. It already implements thermal expansion.
 
 # Usage
 
@@ -178,14 +184,13 @@ from Elasticipy.StressStrainTensors import StrainTensor
 m = 1000                     # length of tensor array
 mag = np.linspace(0, 0.1, m) # Strain magnitude
 strain = StrainTensor.tensile([1,0,0], mag)
-stress = C * strain
 ````
 
 Given the stiffness tensor ``C`` (see above), one can compute the corresponding stress array with:
 ````python
 stress = C * strain
 ````
-Finally, ``stress.von_Mises()`` returns an array of length ``n`` and data type ``float64``, gathering all the von Mises 
-equivalent stresses.
+Finally, ``stress.von_Mises()`` returns an array of length ``n`` and data type ``float64``, providing all the 
+corresponding von Mises equivalent stresses.
 
 # References
