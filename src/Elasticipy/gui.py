@@ -203,11 +203,8 @@ class ElasticityGUI(QMainWindow):
         C = np.array(coefficients)
         Csym = C + np.tril(C.T, -1) # Rebuild the lower triangular part
 
-        if np.abs(np.linalg.det(Csym)) < 1e-5:
-            self.raise_singularity_error()
-        else:
+        try:
             stiff = StiffnessTensor(Csym)
-
             self.figure.clear()
             requested_value = self.plotting_selector.currentText()
             if requested_value == "Young modulus":
@@ -229,6 +226,10 @@ class ElasticityGUI(QMainWindow):
             else:
                 value.plot_as_pole_figure(fig=self.figure, **plot_kwargs)
             self.canvas.draw()
+
+        except ValueError as inst:
+            QMessageBox.critical(self, "Singular stiffness", inst.__str__(), QMessageBox.Ok)
+
 
     def update_dependent_fields(self):
         symmetry = self.selected_symmetry()
@@ -254,11 +255,6 @@ class ElasticityGUI(QMainWindow):
                     self.coefficient_fields[index].setText(f"{0.5*(C11-C12)}")
             except ValueError:
                 pass
-
-    def raise_singularity_error(self):
-        """Print a message error if the stiffness tensor is singular"""
-        error_message = "The stiffness tensor you entered is singular."
-        QMessageBox.critical(self, "Singular stiffness", error_message, QMessageBox.Ok)
 
 def crystal_elastic_plotter():
     app = QApplication(sys.argv)
