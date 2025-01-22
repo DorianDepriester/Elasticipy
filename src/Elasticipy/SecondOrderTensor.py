@@ -179,7 +179,8 @@ class SecondOrderTensor:
 
         See Also
         --------
-        principalDirections : return only the principal directions (without eigenvalues)
+        eigvals : return only the eigenvalues (without directions)
+        principal_directions : return only the principal directions (without eigenvalues)
         """
         return np.linalg.eig(self.matrix)
 
@@ -191,16 +192,20 @@ class SecondOrderTensor:
         -------
         numpy.ndarray
             Eigenvalues
+
+        See Also
+        --------
+        eig : compute the eigenvalues and the eigenvector
         """
         return np.linalg.eigvals(self.matrix)
 
-    def principalDirections(self):
+    def principal_directions(self):
         """
         Principal directions of the tensors
 
         Returns
         -------
-        np.nparray
+        np.ndarray
             Principal directions of each tensor of the tensor array
 
         See Also
