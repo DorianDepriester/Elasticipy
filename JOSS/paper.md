@@ -119,7 +119,7 @@ of Elasticipy, \autoref{fig:pymatgen} shows the wall-time required to perform tw
 apply the generalized Hooke's law and compute the von Mises equivalent stress) as 
 functions of the number of considered tensors. This demonstrates that, when processing large datasets of tensors 
 ($n>10^3$), basic tensor operations are 1 to 2 orders of magnitude faster in Elasticipy compared to Pymatgen. 
-These performance gains are achieved by leveraging `numpy`'s array broadcasting capabilities.
+These performance gains are achieved by leveraging NumPy's array broadcasting capabilities [@NumPy].
 However, as tensor algebra is not the primary focus of Pymatgen, Elasticipy is designed to complement rather than 
 replace it. Elasticipy supports seamless conversion between its own data structures and those of Pymatgen, allowing 
 users to integrate both tools and benefit from Pymatgen's extensive features beyond tensor analysis. Elasticipy is also
