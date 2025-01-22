@@ -1223,6 +1223,9 @@ class SymmetricSecondOrderTensor(SecondOrderTensor):
         else:
             raise ValueError("array must be of shape (6,) or (...,6) with Voigt vector")
 
+    def eig(self):
+        return np.linalg.eigh(self.matrix)
+
 
 class SkewSymmetricSecondOrderTensor(SecondOrderTensor):
     name = 'Skew-symmetric second-order tensor'
