@@ -612,5 +612,42 @@ class TestStressStrainTensors(unittest.TestCase):
             for j in range(shape[1]):
                 np.testing.assert_array_almost_equal(tinv[i,j].matrix, np.linalg.inv(matrix[i,j]))
 
+    def test_tensile_shear(self):
+        # Start with single tensile
+        mag = 5
+        t = Tensors.SymmetricSecondOrderTensor.tensile([1, 0, 0], mag)
+        assert t.shape == ()
+        mat = np.zeros((3, 3))
+        mat[0, 0] = mag
+        np.testing.assert_almost_equal(t.matrix, mat)
+
+        # Now with arrays
+        n = 5
+        t = Tensors.SymmetricSecondOrderTensor.tensile([1,0,0], range(n))
+        assert t.shape == (n,)
+        mat = np.zeros((n,3,3))
+        mat[:,0,0] = range(n)
+        np.testing.assert_almost_equal(t.matrix, mat)
+
+        # Try with a 2d directions
+        with self.assertRaises(ValueError) as context:
+            _ = Tensors.SymmetricSecondOrderTensor.tensile([1,0], range(n))
+        self.assertEqual(str(context.exception), 'u must be 3D vector.')
+
+        # Now shear
+        t = Tensors.SymmetricSecondOrderTensor.shear([1,0,0], [0,1,0], range(n))
+        assert t.shape == (n,)
+        mat = np.zeros((n,3,3))
+        mat[:,0,1] = mat[:,1,0] = range(n)
+        np.testing.assert_almost_equal(t.matrix, mat)
+
+    def test_repr(self):
+        a=Tensors.SymmetricSecondOrderTensor.ones()
+        assert a.__repr__() == 'Symmetric second-order tensor\n[[1. 1. 1.]\n [1. 1. 1.]\n [1. 1. 1.]]'
+
+        n=5
+        b=Tensors.SymmetricSecondOrderTensor.ones(n)
+        assert b.__repr__() == 'Symmetric second-order tensor\nShape=({},)'.format(n)
+
 if __name__ == '__main__':
     unittest.main()
