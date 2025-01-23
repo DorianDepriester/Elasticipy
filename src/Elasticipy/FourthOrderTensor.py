@@ -1299,14 +1299,12 @@ class StiffnessTensor(SymmetricTensor):
            *Phys. Rev. Lett.*, 101(5), 055504, 2008. https://doi.org/10.1103/PhysRevLett.101.055504
         """
         Cvoigt = self.Voigt_average()
-        Gvoigt = Cvoigt.matrix[3,3]
         Creuss = self.Reuss_average()
-        Greuss = Creuss.matrix[3, 3]
-        C = self.matrix
-        Kv = (C[0,0] + C[1,1] + C[2,2] + 2 * (C[0,1] + C[0,2] + C[1,2])) / 9
-        S = np.linalg.inv(C)
-        Kr = 1 / (S[0,0] + S[1,1] + S[2,2] + 2 * (S[0,1] + S[0,2] + S[1,2]))
-        return 5 * Gvoigt / Greuss + Kv / Kr - 6
+        Gv = Cvoigt.matrix[3, 3]
+        Gr = Creuss.matrix[3, 3]
+        Kv = Cvoigt.bulk_modulus
+        Kr = Creuss.bulk_modulus
+        return 5 * Gv / Gr + Kv / Kr - 6
 
     def to_pymatgen(self):
         """
