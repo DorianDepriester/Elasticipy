@@ -642,12 +642,12 @@ class TestStressStrainTensors(unittest.TestCase):
         np.testing.assert_almost_equal(t.matrix, mat)
 
     def test_repr(self):
-        a=Tensors.SymmetricSecondOrderTensor.ones()
-        assert a.__repr__() == 'Symmetric second-order tensor\n[[1. 1. 1.]\n [1. 1. 1.]\n [1. 1. 1.]]'
+        a=Tensors.StrainTensor.ones()
+        assert a.__repr__() == 'Strain tensor\n[[1. 1. 1.]\n [1. 1. 1.]\n [1. 1. 1.]]'
 
         n=5
-        b=Tensors.SymmetricSecondOrderTensor.ones(n)
-        assert b.__repr__() == 'Symmetric second-order tensor\nShape=({},)'.format(n)
+        b=Tensors.StressTensor.ones(n)
+        assert b.__repr__() == 'Stress tensor\nShape=({},)'.format(n)
 
 if __name__ == '__main__':
     unittest.main()
