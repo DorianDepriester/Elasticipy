@@ -310,8 +310,8 @@ class TestStressStrainTensors(unittest.TestCase):
         a = Tensors.StrainTensor.ones(shape)
         b = 2 * Tensors.StrainTensor.ones(shape)
         c = 3 * Tensors.StrainTensor.ones(shape)
-        d = a + b - c + 5 - 5
-        np.testing.assert_array_equal(d.matrix, np.zeros(shape + (3,3)))
+        d = a + b - c + 5 - 5 - a
+        np.testing.assert_array_equal(d.matrix, -np.ones(shape + (3,3)))
 
     def test_flatten(self):
         """Check flattening of a tensor array"""
