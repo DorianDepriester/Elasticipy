@@ -20,7 +20,7 @@ So now, let's have a look on the strain tensor, and compute the principal strain
 
     >>> strain = StrainTensor.shear([1,0,0], [0,1,0], 1e-3) # XY Shear strain with 1e-3 mag.
     >>> print(strain.principalStrains())
-    [ 0.001 -0.001  0.   ]
+    [-0.001  0.     0.001]
     >>> print(strain.volumetricStrain())
     0.0
 

@@ -961,7 +961,7 @@ class StiffnessTensor(SymmetricTensor):
         >>> C=StiffnessTensor.isotropic(E=210e3, nu=0.28)
         >>> C.shear_modulus
         Hyperspherical function
-        Min=82031.24999999991, Max=82031.24999999997
+        Min=82031.24999999997, Max=82031.25000000006
         """
         argument_vector = np.array([E, nu, lame1, lame2])
         if np.count_nonzero(argument_vector) != 2:
