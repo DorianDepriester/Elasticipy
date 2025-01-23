@@ -3,7 +3,6 @@ import numpy as np
 from pytest import approx
 import os
 import pandas as pd
-from sympy.stats.sampling.sample_numpy import numpy
 
 from Elasticipy.FourthOrderTensor import StiffnessTensor, ComplianceTensor
 from scipy.spatial.transform import Rotation
@@ -12,8 +11,6 @@ from Elasticipy.CrystalSymmetries import SYMMETRIES
 from Elasticipy.StressStrainTensors import StressTensor
 from pymatgen.analysis.elasticity import elastic as mg
 from orix.quaternion import Rotation as orix_rot
-
-from Examples.Example_StressStrain_arrays import C_rotated
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 file_path = os.path.join(current_dir, 'MaterialsProject.json')
@@ -171,6 +168,18 @@ class TestComplianceTensor(unittest.TestCase):
         a = ComplianceTensor.isotropic(E=210, nu=0.3)
         b = ComplianceTensor(a.full_tensor())
         np.testing.assert_array_almost_equal(a.matrix, b.matrix)
+
+
+    def test_component(self):
+        assert S.S11 == Smat[0, 0]
+        assert S.S12 == Smat[0, 1]
+        assert S.S13 == Smat[0, 2]
+        assert S.S22 == Smat[1, 1]
+        assert S.S23 == Smat[1, 2]
+        assert S.S33 == Smat[2, 2]
+        with self.assertRaises(AttributeError) as context:
+            _ = S.C11
+        self.assertEqual(str(context.exception), "'ComplianceTensor' object has no attribute 'S11'")
 
 class TestStiffnessConstructor(unittest.TestCase):
     def test_averages(self):
@@ -592,6 +601,19 @@ class TestStiffnessConstructor(unittest.TestCase):
         a = StiffnessTensor.isotropic(E=210, nu=0.3)
         b = StiffnessTensor(a.full_tensor())
         assert a == b
+
+    def test_component(self):
+        C=S.inv()
+        Cmat = C.matrix
+        assert C.C11 == Cmat[0, 0]
+        assert C.C12 == Cmat[0, 1]
+        assert C.C13 == Cmat[0, 2]
+        assert C.C22 == Cmat[1, 1]
+        assert C.C23 == Cmat[1, 2]
+        assert C.C33 == Cmat[2, 2]
+        with self.assertRaises(AttributeError) as context:
+            _ = C.S11
+        self.assertEqual(str(context.exception), "'StiffnessTensor' object has no attribute 'S11'")
 
 if __name__ == '__main__':
     unittest.main()
