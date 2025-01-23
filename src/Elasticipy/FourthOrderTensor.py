@@ -178,6 +178,18 @@ class SymmetricTensor:
         else:
             return len(self.orientations)
 
+    def __init_subclass__(cls, **kwargs):
+        """This allows dynamic access to the component of the tensor"""
+        super().__init_subclass__(**kwargs)
+        prefix = cls.component_prefix  # Get the prefix defined in the subclass
+        for i in range(0,6):
+            for j in range(0,6):
+                def getter(self, I=i, J=j):
+                    return self.matrix[I, J]
+                getter.__doc__ = f"Returns the ({i + 1},{j + 1}) component of the {cls.tensor_name} matrix."
+                component_name = '{}{}{}'.format(prefix, i+1, j+1)
+                setattr(cls, component_name, property(getter))  # Dynamically create the property
+
     def full_tensor(self):
         """
         Returns the full (unvoigted) tensor, as a [3, 3, 3, 3] array
