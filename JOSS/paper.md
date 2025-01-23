@@ -1,5 +1,5 @@
 ---
-title: 'Elasticipy: A Python package for elasticity and tensor analysis'
+title: 'Elasticipy: A Python package for linear elasticity and tensor analysis'
 tags:
   - Python
   - Continuum Mechanics
