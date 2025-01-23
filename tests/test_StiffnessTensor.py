@@ -196,6 +196,11 @@ class TestComplianceTensor(unittest.TestCase):
         docstring = ComplianceTensor.C12.__doc__
         assert docstring == 'Returns the (1,2) component of the Compliance matrix.'
 
+    def test_bulk_modulus(self):
+        E, nu = 210, 0.3
+        Siso= ComplianceTensor.isotropic(E=E, nu=nu)
+        assert Siso.bulk_modulus == approx(E / (3 * (1-2 * nu)))
+
 class TestStiffnessConstructor(unittest.TestCase):
     def test_averages(self):
         """Check that the Voigt, Reuss and Hill averages are consistent with those provided by MP."""
@@ -644,6 +649,11 @@ class TestStiffnessConstructor(unittest.TestCase):
         assert C.C66 == Cmat[5, 5]
         docstring = StiffnessTensor.C12.__doc__
         assert docstring == 'Returns the (1,2) component of the Stiffness matrix.'
+
+    def test_bulk_modulus(self):
+        E, nu = 210, 0.3
+        Ciso= StiffnessTensor.isotropic(E=E, nu=nu)
+        assert Ciso.bulk_modulus == approx(E / (3 * (1-2 * nu)))
 
 if __name__ == '__main__':
     unittest.main()
