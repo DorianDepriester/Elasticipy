@@ -818,11 +818,31 @@ class StiffnessTensor(SymmetricTensor):
         -------
         SphericalFunction
             Directional linear compressibility
+
+        See Also
+        --------
+        bulk_modulus : bulk modulus of the material
         """
         def compute_linear_compressibility(n):
             return _compute_unit_strain_along_direction(self, n, n, direction='spherical')
 
         return SphericalFunction(compute_linear_compressibility)
+
+    @property
+    def bulk_modulus(self):
+        """
+        Compute the bulk modulus of the material
+
+        Returns
+        -------
+        float
+            Bulk modulus
+
+        See Also
+        --------
+        linear_compressibility : directional linear compressibility
+        """
+        return self.inv().bulk_modulus
 
 
     def Voigt_average(self):
@@ -1378,6 +1398,10 @@ class ComplianceTensor(StiffnessTensor):
     @classmethod
     def weighted_average(cls, *args):
         return super().weighted_average(*args).inv()
+
+    @property
+    def bulk_modulus(self):
+        return 1/np.sum(self.matrix[0:3,0:3])
 
     @property
     def universal_anisotropy(self):
