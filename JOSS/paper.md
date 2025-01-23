@@ -8,6 +8,7 @@ tags:
   - Anisotropy
   - Crystals
   - Polycrystals
+  - Materials science
 authors:
   - name: Dorian Depriester
     orcid: 0000-0002-2881-8942
