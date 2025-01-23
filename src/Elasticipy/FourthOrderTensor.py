@@ -1298,8 +1298,9 @@ class StiffnessTensor(SymmetricTensor):
         .. [3] S. I. Ranganathan and M. Ostoja-Starzewski, Universal Elastic Anisotropy Index,
            *Phys. Rev. Lett.*, 101(5), 055504, 2008. https://doi.org/10.1103/PhysRevLett.101.055504
         """
-        Cvoigt = self.Voigt_average()
-        Creuss = self.Reuss_average()
+        C = self._unrotate()    # Ensure that the averages do not use the orientations
+        Cvoigt = C.Voigt_average()
+        Creuss = C.Reuss_average()
         Gv = Cvoigt.matrix[3, 3]
         Gr = Creuss.matrix[3, 3]
         Kv = Cvoigt.bulk_modulus
