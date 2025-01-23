@@ -161,6 +161,14 @@ class SymmetricTensor:
         self.symmetry = symmetry
         self.orientations = orientations
 
+        for i in range(0,6):
+            for j in range(0,6):
+                def getter(obj, I=i, J=j):
+                    return obj.matrix[I, J]
+                getter.__doc__ = f"Returns the ({i + 1},{j + 1}) component of the {self.tensor_name} matrix."
+                component_name = 'C{}{}'.format(i+1, j+1)
+                setattr(self.__class__, component_name, property(getter))  # Dynamically create the property
+
     def __repr__(self):
         if self.phase_name is None:
             heading = '{} tensor (in Voigt notation):\n'.format(self.tensor_name)
@@ -177,18 +185,6 @@ class SymmetricTensor:
             return 1
         else:
             return len(self.orientations)
-
-    def __init_subclass__(cls, **kwargs):
-        """This allows dynamic access to the component of the tensor"""
-        super().__init_subclass__(**kwargs)
-        prefix = cls.component_prefix  # Get the prefix defined in the subclass
-        for i in range(0,6):
-            for j in range(0,6):
-                def getter(self, I=i, J=j):
-                    return self.matrix[I, J]
-                getter.__doc__ = f"Returns the ({i + 1},{j + 1}) component of the {cls.tensor_name} matrix."
-                component_name = '{}{}{}'.format(prefix, i+1, j+1)
-                setattr(cls, component_name, property(getter))  # Dynamically create the property
 
     def full_tensor(self):
         """
