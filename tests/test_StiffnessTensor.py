@@ -613,9 +613,8 @@ class TestStiffnessConstructor(unittest.TestCase):
     def test_linear_compressibility(self):
         E, nu = 210, 0.3
         Ciso = StiffnessTensor.isotropic(E=E, nu=nu)
-        K = E / (3 * (1 - 2*nu))
         beta = Ciso.linear_compressibility.mean()
-        assert K == approx(1 / (3*beta))
+        assert Ciso.bulk_modulus == approx(1 / (3*beta))
 
     def test_full_tensor_as_input(self):
         a = StiffnessTensor.isotropic(E=210, nu=0.3)
