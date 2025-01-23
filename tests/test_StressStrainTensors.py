@@ -68,6 +68,10 @@ class TestStressStrainTensors(unittest.TestCase):
                 for k in range(shape[2]):
                     np.testing.assert_array_equal(random_matrix[i, j, k], transposed_tensor[k, j, i].matrix)
 
+        # Check that transposing a single tensor has no effect
+        a = SecondOrderTensor.rand()
+        assert a == a.transposeArray()
+
     def test_transpose_tensor(self):
         """
         Test transposing a tensor array
