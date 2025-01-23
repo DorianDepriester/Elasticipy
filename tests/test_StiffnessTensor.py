@@ -171,15 +171,30 @@ class TestComplianceTensor(unittest.TestCase):
 
 
     def test_component(self):
-        assert S.S11 == Smat[0, 0]
-        assert S.S12 == Smat[0, 1]
-        assert S.S13 == Smat[0, 2]
-        assert S.S22 == Smat[1, 1]
-        assert S.S23 == Smat[1, 2]
-        assert S.S33 == Smat[2, 2]
-        with self.assertRaises(AttributeError) as context:
-            _ = S.C11
-        self.assertEqual(str(context.exception), "'ComplianceTensor' object has no attribute 'S11'")
+        assert S.C11 == Smat[0, 0]
+        assert S.C12 == Smat[0, 1]
+        assert S.C13 == Smat[0, 2]
+        assert S.C14 == Smat[0, 3]
+        assert S.C15 == Smat[0, 4]
+        assert S.C16 == Smat[0, 5]
+        assert S.C22 == Smat[1, 1]
+        assert S.C23 == Smat[1, 2]
+        assert S.C24 == Smat[1, 3]
+        assert S.C25 == Smat[1, 4]
+        assert S.C26 == Smat[1, 5]
+        assert S.C32 == Smat[2, 1]
+        assert S.C33 == Smat[2, 2]
+        assert S.C34 == Smat[2, 3]
+        assert S.C35 == Smat[2, 4]
+        assert S.C36 == Smat[2, 5]
+        assert S.C44 == Smat[3, 3]
+        assert S.C45 == Smat[3, 4]
+        assert S.C46 == Smat[3, 5]
+        assert S.C55 == Smat[4, 4]
+        assert S.C56 == Smat[4, 5]
+        assert S.C66 == Smat[5, 5]
+        docstring = ComplianceTensor.C12.__doc__
+        assert docstring == 'Returns the (1,2) component of the Compliance matrix.'
 
 class TestStiffnessConstructor(unittest.TestCase):
     def test_averages(self):
@@ -603,17 +618,32 @@ class TestStiffnessConstructor(unittest.TestCase):
         assert a == b
 
     def test_component(self):
-        C=S.inv()
+        C = S.inv()
         Cmat = C.matrix
         assert C.C11 == Cmat[0, 0]
         assert C.C12 == Cmat[0, 1]
         assert C.C13 == Cmat[0, 2]
+        assert C.C14 == Cmat[0, 3]
+        assert C.C15 == Cmat[0, 4]
+        assert C.C16 == Cmat[0, 5]
         assert C.C22 == Cmat[1, 1]
         assert C.C23 == Cmat[1, 2]
+        assert C.C24 == Cmat[1, 3]
+        assert C.C25 == Cmat[1, 4]
+        assert C.C26 == Cmat[1, 5]
+        assert C.C32 == Cmat[2, 1]
         assert C.C33 == Cmat[2, 2]
-        with self.assertRaises(AttributeError) as context:
-            _ = C.S11
-        self.assertEqual(str(context.exception), "'StiffnessTensor' object has no attribute 'S11'")
+        assert C.C34 == Cmat[2, 3]
+        assert C.C35 == Cmat[2, 4]
+        assert C.C36 == Cmat[2, 5]
+        assert C.C44 == Cmat[3, 3]
+        assert C.C45 == Cmat[3, 4]
+        assert C.C46 == Cmat[3, 5]
+        assert C.C55 == Cmat[4, 4]
+        assert C.C56 == Cmat[4, 5]
+        assert C.C66 == Cmat[5, 5]
+        docstring = StiffnessTensor.C12.__doc__
+        assert docstring == 'Returns the (1,2) component of the Stiffness matrix.'
 
 if __name__ == '__main__':
     unittest.main()
