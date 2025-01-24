@@ -1309,7 +1309,8 @@ class StiffnessTensor(SymmetricTensor):
 
     @property
     def Zener_ratio(self):
-        """Compute the Zener ratio (Z). Only valid for cubic symmetry.
+        """
+        Compute the Zener ratio (Z). Only valid for cubic symmetry.
 
         It is only valid for cubic and isotropic symmetry. Will return NaN for other symmetries.
 
@@ -1324,7 +1325,7 @@ class StiffnessTensor(SymmetricTensor):
 
         .. math::
 
-                Z=\frac{ 2C_{44} }{C11 - C12}
+                Z=\\frac{ 2C_{44} }{C11 - C12}
 
         See Also
         --------
