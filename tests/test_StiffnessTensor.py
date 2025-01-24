@@ -592,11 +592,18 @@ class TestStiffnessConstructor(unittest.TestCase):
         expected_error = 'The input matrix is not definite positive (eigenvalues: {})'.format(eig_vals)
         self.assertEqual(str(context.exception), expected_error)
 
-    def test_universal_anisotropy(self):
+    def test_Zener_universal_anisotropy(self):
         C11, C12, C44 = 173, 33, 18
         C = StiffnessTensor.cubic(C11=C11, C12=C12, C44=C44)
-        Z = 2 * C44 / (C11 - C12)
+        Z = C.Zener_ratio
         assert 6/5 * (Z**0.5 - Z**(-0.5))**2 == approx(C.universal_anisotropy)
+        C_cub_iso = StiffnessTensor.cubic(C11=C11, C12=C12, C44=(C11-C12)/2)
+        assert C_cub_iso.Zener_ratio == 1.0
+        Ciso = StiffnessTensor.isotropic(E=210, nu=0.3)
+        assert Ciso.Zener_ratio == 1.0
+        assert Ciso.universal_anisotropy == 0.0
+        Cmono = S.inv()
+        assert np.isnan(Cmono.Zener_ratio)
 
     def test_orix(self):
         n=5
