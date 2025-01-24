@@ -1307,6 +1307,36 @@ class StiffnessTensor(SymmetricTensor):
         Kr = Creuss.bulk_modulus
         return 5 * Gv / Gr + Kv / Kr - 6
 
+    @property
+    def Zener_ratio(self):
+        """Compute the Zener ratio (Z). Only valid for cubic symmetry.
+
+        It is only valid for cubic and isotropic symmetry. Will return NaN for other symmetries.
+
+        Returns
+        -------
+        float
+            Zener ratio (NaN is the symmetry is not cubic)
+
+        Notes
+        -----
+        The Zener ratio is defined as:
+
+        .. math::
+
+                Z=\frac{ 2C_{44} }{C11 - C12}
+
+        See Also
+        --------
+        universal_anisotropy : compute the universal anisotropy factor
+        """
+        if self.symmetry == 'isotropic':
+            return 1.0
+        elif self.symmetry == 'cubic':
+            return 2 * self.C44 / (self.C11 - self.C12)
+        else:
+            return np.nan
+
     def to_pymatgen(self):
         """
         Convert the stiffness tensor (from Elasticipy) to Python Materials Genomics (Pymatgen) format.
