@@ -10,7 +10,7 @@ class StrainTensor(SymmetricSecondOrderTensor):
     name = 'Strain tensor'
     voigt_map = [1, 1, 1, 2, 2, 2]
 
-    def principalStrains(self):
+    def principal_strains(self):
         """
         Values of the principals strains.
 
@@ -23,7 +23,7 @@ class StrainTensor(SymmetricSecondOrderTensor):
         """
         return self.eigvals()
 
-    def volumetricStrain(self):
+    def volumetric_strain(self):
         """
         Volumetric change (1st invariant of the strain tensor)
 

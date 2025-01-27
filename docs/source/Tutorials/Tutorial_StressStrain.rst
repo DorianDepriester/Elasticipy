@@ -12,6 +12,226 @@ equivalent stresses:
 .. doctest::
 
     >>> from Elasticipy.StressStrainTensors import StressTensor, StrainTensor
+            >>> stress = StressTensor.shear([1, 0, 0], [0, 1, 0], 1.0) # Unit XY shear stress
+            >>> print(stress.vonMises(), stress.Tresca())
+            1.7320508075688772 2.0
+
+        So now, let's have a look on the strain tensor, and compute the principal strains and the volumetric change:
+
+            >>> strain = StrainTensor.shear([1,0,0], [0,1,0], 1e-3) # XY Shear strain with 1e-3 mag.
+            >>> print(strain.principal_strains())
+            [-0.001  0.     0.001]
+            >>> print(strain.volumetricStrain())
+            0.0
+            >>> stress = StressTensor.shear([1, 0, 0], [0, 1, 0], 1.0) # Unit XY shear stress
+            >>> print(stress.vonMises(), stress.Tresca())
+            1.7320508075688772 2.0
+
+        So now, let's have a look on the strain tensor, and compute the principal strains and the volumetric change:
+
+            >>> strain = StrainTensor.shear([1,0,0], [0,1,0], 1e-3) # XY Shear strain with 1e-3 mag.
+            >>> print(strain.principal_strains())
+            [-0.001  0.     0.001]
+            >>> print(strain.volumetricStrain())
+            0.0
+        >>> stress = StressTensor.shear([1, 0, 0], [0, 1, 0], 1.0) # Unit XY shear stress
+        >>> print(stress.vonMises(), stress.Tresca())
+        1.7320508075688772 2.0
+
+    So now, let's have a look on the strain tensor, and compute the principal strains and the volumetric change:
+
+        >>> strain = StrainTensor.shear([1,0,0], [0,1,0], 1e-3) # XY Shear strain with 1e-3 mag.
+        >>> print(strain.principalStrains())
+        [-0.001  0.     0.001]
+        >>> print(strain.volumetric_strain())
+        0.0
+            >>> stress = StressTensor.shear([1, 0, 0], [0, 1, 0], 1.0) # Unit XY shear stress
+            >>> print(stress.vonMises(), stress.Tresca())
+            1.7320508075688772 2.0
+
+        So now, let's have a look on the strain tensor, and compute the principal strains and the volumetric change:
+
+            >>> strain = StrainTensor.shear([1,0,0], [0,1,0], 1e-3) # XY Shear strain with 1e-3 mag.
+            >>> print(strain.principal_strains())
+            [-0.001  0.     0.001]
+            >>> print(strain.volumetricStrain())
+            0.0
+            >>> stress = StressTensor.shear([1, 0, 0], [0, 1, 0], 1.0) # Unit XY shear stress
+            >>> print(stress.vonMises(), stress.Tresca())
+            1.7320508075688772 2.0
+
+        So now, let's have a look on the strain tensor, and compute the principal strains and the volumetric change:
+
+            >>> strain = StrainTensor.shear([1,0,0], [0,1,0], 1e-3) # XY Shear strain with 1e-3 mag.
+            >>> print(strain.principal_strains())
+            [-0.001  0.     0.001]
+            >>> print(strain.volumetricStrain())
+            0.0
+        >>> stress = StressTensor.shear([1, 0, 0], [0, 1, 0], 1.0) # Unit XY shear stress
+        >>> print(stress.vonMises(), stress.Tresca())
+        1.7320508075688772 2.0
+
+    So now, let's have a look on the strain tensor, and compute the principal strains and the volumetric change:
+
+        >>> strain = StrainTensor.shear([1,0,0], [0,1,0], 1e-3) # XY Shear strain with 1e-3 mag.
+        >>> print(strain.principalStrains())
+        [-0.001  0.     0.001]
+        >>> print(strain.volumetric_strain())
+        0.0
+            >>> stress = StressTensor.shear([1, 0, 0], [0, 1, 0], 1.0) # Unit XY shear stress
+            >>> print(stress.vonMises(), stress.Tresca())
+            1.7320508075688772 2.0
+
+        So now, let's have a look on the strain tensor, and compute the principal strains and the volumetric change:
+
+            >>> strain = StrainTensor.shear([1,0,0], [0,1,0], 1e-3) # XY Shear strain with 1e-3 mag.
+            >>> print(strain.principal_strains())
+            [-0.001  0.     0.001]
+            >>> print(strain.volumetric_strain())
+            0.0
+            >>> stress = StressTensor.shear([1, 0, 0], [0, 1, 0], 1.0) # Unit XY shear stress
+            >>> print(stress.vonMises(), stress.Tresca())
+            1.7320508075688772 2.0
+
+        So now, let's have a look on the strain tensor, and compute the principal strains and the volumetric change:
+
+            >>> strain = StrainTensor.shear([1,0,0], [0,1,0], 1e-3) # XY Shear strain with 1e-3 mag.
+            >>> print(strain.principal_strains())
+            [-0.001  0.     0.001]
+            >>> print(strain.volumetricStrain())
+            0.0
+        >>> stress = StressTensor.shear([1, 0, 0], [0, 1, 0], 1.0) # Unit XY shear stress
+        >>> print(stress.vonMises(), stress.Tresca())
+        1.7320508075688772 2.0
+
+    So now, let's have a look on the strain tensor, and compute the principal strains and the volumetric change:
+
+        >>> strain = StrainTensor.shear([1,0,0], [0,1,0], 1e-3) # XY Shear strain with 1e-3 mag.
+        >>> print(strain.principalStrains())
+        [-0.001  0.     0.001]
+        >>> print(strain.volumetricStrain())
+        0.0
+            >>> stress = StressTensor.shear([1, 0, 0], [0, 1, 0], 1.0) # Unit XY shear stress
+            >>> print(stress.vonMises(), stress.Tresca())
+            1.7320508075688772 2.0
+
+        So now, let's have a look on the strain tensor, and compute the principal strains and the volumetric change:
+
+            >>> strain = StrainTensor.shear([1,0,0], [0,1,0], 1e-3) # XY Shear strain with 1e-3 mag.
+            >>> print(strain.principal_strains())
+            [-0.001  0.     0.001]
+            >>> print(strain.volumetric_strain())
+            0.0
+            >>> stress = StressTensor.shear([1, 0, 0], [0, 1, 0], 1.0) # Unit XY shear stress
+            >>> print(stress.vonMises(), stress.Tresca())
+            1.7320508075688772 2.0
+
+        So now, let's have a look on the strain tensor, and compute the principal strains and the volumetric change:
+
+            >>> strain = StrainTensor.shear([1,0,0], [0,1,0], 1e-3) # XY Shear strain with 1e-3 mag.
+            >>> print(strain.principal_strains())
+            [-0.001  0.     0.001]
+            >>> print(strain.volumetricStrain())
+            0.0
+        >>> stress = StressTensor.shear([1, 0, 0], [0, 1, 0], 1.0) # Unit XY shear stress
+        >>> print(stress.vonMises(), stress.Tresca())
+        1.7320508075688772 2.0
+
+    So now, let's have a look on the strain tensor, and compute the principal strains and the volumetric change:
+
+        >>> strain = StrainTensor.shear([1,0,0], [0,1,0], 1e-3) # XY Shear strain with 1e-3 mag.
+        >>> print(strain.principalStrains())
+        [-0.001  0.     0.001]
+        >>> print(strain.volumetricStrain())
+        0.0
+            >>> stress = StressTensor.shear([1, 0, 0], [0, 1, 0], 1.0) # Unit XY shear stress
+            >>> print(stress.vonMises(), stress.Tresca())
+            1.7320508075688772 2.0
+
+        So now, let's have a look on the strain tensor, and compute the principal strains and the volumetric change:
+
+            >>> strain = StrainTensor.shear([1,0,0], [0,1,0], 1e-3) # XY Shear strain with 1e-3 mag.
+            >>> print(strain.principal_strains())
+            [-0.001  0.     0.001]
+            >>> print(strain.volumetricStrain())
+            0.0
+            >>> stress = StressTensor.shear([1, 0, 0], [0, 1, 0], 1.0) # Unit XY shear stress
+            >>> print(stress.vonMises(), stress.Tresca())
+            1.7320508075688772 2.0
+
+        So now, let's have a look on the strain tensor, and compute the principal strains and the volumetric change:
+
+            >>> strain = StrainTensor.shear([1,0,0], [0,1,0], 1e-3) # XY Shear strain with 1e-3 mag.
+            >>> print(strain.principal_strains())
+            [-0.001  0.     0.001]
+            >>> print(strain.volumetric_strain())
+            0.0
+        >>> stress = StressTensor.shear([1, 0, 0], [0, 1, 0], 1.0) # Unit XY shear stress
+        >>> print(stress.vonMises(), stress.Tresca())
+        1.7320508075688772 2.0
+
+    So now, let's have a look on the strain tensor, and compute the principal strains and the volumetric change:
+
+        >>> strain = StrainTensor.shear([1,0,0], [0,1,0], 1e-3) # XY Shear strain with 1e-3 mag.
+        >>> print(strain.principalStrains())
+        [-0.001  0.     0.001]
+        >>> print(strain.volumetricStrain())
+        0.0
+            >>> stress = StressTensor.shear([1, 0, 0], [0, 1, 0], 1.0) # Unit XY shear stress
+            >>> print(stress.vonMises(), stress.Tresca())
+            1.7320508075688772 2.0
+
+        So now, let's have a look on the strain tensor, and compute the principal strains and the volumetric change:
+
+            >>> strain = StrainTensor.shear([1,0,0], [0,1,0], 1e-3) # XY Shear strain with 1e-3 mag.
+            >>> print(strain.principal_strains())
+            [-0.001  0.     0.001]
+            >>> print(strain.volumetricStrain())
+            0.0
+            >>> stress = StressTensor.shear([1, 0, 0], [0, 1, 0], 1.0) # Unit XY shear stress
+            >>> print(stress.vonMises(), stress.Tresca())
+            1.7320508075688772 2.0
+
+        So now, let's have a look on the strain tensor, and compute the principal strains and the volumetric change:
+
+            >>> strain = StrainTensor.shear([1,0,0], [0,1,0], 1e-3) # XY Shear strain with 1e-3 mag.
+            >>> print(strain.principal_strains())
+            [-0.001  0.     0.001]
+            >>> print(strain.volumetric_strain())
+            0.0
+        >>> stress = StressTensor.shear([1, 0, 0], [0, 1, 0], 1.0) # Unit XY shear stress
+        >>> print(stress.vonMises(), stress.Tresca())
+        1.7320508075688772 2.0
+
+    So now, let's have a look on the strain tensor, and compute the principal strains and the volumetric change:
+
+        >>> strain = StrainTensor.shear([1,0,0], [0,1,0], 1e-3) # XY Shear strain with 1e-3 mag.
+        >>> print(strain.principalStrains())
+        [-0.001  0.     0.001]
+        >>> print(strain.volumetricStrain())
+        0.0
+        >>> stress = StressTensor.shear([1, 0, 0], [0, 1, 0], 1.0) # Unit XY shear stress
+        >>> print(stress.vonMises(), stress.Tresca())
+        1.7320508075688772 2.0
+
+    So now, let's have a look on the strain tensor, and compute the principal strains and the volumetric change:
+
+        >>> strain = StrainTensor.shear([1,0,0], [0,1,0], 1e-3) # XY Shear strain with 1e-3 mag.
+        >>> print(strain.principal_strains())
+        [-0.001  0.     0.001]
+        >>> print(strain.volumetricStrain())
+        0.0
+        >>> stress = StressTensor.shear([1, 0, 0], [0, 1, 0], 1.0) # Unit XY shear stress
+        >>> print(stress.vonMises(), stress.Tresca())
+        1.7320508075688772 2.0
+
+    So now, let's have a look on the strain tensor, and compute the principal strains and the volumetric change:
+
+        >>> strain = StrainTensor.shear([1,0,0], [0,1,0], 1e-3) # XY Shear strain with 1e-3 mag.
+        >>> print(strain.principal_strains())
+        [-0.001  0.     0.001]
+        >>> print(strain.volumetricStrain())
+        0.0
     >>> stress = StressTensor.shear([1, 0, 0], [0, 1, 0], 1.0) # Unit XY shear stress
     >>> print(stress.vonMises(), stress.Tresca())
     1.7320508075688772 2.0

@@ -17,8 +17,8 @@ print(stress.Tresca())
 strain = StrainTensor([[0, 1e-3, 0],
                        [1e-3, 0, 0],
                        [0, 0, 0]])
-print(strain.principalStrains())
-print(strain.volumetricStrain())
+print(strain.principal_strains())
+print(strain.volumetric_strain())
 
 # ======================================================
 # Linear elasticity
