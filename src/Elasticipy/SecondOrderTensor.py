@@ -271,6 +271,46 @@ class SecondOrderTensor:
         """
         return np.linalg.det(self.matrix)
 
+    @property
+    def J1(self):
+        """
+        First invariant of the deviatoric part of the stress tensor. It is always zeros, as the deviatoric part as null
+        trace.
+
+        Returns
+        -------
+        float or np.ndarray
+            zero(s)
+        """
+        if self.shape:
+            return np.zeros(self.shape)
+        else:
+            return 0.0
+
+    @property
+    def J2(self):
+        """
+        Second invariant of the deviatoric part of the stress tensor.
+
+        Returns
+        -------
+        float or np.ndarray
+            J2 invariant
+        """
+        return -self.deviatoric_part().I2
+
+    @property
+    def J3(self):
+        """
+        Third invariant of the deviatoric part of the stress tensor.
+
+        Returns
+        -------
+        float or np.ndarray
+            J3 invariant
+        """
+        return self.deviatoric_part().I3
+
     def trace(self):
         """
         Return the traces of the tensor array
@@ -1145,6 +1185,7 @@ class SecondOrderTensor:
             return [Constructor(self[i].matrix) for i in range(self.shape[0])]
         else:
             return Constructor(self.matrix)
+
 
 class SymmetricSecondOrderTensor(SecondOrderTensor):
     voigt_map = [1, 1, 1, 1, 1, 1]

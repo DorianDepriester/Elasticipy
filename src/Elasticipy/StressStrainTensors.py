@@ -34,6 +34,9 @@ class StrainTensor(SymmetricSecondOrderTensor):
         """
         return self.I1
 
+    def eq_strain(self):
+        return np.sqrt(3/2 * self.J2)
+
     def elastic_energy(self, stress):
         """
         Compute the elastic energy.
@@ -68,46 +71,6 @@ class StressTensor(SymmetricSecondOrderTensor):
             Principal stresses
         """
         return self.eigvals()
-
-    @property
-    def J1(self):
-        """
-        First invariant of the deviatoric part of the stress tensor. It is always zeros, as the deviatoric part as null
-        trace.
-
-        Returns
-        -------
-        float or np.ndarray
-            zero(s)
-        """
-        if self.shape:
-            return np.zeros(self.shape)
-        else:
-            return 0.0
-
-    @property
-    def J2(self):
-        """
-        Second invariant of the deviatoric part of the stress tensor.
-
-        Returns
-        -------
-        float or np.ndarray
-            J2 invariant
-        """
-        return -self.deviatoric_part().I2
-
-    @property
-    def J3(self):
-        """
-        Third invariant of the deviatoric part of the stress tensor.
-
-        Returns
-        -------
-        float or np.ndarray
-            J3 invariant
-        """
-        return self.deviatoric_part().I3
 
     def vonMises(self):
         """
