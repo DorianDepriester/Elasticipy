@@ -11,6 +11,7 @@ Submodules
    Elasticipy.SecondOrderTensor
    Elasticipy.SphericalFunction
    Elasticipy.StressStrainTensors
+   Elasticipy.Plasticity
 
 Module contents
 ---------------
