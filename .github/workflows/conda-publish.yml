@@ -1,8 +1,9 @@
 name: Upload Elasticipy to Conda
 
 on:
-  release:
-    types: [published]
+  push:
+    tags:
+      - "v*"  # Runs when a tag starting with "v" (e.g., v1.0.0) is pushed
 
 jobs:
   build-and-upload:
