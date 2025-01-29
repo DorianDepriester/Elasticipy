@@ -1,7 +1,5 @@
 import unittest
-
 import numpy as np
-
 from Elasticipy.Plasticity import JohnsonCook
 
 A, B, C = 792, 510, 0.014
