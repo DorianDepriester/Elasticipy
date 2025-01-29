@@ -27,9 +27,9 @@ jobs:
     - name: Install dependencies
       run: |
         conda create -n elasticipy python=3.10 -y
-        conda activate elasticipy
-        conda install anaconda-client conda-build
-        conda install numpy -y
+        conda run -n elasticipy conda install anaconda-client conda-build -y
+        conda run -n elasticipy conda install numpy -y
+
 
     - name: Extract version from tag
       id: extract_version
@@ -37,8 +37,7 @@ jobs:
 
     - name: Build package
       run: |
-        conda activate elasticipy
-        conda build conda --old-build-string --output-folder build --no-anaconda-upload
+        conda run -n elasticipy conda build conda --old-build-string --output-folder build --no-anaconda-upload
 
     - name: Find built package
       id: find-package
@@ -50,6 +49,5 @@ jobs:
       env:
         ANACONDA_API_TOKEN: ${{ secrets.ANACONDA_API_TOKEN }}
       run: |
-        conda activate elasticipy
-        anaconda login --token $ANACONDA_API_TOKEN
-        anaconda upload ${{ env.PACKAGE_PATH }}
+        conda run -n elasticipy anaconda login --token $ANACONDA_API_TOKEN
+        conda run -n elasticipy anaconda upload ${{ env.PACKAGE_PATH }}
