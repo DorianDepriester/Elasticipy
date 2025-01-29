@@ -398,11 +398,19 @@ class TestStiffnessConstructor(unittest.TestCase):
 
     def test_write_read_tensor(self):
         """Test export and import stiffness tensor to text file"""
-        C = StiffnessTensor.isotropic(E=210, nu=0.3)
         filename = 'C_tmp.txt'
+        C = StiffnessTensor.isotropic(E=210, nu=0.3)
         C.save_to_txt(filename)
         C2 = StiffnessTensor.from_txt_file(filename)
         np.testing.assert_allclose(C2.matrix, C.matrix, atol=1e-2)
+
+        # Now the same with phase name
+        C = StiffnessTensor.isotropic(E=210, nu=0.3, phase_name='Steel')
+        C.save_to_txt(filename)
+        C2 = StiffnessTensor.from_txt_file(filename)
+        np.testing.assert_allclose(C2.matrix, C.matrix, atol=1e-2)
+        assert C2.phase_name == 'Steel'
+
 
     def test_equality(self):
         """Test == operator"""
