@@ -83,7 +83,7 @@ class JohnsonCook:
         if eps_dot is not None:
             eps_dot = np.asarray(eps_dot)
             if (self.C is None) or (self.eps_dot_ref is None):
-                raise ValueError('C and eps_dot_ref must be defined for using a strain-dependent model')
+                raise ValueError('C and eps_dot_ref must be defined for using a rate-dependent model')
             stress *= (1 + self.C * np.log(eps_dot / self.eps_dot_ref))
 
         if T is not None:
