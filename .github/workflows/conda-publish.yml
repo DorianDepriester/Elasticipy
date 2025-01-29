@@ -9,6 +9,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Copy requirements.txt
+      run: cp requirements.txt conda/
+
     - name: Checkout repository
       uses: actions/checkout@v2
 
