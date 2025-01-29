@@ -1,0 +1,18 @@
+package:
+  name: elasticipy
+  version: {{ environ.get('VERSION', '0.1.0') }}
+
+source:
+  path: .
+
+build:
+  script: build.sh  # or bld.bat for Windows
+
+requirements:
+  build:
+    - python
+    - setuptools
+    - wheel
+  run:
+    - python
+    - pip
