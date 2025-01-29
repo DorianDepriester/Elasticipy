@@ -27,7 +27,7 @@ jobs:
       run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
 
     - name: Build package
-      run: conda build . --old-build-string --output-folder build --no-anaconda-upload
+      run: conda build conda --old-build-string --output-folder build --no-anaconda-upload
 
     - name: Find built package
       id: find-package
