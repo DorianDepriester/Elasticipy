@@ -51,6 +51,9 @@ class TestJohnsonCook(unittest.TestCase):
             _ = JC.flow_stress(0.1, T=T0)
         self.assertEqual(str(context.exception), 'T0, Tm and m must be defined for using a temperature-dependent model')
 
+        # Check that if stress < A, the strain is zero
+        np.testing.assert_array_equal(JC.compute_strain(np.linspace(0,A)), np.zeros(50))
+
 
 
 if __name__ == '__main__':
