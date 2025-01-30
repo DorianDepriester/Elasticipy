@@ -380,6 +380,9 @@ class SecondOrderTensor:
     def __truediv__(self, other):
         if isinstance(other, (float, int)):
             return self.__class__(self.matrix / other)
+        elif isinstance(other, np.ndarray) and (self.shape == other.shape):
+            new_mat = np.einsum('...ij,...->...ij', self.matrix, 1/other)
+            return self.__class__(new_mat)
         else:
             raise NotImplementedError('Tensors can only be divided by scalar values.')
 
