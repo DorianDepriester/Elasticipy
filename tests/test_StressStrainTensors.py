@@ -119,6 +119,11 @@ class TestStressStrainTensors(unittest.TestCase):
             _ = a / a
         self.assertEqual(str(context.exception), 'Tensors can only be divided by scalar values.')
 
+        mag = np.linspace(1,2)
+        b = Tensors.StrainTensor.tensile([1,0,0], mag)
+        bdiv = b / mag
+        np.testing.assert_array_almost_equal(bdiv.matrix, np.tile(np.diag([1.,0,0]),(50,1,1)))
+
     def test_matmul(self, length1=3, length2=4):
         """
         Test the matrix-like product of tensor arrays
