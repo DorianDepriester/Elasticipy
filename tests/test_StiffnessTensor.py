@@ -620,9 +620,17 @@ class TestStiffnessConstructor(unittest.TestCase):
         C_rotated = C * orix_rotations
         C_rotated_full = C_rotated.full_tensor()
         for i in range(n):
-            rot_mat = orix_rotations.to_matrix()[i]
+            inv_rotation = ~orix_rotations
+            rot_mat = inv_rotation.to_matrix()[i]
             tensor_i = np.einsum('im,jn,ko,lp,mnop -> ijkl', rot_mat, rot_mat, rot_mat, rot_mat, C.full_tensor())
             np.testing.assert_array_almost_equal(C_rotated_full[i], tensor_i)
+
+        # Check that the result is consistent with scipy.Rotation
+        euler = orix_rotations.to_euler()
+        scipy_rotations = Rotation.from_euler('ZXZ', euler)
+        C_rotated_scipy = C * scipy_rotations
+        C_rotated_full_scipy = C_rotated_scipy.full_tensor()
+        np.testing.assert_array_almost_equal(C_rotated_full_scipy, C_rotated_full)
 
 
     def test_linear_compressibility(self):
