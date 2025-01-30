@@ -115,6 +115,9 @@ class TestStressStrainTensors(unittest.TestCase):
         a = Tensors.StressTensor.rand((5,6))
         adiv = a/2
         np.testing.assert_array_equal(adiv.matrix, a.matrix/2)
+        with self.assertRaises(NotImplementedError) as context:
+            _ = a / a
+        self.assertEqual(str(context.exception), 'Tensors can only be divided by scalar values.')
 
     def test_matmul(self, length1=3, length2=4):
         """
