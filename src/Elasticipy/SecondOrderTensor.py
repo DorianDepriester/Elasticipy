@@ -290,7 +290,7 @@ class SecondOrderTensor:
     @property
     def J2(self):
         """
-        Second invariant of the deviatoric part of the stress tensor.
+        Second invariant of the deviatoric part of the tensor.
 
         Returns
         -------
@@ -302,7 +302,7 @@ class SecondOrderTensor:
     @property
     def J3(self):
         """
-        Third invariant of the deviatoric part of the stress tensor.
+        Third invariant of the deviatoric part of the tensor.
 
         Returns
         -------
