@@ -1352,7 +1352,8 @@ def rotation_to_matrix(rotation, return_transpose=False):
     if isinstance(rotation, Rotation):
         matrix = rotation.as_matrix()
     elif is_orix_rotation(rotation):
-        matrix = rotation.to_matrix()
+        inv_rotation = ~rotation
+        matrix = inv_rotation.to_matrix()
     else:
         raise TypeError('The input argument must be of class scipy.transform.Rotation or '
                         'orix.quaternion.rotation.Rotation')
