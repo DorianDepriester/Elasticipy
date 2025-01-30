@@ -1,5 +1,5 @@
 import numpy as np
-
+from Elasticipy.StressStrainTensors import StrainTensor
 
 
 class JohnsonCook:
@@ -130,7 +130,35 @@ class JohnsonCook:
         strain = np.zeros_like(stress_array, dtype=float)
         strain[k > 0] = (1/self.B * k[k>0])**(1/self.n)
         strain[theta>=1.0] = np.inf
-        if isinstance(stress, float):
-            return strain[0]
-        else:
-            return strain
+        return strain
+
+
+def normality_rule(stress, criterion='von Mises'):
+    """
+    Apply the normality rule for plastic flow, given a yield criterion.
+
+    The stress can be a single tensor, or an array of tensors.
+
+    Parameters
+    ----------
+    stress : StressTensor
+        Stress tensor to apply the normality rule from
+    criterion : str, optional
+        Name of the criterion to use
+
+    Returns
+    -------
+    numpy.ndarray
+        If a single stress tensor is passed, the returned array will be of shape
+
+    Notes
+    -----
+    To this day, only von Mises criterion is implemented.
+    """
+    if criterion.lower()=='von mises':
+        eq_stress = stress.vonMises()
+        dev_stress= stress.deviatoric_part()
+        gradient_tensor = dev_stress / eq_stress
+        return StrainTensor(3/2 * gradient_tensor.matrix)
+    else:
+        raise NotImplementedError('Other criteria will be implemented in future releases.')
