@@ -111,6 +111,11 @@ class TestStressStrainTensors(unittest.TestCase):
                 matrix = tensor_prod[i, j].matrix
                 np.testing.assert_array_equal(matrix, t.matrix[i,j,:] * random_array[i,j])
 
+    def test_truediv(self):
+        a = Tensors.StressTensor.rand((5,6))
+        adiv = a/2
+        np.testing.assert_array_equal(adiv.matrix, a.matrix/2)
+
     def test_matmul(self, length1=3, length2=4):
         """
         Test the matrix-like product of tensor arrays
