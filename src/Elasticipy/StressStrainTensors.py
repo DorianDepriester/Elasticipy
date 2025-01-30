@@ -29,13 +29,14 @@ class StrainTensor(SymmetricSecondOrderTensor):
 
         Returns
         -------
-        np.array or float
+        numpy.ndarray or float
             Volumetric change
         """
         return self.I1
 
     def eq_strain(self):
-        return np.sqrt(3/2 * self.J2)
+        """von Mises equivalent strain"""
+        return np.sqrt(2/3 * self.J2)
 
     def elastic_energy(self, stress):
         """
