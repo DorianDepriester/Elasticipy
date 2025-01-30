@@ -377,6 +377,12 @@ class SecondOrderTensor:
         else:
             raise NotImplementedError('Left multiplication is only implemented for scalar values.')
 
+    def __truediv__(self, other):
+        if isinstance(other, (float, int)):
+            return self.__class__(self.matrix / other)
+        else:
+            raise NotImplementedError('Tensors can only be divided by scalar values.')
+
     def __eq__(self, other) -> np.ndarray:
         """
         Check whether the tensors in the tensor array are equal
