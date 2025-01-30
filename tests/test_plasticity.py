@@ -54,6 +54,9 @@ class TestJohnsonCook(unittest.TestCase):
         # Check that if stress < A, the strain is zero
         np.testing.assert_array_equal(JC.compute_strain(np.linspace(0,A)), np.zeros(50))
 
+        # Check that if the temperature is larger than Tm, the strain is infinite
+        assert JC_td.compute_strain(0, T=Tm) == np.inf
+
 
 
 if __name__ == '__main__':
