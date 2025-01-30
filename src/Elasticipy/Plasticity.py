@@ -115,11 +115,19 @@ class JohnsonCook:
         """
         stress = np.asarray(stress)
         if T is None:
-            theta_m=0.0
+            theta = theta_m = np.zeros_like(stress, dtype=float)
         else:
             if self.T0 is None or self.Tm is None or self.m is None:
                 raise ValueError('T0, Tm and m must be defined for using a temperature-dependent model')
             else:
-                theta = (T - self.T0) / (self.Tm - self.T0)
-                theta_m = np.clip(theta**self.m, None, 1.0)
-        return (1/self.B * ( stress / (1 - theta_m) - self.A))**(1/self.n)
+                T_array = np.asarray(T)
+                if T_array.shape != stress.shape:
+                    T_array = T*np.ones_like(stress, dtype=float)
+                theta = (T_array - self.T0) / (self.Tm - self.T0)
+                theta_m = theta**self.m
+        k = np.zeros_like(stress, dtype=float)
+        k[theta<1] = ( stress[theta<1] / (1 - theta_m[theta<1]) - self.A)
+        strain = np.zeros_like(stress, dtype=float)
+        strain[k > 0] = (1/self.B * k[k>0])**(1/self.n)
+        strain[theta>=1.0] = np.inf
+        return strain
