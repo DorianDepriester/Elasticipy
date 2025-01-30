@@ -384,7 +384,7 @@ class SecondOrderTensor:
             new_mat = np.einsum('...ij,...->...ij', self.matrix, 1/other)
             return self.__class__(new_mat)
         else:
-            raise NotImplementedError('Tensors can only be divided by scalar values.')
+            raise NotImplementedError('Tensors can only be divided by scalar values or by arrays of the same shape.')
 
     def __eq__(self, other) -> np.ndarray:
         """

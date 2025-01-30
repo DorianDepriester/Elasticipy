@@ -117,7 +117,8 @@ class TestStressStrainTensors(unittest.TestCase):
         np.testing.assert_array_equal(adiv.matrix, a.matrix/2)
         with self.assertRaises(NotImplementedError) as context:
             _ = a / a
-        self.assertEqual(str(context.exception), 'Tensors can only be divided by scalar values.')
+        self.assertEqual(str(context.exception), 'Tensors can only be divided by scalar values or by arrays '
+                                                 'of the same shape.')
 
         mag = np.linspace(1,2)
         b = Tensors.StrainTensor.tensile([1,0,0], mag)
