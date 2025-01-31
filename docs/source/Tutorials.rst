@@ -12,3 +12,4 @@ Tutorials
     ./Tutorials/Tutorial_wave-velocities.rst
     ./Tutorials/Tutorial_MultiplePhases.rst
     ./Tutorials/Tutorial_ReadWriteFiles.rst
+    ./Tutorials/Plasticity.rst
