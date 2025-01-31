@@ -203,7 +203,7 @@ def normality_rule(stress, criterion='von Mises'):
 
     Returns
     -------
-    numpy.ndarray
+    StrainTensor
         If a single stress tensor is passed, the returned array will be of shape
 
     Notes
