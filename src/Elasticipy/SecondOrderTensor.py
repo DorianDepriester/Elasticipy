@@ -731,7 +731,7 @@ class SecondOrderTensor:
 
         Returns
         -------
-        SecondOrderTensor
+        SkewSymmetricSecondOrderTensor
             Skew-symmetric tensor
         """
         new_mat = 0.5 * (self.matrix - self._transposeTensor())
@@ -743,7 +743,7 @@ class SecondOrderTensor:
 
         Returns
         -------
-        SecondOrderTensor
+        self
             Spherical part
 
         See Also
@@ -760,7 +760,7 @@ class SecondOrderTensor:
 
         Returns
         -------
-        SecondOrderTensor
+        self
 
         See Also
         --------
@@ -781,7 +781,7 @@ class SecondOrderTensor:
 
         Returns
         -------
-        SecondOrderTensor
+        cls
             Array of identity tensors
 
         See Also
@@ -810,7 +810,7 @@ class SecondOrderTensor:
 
         Returns
         -------
-        SecondOrderTensor
+        cls
             Array of ones tensors
 
         See Also
@@ -838,7 +838,7 @@ class SecondOrderTensor:
 
         Returns
         -------
-        SecondOrderTensor
+        cls
             Array of ones tensors
 
         See Also
@@ -867,7 +867,7 @@ class SecondOrderTensor:
             will be of the same shape as magnitude.
         Returns
         -------
-        SecondOrderTensor
+        cls
             tensor or tensor array
         """
         mat = _tensor_from_direction_magnitude(u, u, magnitude)
@@ -887,7 +887,7 @@ class SecondOrderTensor:
 
         Returns
         -------
-        SecondOrderTensor
+        cls
             Tensor or tensor array of uniform random value
 
         See Also
@@ -942,7 +942,7 @@ class SecondOrderTensor:
 
         Returns
         -------
-        SecondOrderTensor
+        cls
             Tensor or tensor array of normal random value
         """
         if shape is None:
@@ -976,7 +976,7 @@ class SecondOrderTensor:
             will be of the same shape as magnitude.
         Returns
         -------
-        SecondOrderTensor
+        cls
             tensor or tensor array
         """
         if np.abs(np.dot(u, v)) > 1e-5:
