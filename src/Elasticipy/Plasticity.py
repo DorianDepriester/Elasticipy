@@ -1,5 +1,5 @@
 import numpy as np
-from Elasticipy.StressStrainTensors import StrainTensor
+from Elasticipy.StressStrainTensors import StrainTensor, StressTensor
 
 
 class JohnsonCook:
@@ -58,6 +58,7 @@ class JohnsonCook:
         self.eps_dot_ref = eps_dot_ref
         self.T0 = T0
         self.Tm = Tm
+        self.plastic_strain = 0.0
 
     def flow_stress(self, eps_p, eps_dot=None, T=None):
         """
@@ -96,8 +97,37 @@ class JohnsonCook:
 
         return stress
 
+    def apply_strain(self, strain, **kwargs):
+        """
+        Apply strain to the current JC model.
 
-    def compute_strain(self, stress, T=None):
+        This function updates the internal variable to store hardening state.
+
+        Parameters
+        ----------
+        strain : float or StrainTensor
+        kwargs : dict
+            Keyword arguments passed to flow_stress()
+
+        Returns
+        -------
+        float
+            Associated flow stress (positive)
+
+        See Also
+        --------
+        flow_stress : compute the flow stress, given a cumulative equivalent strain
+        """
+        if isinstance(strain, float):
+            self.plastic_strain += np.abs(strain)
+        elif isinstance(strain, StrainTensor):
+            self.plastic_strain += strain.eq_strain()
+        else:
+            raise ValueError('The applied strain must be float of StrainTensor')
+        return self.flow_stress(self.plastic_strain, **kwargs)
+
+
+    def compute_strain_increment(self, stress, T=None, apply_strain=True, criterion='von Mises'):
         """
         Given the equivalent stress, compute the strain
 
