@@ -1,7 +1,10 @@
 import unittest
 import numpy as np
 from Elasticipy.Plasticity import JohnsonCook
+from Elasticipy.Plasticity import normality_rule
 from pytest import approx
+
+from Elasticipy.StressStrainTensors import StressTensor, StrainTensor
 
 A, B, C = 792, 510, 0.014
 m, n = 1.03, 0.26
@@ -35,11 +38,12 @@ class TestJohnsonCook(unittest.TestCase):
             self.assertEqual(str(context.exception), 'T0, Tm and m must be defined for using a temperature-dependent model')
 
     def test_compute_strain_increment(self):
+        JC2 = JohnsonCook(A=A, B=B, n=n)
         strain0 = 0.1
 
         # Test temperature-independent model
-        stress = JC.flow_stress(strain0)
-        strain1 = JC.compute_strain_increment(stress)
+        stress = JC2.flow_stress(strain0)
+        strain1 = JC2.compute_strain_increment(stress)
         assert strain1 == approx(strain0)
 
         # Test temperature-dependent model
@@ -57,6 +61,30 @@ class TestJohnsonCook(unittest.TestCase):
 
         # Check that if the temperature is larger than Tm, the strain is infinite
         assert JC_td.compute_strain_increment(0, T=Tm) == np.inf
+
+
+    def test_normality(self):
+        tensile_stress = StressTensor.tensile([1,0,0], 1)
+        normal = normality_rule(tensile_stress)
+        assert normal == np.diag([1., -0.5, -0.5])
+
+        shear_stress = StressTensor.shear([1, 0, 0], [0, 1, 0], 1)
+        normal = normality_rule(shear_stress)
+        normal_th = 3/2 * 1/3**0.5 * np.array([[0, 1, 0],
+                                               [1, 0, 0],
+                                               [0, 0, 0]])
+        np.testing.assert_array_almost_equal(normal.matrix, normal_th)
+
+
+    def test_apply_strain(self):
+        strain = StrainTensor.tensile([1,0,0], 1) + StrainTensor.tensile([0, 1, 0], -0.5) + StrainTensor.tensile([0, 0, 1], -0.5)
+        JC.apply_strain(0.0)    # Try with float
+        assert JC.plastic_strain == 0.0
+        JC.apply_strain(strain) # Try with StrainTensor
+        assert JC.plastic_strain == 1.0
+        JC.apply_strain(-1.0)
+        assert JC.plastic_strain == 2
+
 
 
 
