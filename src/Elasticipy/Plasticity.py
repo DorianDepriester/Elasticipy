@@ -75,7 +75,7 @@ class JohnsonCook:
             Temperature. If float, the temperature is supposed to be homogeneous for every value of eps_p.
         Returns
         -------
-        numpy.ndarray
+        float or numpy.ndarray
             Flow stress
         """
         eps_p = np.asarray(eps_p)
