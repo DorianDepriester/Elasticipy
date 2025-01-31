@@ -378,13 +378,16 @@ class SecondOrderTensor:
             raise NotImplementedError('Left multiplication is only implemented for scalar values.')
 
     def __truediv__(self, other):
+        new_mat = np.zeros(self.matrix.shape)
+        non_zero = np.any(self.matrix, axis=(-1, -2))
         if isinstance(other, (float, int)):
-            return self.__class__(self.matrix / other)
+            new_mat[non_zero] = self.matrix[non_zero] / other # Hack to force 0/0 = 0
         elif isinstance(other, np.ndarray) and (self.shape == other.shape):
-            new_mat = np.einsum('...ij,...->...ij', self.matrix, 1/other)
+            new_mat[non_zero] = np.einsum('pij,p->pij', self.matrix[non_zero], 1/other[non_zero])
             return self.__class__(new_mat)
         else:
             raise NotImplementedError('Tensors can only be divided by scalar values or by arrays of the same shape.')
+        return self.__class__(new_mat)
 
     def __eq__(self, other) -> np.ndarray:
         """
