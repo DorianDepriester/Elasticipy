@@ -36,7 +36,7 @@ class StrainTensor(SymmetricSecondOrderTensor):
 
     def eq_strain(self):
         """von Mises equivalent strain"""
-        return np.sqrt(2/3 * self.J2)
+        return np.sqrt(2/3 * self.ddot(self))
 
     def elastic_energy(self, stress):
         """
