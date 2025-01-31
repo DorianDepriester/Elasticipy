@@ -133,34 +133,59 @@ class JohnsonCook:
 
         Parameters
         ----------
-        stress : float or numpy.ndarray
-            Equivalent stress tom compute the stress from
-        T : float or list or tuple or numpy.ndarray
+        stress : float or StressTensor
+            Equivalent stress to compute the stress from
+        T : float
             Temperature
-
+        apply_strain : bool, optional
+            If true, the JC model will be updated to account for the applied strain (hardening)
+        criterion : str, optional
+            Plasticity criterion to use compute the equivalent stress. It can be 'von Mises', 'Tresca' or 'J2'.
+            'J2' is equivalent to 'von Mises'.
         Returns
         -------
         numpy.ndarray
             Equivalent strain
+
+        See Also
+        --------
+        apply_strain : apply strain to the JC model and updates its hardening value
         """
-        stress_array = np.asarray(stress)
+        if isinstance(stress, StressTensor):
+            criterion = criterion.lower()
+            if criterion in ('von mises', 'j2'):
+                eq_stress = stress.vonMises()
+            elif criterion =='tresca':
+                eq_stress = stress.Tresca()
+            else:
+                raise NotImplementedError('Only von Mises and Tresca criteria have been implement yet.')
+        else:
+            eq_stress = stress
         if T is None:
-            theta = theta_m = np.zeros_like(stress_array, dtype=float)
+            if eq_stress > self.A:
+                k = eq_stress  - self.A
+                total_strain = (1 / self.B * k) ** (1 / self.n)
+                strain_increment = np.max((total_strain - self.plastic_strain, 0))
+            else:
+                strain_increment = 0.0
         else:
             if self.T0 is None or self.Tm is None or self.m is None:
                 raise ValueError('T0, Tm and m must be defined for using a temperature-dependent model')
             else:
-                T_array = np.asarray(T)
-                if T_array.shape != stress_array.shape:
-                    T_array = T*np.ones_like(stress_array, dtype=float)
-                theta = (T_array - self.T0) / (self.Tm - self.T0)
-                theta_m = theta**self.m
-        k = np.zeros_like(stress_array, dtype=float)
-        k[theta<1] = (stress_array[theta < 1] / (1 - theta_m[theta < 1]) - self.A)
-        strain = np.zeros_like(stress_array, dtype=float)
-        strain[k > 0] = (1/self.B * k[k>0])**(1/self.n)
-        strain[theta>=1.0] = np.inf
-        return strain
+                if T >= self.Tm:
+                    strain_increment = np.inf
+                else:
+                    theta = (T - self.T0) / (self.Tm - self.T0)
+                    theta_m = theta**self.m
+                    k = (eq_stress / (1 - theta_m) - self.A)
+                    if k<0:
+                        strain_increment = 0.0
+                    else:
+                        total_strain = (1/self.B * k)**(1/self.n)
+                        strain_increment = np.max((total_strain - self.plastic_strain, 0))
+        if apply_strain:
+            self.apply_strain(strain_increment)
+        return strain_increment
 
 
 def normality_rule(stress, criterion='von Mises'):
