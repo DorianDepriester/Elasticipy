@@ -1,6 +1,7 @@
 import unittest
 import numpy as np
 from Elasticipy.Plasticity import JohnsonCook
+from pytest import approx
 
 A, B, C = 792, 510, 0.014
 m, n = 1.03, 0.26
@@ -33,18 +34,18 @@ class TestJohnsonCook(unittest.TestCase):
                 _ = model.flow_stress(0.1, T=T0)
             self.assertEqual(str(context.exception), 'T0, Tm and m must be defined for using a temperature-dependent model')
 
-    def test_compute_strain(self):
-        strain0 = np.linspace(0,1)
+    def test_compute_strain_increment(self):
+        strain0 = 0.1
 
         # Test temperature-independent model
         stress = JC.flow_stress(strain0)
-        strain1 = JC.compute_strain(stress)
-        np.testing.assert_array_almost_equal(strain0, strain1)
+        strain1 = JC.compute_strain_increment(stress)
+        assert strain1 == approx(strain0)
 
         # Test temperature-dependent model
         stress = JC_td.flow_stress(strain0, T=500)
-        strain1 = JC_td.compute_strain(stress, T=500)
-        np.testing.assert_array_almost_equal(strain0, strain1)
+        strain2 = JC_td.compute_strain_increment(stress, T=500)
+        assert strain2 == approx(strain0)
 
         # What if we use try to use the temperature on temperature-independent model
         with self.assertRaises(ValueError) as context:
@@ -52,10 +53,10 @@ class TestJohnsonCook(unittest.TestCase):
         self.assertEqual(str(context.exception), 'T0, Tm and m must be defined for using a temperature-dependent model')
 
         # Check that if stress < A, the strain is zero
-        np.testing.assert_array_equal(JC.compute_strain(np.linspace(0,A)), np.zeros(50))
+        assert JC.compute_strain_increment(A) == 0.0
 
         # Check that if the temperature is larger than Tm, the strain is infinite
-        assert JC_td.compute_strain(0, T=Tm) == np.inf
+        assert JC_td.compute_strain_increment(0, T=Tm) == np.inf
 
 
 
