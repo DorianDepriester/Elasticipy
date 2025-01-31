@@ -46,6 +46,14 @@ class TestJohnsonCook(unittest.TestCase):
         strain1 = JC2.compute_strain_increment(stress)
         assert strain1 == approx(strain0)
 
+        # Now try with a full tensor
+        JC.reset_strain()
+        assert JC.plastic_strain == 0.0
+        stress = StressTensor.tensile([1,0,0], A+10)
+        strain = JC.compute_strain_increment(stress)
+        normalized_strain = strain / strain.eq_strain()
+        np.testing.assert_array_almost_equal(normalized_strain.matrix, np.diag([1,-0.5,-0.5]))
+
         # Test temperature-dependent model
         stress = JC_td.flow_stress(strain0, T=500)
         strain2 = JC_td.compute_strain_increment(stress, T=500)
@@ -84,6 +92,8 @@ class TestJohnsonCook(unittest.TestCase):
         assert JC.plastic_strain == 1.0
         JC.apply_strain(-1.0)
         assert JC.plastic_strain == 2
+
+
 
 
 
