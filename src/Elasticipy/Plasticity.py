@@ -129,7 +129,7 @@ class JohnsonCook:
 
     def compute_strain_increment(self, stress, T=None, apply_strain=True, criterion='von Mises'):
         """
-        Given the equivalent stress, compute the strain
+        Given the equivalent stress, compute the strain increment with respect to the normality rule.
 
         Parameters
         ----------
@@ -140,12 +140,13 @@ class JohnsonCook:
         apply_strain : bool, optional
             If true, the JC model will be updated to account for the applied strain (hardening)
         criterion : str, optional
-            Plasticity criterion to use compute the equivalent stress. It can be 'von Mises', 'Tresca' or 'J2'.
-            'J2' is equivalent to 'von Mises'.
+            Plasticity criterion to consider to compute the equivalent stress and apply the normality rule.
+            It can be 'von Mises', 'Tresca' or 'J2'. 'J2' is equivalent to 'von Mises'.
+
         Returns
         -------
-        numpy.ndarray
-            Equivalent strain
+        StrainTensor
+            Increment of plastic strain
 
         See Also
         --------
@@ -185,7 +186,15 @@ class JohnsonCook:
                         strain_increment = np.max((total_strain - self.plastic_strain, 0))
         if apply_strain:
             self.apply_strain(strain_increment)
-        return strain_increment
+
+        n = normality_rule(stress, criterion=criterion)
+        return n * strain_increment
+
+    def reset_strain(self):
+        """
+        Reinitialize the plastic strain to 0
+        """
+        self.plastic_strain = 0.0
 
 
 def normality_rule(stress, criterion='von Mises'):
