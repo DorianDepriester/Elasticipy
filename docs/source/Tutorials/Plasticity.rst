@@ -28,6 +28,7 @@ The parameters are taken from [1]_. As we will also take elastic behaviour into 
 
 Now, let say that we want to investigate the material's response for the tensile stress ranging from 0 to 725 MPa:
 
+    >>> from Elasticipy.StressStrainTensors import StressTensor, StrainTensor
     >>> import numpy as np
     >>> n_step = 100
     >>> stress_mag = np.linspace(0, 725, n_step)
@@ -74,7 +75,7 @@ to add a subroutine (optimization loop) to find the tensile stress so that the a
                 trial_strain_increment = JC.compute_strain_increment(trial_stress, apply_strain=False)
                 trial_plastic_strain = plastic_strain[i - 1] + trial_strain_increment
                 trial_elongation =  trial_plastic_strain.C[0,0] +  trial_elastic_strain.C[0,0]
-                return (trial_elongation - eps_xx[i])**2
+                return (trial_elongation - elong[i])**2
             s = minimize_scalar(fun)
             stress.C[0,0][i] = s.x
             strain_increment = JC.compute_strain_increment(stress[i])
@@ -82,7 +83,7 @@ to add a subroutine (optimization loop) to find the tensile stress so that the a
 
 Finally, let's plot the corresponding tensile curve ontop of that of the stress-controlled tensile test:
 
-    >>> ax.plot(eps_xx, stress.C[0,0], label='Strain-controlled', linestyle='dotted')
+    >>> ax.plot(elong, stress.C[0,0], label='Strain-controlled', linestyle='dotted')
     >>> ax.legend()
 
 .. image:: images/StressStrain-controlled.png
@@ -97,7 +98,7 @@ Here, we have only considered monotonic loading, but we can also consider differ
                      np.linspace(0.099,0.2),
                      np.linspace(0.2,0.199),
                      np.linspace(0.199,0.3)]
-    >>> eps_xx = np.concatenate(load_path)
+    >>> elong = np.concatenate(load_path)
     >>> n_step = len(eps_xx)
 
 .. image:: images/Incremental.png
@@ -109,7 +110,7 @@ or cyclic:
                      np.linspace(0.1,-0.2),
                      np.linspace(-0.2,0.3),
                      np.linspace(0.3,-0.4)]
-    >>> eps_xx = np.concatenate(load_path)
+    >>> elong = np.concatenate(load_path)
     >>> n_step = len(eps_xx)
 
 .. image:: images/Cyclic.png
