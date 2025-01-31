@@ -22,7 +22,7 @@ E.plot_as_pole_figure()     # or even with PF
 print(E.max())
 
 # Apply a random rotation on stiffness tensor
-rotation = Rotation.from_euler('zxz', [0, 45, 0], degrees=True)
+rotation = Rotation.from_euler('ZXZ', [90, 45, 0], degrees=True)
 Crot = C*rotation
 # Check that the Young modulus has changed as well
 Crot.Young_modulus.plot3D()
