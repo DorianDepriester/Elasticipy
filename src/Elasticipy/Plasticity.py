@@ -134,7 +134,7 @@ class JohnsonCook:
         Parameters
         ----------
         stress : float or StressTensor
-            Equivalent stress to compute the stress from
+            Equivalent stress to compute the stress from, or full stress tensor.
         T : float
             Temperature
         apply_strain : bool, optional
@@ -145,8 +145,10 @@ class JohnsonCook:
 
         Returns
         -------
-        StrainTensor
-            Increment of plastic strain
+        StrainTensor or float
+            Increment of plastic strain. If the input stress is float, only the magnitude of the increment will be
+            returned (float value). If the stress is of type StressTensor, the returned value will be a full
+            StrainTensor.
 
         See Also
         --------
@@ -187,8 +189,11 @@ class JohnsonCook:
         if apply_strain:
             self.apply_strain(strain_increment)
 
-        n = normality_rule(stress, criterion=criterion)
-        return n * strain_increment
+        if isinstance(stress, StressTensor):
+            n = normality_rule(stress, criterion=criterion)
+            return n * strain_increment
+        else:
+            return strain_increment
 
     def reset_strain(self):
         """
