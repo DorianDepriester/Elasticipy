@@ -311,6 +311,48 @@ class SecondOrderTensor:
         """
         return self.deviatoric_part().I3
 
+    def Lode_angle(self, degrees=False):
+        """
+        Computes the Lode angle of the tensor.
+
+        The returned value is defined from the positive cosine (see Notes)
+
+        Parameters
+        ----------
+        degrees : bool, optional
+            Whether to return the angle in degrees
+
+        Returns
+        -------
+        float or numpy.ndarray
+
+        See Also
+        --------
+        J2 : Second invariant of the deviatoric part
+        J3 : Third invariant of the deviatoric part
+
+        Notes
+        -----
+        The Lode angle is defined such that:
+
+        .. math::
+
+            \\cos(3\\theta)= \\frac{J_3}{2}\\left(\\frac{3}{J_2}\\right)^{3/2}
+        """
+        J2 = np.atleast_1d(self.J2)
+        J3 = np.atleast_1d(self.J3)
+        non_hydro =  J2 !=0.
+        cosine = np.ones(shape=J3.shape) * np.nan
+        cosine[non_hydro] = J3[non_hydro] / 2 * (3 / J2[non_hydro] )**(3 / 2)
+        if degrees:
+            theta = np.arccos(cosine) * 60 / np.pi
+        else:
+            theta = np.arccos(cosine) / 3
+        if self.shape:
+            return theta
+        else:
+            return theta[0]
+
     def trace(self):
         """
         Return the traces of the tensor array
