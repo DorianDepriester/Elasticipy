@@ -110,8 +110,8 @@ Finally, let's plot the corresponding tensile curve ontop of that of the stress-
 .. image:: images/StressStrain-controlled.png
 
 
-What about incremental loading?
-===============================
+Incremental loading
+===================
 Here, we have only considered monotonic loading, but we can also consider different loading path, such as incremental:
 
     >>> load_path = [np.linspace(0,0.1),
