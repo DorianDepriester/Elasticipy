@@ -141,6 +141,17 @@ or cyclic:
     The figure above clearly evidences the isotropic hardening inherent to the JC model.
 
 
+Complex loading path
+====================
+In the example above, we have only studied longitudinal stress/strain. Still, it is worth mentioning that other stress
+states can be investigated (e.g. shear, multiaxial etc.) thanks to the
+`normality rule<https://www.doitpoms.ac.uk/tlplib/granular_materials/normal.php>`_.
+
+.. note::
+
+    The normality rule is implemented in Elasticipy for the von Mises (J2) criterion only.
+
+
 
 .. [1]  Sandeep Yadav, Sorabh Singhal, Yogeshwar Jasra, Ravindra K. Saxena,
         Determination of Johnson-Cook material model for weldment of mild steel,
