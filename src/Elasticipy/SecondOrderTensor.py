@@ -315,12 +315,12 @@ class SecondOrderTensor:
         """
         Computes the Lode angle of the tensor.
 
-        The returned value is defined from the positive cosine (see Notes)
+        The returned value is defined from the positive cosine (see Notes).
 
         Parameters
         ----------
         degrees : bool, optional
-            Whether to return the angle in degrees
+            Whether to return the angle in degrees or not
 
         Returns
         -------
