@@ -7,7 +7,28 @@ elasto-plastic domain of a material.
 The Johnson-Cook model
 ======================
 The Johnson-Cook (JC) model is widely used in the literature for modeling isotropic hardening of metalic materials.
-Therefore, it is available out-of-the-box in Elasticipy.
+Therefore, it is available out-of-the-box in Elasticipy. It assumes that the flow stress (:math:`\sigma`) depends on the
+equivalent strain (:math:`\varepsilon`), the strain rate (:math:`\dot{\varepsilon}`) and the temperature (:math:`T`),
+according to the following equation:
+
+.. math::
+
+        \sigma = \left(A + B\varepsilon^n\right)
+                \left[1 + C\log\left(\frac{\varepsilon}{\dot{\varepsilon}_0}\right)\right]
+                \left(1-\theta^m\right)
+
+with
+
+.. math::
+
+        \theta = \begin{cases}
+                    \frac{T-T_0}{T_m-T_0} & \text{if } T<T_m\\\\
+                    1                      & \text{otherwise}
+                    \end{cases}
+
+
+:math:`A`, :math:`B`, :math:`C`, :math:`\dot{\varepsilon}_0`, :math:`T_0`, :math:`T_m` and :math:`m` are parameters
+whose values depend on the material.
 
 Simulation of a stress-controlled tensile test
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -114,6 +135,11 @@ or cyclic:
     >>> n_step = len(eps_xx)
 
 .. image:: images/Cyclic.png
+
+.. note::
+
+    The figure above evidences that the current version of the JC model assumes an isotropic hardening. Kinematic
+    hardening will be implemented in a future release.
 
 
 
