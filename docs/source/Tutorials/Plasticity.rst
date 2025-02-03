@@ -138,8 +138,7 @@ or cyclic:
 
 .. note::
 
-    The figure above evidences that the current version of the JC model assumes an isotropic hardening. Kinematic
-    hardening will be implemented in a future release.
+    The figure above clearly evidences the isotropic hardening inherent to the JC model.
 
 
 
