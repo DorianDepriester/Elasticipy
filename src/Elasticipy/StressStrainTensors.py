@@ -102,7 +102,7 @@ class StressTensor(SymmetricSecondOrderTensor):
         vonMises : von Mises equivalent stress
         """
         ps = self.principal_stresses()
-        return ps[...,-1] - ps[...,0]
+        return ps[...,0] - ps[...,-1]
 
     def hydrostaticPressure(self):
         """
