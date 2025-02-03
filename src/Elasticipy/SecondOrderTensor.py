@@ -1335,10 +1335,39 @@ class SymmetricSecondOrderTensor(SecondOrderTensor):
             raise ValueError("array must be of shape (6,) or (...,6) with Voigt vector")
 
     def eig(self):
-        return np.linalg.eigh(self.matrix)
+        """
+        Compute the principal values (eigenvaleues) and principal direction (eigenvectors) of the tensor, sorted in
+        descending order of principal values
+
+        Returns
+        -------
+        numpy.ndarray
+            Principal values
+        numpy.ndarray
+            Principal directions
+
+        See Also
+        --------
+        eigvals : compute the principal values only
+        """
+        eigvals, eigdir = np.linalg.eigh(self.matrix)
+        return np.flip(eigvals,axis=-1), np.flip(eigdir,axis=-1)
 
     def eigvals(self):
-        return np.linalg.eigvalsh(self.matrix)
+        """
+        Compute the principal values (eigenvalues), sorted in descending order.
+
+        Returns
+        -------
+        numpy.ndarray
+            Principal values
+
+        See Also
+        --------
+        eig : return the principal values and principal directions
+        """
+        eigvals = np.linalg.eigvalsh(self.matrix)
+        return np.flip(eigvals,axis=-1)
 
 
 class SkewSymmetricSecondOrderTensor(SecondOrderTensor):
