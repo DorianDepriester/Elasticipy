@@ -145,7 +145,7 @@ Complex loading path
 ====================
 In the example above, we have only studied longitudinal stress/strain. Still, it is worth mentioning that other stress
 states can be investigated (e.g. shear, multiaxial etc.) thanks to the
-`normality rule<https://www.doitpoms.ac.uk/tlplib/granular_materials/normal.php>`_.
+`normality rule <https://www.doitpoms.ac.uk/tlplib/granular_materials/normal.php>`_.
 
 .. note::
 
