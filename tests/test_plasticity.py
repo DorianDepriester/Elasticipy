@@ -14,6 +14,7 @@ JC    = JohnsonCook(A=A, B=B, n=n)
 JC_rd = JohnsonCook(A=A, B=B, n=n, C=C, eps_dot_ref=eps_dot_ref)
 JC_td = JohnsonCook(A=A, B=B, n=n, m=1.03, T0=T0, Tm=Tm)
 JC_rtd= JohnsonCook(A=A, B=B, n=n, C=C, eps_dot_ref=eps_dot_ref, m=m, T0=T0, Tm=Tm)
+k = 3 / 2 * 1 / 3 ** 0.5
 
 
 class TestJohnsonCook(unittest.TestCase):
@@ -71,17 +72,33 @@ class TestJohnsonCook(unittest.TestCase):
         assert JC_td.compute_strain_increment(0, T=Tm) == np.inf
 
 
-    def test_normality(self):
+    def test_normality_J2(self):
         tensile_stress = StressTensor.tensile([1,0,0], 1)
         normal = normality_rule(tensile_stress)
         assert normal == np.diag([1., -0.5, -0.5])
 
         shear_stress = StressTensor.shear([1, 0, 0], [0, 1, 0], 1)
         normal = normality_rule(shear_stress)
-        normal_th = 3/2 * 1/3**0.5 * np.array([[0, 1, 0],
-                                               [1, 0, 0],
-                                               [0, 0, 0]])
+        normal_th = k * np.array([[0, 1, 0],
+                                  [1, 0, 0],
+                                  [0, 0, 0]])
         np.testing.assert_array_almost_equal(normal.matrix, normal_th)
+
+    def test_normality_Tresca(self):
+        biaxial = (StressTensor.tensile([1,0,0],[0, 1, 1, 1, 1, 1, 0]) +
+                   StressTensor.tensile([0,1,0],[-1, -1, -0.5, 0, 0.5, 1, 1]))
+        n = normality_rule(biaxial, criterion='Tresca')
+        assert n[0] == normality_rule(biaxial[0])
+        assert n[2] == k * np.diag([1, -1, 0])
+        assert n[2] == k * np.diag([1, -1, 0])
+        assert n[3] == normality_rule(biaxial[3])
+        assert n[4] == k * np.diag([1, 0, -1])
+        assert n[5] == normality_rule(biaxial[5])
+        assert n[6] == normality_rule(biaxial[6])
+
+        triaxial = StressTensor(np.diag([1,2,4]))
+        n = normality_rule(triaxial, criterion='Tresca')
+        assert n == k*np.diag([-1,0,1])
 
 
     def test_apply_strain(self):
