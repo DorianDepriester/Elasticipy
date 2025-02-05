@@ -147,9 +147,37 @@ In the example above, we have only studied longitudinal stress/strain. Still, it
 states can be investigated (e.g. shear, multiaxial etc.) thanks to the
 `normality rule <https://www.doitpoms.ac.uk/tlplib/granular_materials/normal.php>`_.
 
-.. note::
+Tresca's plasticity criterion
+=============================
+Above, we have used the von Mises plasticity criterion (a.k.a J2 criterion). This can be switched to Tresca by passing
+the plasticity criterion to the model constructor:
 
-    The normality rule is implemented in Elasticipy for the von Mises (J2) criterion only.
+    >>> JC = JohnsonCook(A=363, B=792.7122, n=0.5756, criterion='Tresca')
+
+For instance, one can highlight the difference between the J2 and Tresca plasticity in shear:
+
+    >>> C.reset_strain()
+    >>> JC_tresca = JohnsonCook(A=363, B=792.7122, n=0.5756, criterion='Tresca')
+    >>> stress_mag = np.linspace(0, 500, n_step)
+    >>> stress = StressTensor.shear([1,0,0], [0,1,0],stress_mag)
+    >>> models = (JC, JC_tresca)
+    >>> labels = ('von Mises', 'Tresca')
+    >>>
+    >>> elastic_strain = C.inv() * stress
+    >>> fig, ax = plt.subplots()
+    >>> for j, model in enumerate(models):
+            plastic_strain = StrainTensor.zeros(n_step)
+            for i in range(2, n_step):
+                strain_increment = model.compute_strain_increment(stress[i])
+                plastic_strain[i] = plastic_strain[i-1] + strain_increment
+        eps_xy = elastic_strain.C[0,1]+plastic_strain.C[0,1]
+        ax.plot(eps_xy, stress_mag, label=labels[j])
+    >>> ax.set_xlabel(r'$\varepsilon_{xy}$')
+    >>> ax.set_ylabel('Shear stress (MPa)')
+    >>> ax.legend()
+
+
+.. image:: images/Shear.png
 
 
 
