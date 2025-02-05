@@ -202,7 +202,7 @@ class JohnsonCook:
         self.plastic_strain = 0.0
 
 
-def normality_rule(stress, criterion='von Mises'):
+def normality_rule(stress, criterion='von Mises', treat_singular='mean'):
     """
     Apply the normality rule for plastic flow, given a yield criterion.
 
@@ -229,5 +229,26 @@ def normality_rule(stress, criterion='von Mises'):
         dev_stress= stress.deviatoric_part()
         gradient_tensor = dev_stress / eq_stress
         return StrainTensor(3/2 * gradient_tensor.matrix)
+    elif criterion.lower()=='tresca':
+        vals, dirs = stress.eig()
+        major_dir = dirs[...,0]
+        middle_dir = dirs[..., 1]
+        minor_dir = dirs[...,2]
+        major_vals = vals[...,0]
+        middle_vals = vals[..., 1]
+        minor_vals = vals[...,2]
+        A = np.einsum('...i,...j->...ij',major_dir, major_dir)
+        B = np.einsum('...i,...j->...ij',minor_dir, minor_dir)
+        sigma_tresca = major_vals - minor_vals
+        major_middle_dir=middle_dir[middle_vals==major_vals]
+        A[middle_vals==major_vals] = (A[middle_vals==major_vals] / 2
+                                      + np.einsum('...i,...j->...ij',major_middle_dir, major_middle_dir) / 2)
+        minor_middle_dir=middle_dir[middle_vals==minor_vals]
+        B[middle_vals==minor_vals] = (B[middle_vals==minor_vals] / 2
+                                      + np.einsum('...i,...j->...ij',minor_middle_dir, minor_middle_dir) / 2)
+        normal = A - B
+        normal[sigma_tresca == 0.0] = 0.0
+        strain = StrainTensor(normal)
+        return strain / strain.eq_strain()
     else:
         raise NotImplementedError('Other criteria will be implemented in future releases.')
