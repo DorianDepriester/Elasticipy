@@ -104,6 +104,10 @@ class TestJohnsonCook(unittest.TestCase):
         assert n == k*np.diag([-1,0,1])
         assert n.eq_strain() == 1.0
 
+        with self.assertRaises(NotImplementedError) as context:
+            _ = normality_rule(triaxial, criterion='other')
+        self.assertEqual(str(context.exception), 'The normality rule is only implemented for von Mises (J2) and Tresca criteria.')
+
 
     def test_apply_strain(self):
         strain = StrainTensor.tensile([1,0,0], 1) + StrainTensor.tensile([0, 1, 0], -0.5) + StrainTensor.tensile([0, 0, 1], -0.5)
