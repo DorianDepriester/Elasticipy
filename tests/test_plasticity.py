@@ -96,9 +96,13 @@ class TestJohnsonCook(unittest.TestCase):
         assert n[5] == normality_rule(biaxial[5])
         assert n[6] == normality_rule(biaxial[6])
 
+        # Check that the magnitude of the normal is 1
+        np.testing.assert_array_equal(n.eq_strain(), np.ones(biaxial.shape))
+
         triaxial = StressTensor(np.diag([1,2,4]))
         n = normality_rule(triaxial, criterion='Tresca')
         assert n == k*np.diag([-1,0,1])
+        assert n.eq_strain() == 1.0
 
 
     def test_apply_strain(self):
