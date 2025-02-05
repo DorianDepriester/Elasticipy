@@ -1,9 +1,37 @@
 import numpy as np
 from Elasticipy.StressStrainTensors import StrainTensor, StressTensor
 
+class IsotropicHardening:
+    """
+    Template class for isotropic hardening plasticity models
+    """
+    def __init__(self, criterion='von Mises'):
+        """
+        Create an instance of a plastic model, assuming isotropic hardening
 
-class JohnsonCook:
-    def __init__(self, A, B, n, C=None, eps_dot_ref=1.0, m=None, T0=25, Tm=None):
+        Parameters
+        ----------
+        criterion : str, optional
+            Plasticity criterion to use. Can be 'von Mises', 'Tresca' or 'J2'. J2 is the same as von Mises.
+        """
+        self.criterion = criterion
+        self.plastic_strain = 0.0
+
+    def flow_strain(self):
+        pass
+
+    def apply_strain(self, strain, **kwargs):
+        pass
+
+    def compute_strain_increment(self, stress, **kwargs):
+        pass
+
+    def reset_strain(self):
+        self.plastic_strain = 0.0
+
+
+class JohnsonCook(IsotropicHardening):
+    def __init__(self, A, B, n, C=None, eps_dot_ref=1.0, m=None, T0=25, Tm=None, criterion='von Mises'):
         """
         Constructor for a Jonhson-Cook (JC) model.
 
@@ -50,6 +78,7 @@ class JohnsonCook:
                             1                      & \\text{otherwise}
                             \\end{cases}
         """
+        super().__init__(criterion=criterion)
         self.A = A
         self.B = B
         self.C = C
@@ -58,7 +87,6 @@ class JohnsonCook:
         self.eps_dot_ref = eps_dot_ref
         self.T0 = T0
         self.Tm = Tm
-        self.plastic_strain = 0.0
 
     def flow_stress(self, eps_p, eps_dot=None, T=None):
         """
