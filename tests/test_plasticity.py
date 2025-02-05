@@ -14,7 +14,7 @@ JC    = JohnsonCook(A=A, B=B, n=n)
 JC_rd = JohnsonCook(A=A, B=B, n=n, C=C, eps_dot_ref=eps_dot_ref)
 JC_td = JohnsonCook(A=A, B=B, n=n, m=1.03, T0=T0, Tm=Tm)
 JC_rtd= JohnsonCook(A=A, B=B, n=n, C=C, eps_dot_ref=eps_dot_ref, m=m, T0=T0, Tm=Tm)
-k = 3 / 2 * 1 / 3 ** 0.5
+K = 3 / 2 * 1 / 3 ** 0.5
 
 
 class TestJohnsonCook(unittest.TestCase):
@@ -79,7 +79,7 @@ class TestJohnsonCook(unittest.TestCase):
 
         shear_stress = StressTensor.shear([1, 0, 0], [0, 1, 0], 1)
         normal = normality_rule(shear_stress)
-        normal_th = k * np.array([[0, 1, 0],
+        normal_th = K * np.array([[0, 1, 0],
                                   [1, 0, 0],
                                   [0, 0, 0]])
         np.testing.assert_array_almost_equal(normal.matrix, normal_th)
@@ -89,10 +89,10 @@ class TestJohnsonCook(unittest.TestCase):
                    StressTensor.tensile([0,1,0],[-1, -1, -0.5, 0, 0.5, 1, 1]))
         n = normality_rule(biaxial, criterion='Tresca')
         assert n[0] == normality_rule(biaxial[0])
-        assert n[2] == k * np.diag([1, -1, 0])
-        assert n[2] == k * np.diag([1, -1, 0])
+        assert n[2] == K * np.diag([1, -1, 0])
+        assert n[2] == K * np.diag([1, -1, 0])
         assert n[3] == normality_rule(biaxial[3])
-        assert n[4] == k * np.diag([1, 0, -1])
+        assert n[4] == K * np.diag([1, 0, -1])
         assert n[5] == normality_rule(biaxial[5])
         assert n[6] == normality_rule(biaxial[6])
 
@@ -101,7 +101,7 @@ class TestJohnsonCook(unittest.TestCase):
 
         triaxial = StressTensor(np.diag([1,2,4]))
         n = normality_rule(triaxial, criterion='Tresca')
-        assert n == k*np.diag([-1,0,1])
+        assert n == K * np.diag([-1, 0, 1])
         assert n.eq_strain() == 1.0
 
         with self.assertRaises(NotImplementedError) as context:
@@ -119,9 +119,12 @@ class TestJohnsonCook(unittest.TestCase):
         JC.apply_strain(-1.0)
         assert JC.plastic_strain == 2
 
-
-
-
+    def test_Tresca_plasticity(self):
+        JC_tresca = JohnsonCook(A=A, B=B, n=n, criterion='Tresca')
+        stress = StressTensor.shear([1,0,0],[0,1,0], 1000)
+        strain = JC_tresca.compute_strain_increment(stress)
+        eq_stress_tr = JC_tresca.flow_stress(strain.eq_strain())
+        assert eq_stress_tr == approx(stress.Tresca())
 
 
 if __name__ == '__main__':
