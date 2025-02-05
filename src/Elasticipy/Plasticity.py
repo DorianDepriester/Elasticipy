@@ -202,7 +202,7 @@ class JohnsonCook:
         self.plastic_strain = 0.0
 
 
-def normality_rule(stress, criterion='von Mises', treat_singular='mean'):
+def normality_rule(stress, criterion='von Mises'):
     """
     Apply the normality rule for plastic flow, given a yield criterion.
 
@@ -213,7 +213,7 @@ def normality_rule(stress, criterion='von Mises', treat_singular='mean'):
     stress : StressTensor
         Stress tensor to apply the normality rule from
     criterion : str, optional
-        Name of the criterion to use
+        Name of the criterion to use. Can be either 'von Mises' or 'Tresca'
 
     Returns
     -------
@@ -222,7 +222,8 @@ def normality_rule(stress, criterion='von Mises', treat_singular='mean'):
 
     Notes
     -----
-    To this day, only von Mises criterion is implemented.
+    The singular points for the Tresca criterion are treated as the von Mises criterion, which is equivalent to the
+    average of the two adjacent normals of the domain.
     """
     if criterion.lower()=='von mises':
         eq_stress = stress.vonMises()
@@ -231,23 +232,17 @@ def normality_rule(stress, criterion='von Mises', treat_singular='mean'):
         return StrainTensor(3/2 * gradient_tensor.matrix)
     elif criterion.lower()=='tresca':
         vals, dirs = stress.eig()
-        major_dir = dirs[...,0]
-        middle_dir = dirs[..., 1]
-        minor_dir = dirs[...,2]
-        major_vals = vals[...,0]
-        middle_vals = vals[..., 1]
-        minor_vals = vals[...,2]
-        A = np.einsum('...i,...j->...ij',major_dir, major_dir)
-        B = np.einsum('...i,...j->...ij',minor_dir, minor_dir)
-        sigma_tresca = major_vals - minor_vals
-        major_middle_dir=middle_dir[middle_vals==major_vals]
-        A[middle_vals==major_vals] = (A[middle_vals==major_vals] / 2
-                                      + np.einsum('...i,...j->...ij',major_middle_dir, major_middle_dir) / 2)
-        minor_middle_dir=middle_dir[middle_vals==minor_vals]
-        B[middle_vals==minor_vals] = (B[middle_vals==minor_vals] / 2
-                                      + np.einsum('...i,...j->...ij',minor_middle_dir, minor_middle_dir) / 2)
+        u1 = dirs[...,0]
+        u3 = dirs[...,2]
+        s1 = vals[...,0]
+        s2 = vals[..., 1]
+        s3 = vals[...,2]
+        A = np.einsum('...i,...j->...ij',u1, u1)
+        B = np.einsum('...i,...j->...ij',u3, u3)
         normal = A - B
-        normal[sigma_tresca == 0.0] = 0.0
+        singular_points = np.logical_or(s2==s1, s2==s3)
+        normal[singular_points] = normality_rule(stress[singular_points], criterion='von Mises').matrix
+        normal[np.logical_and(s2==s1, s2==s3)] = 0.0
         strain = StrainTensor(normal)
         return strain / strain.eq_strain()
     else:
