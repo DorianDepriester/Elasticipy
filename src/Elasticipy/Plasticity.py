@@ -246,4 +246,4 @@ def normality_rule(stress, criterion='von Mises'):
         strain = StrainTensor(normal)
         return strain / strain.eq_strain()
     else:
-        raise NotImplementedError('Other criteria will be implemented in future releases.')
+        raise NotImplementedError('The normality rule is only implemented for von Mises (J2) and Tresca criteria.')
