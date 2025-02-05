@@ -106,7 +106,8 @@ class TestJohnsonCook(unittest.TestCase):
 
         with self.assertRaises(NotImplementedError) as context:
             _ = normality_rule(triaxial, criterion='other')
-        self.assertEqual(str(context.exception), 'The normality rule is only implemented for von Mises (J2) and Tresca criteria.')
+        expected_error = 'The normality rule is only implemented for von Mises (J2) and Tresca criteria.'
+        self.assertEqual(str(context.exception), expected_error)
 
 
     def test_apply_strain(self):
