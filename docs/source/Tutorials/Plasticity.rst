@@ -120,7 +120,7 @@ Here, we have only considered monotonic loading, but we can also consider differ
                      np.linspace(0.2,0.199),
                      np.linspace(0.199,0.3)]
     >>> elong = np.concatenate(load_path)
-    >>> n_step = len(eps_xx)
+    >>> n_step = len(elong)
 
 .. image:: images/Incremental.png
 
@@ -132,7 +132,7 @@ or cyclic:
                      np.linspace(-0.2,0.3),
                      np.linspace(0.3,-0.4)]
     >>> elong = np.concatenate(load_path)
-    >>> n_step = len(eps_xx)
+    >>> n_step = len(elong)
 
 .. image:: images/Cyclic.png
 
@@ -156,7 +156,7 @@ the plasticity criterion to the model constructor:
 
 For instance, one can highlight the difference between the J2 and Tresca plasticity in shear:
 
-    >>> C.reset_strain()
+    >>> JC.reset_strain()
     >>> JC_tresca = JohnsonCook(A=363, B=792.7122, n=0.5756, criterion='Tresca')
     >>> stress_mag = np.linspace(0, 500, n_step)
     >>> stress = StressTensor.shear([1,0,0], [0,1,0],stress_mag)
@@ -170,8 +170,8 @@ For instance, one can highlight the difference between the J2 and Tresca plastic
             for i in range(1, n_step):
                 strain_increment = model.compute_strain_increment(stress[i])
                 plastic_strain[i] = plastic_strain[i-1] + strain_increment
-        eps_xy = elastic_strain.C[0,1]+plastic_strain.C[0,1]
-        ax.plot(eps_xy, stress_mag, label=labels[j])
+            eps_xy = elastic_strain.C[0,1]+plastic_strain.C[0,1]
+            ax.plot(eps_xy, stress_mag, label=labels[j])
     >>> ax.set_xlabel(r'$\varepsilon_{xy}$')
     >>> ax.set_ylabel('Shear stress (MPa)')
     >>> ax.legend()
