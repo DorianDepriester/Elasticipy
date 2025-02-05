@@ -14,20 +14,57 @@ class IsotropicHardening:
         criterion : str, optional
             Plasticity criterion to use. Can be 'von Mises', 'Tresca' or 'J2'. J2 is the same as von Mises.
         """
-        self.criterion = criterion
+        criterion = criterion.lower()
+        if criterion in ('von mises', 'mises', 'vonmises', 'j2'):
+            criterion = 'j2'
+        elif criterion != 'tresca':
+            raise ValueError('The criterion can be "Tresca", "von Mises" or "J2".')
+        self.criterion = criterion.lower()
         self.plastic_strain = 0.0
 
-    def flow_strain(self):
+    def flow_stress(self, strain, **kwargs):
         pass
 
     def apply_strain(self, strain, **kwargs):
-        pass
+        """
+        Apply strain to the current JC model.
+
+        This function updates the internal variable to store hardening state.
+
+        Parameters
+        ----------
+        strain : float or StrainTensor
+        kwargs : dict
+            Keyword arguments passed to flow_stress()
+
+        Returns
+        -------
+        float
+            Associated flow stress (positive)
+
+        See Also
+        --------
+        flow_stress : compute the flow stress, given a cumulative equivalent strain
+        """
+        if isinstance(strain, float):
+            self.plastic_strain += np.abs(strain)
+        elif isinstance(strain, StrainTensor):
+            self.plastic_strain += strain.eq_strain()
+        else:
+            raise ValueError('The applied strain must be float of StrainTensor')
+        return self.flow_stress(self.plastic_strain, **kwargs)
 
     def compute_strain_increment(self, stress, **kwargs):
         pass
 
     def reset_strain(self):
         self.plastic_strain = 0.0
+
+    def eq_stress(self, stress):
+        if self.criterion == 'j2':
+            return stress.vonMises()
+        else:
+            return stress.Tresca()
 
 
 class JohnsonCook(IsotropicHardening):
@@ -56,6 +93,8 @@ class JohnsonCook(IsotropicHardening):
             Reference temperature
         Tm : float, optional
             Melting temperature (at which the flow stress is zero)
+        criterion : str, optional
+            Plasticity criterion to use. It can be 'von Mises' or 'Tresca'.
 
         Notes
         -----
@@ -125,34 +164,6 @@ class JohnsonCook(IsotropicHardening):
 
         return stress
 
-    def apply_strain(self, strain, **kwargs):
-        """
-        Apply strain to the current JC model.
-
-        This function updates the internal variable to store hardening state.
-
-        Parameters
-        ----------
-        strain : float or StrainTensor
-        kwargs : dict
-            Keyword arguments passed to flow_stress()
-
-        Returns
-        -------
-        float
-            Associated flow stress (positive)
-
-        See Also
-        --------
-        flow_stress : compute the flow stress, given a cumulative equivalent strain
-        """
-        if isinstance(strain, float):
-            self.plastic_strain += np.abs(strain)
-        elif isinstance(strain, StrainTensor):
-            self.plastic_strain += strain.eq_strain()
-        else:
-            raise ValueError('The applied strain must be float of StrainTensor')
-        return self.flow_stress(self.plastic_strain, **kwargs)
 
 
     def compute_strain_increment(self, stress, T=None, apply_strain=True, criterion='von Mises'):
@@ -183,13 +194,7 @@ class JohnsonCook(IsotropicHardening):
         apply_strain : apply strain to the JC model and updates its hardening value
         """
         if isinstance(stress, StressTensor):
-            criterion = criterion.lower()
-            if criterion in ('von mises', 'j2'):
-                eq_stress = stress.vonMises()
-            elif criterion =='tresca':
-                eq_stress = stress.Tresca()
-            else:
-                raise NotImplementedError('Only von Mises and Tresca criteria have been implement yet.')
+            eq_stress = self.eq_stress(stress)
         else:
             eq_stress = stress
         if T is None:
