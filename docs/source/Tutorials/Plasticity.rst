@@ -62,7 +62,7 @@ At least, we can directly compute the elastic strain for each step:
 So now, the plastic strain can be computed using an iterative approach:
 
     >>> plastic_strain = StrainTensor.zeros(n_step)
-    >>> for i in range(2, n_step):
+    >>> for i in range(1, n_step):
             strain_increment = JC.compute_strain_increment(stress[i])
             plastic_strain[i] = plastic_strain[i-1] + strain_increment
 
@@ -89,7 +89,7 @@ to add a subroutine (optimization loop) to find the tensile stress so that the a
     >>> stress = StressTensor.zeros(n_step)
     >>> plastic_strain = StrainTensor.zeros(n_step)
     >>> JC.reset_strain()
-    >>> for i in range(2, n_step):
+    >>> for i in range(1, n_step):
             def fun(tensile_stress):
                 trial_stress = StressTensor.tensile([1,0,0], tensile_stress)
                 trial_elastic_strain = C.inv() * trial_stress
@@ -167,7 +167,7 @@ For instance, one can highlight the difference between the J2 and Tresca plastic
     >>> fig, ax = plt.subplots()
     >>> for j, model in enumerate(models):
             plastic_strain = StrainTensor.zeros(n_step)
-            for i in range(2, n_step):
+            for i in range(1, n_step):
                 strain_increment = model.compute_strain_increment(stress[i])
                 plastic_strain[i] = plastic_strain[i-1] + strain_increment
         eps_xy = elastic_strain.C[0,1]+plastic_strain.C[0,1]
