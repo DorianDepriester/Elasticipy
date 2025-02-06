@@ -1,6 +1,7 @@
 import numpy as np
 from Elasticipy.StressStrainTensors import StrainTensor, StressTensor
 
+
 class IsotropicHardening:
     """
     Template class for isotropic hardening plasticity models
@@ -11,15 +12,19 @@ class IsotropicHardening:
 
         Parameters
         ----------
-        criterion : str, optional
+        criterion : str or PlasticityCriterion
             Plasticity criterion to use. Can be 'von Mises', 'Tresca' or 'J2'. J2 is the same as von Mises.
         """
-        criterion = criterion.lower()
-        if criterion in ('von mises', 'mises', 'vonmises', 'j2'):
-            criterion = 'j2'
-        elif criterion != 'tresca':
-            raise ValueError('The criterion can be "Tresca", "von Mises" or "J2".')
-        self.criterion = criterion.lower()
+        if isinstance(criterion, str):
+            criterion = criterion.lower()
+            if criterion in ('von mises', 'mises', 'vonmises', 'j2'):
+                self.criterion = VonMisesPlasticity
+            elif criterion == 'tresca':
+                self.criterion = TrescaPlasticity
+            else:
+                raise ValueError('The criterion can be "Tresca", "von Mises" or "J2".')
+        else:
+            self.criterion = criterion
         self.plastic_strain = 0.0
 
     def flow_stress(self, strain, **kwargs):
@@ -60,12 +65,6 @@ class IsotropicHardening:
     def reset_strain(self):
         self.plastic_strain = 0.0
 
-    def eq_stress(self, stress):
-        if self.criterion == 'j2':
-            return stress.vonMises()
-        else:
-            return stress.Tresca()
-
 
 class JohnsonCook(IsotropicHardening):
     def __init__(self, A, B, n, C=None, eps_dot_ref=1.0, m=None, T0=25, Tm=None, criterion='von Mises'):
@@ -93,7 +92,7 @@ class JohnsonCook(IsotropicHardening):
             Reference temperature
         Tm : float, optional
             Melting temperature (at which the flow stress is zero)
-        criterion : str, optional
+        criterion : str or PlasticityCriterion, optional
             Plasticity criterion to use. It can be 'von Mises' or 'Tresca'.
 
         Notes
@@ -194,7 +193,7 @@ class JohnsonCook(IsotropicHardening):
         apply_strain : apply strain to the JC model and updates its hardening value
         """
         if isinstance(stress, StressTensor):
-            eq_stress = self.eq_stress(stress)
+            eq_stress = self.criterion.eq_stress(stress)
         else:
             eq_stress = stress
         if T is None:
@@ -223,7 +222,7 @@ class JohnsonCook(IsotropicHardening):
             self.apply_strain(strain_increment)
 
         if isinstance(stress, StressTensor):
-            n = normality_rule(stress, criterion=criterion)
+            n = self.criterion.normal(stress)
             return n * strain_increment
         else:
             return strain_increment
@@ -235,47 +234,59 @@ class JohnsonCook(IsotropicHardening):
         self.plastic_strain = 0.0
 
 
-def normality_rule(stress, criterion='von Mises'):
-    """
-    Apply the normality rule for plastic flow, given a yield criterion.
+class PlasticityCriterion:
+    @staticmethod
+    def eq_stress(stress, **kwargs):
+        """
 
-    The stress can be a single tensor, or an array of tensors.
+        Parameters
+        ----------
+        stress : StressTensor
+        kwargs
 
-    Parameters
-    ----------
-    stress : StressTensor
-        Stress tensor to apply the normality rule from
-    criterion : str, optional
-        Name of the criterion to use. Can be either 'von Mises' or 'Tresca'
+        Returns
+        -------
+        float or numpy.ndarray
+        """
+        pass
 
-    Returns
-    -------
-    StrainTensor
-        If a single stress tensor is passed, the returned array will be of shape
+    def yield_function(self, stress, **kwargs):
+        pass
 
-    Notes
-    -----
-    The singular points for the Tresca criterion are treated as the von Mises criterion, which is equivalent to the
-    average of the two adjacent normals of the domain.
-    """
-    if criterion.lower()=='von mises':
+    def normal(self, stress, **kwargs):
+        pass
+
+class VonMisesPlasticity(PlasticityCriterion):
+    @staticmethod
+    def eq_stress(stress, **kwargs):
+        return stress.vonMises()
+
+    @staticmethod
+    def normal(stress, **kwargs):
         eq_stress = stress.vonMises()
-        dev_stress= stress.deviatoric_part()
+        dev_stress = stress.deviatoric_part()
         gradient_tensor = dev_stress / eq_stress
-        return StrainTensor(3/2 * gradient_tensor.matrix)
-    elif criterion.lower()=='tresca':
+        return StrainTensor(3 / 2 * gradient_tensor.matrix)
+
+class TrescaPlasticity(PlasticityCriterion):
+    @staticmethod
+    def eq_stress(stress, **kwargs):
+        return stress.Tresca()
+
+    @staticmethod
+    def normal(stress, **kwargs):
         vals, dirs = stress.eig()
-        u1 = dirs[...,0]
-        u3 = dirs[...,2]
-        s1 = vals[...,0]
+        u1 = dirs[..., 0]
+        u3 = dirs[..., 2]
+        s1 = vals[..., 0]
         s2 = vals[..., 1]
-        s3 = vals[...,2]
-        A = np.einsum('...i,...j->...ij',u1, u1)
-        B = np.einsum('...i,...j->...ij',u3, u3)
-        normal = A - B
-        singular_points = np.logical_or(s2==s1, s2==s3)
-        normal[singular_points] = normality_rule(stress[singular_points], criterion='von Mises').matrix
-        normal[np.logical_and(s2==s1, s2==s3)] = 0.0
+        s3 = vals[..., 2]
+        a = np.einsum('...i,...j->...ij', u1, u1)
+        b = np.einsum('...i,...j->...ij', u3, u3)
+        normal = a - b
+        singular_points = np.logical_or(s2 == s1, s2 == s3)
+        normal[singular_points] = VonMisesPlasticity().normal(stress[singular_points]).matrix
+        normal[np.logical_and(s2 == s1, s2 == s3)] = 0.0
         strain = StrainTensor(normal)
         return strain / strain.eq_strain()
     else:
