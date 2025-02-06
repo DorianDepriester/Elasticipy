@@ -126,6 +126,29 @@ class TestJohnsonCook(unittest.TestCase):
         eq_stress_tr = JC_tresca.flow_stress(strain.eq_strain())
         assert eq_stress_tr == approx(stress.Tresca())
 
+    def test_DruckerPrager(self):
+        dp = DruckerPrager(0.2)
+        JC_pg = JohnsonCook(A=A, B=B, n=n, criterion=dp)
+        shear_stress = StressTensor.shear([1, 0, 0], [0, 1, 0], 1000)
+        tens_shear_stress = shear_stress + StressTensor.eye() * 100
+        comp_shear_stress = shear_stress - StressTensor.eye() * 100
+        strain_0 = JC_pg.compute_strain_increment(shear_stress, apply_strain=False)
+        strain_p = JC_pg.compute_strain_increment(tens_shear_stress, apply_strain=False)
+        strain_m = JC_pg.compute_strain_increment(comp_shear_stress, apply_strain=False)
+        assert strain_m.eq_strain() < strain_0.eq_strain() < strain_p.eq_strain()
+
+        # Now investigate the special case alpha=0 (== von Mises)
+        JC_pg0 = JohnsonCook(A=A, B=B, n=n, criterion=DruckerPrager(0.))
+        JC.reset_strain()
+        strain_0 = JC_pg0.compute_strain_increment(shear_stress, apply_strain=False)
+        strain_p = JC_pg0.compute_strain_increment(tens_shear_stress, apply_strain=False)
+        strain_m = JC_pg0.compute_strain_increment(comp_shear_stress, apply_strain=False)
+        strain_vm = JC.compute_strain_increment(tens_shear_stress, apply_strain=False)
+        assert strain_0.eq_strain() == approx(strain_p.eq_strain())
+        assert strain_0.eq_strain() == approx(strain_m.eq_strain())
+        assert strain_0.eq_strain() == approx(strain_vm.eq_strain())
+
+
 
 if __name__ == '__main__':
     unittest.main()
