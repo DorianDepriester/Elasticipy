@@ -289,5 +289,16 @@ class TrescaPlasticity(PlasticityCriterion):
         normal[np.logical_and(s2 == s1, s2 == s3)] = 0.0
         strain = StrainTensor(normal)
         return strain / strain.eq_strain()
-    else:
-        raise NotImplementedError('The normality rule is only implemented for von Mises (J2) and Tresca criteria.')
+
+class DruckerPrager(PlasticityCriterion):
+    def __init__(self, alpha):
+        self.alpha = alpha
+
+    def eq_stress(self, stress, **kwargs):
+        return (stress.J2**0.5 + self.alpha * stress.I1) / (1/3**0.5 + self.alpha)
+
+    def normal(self, stress, **kwargs):
+        J2 = stress.J2
+        gradient = stress.deviatoric_part() / (2 * J2**0.5) + self.alpha * StressTensor.eye(stress.shape)
+        strain = StrainTensor(gradient.matrix)
+        return strain / strain.eq_strain()
