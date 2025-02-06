@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 from Elasticipy.Plasticity import JohnsonCook
-from Elasticipy.Plasticity import normality_rule
+from Elasticipy.Plasticity import TrescaPlasticity, VonMisesPlasticity, DruckerPrager
 from pytest import approx
 
 from Elasticipy.StressStrainTensors import StressTensor, StrainTensor
@@ -74,11 +74,11 @@ class TestJohnsonCook(unittest.TestCase):
 
     def test_normality_J2(self):
         tensile_stress = StressTensor.tensile([1,0,0], 1)
-        normal = normality_rule(tensile_stress)
+        normal = VonMisesPlasticity.normal(tensile_stress)
         assert normal == np.diag([1., -0.5, -0.5])
 
         shear_stress = StressTensor.shear([1, 0, 0], [0, 1, 0], 1)
-        normal = normality_rule(shear_stress)
+        normal = VonMisesPlasticity.normal(shear_stress)
         normal_th = K * np.array([[0, 1, 0],
                                   [1, 0, 0],
                                   [0, 0, 0]])
@@ -87,27 +87,21 @@ class TestJohnsonCook(unittest.TestCase):
     def test_normality_Tresca(self):
         biaxial = (StressTensor.tensile([1,0,0],[0, 1, 1, 1, 1, 1, 0]) +
                    StressTensor.tensile([0,1,0],[-1, -1, -0.5, 0, 0.5, 1, 1]))
-        n = normality_rule(biaxial, criterion='Tresca')
-        assert n[0] == normality_rule(biaxial[0])
+        n = TrescaPlasticity.normal(biaxial)
+        assert n[0] == VonMisesPlasticity.normal(biaxial[0])
         assert n[2] == K * np.diag([1, -1, 0])
         assert n[2] == K * np.diag([1, -1, 0])
-        assert n[3] == normality_rule(biaxial[3])
+        assert n[3] == VonMisesPlasticity.normal(biaxial[3])
         assert n[4] == K * np.diag([1, 0, -1])
-        assert n[5] == normality_rule(biaxial[5])
-        assert n[6] == normality_rule(biaxial[6])
+        assert n[5] == VonMisesPlasticity.normal(biaxial[5])
+        assert n[6] == VonMisesPlasticity.normal(biaxial[6])
 
         # Check that the magnitude of the normal is 1
         np.testing.assert_array_equal(n.eq_strain(), np.ones(biaxial.shape))
-
         triaxial = StressTensor(np.diag([1,2,4]))
-        n = normality_rule(triaxial, criterion='Tresca')
+        n = TrescaPlasticity.normal(triaxial)
         assert n == K * np.diag([-1, 0, 1])
         assert n.eq_strain() == 1.0
-
-        with self.assertRaises(NotImplementedError) as context:
-            _ = normality_rule(triaxial, criterion='other')
-        expected_error = 'The normality rule is only implemented for von Mises (J2) and Tresca criteria.'
-        self.assertEqual(str(context.exception), expected_error)
 
 
     def test_apply_strain(self):
