@@ -220,6 +220,26 @@ class SymmetricTensor:
         else:
             return _rotate_tensor(m, self.orientations)
 
+    def flatten(self):
+        """
+        Flatten the tensor
+
+        If the tensor has (m,n,o...,r) orientations, the flattened tensor will have m*n*o*...*r orientations
+
+        Returns
+        -------
+        SymmetricTensor
+            Flattened tensor
+        """
+        tensor_flat = self._unrotate()
+        o = self.orientations
+        if is_orix_rotation(o):
+            o_flat = o.flatten()
+        else:
+            o_flat = o
+        tensor_flat.orientations = o_flat
+        return tensor_flat
+
     @classmethod
     def _full_to_matrix(cls, full_tensor):
         ij, kl = np.indices((6, 6))
