@@ -8,6 +8,7 @@ from scipy.spatial.transform import Rotation
 from Elasticipy.CrystalSymmetries import SYMMETRIES
 from copy import deepcopy
 
+
 def _parse_tensor_components(prefix, **kwargs):
     pattern = r'^{}(\d{{2}})$'.format(prefix)
     value = dict()
@@ -67,7 +68,7 @@ def _compute_unit_strain_along_direction(S, m, n, direction='longitudinal'):
     if direction == 'transverse':
         ein_str = 'ijkl,pi,pj,pk,pl->p'
         return np.einsum(ein_str, S.full_tensor(), m, m, n, n)
-    elif direction =='longitudinal':
+    elif direction == 'longitudinal':
         ein_str = 'ijkl,pi,pk,pj,pl->p'
         return np.einsum(ein_str, S.full_tensor(), m, m, n, n)
     else:
@@ -82,6 +83,7 @@ def _isotropic_matrix(C11, C12, C44):
                      [0, 0, 0, C44, 0, 0],
                      [0, 0, 0, 0, C44, 0],
                      [0, 0, 0, 0, 0, C44]])
+
 
 def _check_definite_positive(mat):
     try:
@@ -100,10 +102,12 @@ def _is_single_rotation(rotation):
         raise TypeError('The input argument must be of class scipy.transform.Rotation or '
                         'orix.quaternion.rotation.Rotation')
 
+
 def _rotate_tensor(full_tensor, rotation):
     rot_mat = rotation_to_matrix(rotation)
-    str_ein =  '...im,...jn,...ko,...lp,mnop->...ijkl'
+    str_ein = '...im,...jn,...ko,...lp,mnop->...ijkl'
     return np.einsum(str_ein, rot_mat, rot_mat, rot_mat, rot_mat, full_tensor)
+
 
 class SymmetricTensor:
     """
@@ -145,9 +149,9 @@ class SymmetricTensor:
             Whether to check or not that the input matrix is definite positive
         """
         M = np.asarray(M)
-        if M.shape == (6,6):
+        if M.shape == (6, 6):
             matrix = M
-        elif M.shape == (3,3,3,3):
+        elif M.shape == (3, 3, 3, 3):
             matrix = self._full_to_matrix(M)
         else:
             raise ValueError('The input matrix must of shape (6,6)')
@@ -161,12 +165,13 @@ class SymmetricTensor:
         self.symmetry = symmetry
         self.orientations = orientations
 
-        for i in range(0,6):
-            for j in range(0,6):
+        for i in range(0, 6):
+            for j in range(0, 6):
                 def getter(obj, I=i, J=j):
                     return obj.matrix[I, J]
+
                 getter.__doc__ = f"Returns the ({i + 1},{j + 1}) component of the {self.tensor_name} matrix."
-                component_name = 'C{}{}'.format(i+1, j+1)
+                component_name = 'C{}{}'.format(i + 1, j + 1)
                 setattr(self.__class__, component_name, property(getter))  # Dynamically create the property
 
     def __repr__(self):
@@ -303,7 +308,6 @@ class SymmetricTensor:
             axis = tuple([i for i in range(self.ndim)])
         return np.mean(self.full_tensor(), axis=axis)
 
-
     def _unrotate(self):
         unrotated_tensor = deepcopy(self)
         unrotated_tensor.orientations = None
@@ -345,7 +349,8 @@ class SymmetricTensor:
             if _is_single_rotation(other):
                 return self.rotate(other)
             else:
-                return self.__class__(self.matrix, symmetry=self.symmetry, orientations=other, phase_name=self.phase_name)
+                return self.__class__(self.matrix, symmetry=self.symmetry, orientations=other,
+                                      phase_name=self.phase_name)
         else:
             return self.__class__(self.matrix * other, symmetry=self.symmetry)
 
@@ -364,17 +369,11 @@ class SymmetricTensor:
     def __eq__(self, other):
         if isinstance(other, SymmetricTensor):
             return np.all(self.matrix == other.matrix) and np.all(self.orientations == other.orientations)
-        elif isinstance(other, np.ndarray) and other.shape == (6,6):
+        elif isinstance(other, np.ndarray) and other.shape == (6, 6):
             return np.all(self.matrix == other)
         else:
             raise NotImplementedError('The element to compare with must be a fourth-order tensor '
                                       'or an array of shape (6,6).')
-
-
-    def _orientation_average(self):
-        mean_full_tensor = np.mean(self.full_tensor(), axis=0)
-        mean_matrix = self._full_to_matrix(mean_full_tensor)
-        return self.__class__(mean_matrix)
 
     @classmethod
     def _matrixFromCrystalSymmetry(cls, symmetry='Triclinic', point_group=None, diad='y', prefix=None, **kwargs):
@@ -796,7 +795,8 @@ class SymmetricTensor:
         if self.orientations is None:
             raise IndexError('The tensor has no orientation, therefore it cannot be indexed.')
         else:
-            return self._unrotate()*self.orientations[item]
+            return self._unrotate() * self.orientations[item]
+
 
 class StiffnessTensor(SymmetricTensor):
     """
@@ -895,6 +895,7 @@ class StiffnessTensor(SymmetricTensor):
         --------
         bulk_modulus : bulk modulus of the material
         """
+
         def compute_linear_compressibility(n):
             return _compute_unit_strain_along_direction(self, n, n, direction='spherical')
 
@@ -915,7 +916,6 @@ class StiffnessTensor(SymmetricTensor):
         linear_compressibility : directional linear compressibility
         """
         return self.inv().bulk_modulus
-
 
     def Voigt_average(self):
         """
@@ -945,7 +945,7 @@ class StiffnessTensor(SymmetricTensor):
             mat = _isotropic_matrix(C11, C12, C44)
             return StiffnessTensor(mat, symmetry='isotropic', phase_name=self.phase_name)
         else:
-            return self._orientation_average()
+            return StiffnessTensor(self.mean())
 
     def Reuss_average(self):
         """
@@ -1012,7 +1012,6 @@ class StiffnessTensor(SymmetricTensor):
             return fun()
         else:
             raise NotImplementedError('Only Voigt, Reus, and Hill are implemented.')
-
 
     @classmethod
     def isotropic(cls, E=None, nu=None, lame1=None, lame2=None, phase_name=None):
@@ -1116,10 +1115,10 @@ class StiffnessTensor(SymmetricTensor):
         """
         tri_sup = np.array([[1 / Ex, -nu_yx / Ey, -nu_zx / Ez, 0, 0, 0],
                             [0, 1 / Ey, -nu_zy / Ez, 0, 0, 0],
-                            [0,      0,           1 / Ez,       0,          0,          0],
-                            [0,      0,           0,            1 / Gyz,    0,          0],
-                            [0,      0,           0,            0,          1 / Gxz,    0],
-                            [0,      0,           0,            0,          0,          1 / Gxy]])
+                            [0, 0, 1 / Ez, 0, 0, 0],
+                            [0, 0, 0, 1 / Gyz, 0, 0],
+                            [0, 0, 0, 0, 1 / Gxz, 0],
+                            [0, 0, 0, 0, 0, 1 / Gxy]])
         S = tri_sup + np.tril(tri_sup.T, -1)
         return StiffnessTensor(np.linalg.inv(S), symmetry='orthotropic', **kwargs)
 
@@ -1370,7 +1369,7 @@ class StiffnessTensor(SymmetricTensor):
         .. [3] S. I. Ranganathan and M. Ostoja-Starzewski, Universal Elastic Anisotropy Index,
            *Phys. Rev. Lett.*, 101(5), 055504, 2008. https://doi.org/10.1103/PhysRevLett.101.055504
         """
-        C = self._unrotate()    # Ensure that the averages do not use the orientations
+        C = self._unrotate()  # Ensure that the averages do not use the orientations
         Cvoigt = C.Voigt_average()
         Creuss = C.Reuss_average()
         Gv = Cvoigt.matrix[3, 3]
@@ -1425,6 +1424,7 @@ class StiffnessTensor(SymmetricTensor):
             raise ModuleNotFoundError('pymatgen module is required for this function.')
         return matgenElast.ElasticTensor(self.full_tensor())
 
+
 class ComplianceTensor(StiffnessTensor):
     """
     Class for manipulating compliance tensors
@@ -1477,7 +1477,7 @@ class ComplianceTensor(StiffnessTensor):
             mat = _isotropic_matrix(S11, S12, S44)
             return ComplianceTensor(mat, symmetry='isotropic', phase_name=self.phase_name)
         else:
-            return self._orientation_average()
+            return ComplianceTensor(self.mean())
 
     def Voigt_average(self):
         return self.inv().Voigt_average().inv()
@@ -1496,14 +1496,14 @@ class ComplianceTensor(StiffnessTensor):
     @classmethod
     def transverse_isotropic(cls, *args, **kwargs):
         return super().transverse_isotropic(*args, **kwargs).inv()
-    
+
     @classmethod
     def weighted_average(cls, *args):
         return super().weighted_average(*args).inv()
 
     @property
     def bulk_modulus(self):
-        return 1/np.sum(self.matrix[0:3,0:3])
+        return 1 / np.sum(self.matrix[0:3, 0:3])
 
     @property
     def universal_anisotropy(self):
