@@ -177,14 +177,30 @@ class SymmetricTensor:
         print_symmetry = '\nSymmetry: {}'.format(self.symmetry)
         msg = heading + self.matrix.__str__() + print_symmetry
         if self.orientations is not None:
-            msg = msg + '\n{} orientations'.format(len(self))
+            shape = self.shape
+            if len(shape) == 1:
+                msg = msg + '\n{} orientations'.format(shape[0])
+            else:
+                msg = msg + '\n{} orientations'.format(shape)
         return msg
 
     def __len__(self):
-        if self.orientations is None:
+        o = self.orientations
+        if o is None:
             return 1
         else:
-            return len(self.orientations)
+            if is_orix_rotation(o):
+                return o.shape[0]
+            else:
+                return len(o)
+
+    @property
+    def shape(self):
+        o = self.orientations
+        if is_orix_rotation(o):
+            return o.shape
+        else:
+            return (len(o),)
 
     def full_tensor(self):
         """
