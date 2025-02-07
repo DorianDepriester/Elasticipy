@@ -268,6 +268,42 @@ class SymmetricTensor:
         else:
             raise ValueError('The rotation to apply must be single')
 
+    @property
+    def ndim(self):
+        """
+        Returns the dimensionality of the tensor (number of dimensions in the orientation array)
+
+        Returns
+        -------
+        int
+            Number of dimensions
+        """
+        shape = self.shape
+        if shape:
+            return len(shape)
+        else:
+            return 0
+
+    def mean(self, axis=None):
+        """
+        Compute the mean value of the tensor T, considering the orientations
+
+        Parameters
+        ----------
+        axis : int or list of int or tuple of int, optional
+            axis along which to compute the mean. If None, the mean is computed on the flattened tensor
+
+        Returns
+        -------
+        numpy.ndarray
+            If no axis is given, the result will be of shape (3,3,3,3).
+            Otherwise, if T.ndim=m, and len(axis)=n, the returned value will be of shape (...,3,3,3,3), with ndim=m-n+4
+        """
+        if axis is None:
+            axis = tuple([i for i in range(self.ndim)])
+        return np.mean(self.full_tensor(), axis=axis)
+
+
     def _unrotate(self):
         unrotated_tensor = deepcopy(self)
         unrotated_tensor.orientations = None
