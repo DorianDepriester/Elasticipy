@@ -206,7 +206,9 @@ class SymmetricTensor:
     @property
     def shape(self):
         o = self.orientations
-        if is_orix_rotation(o):
+        if o is None:
+            return None
+        elif is_orix_rotation(o):
             return o.shape
         else:
             return (len(o),)
