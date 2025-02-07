@@ -238,22 +238,36 @@ class PlasticityCriterion:
     @staticmethod
     def eq_stress(stress, **kwargs):
         """
+        Return the equivalent stress, with respect to the plasticity criterion.
 
         Parameters
         ----------
         stress : StressTensor
-        kwargs
-
+            Stress to compute the equivalent stress from
+        kwargs : dict
+            keyword arguments passed to the function
         Returns
         -------
         float or numpy.ndarray
         """
         pass
 
-    def yield_function(self, stress, **kwargs):
-        pass
-
     def normal(self, stress, **kwargs):
+        """
+        Apply the normality rule
+
+        Parameters
+        ----------
+        stress : StressTensor
+            Stress tensor to apply the normality rule
+        kwargs : dict
+            Keyword arguments passed to the function
+
+        Returns
+        -------
+        StrainTensor
+            Normalized direction of plastic flow
+        """
         pass
 
 class VonMisesPlasticity(PlasticityCriterion):
@@ -292,6 +306,20 @@ class TrescaPlasticity(PlasticityCriterion):
 
 class DruckerPrager(PlasticityCriterion):
     def __init__(self, alpha):
+        """
+        Create a Drucker-Prager (DG) plasticity criterion.
+
+        Parameters
+        ----------
+        alpha : float
+            Pressure dependence parameters (see notes for details)
+
+        Notes
+        -----
+        The pressure-dependent DG plasticity criterion assumes that the equivalent stress is defined as:
+
+
+        """
         self.alpha = alpha
 
     def eq_stress(self, stress, **kwargs):
