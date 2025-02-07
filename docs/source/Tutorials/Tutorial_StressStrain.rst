@@ -184,7 +184,7 @@ These rotations can be applied on the strain tensor
     >>> eps_rotated = eps.matmul(rotations)
 
 
-The ``matmul()`` just works like the matrix product, thus increasing the dimensionality of the array.
+The ``matmul()`` operator just works like the matrix product, thus increasing the dimensionality of the array.
 Here, we thus get an array of shape (10, 1000).
 
     >>> print(eps_rotated.shape)
@@ -200,7 +200,7 @@ And get the stress back to the initial coordinate system:
 
     >>> sigma = sigma_rotated * rotations.inv()   # Go back to initial frame
 
-As opposed to the matmul operator (see above), we use ``*`` operator here to keep the same dimensionality (perform
+As opposed to the ``matmul()`` operator (see above), we use ``*`` here to keep the same dimensionality (perform
 element-wise multiplication).
 Finally, we can estimate the mean stresses among all the orientations:
 
