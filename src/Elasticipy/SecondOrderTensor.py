@@ -1281,7 +1281,10 @@ class SymmetricSecondOrderTensor(SecondOrderTensor):
         >>> a==b
         True
         """
-        mat = np.asarray(mat, dtype=float)
+        if isinstance(mat, SecondOrderTensor):
+            mat = mat.matrix
+        else:
+            mat = np.asarray(mat, dtype=float)
         mat_transposed = _transpose_matrix(mat)
         if np.all(np.isclose(mat, mat_transposed)) or force_symmetry:
             # The input matrix is symmetric
