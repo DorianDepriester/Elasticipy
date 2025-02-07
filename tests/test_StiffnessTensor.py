@@ -213,6 +213,7 @@ class TestComplianceTensor(unittest.TestCase):
             np.testing.assert_array_almost_equal(S_mean_1[i], S_rotated[i,:].Reuss_average().full_tensor())
         S_mean = S_rotated.mean()
         np.testing.assert_array_almost_equal(S_mean, S_rotated.flatten().Reuss_average().full_tensor())
+        np.testing.assert_array_almost_equal(S_mean, S_rotated.Reuss_average().full_tensor())
 
 class TestStiffnessConstructor(unittest.TestCase):
     def test_averages(self):
