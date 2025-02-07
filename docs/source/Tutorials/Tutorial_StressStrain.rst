@@ -20,8 +20,8 @@ equivalent stresses:
 
             >>> strain = StrainTensor.shear([1,0,0], [0,1,0], 1e-3) # XY Shear strain with 1e-3 mag.
             >>> print(strain.principal_strains())
-            [-0.001  0.     0.001]
-            >>> print(strain.volumetricStrain())
+            [ 0.001  0.    -0.001]
+            >>> print(strain.volumetric_strain())
             0.0
             >>> stress = StressTensor.shear([1, 0, 0], [0, 1, 0], 1.0) # Unit XY shear stress
             >>> print(stress.vonMises(), stress.Tresca())
