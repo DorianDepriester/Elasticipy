@@ -232,7 +232,7 @@ class TestStressStrainTensors(unittest.TestCase):
         eps = Tensors.StrainTensor(matrix, force_symmetry=True)
         ori = Rotation.random(n_ori)
         C_rotated = C * ori
-        sigma = C_rotated * eps
+        sigma = C_rotated.matmul(eps)
 
         # Rotate stress and stress by their own
         eps_rot = eps.matmul(ori)
@@ -250,8 +250,12 @@ class TestStressStrainTensors(unittest.TestCase):
         strain = Tensors.StrainTensor.ones(shape_strain)
         ori = Rotation.random(n_ori)
         C_rotated = C * ori
-        stress = C_rotated * strain
+        stress = C_rotated.matmul(strain)
         self.assertEqual(stress.shape, (n_ori,) + shape_strain)
+        for i in range(5):
+            for j in range(4):
+                for k in range(3):
+                    assert np.all(stress[:,i,j,k] == C_rotated * strain[i,j,k])
 
     def test_Voigt_notation_strain(self):
         """
