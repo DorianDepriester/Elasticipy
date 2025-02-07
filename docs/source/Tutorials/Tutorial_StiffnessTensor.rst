@@ -55,7 +55,7 @@ deviation of the Young modulus:
 Another way to evidence anisotropy is to use the universal anisotropy factor [1]_:
 
     >>> C.universal_anisotropy
-    5.14100955164141
+    5.1410095516414085
 
 Shear moduli and Poisson ratios
 -------------------------------
