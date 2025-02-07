@@ -201,6 +201,19 @@ class TestComplianceTensor(unittest.TestCase):
         Siso= ComplianceTensor.isotropic(E=E, nu=nu)
         assert Siso.bulk_modulus == approx(E / (3 * (1-2 * nu)))
 
+    def test_mean(self):
+        m, n = 5, 10
+        orix_rotations = orix_rot.random((m, n))
+        S_rotated = S * orix_rotations
+        S_mean_0 = S_rotated.mean(axis=0)
+        for i in range(n):
+            np.testing.assert_array_almost_equal(S_mean_0[i], S_rotated[:,i].Reuss_average().full_tensor())
+        S_mean_1 = S_rotated.mean(axis=1)
+        for i in range(m):
+            np.testing.assert_array_almost_equal(S_mean_1[i], S_rotated[i,:].Reuss_average().full_tensor())
+        S_mean = S_rotated.mean()
+        np.testing.assert_array_almost_equal(S_mean, S_rotated.flatten().Reuss_average().full_tensor())
+
 class TestStiffnessConstructor(unittest.TestCase):
     def test_averages(self):
         """Check that the Voigt, Reuss and Hill averages are consistent with those provided by MP."""
@@ -680,6 +693,8 @@ class TestStiffnessConstructor(unittest.TestCase):
         E, nu = 210, 0.3
         Ciso= StiffnessTensor.isotropic(E=E, nu=nu)
         assert Ciso.bulk_modulus == approx(E / (3 * (1-2 * nu)))
+
+
 
 if __name__ == '__main__':
     unittest.main()
