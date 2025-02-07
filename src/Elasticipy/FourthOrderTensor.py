@@ -1,7 +1,11 @@
 import numpy as np
 import re
 
-from Elasticipy.SecondOrderTensor import SymmetricSecondOrderTensor, rotation_to_matrix, is_orix_rotation
+from dask.array import indices
+from numpy.matrixlib.defmatrix import matrix
+
+from Elasticipy.SecondOrderTensor import SymmetricSecondOrderTensor, rotation_to_matrix, is_orix_rotation, \
+    SecondOrderTensor
 from Elasticipy.StressStrainTensors import StrainTensor, StressTensor
 from Elasticipy.SphericalFunction import SphericalFunction, HyperSphericalFunction
 from scipy.spatial.transform import Rotation
@@ -340,11 +344,20 @@ class SymmetricTensor:
         if isinstance(other, SymmetricSecondOrderTensor):
             return SymmetricSecondOrderTensor(self * other.matrix)
         elif isinstance(other, np.ndarray):
-            if other.shape[-2:] == (3, 3):
-                if self.orientations is None:
-                    return np.einsum('ijkl,...kl->...ij', self.full_tensor(), other)
-                else:
-                    return np.einsum('qijkl,...kl->q...ij', self.full_tensor(), other)
+            if other.shape == (3, 3):
+                # other is a single tensor
+                matrix = np.einsum('...ijkl,kl->...ij', self.full_tensor(), other)
+                return SecondOrderTensor(matrix)
+            elif self.shape is None:
+                # other is an array, but self is single
+                matrix = np.einsum('ijkl,...kl->...ij', self.full_tensor(), other)
+                return SecondOrderTensor(matrix)
+            elif self.shape == other.shape[:-2]:
+                # other and self are arrays of the same shape
+                matrix = np.einsum('...ijkl,...kl->...ij', self.full_tensor(), other)
+                return SecondOrderTensor(matrix)
+            else:
+                raise ValueError('The arrays to multiply have inconsistent shapes. Try with dot or matprod.')
         elif isinstance(other, Rotation) or is_orix_rotation(other):
             if _is_single_rotation(other):
                 return self.rotate(other)
@@ -374,6 +387,19 @@ class SymmetricTensor:
         else:
             raise NotImplementedError('The element to compare with must be a fourth-order tensor '
                                       'or an array of shape (6,6).')
+
+    def matmul(self, other):
+        if isinstance(other, SecondOrderTensor):
+            other_matrix = other.matrix
+        else:
+            other_matrix = other
+        indices_0= 'abcdefgh'
+        indices_1= indices_0.upper()
+        indices_0 = indices_0[:self.ndim]
+        indices_1 = indices_1[:other_matrix.ndim-2]
+        ein_str = indices_0 + 'ijkl,' + indices_1 +'kl->' + indices_0 + indices_1 + 'ij'
+        new_mat = np.einsum(ein_str, self.full_tensor(), other_matrix)
+        return StrainTensor(new_mat)
 
     @classmethod
     def _matrixFromCrystalSymmetry(cls, symmetry='Triclinic', point_group=None, diad='y', prefix=None, **kwargs):
