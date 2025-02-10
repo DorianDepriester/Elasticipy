@@ -205,6 +205,13 @@ class SymmetricTensor:
 
     @property
     def shape(self):
+        """
+        Return the shape of the tensor array
+        Returns
+        -------
+        tuple
+            Shape of the tensor array
+        """
         o = self.orientations
         if o is None:
             return None
