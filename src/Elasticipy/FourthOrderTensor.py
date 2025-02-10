@@ -372,7 +372,7 @@ class SymmetricTensor:
                 matrix = np.einsum('...ijkl,...kl->...ij', self.full_tensor(), other)
                 return SecondOrderTensor(matrix)
             else:
-                raise ValueError('The arrays to multiply have inconsistent shapes. Try with dot or matprod.')
+                raise ValueError('The arrays to multiply could not be broadcast with shapes {} and {}'.format(self.shape, other.shape[:-2]))
         elif isinstance(other, Rotation) or is_orix_rotation(other):
             if _is_single_rotation(other):
                 return self.rotate(other)
