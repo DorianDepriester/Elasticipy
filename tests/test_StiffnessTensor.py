@@ -8,7 +8,7 @@ from Elasticipy.FourthOrderTensor import StiffnessTensor, ComplianceTensor
 from scipy.spatial.transform import Rotation
 from Elasticipy.FourthOrderTensor import _indices2str
 from Elasticipy.CrystalSymmetries import SYMMETRIES
-from Elasticipy.StressStrainTensors import StressTensor
+from Elasticipy.StressStrainTensors import StressTensor, StrainTensor
 from pymatgen.analysis.elasticity import elastic as mg
 from orix.quaternion import Rotation as orix_rot
 
@@ -694,6 +694,70 @@ class TestStiffnessConstructor(unittest.TestCase):
         E, nu = 210, 0.3
         Ciso= StiffnessTensor.isotropic(E=E, nu=nu)
         assert Ciso.bulk_modulus == approx(E / (3 * (1-2 * nu)))
+
+    def test_broadcasting(self):
+        C11, C12, C44 = 173, 33, 18
+        m,n,o = 9,7,5
+        rot_0d = orix_rot.random()
+        rot_1d = orix_rot.random(o)
+        rot_2d = orix_rot.random((n, o))
+        rot_3d = orix_rot.random((m, n, o))
+        C_0d = StiffnessTensor.cubic(C11=C11, C12=C12, C44=C44)
+        C_rotated_0d = C_0d * rot_0d
+        C_rotated_1d = C_0d * rot_1d
+        C_rotated_2d = C_0d * rot_2d
+        C_rotated_3d = C_0d * rot_3d
+        strain_0d = StrainTensor.rand()
+        strain_1d = StrainTensor.rand((o,))
+        strain_2d = StrainTensor.rand((n, o))
+        strain_3d = StrainTensor.rand((m, n, o))
+
+        stress = C_rotated_0d * strain_1d
+        for i in range(o):
+            assert stress[i] == C_rotated_0d * strain_1d[i]
+        stress = C_rotated_1d * strain_0d
+        for i in range(o):
+            np.testing.assert_array_almost_equal(stress[i].matrix, (C_rotated_1d[i] * strain_0d).matrix)
+        stress = C_rotated_1d * strain_1d
+        for i in range(o):
+            np.testing.assert_array_almost_equal(stress[i].matrix, (C_rotated_1d[i] * strain_1d[i]).matrix)
+        stress = C_rotated_2d * strain_0d
+        for i in range(n):
+            for j in range(o):
+                np.testing.assert_array_almost_equal(stress[i, j].matrix, (C_rotated_2d[i, j] * strain_0d).matrix)
+        stress = C_rotated_2d * strain_1d
+        for i in range(n):
+            for j in range(o):
+                np.testing.assert_array_almost_equal(stress[i,j].matrix, (C_rotated_2d[i,j] * strain_1d[j]).matrix)
+        stress = C_rotated_2d * strain_2d
+        for i in range(n):
+            for j in range(o):
+                np.testing.assert_array_almost_equal(stress[i,j].matrix, (C_rotated_2d[i,j] * strain_2d[i,j]).matrix)
+        stress = C_rotated_3d * strain_0d
+        for i in range(m):
+            for j in range(n):
+                for k in range(o):
+                    np.testing.assert_array_almost_equal(stress[i,j,k].matrix, (C_rotated_3d[i,j,k] * strain_0d).matrix)
+        stress = C_rotated_3d * strain_1d
+        for i in range(m):
+            for j in range(n):
+                for k in range(o):
+                    np.testing.assert_array_almost_equal(stress[i, j, k].matrix,
+                                                         (C_rotated_3d[i, j, k] * strain_1d[k]).matrix)
+        stress = C_rotated_3d * strain_2d
+        for i in range(m):
+            for j in range(n):
+                for k in range(o):
+                    np.testing.assert_array_almost_equal(stress[i, j, k].matrix,
+                                                         (C_rotated_3d[i, j, k] * strain_2d[j,k]).matrix)
+        stress = C_rotated_3d * strain_3d
+        for i in range(m):
+            for j in range(n):
+                for k in range(o):
+                    np.testing.assert_array_almost_equal(stress[i, j, k].matrix,
+                                                         (C_rotated_3d[i, j, k] * strain_3d[i,j,k]).matrix)
+
+
 
 
 
