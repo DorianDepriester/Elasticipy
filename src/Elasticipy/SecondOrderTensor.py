@@ -455,6 +455,44 @@ class SecondOrderTensor:
                 raise ValueError('The value to compare must be an array of shape {} or {}'.format(self.shape, self.shape + (3,3)))
 
     def dot(self, other, mode='pair'):
+        """
+        Perform contraction product ("dot product") between tensor.
+
+        On tensor arrays, the product contraction can be performed element-wise, or considering all cross-combinations
+        (see below).
+
+        Parameters
+        ----------
+        other : SecondOrderTensor
+            tensor or tensor array to compute the product from
+        mode : str, optional
+            If 'pair' (default), the contraction products of tensor arrays are applied element-wise.
+            If 'cross', all combinations of contraction product are considered. If A.shape==(m,n,o) and
+            B.shape==(r,s,t), A.dot(B,mode='cross').shape==(m,n,o,r,s,t).
+
+        Returns
+        -------
+        SecondOrderTensor
+
+        Examples
+        --------
+        >>> A=SecondOrderTensor.rand(3)
+        >>> B=SecondOrderTensor.rand(3)
+        >>> AB_pair = A.dot(B)
+        >>> AB_pair.shape
+        (3,)
+        >>> AB_cross = A.dot(B, mode='cross')
+        >>> AB_cross.shape
+        (3, 3)
+
+        We can check that:
+        >>> AB_pair[0] == A[0].dot(B[0])
+        True
+
+        and
+        >>> AB_cross[0,1] == A[0].dot(B[1])
+        True
+        """
         if self.shape == ():
             ein_str = 'ik,...kj->...ij'
         else:
@@ -945,7 +983,7 @@ class SecondOrderTensor:
 
         Parameters
         ----------
-        shape : tuple, optional
+        shape : int or tuple, optional
             Shape of the tensor array. If not provided, a single tensor is returned
         seed : int, optional
             Sets the seed for random generation. Useful to ensure reproducibility
@@ -977,6 +1015,8 @@ class SecondOrderTensor:
         """
         if shape is None:
             shape = (3,3)
+        elif isinstance(shape, int):
+            shape = (shape, 3, 3)
         else:
             shape = shape + (3,3)
         rng = np.random.default_rng(seed)
