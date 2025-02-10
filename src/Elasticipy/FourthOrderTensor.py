@@ -1,9 +1,6 @@
 import numpy as np
 import re
 
-from dask.array import indices
-from numpy.matrixlib.defmatrix import matrix
-
 from Elasticipy.SecondOrderTensor import SymmetricSecondOrderTensor, rotation_to_matrix, is_orix_rotation, \
     SecondOrderTensor
 from Elasticipy.StressStrainTensors import StrainTensor, StressTensor
@@ -11,6 +8,8 @@ from Elasticipy.SphericalFunction import SphericalFunction, HyperSphericalFuncti
 from scipy.spatial.transform import Rotation
 from Elasticipy.CrystalSymmetries import SYMMETRIES
 from copy import deepcopy
+
+ALPHABET = 'abcdefghijklmnopqrstuvwxyz'
 
 
 def _parse_tensor_components(prefix, **kwargs):
@@ -360,6 +359,13 @@ class SymmetricTensor:
             elif self.shape is None:
                 # other is an array, but self is single
                 matrix = np.einsum('ijkl,...kl->...ij', self.full_tensor(), other)
+                return SecondOrderTensor(matrix)
+            elif (self.ndim >= (other.ndim - 2)) and self.shape[-other.ndim+2:]==other.shape[:-2]:
+                # self.shape==(m,n,o,p) and other.shape==(o,p,3,3)
+                indices_0 = ALPHABET[:self.ndim]
+                indices_1 = indices_0[-other.ndim+2:]
+                ein_str = indices_0 + 'IJKL,' + indices_1 + 'KL->' + indices_0 + 'IJ'
+                matrix = np.einsum(ein_str, self.full_tensor(), other)
                 return SecondOrderTensor(matrix)
             elif self.shape == other.shape[:-2]:
                 # other and self are arrays of the same shape
