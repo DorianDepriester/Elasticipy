@@ -502,7 +502,7 @@ class SecondOrderTensor:
             new_mat = np.matmul(matrix_expanded, other_expanded)
             return SecondOrderTensor(np.squeeze(new_mat))
 
-    def transposeArray(self):
+    def transpose_array(self):
         """
         Transpose the array of tensors
 
@@ -538,7 +538,7 @@ class SecondOrderTensor:
         SecondOrderTensor
             Transposed array
         """
-        return self.transposeArray()
+        return self.transpose_array()
 
     def _transposeTensor(self):
         return _transpose_matrix(self.matrix)

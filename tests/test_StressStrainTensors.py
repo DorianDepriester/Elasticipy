@@ -70,7 +70,7 @@ class TestStressStrainTensors(unittest.TestCase):
 
         # Check that transposing a single tensor has no effect
         a = SecondOrderTensor.rand()
-        assert a == a.transposeArray()
+        assert a == a.transpose_array()
 
     def test_transpose_tensor(self):
         """
@@ -238,7 +238,7 @@ class TestStressStrainTensors(unittest.TestCase):
         eps_rot = eps.matmul(ori)
         sigma_rot2 = C * eps_rot
         sigma2 = sigma_rot2 * ori.inv()
-        np.testing.assert_almost_equal(sigma.matrix, sigma2.transposeArray().matrix)
+        np.testing.assert_almost_equal(sigma.matrix, sigma2.transpose_array().matrix)
 
     def test_multidimensional_tensors(self, ):
         """
