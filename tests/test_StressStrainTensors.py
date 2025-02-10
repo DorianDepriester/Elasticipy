@@ -9,6 +9,8 @@ from Elasticipy.SecondOrderTensor import SecondOrderTensor, SymmetricSecondOrder
 from Elasticipy.StressStrainTensors import StrainTensor, StressTensor
 from pymatgen.analysis.elasticity import Strain as mgStrain, Stress as mgStress
 
+from Examples.essai_plasticity import model
+
 Cmat = [[231, 127, 104, 0, -18, 0],
         [127, 240, 131, 0, 1, 0],
         [104, 131, 175, 0, -3, 0],
@@ -670,6 +672,40 @@ class TestStressStrainTensors(unittest.TestCase):
         n=5
         b=Tensors.StressTensor.ones(n)
         assert b.__repr__() == 'Stress tensor\nShape=({},)'.format(n)
+
+    def test_dot(self):
+        m, n = 5, 6
+        a_0d = StrainTensor.rand()
+        a_1d = StrainTensor.rand((m,))
+        a_2d = StressTensor.rand((m, n))
+        b_0d = StrainTensor.rand()
+        b_1d = StrainTensor.rand((m,))
+        b_2d = StressTensor.rand((m, n))
+        ab = a_0d.dot(b_0d)
+        np.testing.assert_array_almost_equal(ab.matrix, np.matmul(a_0d.matrix, b_0d.matrix))
+        ab = a_0d.dot(b_1d)
+        for i in range(m):
+            np.testing.assert_array_almost_equal(ab[i].matrix, np.matmul(a_0d.matrix, b_1d[i].matrix))
+        ab = a_1d.dot(b_1d)
+        for i in range(m):
+            np.testing.assert_array_almost_equal(ab[i].matrix, np.matmul(a_1d[i].matrix, b_1d[i].matrix))
+        ab = a_2d.dot(b_2d)
+        for i in range(m):
+            for j in range(n):
+                np.testing.assert_array_almost_equal(ab[i,j].matrix, np.matmul(a_2d[i,j].matrix, b_2d[i,j].matrix))
+
+        ab = a_1d.dot(b_1d, mode='cross')
+        for i in range(m):
+            for j in range(m):
+                np.testing.assert_array_almost_equal(ab[i,j].matrix, np.matmul(a_1d[i].matrix, b_1d[j].matrix))
+        ab = a_2d.dot(b_2d, mode='cross')
+        for i in range(m):
+            for j in range(n):
+                for k in range(m):
+                    for l in range(n):
+                        np.testing.assert_array_almost_equal(ab[i,j,k,l].matrix, np.matmul(a_2d[i,j].matrix, b_2d[k,l].matrix))
+
+
 
 if __name__ == '__main__':
     unittest.main()
