@@ -454,6 +454,28 @@ class SecondOrderTensor:
             else:
                 raise ValueError('The value to compare must be an array of shape {} or {}'.format(self.shape, self.shape + (3,3)))
 
+    def dot(self, other, mode='pair'):
+        if self.shape == ():
+            ein_str = 'ik,...kj->...ij'
+        else:
+            if mode=='pair':
+                if other.shape == self.shape:
+                    ein_str = '...ik,...kj->...ij'
+                else:
+                    raise ValueError('Tensors of shape {} and {} have inconsistent shapes. Try with mode="cross"')
+            elif mode=='cross':
+                ndim_0 = self.ndim
+                ndim_1 = other.ndim
+                indices_0 = ALPHABET[:ndim_0]
+                indices_1 = ALPHABET[:ndim_1].upper()
+                indices_2 = indices_0 + indices_1
+                ein_str = indices_0 + 'ik,' + indices_1 + 'kj->' + indices_2 + 'ij'
+            else:
+                raise ValueError('Invalid mode. Use "pair" or "cross".')
+        matrix = np.einsum(ein_str, self.matrix, other.matrix)
+        return SecondOrderTensor(matrix)
+
+
     def matmul(self, other):
         """
         Perform matrix-like product between tensor arrays. Each "product" is a matrix product between
