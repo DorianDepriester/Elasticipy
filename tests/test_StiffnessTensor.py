@@ -763,17 +763,18 @@ class TestStiffnessConstructor(unittest.TestCase):
         assert str(context.exception) == expected_error
 
     def test_transpose_array(self):
-        m,n = 5, 6
-        rot_2d = orix_rot.random((m, n))
+        m, n, o = 5, 6, 7
+        rot_2d = orix_rot.random((m, n, o))
         C11, C12, C44 = 173, 33, 18
         C = StiffnessTensor.cubic(C11=C11, C12=C12, C44=C44)
         C_rotated = C * rot_2d
         C_rotated_T = C_rotated.transpose_array()
         assert C.transpose_array() == C
-        assert C_rotated_T.shape == (n, m)
+        assert C_rotated_T.shape == (o, n, m)
         for i in range(m):
             for j in range(n):
-                assert C_rotated_T[j,i] == C_rotated[i,j]
+                for k in range(o):
+                    np.testing.assert_array_almost_equal(C_rotated_T[k,j,i].full_tensor(), C_rotated[i,j,k].full_tensor())
 
 if __name__ == '__main__':
     unittest.main()
