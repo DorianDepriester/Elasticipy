@@ -391,11 +391,13 @@ class SymmetricTensor:
         FourthOrderTensor
             The same tensor, but with transposed orientations
         """
-        if self.ndim==0 or self.ndim==1:
+        ndim = self.ndim
+        if ndim==0 or ndim==1:
             return self
         else:
             new_tensor = self._unrotate()
-            new_tensor.orientations = self.orientations.transpose()
+            new_order = np.flip(range(ndim))
+            new_tensor.orientations = self.orientations.transpose(*new_order)
             return new_tensor
 
     def __rmul__(self, other):
