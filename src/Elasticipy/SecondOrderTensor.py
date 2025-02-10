@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 from scipy.spatial.transform import Rotation
 
+ALPHABET = 'abcdefghijklmnopqrstuvwxyz'
 
 class _MatrixProxy:
     def __init__(self, matrix):

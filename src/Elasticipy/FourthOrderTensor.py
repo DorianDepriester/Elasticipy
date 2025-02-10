@@ -2,14 +2,12 @@ import numpy as np
 import re
 
 from Elasticipy.SecondOrderTensor import SymmetricSecondOrderTensor, rotation_to_matrix, is_orix_rotation, \
-    SecondOrderTensor
+    SecondOrderTensor, ALPHABET
 from Elasticipy.StressStrainTensors import StrainTensor, StressTensor
 from Elasticipy.SphericalFunction import SphericalFunction, HyperSphericalFunction
 from scipy.spatial.transform import Rotation
 from Elasticipy.CrystalSymmetries import SYMMETRIES
 from copy import deepcopy
-
-ALPHABET = 'abcdefghijklmnopqrstuvwxyz'
 
 
 def _parse_tensor_components(prefix, **kwargs):
