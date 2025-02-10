@@ -382,6 +382,22 @@ class SymmetricTensor:
         else:
             return self.__class__(self.matrix * other, symmetry=self.symmetry)
 
+    def transpose_array(self):
+        """
+        Transpose the orientations of the tensor array
+
+        Returns
+        -------
+        FourthOrderTensor
+            The same tensor, but with transposed orientations
+        """
+        if self.ndim==0 or self.ndim==1:
+            return self
+        else:
+            new_tensor = self._unrotate()
+            new_tensor.orientations = self.orientations.transpose()
+            return new_tensor
+
     def __rmul__(self, other):
         if isinstance(other, (Rotation, float, int, np.number)) or is_orix_rotation(other):
             return self * other
