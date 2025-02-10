@@ -251,7 +251,7 @@ class SecondOrderTensor:
         I3 : Third invariant of the tensors (det)
         """
         a = self.I1**2
-        b = np.matmul(self.matrix, self._transposeTensor()).trace(axis1=-1, axis2=-2)
+        b = np.matmul(self.matrix, self._transpose_tensor()).trace(axis1=-1, axis2=-2)
         return 0.5 * (a - b)
 
     @property
@@ -531,7 +531,7 @@ class SecondOrderTensor:
         """
         Transpose the array of tensors.
 
-        It is actually an alias for transposeArray()
+        It is actually an alias for transpose_array()
 
         Returns
         -------
@@ -540,10 +540,10 @@ class SecondOrderTensor:
         """
         return self.transpose_array()
 
-    def _transposeTensor(self):
+    def _transpose_tensor(self):
         return _transpose_matrix(self.matrix)
 
-    def transposeTensor(self):
+    def transpose_tensor(self):
         """
         Transpose of tensors of the tensor array
 
@@ -554,9 +554,9 @@ class SecondOrderTensor:
 
         See Also
         --------
-        Transpose : transpose the array (not the components)
+        transpose_array : transpose the array (not the components)
         """
-        return self.__class__(self._transposeTensor())
+        return self.__class__(self._transpose_tensor())
 
     def ddot(self, other):
         """
@@ -581,7 +581,7 @@ class SecondOrderTensor:
         matmul : matrix-like product between two tensor arrays.
 
         """
-        tensor_prod = self.transposeTensor()*other
+        tensor_prod = self.transpose_tensor() * other
         return tensor_prod.trace()
 
     def _flatten(self):
@@ -750,7 +750,7 @@ class SecondOrderTensor:
             return self
 
     def _symmetric_part(self):
-        return 0.5 * (self.matrix + self._transposeTensor())
+        return 0.5 * (self.matrix + self._transpose_tensor())
 
     def symmetric_part(self):
         """
@@ -776,7 +776,7 @@ class SecondOrderTensor:
         SkewSymmetricSecondOrderTensor
             Skew-symmetric tensor
         """
-        new_mat = 0.5 * (self.matrix - self._transposeTensor())
+        new_mat = 0.5 * (self.matrix - self._transpose_tensor())
         return SkewSymmetricSecondOrderTensor(new_mat)
 
     def spherical_part(self):
