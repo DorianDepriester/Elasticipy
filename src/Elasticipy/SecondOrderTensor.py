@@ -408,10 +408,7 @@ class SecondOrderTensor:
         if isinstance(B, SecondOrderTensor):
             return self.dot(B, mode='pair')
         elif isinstance(B, Rotation) or is_orix_rotation(B):
-            rotation_matrices, transpose_matrices = rotation_to_matrix(B, return_transpose=True)
-            new_matrix = np.matmul(np.matmul(transpose_matrices, self.matrix), rotation_matrices)
-            # In case of rotation, the property of the transformed tensor is kept
-            return self.__class__(new_matrix)
+            return self.rotate(B, mode='pair')
         elif isinstance(B, (float, int)):
             return self.__class__(self.matrix * B)
         elif isinstance(B, np.ndarray):
@@ -437,8 +434,7 @@ class SecondOrderTensor:
         ----------
         rotation : scipy.spatial.Rotation or orix.quaternion.Rotation
         mode : str, optional
-            If 'pair', the rotations are applied element wise. The shape of the rotations must be equal to that the
-            tensor array.
+            If 'pair', the rotations are applied element wise. Broadcasting rule applies.
             If 'cross', all the possible combinations are considered. If ``C=A.rotate(rot)``, then
             ``C.shape==A.shape + rot.shape``.
 
@@ -452,11 +448,17 @@ class SecondOrderTensor:
             ein_str = 'li,kj,...lk->...ij'
         else:
             if mode=='pair':
-                if rotation.shape == self.shape:
+                shape = _orientation_shape(rotation)
+                ndim = len(shape)
+                if shape == self.shape:
                     ein_str = '...li,...kj,...lk->...ij'
+                elif shape == self.shape[-ndim:]:
+                    indices_self = ALPHABET[:self.ndim]
+                    indices_g = indices_self[-ndim:]
+                    ein_str = indices_g + 'zw,' + indices_g + 'yx,' + indices_self + 'zy->' + indices_self + 'wx'
                 else:
                     raise ValueError('Tensor with shape {} cannot be rotated by orientation with shape {}. '
-                                     'Try with mode="cross" instead.')
+                                     'Try with mode="cross" instead.'.format(self.shape, shape))
             elif mode=='cross':
                 ndim_0 = self.ndim
                 ndim_1 = len(_orientation_shape(rotation))
@@ -468,7 +470,7 @@ class SecondOrderTensor:
                 raise ValueError('Invalid mode. It can be "cross" or "pari".')
         g_mat = rotation_to_matrix(rotation)
         matrix = np.einsum(ein_str, g_mat, g_mat, self.matrix)
-        return SecondOrderTensor(matrix)
+        return self.__class__(matrix)
 
     def __rmul__(self, other):
         if isinstance(other, (float, int)):
