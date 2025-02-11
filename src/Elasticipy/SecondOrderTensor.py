@@ -448,17 +448,7 @@ class SecondOrderTensor:
             ein_str = 'li,kj,...lk->...ij'
         else:
             if mode=='pair':
-                shape = _orientation_shape(rotation)
-                ndim = len(shape)
-                if shape == self.shape:
-                    ein_str = '...li,...kj,...lk->...ij'
-                elif shape == self.shape[-ndim:]:
-                    indices_self = ALPHABET[:self.ndim]
-                    indices_g = indices_self[-ndim:]
-                    ein_str = indices_g + 'zw,' + indices_g + 'yx,' + indices_self + 'zy->' + indices_self + 'wx'
-                else:
-                    raise ValueError('Tensor with shape {} cannot be rotated by orientation with shape {}. '
-                                     'Try with mode="cross" instead.'.format(self.shape, shape))
+                ein_str = '...li,...kj,...lk->...ij'
             elif mode=='cross':
                 ndim_0 = self.ndim
                 ndim_1 = len(_orientation_shape(rotation))
