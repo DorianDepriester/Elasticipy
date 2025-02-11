@@ -432,7 +432,7 @@ class SecondOrderTensor:
             raise NotImplementedError('Tensors can only be divided by scalar values or by arrays of the same shape.')
         return self.__class__(new_mat)
 
-    def __eq__(self, other) -> np.ndarray:
+    def __eq__(self, other):
         """
         Check whether the tensors in the tensor array are equal
 
@@ -443,7 +443,7 @@ class SecondOrderTensor:
 
         Returns
         -------
-        np.array of bool
+        numpy.ndarray
             True element is True if the corresponding tensors are equal.
         """
         if isinstance(other, SecondOrderTensor):
@@ -466,9 +466,10 @@ class SecondOrderTensor:
         other : SecondOrderTensor
             tensor or tensor array to compute the product from
         mode : str, optional
-            If 'pair' (default), the contraction products of tensor arrays are applied element-wise.
-            If 'cross', all combinations of contraction product are considered. If A.shape==(m,n,o) and
-            B.shape==(r,s,t), A.dot(B,mode='cross').shape==(m,n,o,r,s,t).
+            If 'pair' (default), the contraction products of tensor arrays are applied element-wise. The two tensors
+            must be of the same shape.
+            If 'cross', all combinations of contraction product are considered. If ``C=A.dot(B,mode='cross')``, then
+            ``C.shape==A.shape + B.shape``
 
         Returns
         -------
@@ -485,13 +486,19 @@ class SecondOrderTensor:
         >>> AB_cross.shape
         (3, 3)
 
-        We can check that:
+        We can for instance check that:
+
         >>> AB_pair[0] == A[0].dot(B[0])
         True
 
-        and
+        and:
+
         >>> AB_cross[0,1] == A[0].dot(B[1])
         True
+
+        See Also
+        --------
+        ddot : Double-contraction product
         """
         if self.shape == ():
             ein_str = 'ik,...kj->...ij'
