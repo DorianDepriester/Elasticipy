@@ -1,3 +1,5 @@
+import warnings
+
 import numpy as np
 import pandas as pd
 from scipy.spatial.transform import Rotation
@@ -595,6 +597,11 @@ class SecondOrderTensor:
         --------
         __mul__ : Element-wise matrix product
         """
+        warnings.warn(
+            'matmul() is deprecated and will be removed in a future version. Use dot(tensor,mode="cross") or '
+            'rotate(rotation,mode="cross") instead.',
+            DeprecationWarning,
+            stacklevel=2)
         if isinstance(other, SecondOrderTensor):
             return self.dot(other, mode='cross')
         elif isinstance(other, Rotation) or is_orix_rotation(Rotation):
