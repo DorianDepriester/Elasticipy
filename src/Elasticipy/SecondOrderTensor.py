@@ -457,7 +457,7 @@ class SecondOrderTensor:
                 indices_res = indices_self + indices_g
                 ein_str = indices_g + 'zw,' + indices_g + 'yx,' + indices_self + 'zy->' + indices_res + 'wx'
             else:
-                raise ValueError('Invalid mode. It can be "cross" or "pari".')
+                raise ValueError('Invalid mode. It can be "cross" or "pair".')
         g_mat = rotation_to_matrix(rotation)
         matrix = np.einsum(ein_str, g_mat, g_mat, self.matrix)
         return self.__class__(matrix)
