@@ -38,6 +38,12 @@ def _transpose_matrix(matrix):
 def _symmetric_part(matrix):
     return 0.5 * (matrix + _transpose_matrix(matrix))
 
+def _orientation_shape(g):
+    if is_orix_rotation(g):
+        return g.shape
+    else:
+        return (len(g),)
+
 class SecondOrderTensor:
     """
     Template class for manipulation of second order tensors or arrays of second order tensors

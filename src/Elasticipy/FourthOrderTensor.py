@@ -3,6 +3,7 @@ import re
 
 from Elasticipy.SecondOrderTensor import SymmetricSecondOrderTensor, rotation_to_matrix, is_orix_rotation, \
     SecondOrderTensor, ALPHABET
+from Elasticipy.SecondOrderTensor import _orientation_shape
 from Elasticipy.StressStrainTensors import StrainTensor, StressTensor
 from Elasticipy.SphericalFunction import SphericalFunction, HyperSphericalFunction
 from scipy.spatial.transform import Rotation
@@ -212,10 +213,8 @@ class SymmetricTensor:
         o = self.orientations
         if o is None:
             return None
-        elif is_orix_rotation(o):
-            return o.shape
         else:
-            return (len(o),)
+            return _orientation_shape(o)
 
     def full_tensor(self):
         """
