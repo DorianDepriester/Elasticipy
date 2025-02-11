@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from numpy.ma.core import shape
 from scipy.spatial.transform import Rotation
 
 ALPHABET = 'abcdefghijklmnopqrstuvwxyz'
