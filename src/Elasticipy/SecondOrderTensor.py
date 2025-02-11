@@ -658,7 +658,7 @@ class SecondOrderTensor:
         """
         return self.__class__(self._transpose_tensor())
 
-    def ddot(self, other):
+    def ddot(self, other, mode='pair'):
         """
         Double dot product (contraction of tensor product, usually denoted ":") of two tensors.
 
@@ -670,6 +670,11 @@ class SecondOrderTensor:
         ----------
         other : SecondOrderTensor or np.ndarray
             Tensor or tensor array to multiply by before contraction.
+        mode : str, optional
+            If "pair", the dot products are performed element-wise before contraction. Broadcasting rule applies.
+            If "cross", all the cross-combinations are computed, increasing the dimensionality.
+            If ``C=A.ddot(B, mode='cross')``, then ``C.shape = A.shape + B.shape``.
+
 
         Returns
         -------
@@ -678,10 +683,10 @@ class SecondOrderTensor:
 
         See Also
         --------
-        matmul : matrix-like product between two tensor arrays.
+        dot : contraction product ("dot product") between tensor.
 
         """
-        tensor_prod = self.transpose_tensor() * other
+        tensor_prod = self.transpose_tensor().dot(other, mode=mode)
         return tensor_prod.trace()
 
     def _flatten(self):
