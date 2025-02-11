@@ -535,18 +535,19 @@ class SecondOrderTensor:
 
         Examples
         --------
-        >>> A=SecondOrderTensor.rand(3)
-        >>> B=SecondOrderTensor.rand(3)
+        >>> from Elasticipy.SecondOrderTensor import SecondOrderTensor
+        >>> A=SecondOrderTensor.rand(10)
+        >>> B=SecondOrderTensor.rand(10)
         >>> AB_pair = A.dot(B)
         >>> AB_pair.shape
-        (3,)
+        (10,)
         >>> AB_cross = A.dot(B, mode='cross')
         >>> AB_cross.shape
-        (3, 3)
+        (10, 10)
 
         We can for instance check that:
 
-        >>> AB_pair[0] == A[0].dot(B[0])
+        >>> AB_pair[5] == A[5].dot(B[5])
         True
 
         and:
