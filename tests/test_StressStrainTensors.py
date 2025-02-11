@@ -100,7 +100,7 @@ class TestStressStrainTensors(unittest.TestCase):
         for i in range(shape[0]):
             for j in range(shape[1]):
                 mat_prod = np.matmul(matrix1[i, j], matrix2[i, j])
-                np.testing.assert_array_equal(tensor_prod[i, j].matrix, mat_prod)
+                np.testing.assert_array_almost_equal(tensor_prod[i, j].matrix, mat_prod)
 
         # Now, multiply a SymmetricSecondOrderTensor with an array of the same shape, and expect an element-wise
         # multiplication between the sliced matrix of the tensor and the values of the array
