@@ -608,25 +608,11 @@ class SecondOrderTensor:
         __mul__ : Element-wise matrix product
         """
         if isinstance(other, SecondOrderTensor):
-            other_matrix = other.matrix
+            return self.dot(other, mode='cross')
         elif isinstance(other, Rotation) or is_orix_rotation(Rotation):
-            other_matrix = rotation_to_matrix(other)
+            return self.rotate(other, mode='cross')
         else:
-            other_matrix = other
-        matrix = self.matrix
-        shape_matrix = matrix.shape[:-2]
-        shape_other = other_matrix.shape[:-2]
-        extra_dim_matrix = len(shape_other)
-        extra_dim_other = len(shape_matrix)
-        matrix_expanded = matrix.reshape(shape_matrix + (1,) * extra_dim_other + (3, 3))
-        other_expanded = other_matrix.reshape((1,) * extra_dim_matrix + shape_other + (3, 3))
-        if isinstance(other, Rotation):
-            other_expanded_t = _transpose_matrix(other_expanded)
-            new_mat = np.matmul(np.matmul(other_expanded_t, matrix_expanded), other_expanded)
-            return self.__class__(np.squeeze(new_mat))
-        else:
-            new_mat = np.matmul(matrix_expanded, other_expanded)
-            return SecondOrderTensor(np.squeeze(new_mat))
+            raise ValueError('The input argument must be either a rotation or a SecondOrderTensor')
 
     def transpose_array(self):
         """
