@@ -518,6 +518,7 @@ class SecondOrderTensor:
         mode : str, optional
             If 'pair' (default), the contraction products of tensor arrays are applied element-wise. Broadcasting rule
              applies.
+
             If 'cross', all combinations of contraction product are considered. If ``C=A.dot(B,mode='cross')``, then
             ``C.shape==A.shape + B.shape``
 
@@ -533,6 +534,7 @@ class SecondOrderTensor:
         >>> AB_pair = A.dot(B)
         >>> AB_pair.shape
         (10,)
+
         >>> AB_cross = A.dot(B, mode='cross')
         >>> AB_cross.shape
         (10, 10)
