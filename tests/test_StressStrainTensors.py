@@ -193,15 +193,13 @@ class TestStressStrainTensors(unittest.TestCase):
         Test the ddot method.
         """
         shape = (4, 3, 2)
-        matrix1 = np.random.random(shape + (3, 3))
-        matrix2 = np.random.random(shape + (3, 3))
-        tens1 = SecondOrderTensor(matrix1)
-        tens2 = SecondOrderTensor(matrix2)
+        tens1 = SecondOrderTensor.rand(shape)
+        tens2 = SecondOrderTensor.rand(shape[1:])   # Force tens2 to have a different shape, just to check broadcasting
         ddot = tens1.ddot(tens2)
         for i in range(0, shape[0]):
             for j in range(0, shape[1]):
                 for k in range(0, shape[2]):
-                    ddot_th = np.trace(np.matmul(matrix1[i,j,k].T, matrix2[i,j,k]))
+                    ddot_th = np.trace(np.matmul(tens1.matrix[i,j,k].T, tens2.matrix[j,k]))
                     assert ddot_th == approx(ddot[i, j, k])
 
     def test_vonMises_Tresca(self):
