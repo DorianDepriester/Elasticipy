@@ -104,7 +104,7 @@ class StressTensor(SymmetricSecondOrderTensor):
         ps = self.principal_stresses()
         return ps[...,0] - ps[...,-1]
 
-    def hydrostaticPressure(self):
+    def hydrostatic_pressure(self):
         """
         Hydrostatic pressure
 
