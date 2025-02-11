@@ -181,11 +181,11 @@ For example, let's consider a random set of 1000 rotations:
 
 These rotations can be applied on the strain tensor
 
-    >>> eps_rotated = eps.matmul(rotations)
+    >>> eps_rotated = eps.rotate(rotations, mode='cross')
 
 
-The ``matmul()`` operator just works like the matrix product, thus increasing the dimensionality of the array.
-Here, we thus get an array of shape (10, 1000).
+Option ``mode='cross'`` allows to compute all combinations of strains and rotation, resulting in a kind of 2D matrix of
+strain tensors:
 
     >>> print(eps_rotated.shape)
     (10, 1000)
@@ -200,8 +200,11 @@ And get the stress back to the initial coordinate system:
 
     >>> sigma = sigma_rotated * rotations.inv()   # Go back to initial frame
 
-As opposed to the ``matmul()`` operator (see above), we use ``*`` here to keep the same dimensionality (perform
-element-wise multiplication).
+As opposed to the ``rotate(..., mode='cross')`` (see above), we use ``*`` here to keep the same
+dimensionality (perform element-wise multiplication). It is equivalent to:
+
+    >>> sigma = sigma_rotated.rotate(rotations.inv())
+
 Finally, we can estimate the mean stresses among all the orientations:
 
     >>> sigma_mean = sigma.mean(axis=1)     # Compute the mean over all orientations
