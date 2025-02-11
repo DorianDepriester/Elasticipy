@@ -8,6 +8,7 @@ import Elasticipy.StressStrainTensors as Tensors
 from Elasticipy.SecondOrderTensor import SecondOrderTensor, SymmetricSecondOrderTensor, SkewSymmetricSecondOrderTensor
 from Elasticipy.StressStrainTensors import StrainTensor, StressTensor
 from pymatgen.analysis.elasticity import Strain as mgStrain, Stress as mgStress
+from orix.quaternion import Rotation as orix_rot
 
 Cmat = [[231, 127, 104, 0, -18, 0],
         [127, 240, 131, 0, 1, 0],
@@ -703,6 +704,56 @@ class TestStressStrainTensors(unittest.TestCase):
                     for l in range(n):
                         np.testing.assert_array_almost_equal(ab[i,j,k,l].matrix, np.matmul(a_2d[i,j].matrix, b_2d[k,l].matrix))
 
+
+    def test_rotate_orix(self):
+        m, n = 5, 6
+        t_0d = StrainTensor.rand()
+        t_1d = StrainTensor.rand((m,))
+        t_2d = StressTensor.rand((m, n))
+        g_0d = orix_rot.random()
+        g_1d = orix_rot.random(m)
+        g_2d = orix_rot.random((m,n))
+
+        a_rot = t_0d.rotate(g_0d)
+        g_mat = g_0d.to_matrix()[0]
+        np.testing.assert_array_almost_equal(a_rot.matrix, np.matmul(np.matmul(g_mat, t_0d.matrix), g_mat.T),)
+
+        a_rot = t_1d.rotate(g_0d)
+        for i in range(m):
+            g_mat = g_0d.to_matrix()[0]
+            np.testing.assert_array_almost_equal(a_rot[i].matrix, np.matmul(np.matmul(g_mat, t_1d[i].matrix), g_mat.T), )
+
+        a_rot = t_1d.rotate(g_1d)
+        for i in range(m):
+            g_mat = g_1d.to_matrix()[i]
+            np.testing.assert_array_almost_equal(a_rot[i].matrix, np.matmul(np.matmul(g_mat, t_1d[i].matrix), g_mat.T), )
+
+        a_rot = t_0d.rotate(g_1d)
+        for i in range(m):
+            g_mat = g_1d.to_matrix()[i]
+            np.testing.assert_array_almost_equal(a_rot[i].matrix, np.matmul(np.matmul(g_mat, t_0d.matrix), g_mat.T), )
+
+        a_rot = t_2d.rotate(g_2d)
+        for i in range(m):
+            for j in range(n):
+                g_mat = g_2d.to_matrix()[i,j]
+                np.testing.assert_array_almost_equal(a_rot[i,j].matrix, np.matmul(np.matmul(g_mat, t_2d[i,j].matrix), g_mat.T), )
+
+        # Try with 'cross' option
+        a_rot = t_1d.rotate(g_1d, mode='cross')
+        assert a_rot.shape == (m,m)
+        for i in range(m):
+            for j in range(m):
+                g_mat = g_1d.to_matrix()[j]
+                np.testing.assert_array_almost_equal(a_rot[i,j].matrix, np.matmul(np.matmul(g_mat, t_1d[i].matrix), g_mat.T), )
+
+        a_rot = t_1d.rotate(g_2d, mode='cross')
+        assert a_rot.shape == (m,m,n)
+        for i in range(m):
+            for j in range(m):
+                for k in range(m):
+                    g_mat = g_2d.to_matrix()[j,k]
+                    np.testing.assert_array_almost_equal(a_rot[i,j,k].matrix, np.matmul(np.matmul(g_mat, t_1d[i].matrix), g_mat.T), )
 
 
 if __name__ == '__main__':
