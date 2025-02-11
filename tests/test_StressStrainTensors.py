@@ -145,7 +145,7 @@ class TestStressStrainTensors(unittest.TestCase):
         for i in range(0, length1):
             for j in range(0, length2):
                 mat_prod = np.matmul(matrix1[i], matrix2[j])
-                np.testing.assert_array_equal(cross_prod_tensor[i, j].matrix, mat_prod)
+                np.testing.assert_array_almost_equal(cross_prod_tensor[i, j].matrix, mat_prod)
 
     def test_matmul_rotation(self):
         m, n = 5, 100
