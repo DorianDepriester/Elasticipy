@@ -3,7 +3,7 @@ import re
 
 from Elasticipy.SecondOrderTensor import SymmetricSecondOrderTensor, rotation_to_matrix, is_orix_rotation, \
     SecondOrderTensor, ALPHABET
-from Elasticipy.SecondOrderTensor import _orientation_shape
+from Elasticipy.SecondOrderTensor import _orientation_shape, _is_single_rotation
 from Elasticipy.StressStrainTensors import StrainTensor, StressTensor
 from Elasticipy.SphericalFunction import SphericalFunction, HyperSphericalFunction
 from scipy.spatial.transform import Rotation
@@ -93,16 +93,6 @@ def _check_definite_positive(mat):
     except np.linalg.LinAlgError:
         eigen_val = np.linalg.eigvals(mat)
         raise ValueError('The input matrix is not definite positive (eigenvalues: {})'.format(eigen_val))
-
-
-def _is_single_rotation(rotation):
-    if isinstance(rotation, Rotation):
-        return rotation.single
-    elif is_orix_rotation(rotation):
-        return rotation.size == 1
-    else:
-        raise TypeError('The input argument must be of class scipy.transform.Rotation or '
-                        'orix.quaternion.rotation.Rotation')
 
 
 def _rotate_tensor(full_tensor, rotation):

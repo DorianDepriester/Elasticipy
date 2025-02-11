@@ -44,6 +44,15 @@ def _orientation_shape(g):
     else:
         return (len(g),)
 
+def _is_single_rotation(rotation):
+    if isinstance(rotation, Rotation):
+        return rotation.single
+    elif is_orix_rotation(rotation):
+        return rotation.size == 1
+    else:
+        raise TypeError('The input argument must be of class scipy.transform.Rotation or '
+                        'orix.quaternion.rotation.Rotation')
+
 class SecondOrderTensor:
     """
     Template class for manipulation of second order tensors or arrays of second order tensors
