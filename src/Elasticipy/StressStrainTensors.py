@@ -118,17 +118,21 @@ class StressTensor(SymmetricSecondOrderTensor):
         """
         return -self.I1/3
 
-    def elastic_energy(self, strain):
+    def elastic_energy(self, strain, mode='pair'):
         """
         Compute the elastic energy.
 
         Parameters
         ----------
         strain : StrainTensor
-            Corresponding strain tensor
+            Corresponding elastic strain tensor
+        mode : str, optional
+            If 'pair' (default), the elastic energies are computed element-wise. Broadcasting rule applies.
+            If 'cross', each cross-combination of stress and strain are considered.
 
         Returns
         -------
-        Volumetric elastic energy
+        numpy.ndarray
+            Volumetric elastic energy
         """
-        return 0.5 * self.ddot(strain)
+        return 0.5 * self.ddot(strain, mode=mode)
