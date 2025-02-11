@@ -202,7 +202,7 @@ class TestStressStrainTensors(unittest.TestCase):
             for j in range(0, shape[1]):
                 for k in range(0, shape[2]):
                     ddot_th = np.trace(np.matmul(matrix1[i,j,k].T, matrix2[i,j,k]))
-                    self.assertEqual(ddot_th, ddot[i, j, k])
+                    assert ddot_th == approx(ddot[i, j, k])
 
     def test_vonMises_Tresca(self):
         """
