@@ -9,8 +9,6 @@ from Elasticipy.SecondOrderTensor import SecondOrderTensor, SymmetricSecondOrder
 from Elasticipy.StressStrainTensors import StrainTensor, StressTensor
 from pymatgen.analysis.elasticity import Strain as mgStrain, Stress as mgStress
 
-from Examples.essai_plasticity import model
-
 Cmat = [[231, 127, 104, 0, -18, 0],
         [127, 240, 131, 0, 1, 0],
         [104, 131, 175, 0, -3, 0],
