@@ -524,8 +524,8 @@ class SecondOrderTensor:
         other : SecondOrderTensor
             tensor or tensor array to compute the product from
         mode : str, optional
-            If 'pair' (default), the contraction products of tensor arrays are applied element-wise. The two tensors
-            must be of the same shape.
+            If 'pair' (default), the contraction products of tensor arrays are applied element-wise. Broadcasting rule
+             applies.
             If 'cross', all combinations of contraction product are considered. If ``C=A.dot(B,mode='cross')``, then
             ``C.shape==A.shape + B.shape``
 
@@ -563,10 +563,7 @@ class SecondOrderTensor:
             ein_str = 'ik,...kj->...ij'
         else:
             if mode=='pair':
-                if other.shape == self.shape:
-                    ein_str = '...ik,...kj->...ij'
-                else:
-                    raise ValueError('Tensors of shape {} and {} have inconsistent shapes. Try with mode="cross"')
+                ein_str = '...ik,...kj->...ij'
             elif mode=='cross':
                 ndim_0 = self.ndim
                 ndim_1 = other.ndim
