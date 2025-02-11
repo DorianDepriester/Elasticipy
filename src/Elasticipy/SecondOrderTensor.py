@@ -406,8 +406,7 @@ class SecondOrderTensor:
         matmul : matrix-like multiplication of tensor arrays
         """
         if isinstance(B, SecondOrderTensor):
-            new_mat = np.matmul(self.matrix, B.matrix)
-            return SecondOrderTensor(new_mat)
+            return self.dot(B, mode='pair')
         elif isinstance(B, Rotation) or is_orix_rotation(B):
             rotation_matrices, transpose_matrices = rotation_to_matrix(B, return_transpose=True)
             new_matrix = np.matmul(np.matmul(transpose_matrices, self.matrix), rotation_matrices)
@@ -427,6 +426,49 @@ class SecondOrderTensor:
                 raise ValueError(err_msg)
         else:
             raise ValueError('The input argument must be a tensor, an ndarray, a rotation or a scalar value.')
+
+    def rotate(self, rotation, mode='pair'):
+        """
+        Apply rotation(s) to the tensor(s).
+
+        The rotations can be applied element-wise, or on each cross-combination (see below).
+
+        Parameters
+        ----------
+        rotation : scipy.spatial.Rotation or orix.quaternion.Rotation
+        mode : str, optional
+            If 'pair', the rotations are applied element wise. The shape of the rotations must be equal to that the
+            tensor array.
+            If 'cross', all the possible combinations are considered. If ``C=A.rotate(rot)``, then
+            ``C.shape==A.shape + rot.shape``.
+
+        Returns
+        -------
+        SecondOrderTensor
+        """
+        if self.shape == ():
+            ein_str = '...li,...kj,lk->...ij'
+        elif _is_single_rotation(rotation):
+            ein_str = 'li,kj,...lk->...ij'
+        else:
+            if mode=='pair':
+                if rotation.shape == self.shape:
+                    ein_str = '...li,...kj,...lk->...ij'
+                else:
+                    raise ValueError('Tensor with shape {} cannot be rotated by orientation with shape {}. '
+                                     'Try with mode="cross" instead.')
+            elif mode=='cross':
+                ndim_0 = self.ndim
+                ndim_1 = len(_orientation_shape(rotation))
+                indices_self = ALPHABET[:ndim_0]
+                indices_g = ALPHABET[:ndim_1].upper()
+                indices_res = indices_self + indices_g
+                ein_str = indices_g + 'zw,' + indices_g + 'yx,' + indices_self + 'zy->' + indices_res + 'wx'
+            else:
+                raise ValueError('Invalid mode. It can be "cross" or "pari".')
+        g_mat = rotation_to_matrix(rotation)
+        matrix = np.einsum(ein_str, g_mat, g_mat, self.matrix)
+        return SecondOrderTensor(matrix)
 
     def __rmul__(self, other):
         if isinstance(other, (float, int)):
