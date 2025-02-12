@@ -71,13 +71,7 @@ class ThermalExpansionTensor(SymmetricSecondOrderTensor):
         if isinstance(other, Rotation):
             return super().matmul(other)
         else:
-            other = np.asarray(other)
-            leading_shape = self.shape
-            leading_other_shape = other.shape
-            matrix_expanded = self.matrix.reshape(leading_shape + (1, 1, 3, 3))  # (m, n, 1, 1, 3, 3)
-            other_expanded = other.reshape((1, 1) + leading_other_shape + (1, 1))  # (1, 1, o, p, 1, 1)
-            new_mat = matrix_expanded * other_expanded
-            return StrainTensor(np.squeeze(new_mat))
+            return self.apply_temperature(other, mode='cross')
 
 
     @classmethod
