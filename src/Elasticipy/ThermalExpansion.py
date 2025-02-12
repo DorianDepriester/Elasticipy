@@ -16,6 +16,38 @@ class ThermalExpansionTensor(SymmetricSecondOrderTensor):
             new_mat = self.matrix * other_with_eye
             return StrainTensor(new_mat)
 
+    def apply_temperature(self, temperature, mode='pair'):
+        """
+        Apply temperature increase to the thermal expansion tensor, or to the array.
+
+        Application can be made pair-wise, or considering all cross-combinations (see below).
+
+        Parameters
+        ----------
+        temperature : float or numpy.ndarray
+        mode : str, optional
+            If "pair" (default), the temperatures are applied pair-wise on the tensor array. Broadcasting rule applies
+            If "cross", all cross combinations are considered. Therefore, if ``C=A.apply_temperature(T, mode="cross")``,
+            then ``C.shape=A.shape + T.shape``.
+
+        Returns
+        -------
+        StrainTensor
+            Strain corresponding to the applied temperature increase(s).
+        """
+        temperature = np.asarray(temperature)
+        if mode == 'pair':
+            matrix = self.matrix*temperature[...,np.newaxis,np.newaxis]
+        elif mode == 'cross':
+            indices_self = ALPHABET[:self.ndim]
+            indices_temp = ALPHABET[:len(temperature.shape)].upper()
+            ein_str = indices_self + 'ij,' + indices_temp + '->' + indices_self + indices_temp + 'ij'
+            matrix = np.einsum(ein_str, self.matrix, temperature)
+        else:
+            raise ValueError('Invalid mode. It could be either "pair" or "cross".')
+        return StrainTensor(matrix)
+
+
     def matmul(self, other):
         """
         Matrix like product with array of Rotations, resulting either in rotated ThermalExpansionTensor or StrainTensor.
