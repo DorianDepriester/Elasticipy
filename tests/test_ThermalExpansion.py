@@ -88,6 +88,21 @@ class TestThermalExpansion(unittest.TestCase):
         eps = alpha * temp
         np.testing.assert_almost_equal(eps.matrix, np.eye(3) * coeff * temp)
 
+    def test_apply_temperature(self):
+        m, n = 50, 100
+        rotations = Rotation.random(m)
+        alphas = alpha * rotations
+        T = np.arange(0, m)
+        strain = alphas.apply_temperature(T)
+        for i in range(m):
+            np.testing.assert_array_equal(strain[i].matrix, alphas[i].matrix*T[i])
+        T = np.arange(0, n)
+        strain = alphas.apply_temperature(T, mode='cross')
+        for i in range(m):
+            for j in range(n):
+                np.testing.assert_array_equal(strain[i,j].matrix, alphas[i].matrix*T[j])
+
+
 if __name__ == '__main__':
     unittest.main()
 
