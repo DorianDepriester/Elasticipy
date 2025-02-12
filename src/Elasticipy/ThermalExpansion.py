@@ -1,4 +1,6 @@
-from Elasticipy.SecondOrderTensor import SymmetricSecondOrderTensor
+import warnings
+
+from Elasticipy.SecondOrderTensor import SymmetricSecondOrderTensor, ALPHABET, is_orix_rotation
 from Elasticipy.StressStrainTensors import StrainTensor
 import numpy as np
 from scipy.spatial.transform import Rotation
@@ -50,25 +52,29 @@ class ThermalExpansionTensor(SymmetricSecondOrderTensor):
 
     def matmul(self, other):
         """
-        Matrix like product with array of Rotations, resulting either in rotated ThermalExpansionTensor or StrainTensor.
+        Matrix like product with array of float, resulting either in StrainTensor.
 
-        Compute the product between the tensor and an array of Rotations or a numpy array in a "matrix-product" way,*
+        Compute the product between the tensor and a numpy array in a "matrix-product" way,*
         that is by computing each of the products. If T.shape=(m,n,o,...) and other.shape=(p,q,r,...), then::
 
             T.matmul(other).shape = (m,n,o,...,p,q,r,...)
 
         Parameters
         ----------
-        other : np.ndarray or Rotation
+        other : np.ndarray
             Value to multiply by.
         Returns
         -------
-        ThermalExpansionTensor or StrainTensor
-            If other is a Rotation, the tensor is just rotated, thus returning a ThermalExpansionTensor.
-            If other is an array, it is assumed that it corresponds to the temperature increase, thus returning a
-            StrainTensor.
+        StrainTensor
+            Array fo strain tensors corresponding to all cross-combinations between Thermal expansions and temperature
+            increases.
         """
-        if isinstance(other, Rotation):
+        warnings.warn(
+            'matmul() is deprecated and will be removed in a future version. Use dot(tensor,mode="cross") or '
+            'rotate(rotation,mode="cross") instead.',
+            DeprecationWarning,
+            stacklevel=2)
+        if isinstance(other, Rotation) or is_orix_rotation(other):
             return super().matmul(other)
         else:
             return self.apply_temperature(other, mode='cross')
