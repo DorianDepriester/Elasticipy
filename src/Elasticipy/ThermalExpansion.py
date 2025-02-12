@@ -7,7 +7,7 @@ class ThermalExpansionTensor(SymmetricSecondOrderTensor):
     name = 'Thermal expansion tensor'
 
     def __mul__(self, other):
-        if isinstance(other, Rotation):
+        if isinstance(other, Rotation) or is_orix_rotation(other):
             return super().__mul__(other)
         else:
             other = np.asarray(other)
