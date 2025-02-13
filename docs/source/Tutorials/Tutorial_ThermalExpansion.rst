@@ -77,20 +77,24 @@ If we want to consider multiple orientations at once, we can create an array of 
     Shape=(10000,)
 
 If we want to compute the strain for each combination of orientations and temperatures in ``[0,1,2]`` (as done above),
-we can use the ``matmul`` operator:
+we can use the ``apply_temperature()`` operator with ``mode='cross'``:
 
-    >>> eps = alpha_rotated.matmul([0,1,2])
+    >>> eps = alpha_rotated.apply_temperature([0,1,2], mode='cross')
     >>> print(eps)
     Strain tensor
     Shape=(10000, 3)
+
+.. note::
+
+    Above, we have used ``*``, which is just a shortcut for ``apply_temperature(...,mode='pair')``.
 
 For instance we can check out the maximum value for initial (0°) and final (2°) temperatures:
 
     >>> eps[:,0].max()    # 0 because it corresponds to 0°
     Strain tensor
-    [[ 0. -0. -0.]
-     [-0.  0. -0.]
-     [-0. -0.  0.]]
+    [[0. 0. 0.]
+     [0. 0. 0.]
+     [0. 0. 0.]]
     >>> eps[:,-1].max()
     Strain tensor
     [[1.12000000e-05 5.99947076e-06 5.99905095e-06]
