@@ -1470,7 +1470,7 @@ class SymmetricSecondOrderTensor(SecondOrderTensor):
         eigvals : compute the principal values only
         """
         eigvals, eigdir = np.linalg.eigh(self.matrix)
-        return np.flip(eigvals,axis=-1), np.flip(eigdir,axis=-1)
+        return eigvals[..., ::-1], eigdir[..., :, ::-1]
 
     def eigvals(self):
         """
