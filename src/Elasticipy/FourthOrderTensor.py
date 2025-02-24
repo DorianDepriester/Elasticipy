@@ -10,6 +10,14 @@ from scipy.spatial.transform import Rotation
 from Elasticipy.CrystalSymmetries import SYMMETRIES
 from copy import deepcopy
 
+a = np.sqrt(2)
+_voigt_to_kelvin_matrix = np.array([[1, 1, 1, a, a, a],
+                                    [1, 1, 1, a, a, a],
+                                    [1, 1, 1, a, a, a],
+                                    [a, a, a, 2, 2, 2],
+                                    [a, a, a, 2, 2, 2],
+                                    [a, a, a, 2, 2, 2],])
+
 
 def _parse_tensor_components(prefix, **kwargs):
     pattern = r'^{}(\d{{2}})$'.format(prefix)
@@ -1469,6 +1477,22 @@ class StiffnessTensor(SymmetricTensor):
         except ImportError:
             raise ModuleNotFoundError('pymatgen module is required for this function.')
         return matgenElast.ElasticTensor(self.full_tensor())
+
+    @property
+    def Kelvin(self):
+        return self.matrix * _voigt_to_kelvin_matrix
+
+    def eig(self):
+        eig_vals, eig_vect = np.linalg.eigh(self.Kelvin)
+        return eig_vals[::-1], -eig_vect[:, ::-1]
+
+    @property
+    def eig_stiffnesses(self):
+        return np.linalg.eigvalsh(self.Kelvin)[::-1]
+
+    @property
+    def eig_strains(self):
+        return self.eig()[1]
 
 
 class ComplianceTensor(StiffnessTensor):
