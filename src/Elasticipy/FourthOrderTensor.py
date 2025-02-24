@@ -1480,19 +1480,63 @@ class StiffnessTensor(SymmetricTensor):
 
     @property
     def Kelvin(self):
+        """
+        Returns all the stiffness components using the Kelvin(-Mandel) mapping convention.
+
+        Returns
+        -------
+        numpy.ndarray
+            (6,6) matrix of the stiffness components, according to the Kelvin convention
+        """
         return self.matrix * _voigt_to_kelvin_matrix
 
     def eig(self):
-        eig_vals, eig_vect = np.linalg.eigh(self.Kelvin)
-        return eig_vals[::-1], -eig_vect[:, ::-1]
+        """
+        Compute the eigenstiffnesses and the eigen strains.
+
+        Solve the eigenvalue problem from the Kelvin matrix of the stiffness tensor.
+
+        Returns
+        -------
+        numpy.ndarray
+            Eigenstiffnesses
+        """
+        return np.linalg.eigh(self.Kelvin)
 
     @property
     def eig_stiffnesses(self):
-        return np.linalg.eigvalsh(self.Kelvin)[::-1]
+        """
+        Compute the eigenstiffnesses given by the Kelvin's matrix for stiffness.
+
+        Returns
+        -------
+        numpy.ndarray
+            6 eigenvalues of the Kelvin's stiffness matrix, in ascending order
+        """
+        return np.linalg.eigvalsh(self.Kelvin)
 
     @property
     def eig_strains(self):
+        """
+        Compute the eigenstrains from the Kelvin's matrix for stiffness
+
+        Returns
+        -------
+        numpy.ndarray
+            (6,6) matrix of eigenstrains, sorted by ascending order of eigenstiffnesses.
+        """
         return self.eig()[1]
+
+    def eig_compliances(self):
+        """
+        Compute the eigencompliances from the Kelvin's matrix of stiffness
+
+        Returns
+        -------
+        numpy.ndarray
+            6 eigenvalues of the Kelvin's comliance matrix, in ascending order
+        """
+        return 1/self.eig_stiffnesses
 
 
 class ComplianceTensor(StiffnessTensor):
