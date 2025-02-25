@@ -753,6 +753,14 @@ class TestStressStrainTensors(unittest.TestCase):
                     g_mat = g_2d.to_matrix()[j,k]
                     np.testing.assert_array_almost_equal(a_rot[i,j,k].matrix, np.matmul(np.matmul(g_mat, t_1d[i].matrix), g_mat.T), )
 
+    def test_eigenstiffness(self):
+        C11, C12, C44 = 22, 12, 44
+        C = StiffnessTensor.cubic(C11=C11, C12=C12, C44=C44)
+        eigen_stiffnesses = C.eig_stiffnesses
+        eigen_stiffnesses_th = [C11 + 2 * C12, C11 - C12, 2 * C44]
+        for e in eigen_stiffnesses:
+            assert np.any(np.isclose(e, eigen_stiffnesses_th))
+
 
 if __name__ == '__main__':
     unittest.main()
