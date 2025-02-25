@@ -53,6 +53,21 @@ def _is_single_rotation(rotation):
         raise TypeError('The input argument must be of class scipy.transform.Rotation or '
                         'orix.quaternion.rotation.Rotation')
 
+def _unmap(array, mapping_convention):
+    array = np.asarray(array)
+    shape = array.shape
+    if shape and (shape[-1] == 6):
+        new_shape = shape[:-1] + (3, 3)
+        unmapped_matrix = np.zeros(new_shape)
+        voigt = [[0, 0], [1, 1], [2, 2], [1, 2], [0, 2], [0, 1]]
+        for i in range(6):
+            unmapped_matrix[..., voigt[i][0], voigt[i][1]] = array[..., i] / mapping_convention[i]
+        return unmapped_matrix
+    else:
+        raise ValueError("array must be of shape (6,) or (...,6) with Voigt vector")
+
+kelvin_mapping = [1, 1, 1, np.sqrt(2), np.sqrt(2), np.sqrt(2)]
+
 class SecondOrderTensor:
     """
     Template class for manipulation of second order tensors or arrays of second order tensors
@@ -1439,19 +1454,14 @@ class SymmetricSecondOrderTensor(SecondOrderTensor):
         [[11. 12. 13.]
          [12. 22. 23.]
          [13. 23. 33.]]
-
         """
-        array = np.asarray(array)
-        shape = array.shape
-        if shape and (shape[-1] == 6):
-            new_shape = shape[:-1] + (3, 3)
-            unvoigted_matrix = np.zeros(new_shape)
-            voigt = [[0, 0], [1, 1], [2, 2], [1, 2], [0, 2], [0, 1]]
-            for i in range(6):
-                unvoigted_matrix[..., voigt[i][0], voigt[i][1]] = array[..., i] / cls.voigt_map[i]
-            return cls(unvoigted_matrix)
-        else:
-            raise ValueError("array must be of shape (6,) or (...,6) with Voigt vector")
+        matrix = _unmap(array, cls.voigt_map)
+        return cls(matrix)
+
+    @classmethod
+    def from_Kelvin(cls, array):
+        matrix = _unmap(array, kelvin_mapping)
+        return cls(matrix)
 
     def eig(self):
         """
