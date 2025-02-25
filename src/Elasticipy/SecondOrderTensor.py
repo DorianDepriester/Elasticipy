@@ -1442,9 +1442,14 @@ class SymmetricSecondOrderTensor(SecondOrderTensor):
         ----------
         array : np.ndarray or list
             array to build the SymmetricSecondOrderTensor from. We must have array.ndim>0 and array.shape[-1]==6.
+
         Returns
         -------
         SymmetricSecondOrderTensor
+
+        See Also
+        --------
+        from_Kelvin : Construct a tensor from vector(s) following the Kelvin notation
 
         Examples
         --------
