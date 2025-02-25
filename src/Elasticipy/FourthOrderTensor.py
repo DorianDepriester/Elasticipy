@@ -1486,20 +1486,45 @@ class StiffnessTensor(SymmetricTensor):
         Returns
         -------
         numpy.ndarray
-            (6,6) matrix of the stiffness components, according to the Kelvin convention
+            (6,6) stiffness matrix, according to the Kelvin mapping
+
+        See Also
+        --------
+        eig : returns the eigenstiffnesses and the eigenstrain
+
+        Notes
+        -----
+        This mapping convention is discussed in [4]_.
+
+        References
+        ----------
+        .. [4] Helbig, K. (2013). What Kelvin might have written about Elasticity. Geophysical Prospecting, 61(1), 1-20.
+            doi: 10.1111/j.1365-2478.2011.01049.x
         """
         return self.matrix * _voigt_to_kelvin_matrix
 
     def eig(self):
         """
-        Compute the eigenstiffnesses and the eigen strains.
+        Compute the eigenstiffnesses and the eigenstrains.
 
-        Solve the eigenvalue problem from the Kelvin matrix of the stiffness tensor.
+        Solve the eigenvalue problem from the Kelvin matrix of the stiffness tensor (see Notes).
 
         Returns
         -------
         numpy.ndarray
-            Eigenstiffnesses
+            Array of 6 eigenstiffnesses (eigenvalues of the stiffness matrix)
+        numpy.ndarray
+            (6,6) array of eigenstrains (eigenvectors of the stiffness matrix)
+
+        See Also
+        --------
+        Kelvin : returns the stiffness components as a (6,6) matrix, according to the Kelvin mapping convention.
+        eig_stiffnesses : returns the eigenstiffnesses only
+        eig_strains : returns the eigenstrains only
+
+        Notes
+        -----
+        The definition for eigenstiffnesses and the eigenstrains are introduced in [4]_.
         """
         return np.linalg.eigh(self.Kelvin)
 
@@ -1512,6 +1537,11 @@ class StiffnessTensor(SymmetricTensor):
         -------
         numpy.ndarray
             6 eigenvalues of the Kelvin's stiffness matrix, in ascending order
+
+        See Also
+        --------
+        eig : returns the eigenstiffnesses and the eigenstrains
+        eig_strains : returns the eigenstrains only
         """
         return np.linalg.eigvalsh(self.Kelvin)
 
@@ -1524,6 +1554,10 @@ class StiffnessTensor(SymmetricTensor):
         -------
         numpy.ndarray
             (6,6) matrix of eigenstrains, sorted by ascending order of eigenstiffnesses.
+
+        See Also
+        --------
+        eig : returns both the eigenstiffnesses and the eigenstrains
         """
         return self.eig()[1]
 
@@ -1534,7 +1568,11 @@ class StiffnessTensor(SymmetricTensor):
         Returns
         -------
         numpy.ndarray
-            6 eigenvalues of the Kelvin's comliance matrix, in ascending order
+            6 eigenvalues of the Kelvin's compliance matrix, in ascending order
+
+        See Also
+        --------
+        eig_stiffnesses : compute the eigenstiffnesses from the Kelvin's matrix of stiffness
         """
         return 1/self.eig_stiffnesses
 
