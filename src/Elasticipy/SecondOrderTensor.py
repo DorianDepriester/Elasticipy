@@ -1455,7 +1455,7 @@ class SymmetricSecondOrderTensor(SecondOrderTensor):
 
     def eig(self):
         """
-        Compute the principal values (eigenvaleues) and principal direction (eigenvectors) of the tensor, sorted in
+        Compute the principal values (eigenvalues) and principal direction (eigenvectors) of the tensor, sorted in
         descending order of principal values
 
         Returns
