@@ -1460,6 +1460,21 @@ class SymmetricSecondOrderTensor(SecondOrderTensor):
 
     @classmethod
     def from_Kelvin(cls, array):
+        """
+        Build a tensor from the Kelvin vector, or slices of Kelvin vectors
+
+        Parameters
+        ----------
+        array : np.ndarray or list
+
+        Returns
+        -------
+        SymmetricSecondOrderTensor
+
+        See Also
+        --------
+        from_Voigt : construct a tensor from vector(s) following the Voigt notation
+        """
         matrix = _unmap(array, kelvin_mapping)
         return cls(matrix)
 
