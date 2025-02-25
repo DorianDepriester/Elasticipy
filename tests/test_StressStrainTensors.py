@@ -757,9 +757,14 @@ class TestStressStrainTensors(unittest.TestCase):
         C11, C12, C44 = 22, 12, 44
         C = StiffnessTensor.cubic(C11=C11, C12=C12, C44=C44)
         eigen_stiffnesses = C.eig_stiffnesses
-        eigen_stiffnesses_th = [C11 + 2 * C12, C11 - C12, 2 * C44]
+        eigen_stiffnesses_th = np.sort([C11 + 2 * C12, C11 - C12, 2 * C44]) # 10.1111/j.1365-2478.2011.01049.x
         for e in eigen_stiffnesses:
             assert np.any(np.isclose(e, eigen_stiffnesses_th))
+        eigen_strains = C.eig_strains
+        for i, e in enumerate(eigen_strains.T):
+            strain = StrainTensor.from_Kelvin(e)
+            stress = C * strain
+            np.testing.assert_array_almost_equal(stress.matrix, strain.matrix * eigen_stiffnesses[i])
 
 
 if __name__ == '__main__':
