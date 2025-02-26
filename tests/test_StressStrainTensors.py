@@ -143,7 +143,7 @@ class TestStressStrainTensors(unittest.TestCase):
         matrix2 = np.random.random((length2, 3, 3))
         rand_tensor1 = SecondOrderTensor(matrix1)
         rand_tensor2 = SecondOrderTensor(matrix2)
-        cross_prod_tensor = rand_tensor1.matmul(rand_tensor2)
+        cross_prod_tensor = rand_tensor1.dot(rand_tensor2, mode='cross')
         for i in range(0, length1):
             for j in range(0, length2):
                 mat_prod = np.matmul(matrix1[i], matrix2[j])
@@ -153,7 +153,7 @@ class TestStressStrainTensors(unittest.TestCase):
         m, n = 5, 100
         random_tensor = SecondOrderTensor(np.random.random((m,) + (3, 3)))
         random_oris = Rotation.random(n)
-        array = random_tensor.matmul(random_oris)
+        array = random_tensor.rotate(random_oris, mode='cross')
         assert array.shape == (m, n)
         for i in range(m):
             for j in range(n):
@@ -236,7 +236,7 @@ class TestStressStrainTensors(unittest.TestCase):
         sigma = C_rotated.matmul(eps)
 
         # Rotate stress and stress by their own
-        eps_rot = eps.matmul(ori)
+        eps_rot = eps.rotate(ori, mode='cross')
         sigma_rot2 = C * eps_rot
         sigma2 = sigma_rot2 * ori.inv()
         np.testing.assert_almost_equal(sigma.matrix, sigma2.transpose_array().matrix)
