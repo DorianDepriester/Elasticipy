@@ -1489,7 +1489,8 @@ class StiffnessTensor(SymmetricTensor):
 
         See Also
         --------
-        eig : returns the eigenstiffnesses and the eigenstrain
+        eig : returns the eigenvalues and the eigenvectors of the Kelvin's matrix
+        from_Kelvin : Construct a fourth-order tensor from its (6,6) Kelvin matrix
 
         Notes
         -----
@@ -1517,7 +1518,7 @@ class StiffnessTensor(SymmetricTensor):
 
         See Also
         --------
-        Kelvin : returns the stiffness components as a (6,6) matrix, according to the Kelvin mapping convention.
+        to_Kelvin : returns the stiffness components as a (6,6) matrix, according to the Kelvin mapping convention.
         eig_stiffnesses : returns the eigenstiffnesses only
         eig_strains : returns the eigenstrains only
 
@@ -1556,7 +1557,7 @@ class StiffnessTensor(SymmetricTensor):
 
         See Also
         --------
-        eig : returns both the eigenstiffnesses and the eigenstrains
+        eig : returns both the eigenvalues and the eigenvectors of the Kelvin matrix
         """
         return self.eig()[1]
 
@@ -1589,7 +1590,7 @@ class StiffnessTensor(SymmetricTensor):
             keyword arguments passed to the constructor
         Returns
         -------
-        FourthOrderTensor
+        StiffnessTensor
         """
         return cls(matrix * cls.voigt_map / _voigt_to_kelvin_matrix, **kwargs)
 
