@@ -1576,6 +1576,23 @@ class StiffnessTensor(SymmetricTensor):
         """
         return 1/self.eig_stiffnesses
 
+    @classmethod
+    def from_Kelvin(cls, matrix, **kwargs):
+        """
+        Create a tensor from the (6,6) matrix following the Kelvin(-Mandel) mapping convention
+
+        Parameters
+        ----------
+        matrix : list or numpy.ndarray
+            (6,6) matrix of components
+        kwargs  : dict
+            keyword arguments passed to the constructor
+        Returns
+        -------
+        FourthOrderTensor
+        """
+        return cls(matrix * cls.voigt_map / _voigt_to_kelvin_matrix, **kwargs)
+
 
 class ComplianceTensor(StiffnessTensor):
     """
