@@ -1685,3 +1685,96 @@ class ComplianceTensor(StiffnessTensor):
         except ImportError:
             raise ModuleNotFoundError('pymatgen module is required for this function.')
         return matgenElast.ComplianceTensor(self.full_tensor())
+
+    @property
+    def Kelvin(self):
+        """
+        Returns all the compliance components using the Kelvin(-Mandel) mapping convention.
+
+        Returns
+        -------
+        numpy.ndarray
+            (6,6) compliance matrix, according to the Kelvin mapping
+
+        See Also
+        --------
+        eig : returns the eigencompliances and the eigenstresses
+
+        Notes
+        -----
+        This mapping convention is discussed in [4]_.
+        """
+        return self.matrix * _voigt_to_kelvin_matrix
+
+    def eig(self):
+        """
+        Compute the eigencompliances and the eigenstresses.
+
+        Solve the eigenvalue problem from the Kelvin matrix of the compliance tensor (see Notes).
+
+        Returns
+        -------
+        numpy.ndarray
+            Array of 6 eigencompliances (eigenvalues of the stiffness matrix)
+        numpy.ndarray
+            (6,6) array of eigenstresses (eigenvectors of the stiffness matrix)
+
+        See Also
+        --------
+        Kelvin : returns the stiffness components as a (6,6) matrix, according to the Kelvin mapping convention.
+        eig_compliances : returns the eigencompliances only
+        eig_stresses : returns the eigenstresses only
+
+        Notes
+        -----
+        The definition for eigencompliances and the eigenstresses are introduced in [4]_.
+        """
+        return np.linalg.eigh(self.Kelvin)
+
+    @property
+    def eig_compliances(self):
+        """
+        Compute the eigencompliances given by the Kelvin's matrix for stiffness.
+
+        Returns
+        -------
+        numpy.ndarray
+            6 eigenvalues of the Kelvin's compliance matrix, in ascending order
+
+        See Also
+        --------
+        eig : returns the eigencompliances and the eigenstresses
+        eig_strains : returns the eigenstresses only
+        """
+        return np.linalg.eigvalsh(self.Kelvin)
+
+    @property
+    def eig_strains(self):
+        """
+        Compute the eigenstresses from the Kelvin's matrix for stiffness
+
+        Returns
+        -------
+        numpy.ndarray
+            (6,6) matrix of eigenstresses, sorted by ascending order of eigencompliances.
+
+        See Also
+        --------
+        eig : returns both the eigencompliances and the eigenstresses
+        """
+        return self.eig()[1]
+
+    def eig_stresses(self):
+        """
+        Compute the eigenstresses from the Kelvin's matrix of stiffness
+
+        Returns
+        -------
+        numpy.ndarray
+            inverses of 6 eigenvalues of the Kelvin's compliance matrix, in descending order
+
+        See Also
+        --------
+        eig_compliances : compute the eigencompliances from the Kelvin's matrix of compliance
+        """
+        return 1/self.eig_stiffnesses
