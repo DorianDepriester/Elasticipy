@@ -8,9 +8,7 @@ import Elasticipy.StressStrainTensors as Tensors
 from Elasticipy.SecondOrderTensor import SecondOrderTensor, SymmetricSecondOrderTensor, SkewSymmetricSecondOrderTensor
 from Elasticipy.StressStrainTensors import StrainTensor, StressTensor
 from pymatgen.analysis.elasticity import Strain as mgStrain, Stress as mgStress
-from orix.quaternion import Rotation as orix_rot
-
-from Examples.Example_StressStrain_arrays import stress
+from orix.quaternion import Rotation as OrixRot
 
 Cmat = [[231, 127, 104, 0, -18, 0],
         [127, 240, 131, 0, 1, 0],
@@ -710,9 +708,9 @@ class TestStressStrainTensors(unittest.TestCase):
         t_0d = StrainTensor.rand()
         t_1d = StrainTensor.rand((m,))
         t_2d = StressTensor.rand((m, n))
-        g_0d = orix_rot.random()
-        g_1d = orix_rot.random(m)
-        g_2d = orix_rot.random((m,n))
+        g_0d = OrixRot.random()
+        g_1d = OrixRot.random(m)
+        g_2d = OrixRot.random((m, n))
 
         a_rot = t_0d.rotate(g_0d)
         g_mat = g_0d.to_matrix()[0]
