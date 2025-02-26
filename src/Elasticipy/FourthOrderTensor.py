@@ -1705,7 +1705,7 @@ class ComplianceTensor(StiffnessTensor):
         -----
         This mapping convention is discussed in [4]_.
         """
-        return self.matrix * _voigt_to_kelvin_matrix
+        return self.matrix / self.voigt_map * _voigt_to_kelvin_matrix
 
     def eig(self):
         """
