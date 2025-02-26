@@ -1750,7 +1750,7 @@ class ComplianceTensor(StiffnessTensor):
         return np.linalg.eigvalsh(self.Kelvin)
 
     @property
-    def eig_strains(self):
+    def eig_stresses(self):
         """
         Compute the eigenstresses from the Kelvin's matrix for stiffness
 
@@ -1765,9 +1765,10 @@ class ComplianceTensor(StiffnessTensor):
         """
         return self.eig()[1]
 
-    def eig_stresses(self):
+    @property
+    def eig_stiffnesses(self):
         """
-        Compute the eigenstresses from the Kelvin's matrix of stiffness
+        Compute the eigenstiffnesses from the Kelvin's matrix of compliance
 
         Returns
         -------
@@ -1778,4 +1779,4 @@ class ComplianceTensor(StiffnessTensor):
         --------
         eig_compliances : compute the eigencompliances from the Kelvin's matrix of compliance
         """
-        return 1/self.eig_stiffnesses
+        return 1/self.eig_compliances
