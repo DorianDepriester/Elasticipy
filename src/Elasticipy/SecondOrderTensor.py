@@ -1472,6 +1472,19 @@ class SymmetricSecondOrderTensor(SecondOrderTensor):
         matrix = _unmap(array, cls.voigt_map)
         return cls(matrix)
 
+    def to_Voigt(self):
+        """
+        Convert the tensor to vector, or slices of vector, following the Voigt convention.
+        
+        If the tensor array has shape (m,n,...), the result will be of shape (m,n,...,6).
+        
+        Returns
+        -------
+        numpy.ndarray
+            Voigt vector summarizing the components
+        """
+        return _map(self.matrix, self.voigt_map)
+    
     @classmethod
     def from_Kelvin(cls, array):
         """
@@ -1488,11 +1501,24 @@ class SymmetricSecondOrderTensor(SecondOrderTensor):
         See Also
         --------
         from_Voigt : construct a tensor from vector(s) following the Voigt notation
+        to_Kelvin : convert the tensor to vector(s) following the Kelvin convention
         """
         matrix = _unmap(array, kelvin_mapping)
         return cls(matrix)
     
     def to_Kelvin(self):
+        """
+        Convert the tensor to vector, or slices of vector, following the Kelvin(-Mandel) convention.
+
+        Returns
+        -------
+        numpy.ndarray
+
+        See Also
+        --------
+        from_Kelvin : Construct a tensor from vector(s) following the Kelvin convention
+        to_Voigt : Convert the tensor to vector(s) following the Voigt convention
+        """
         return _map(self.matrix, kelvin_mapping)
 
     def eig(self):
