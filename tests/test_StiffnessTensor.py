@@ -215,6 +215,11 @@ class TestComplianceTensor(unittest.TestCase):
         np.testing.assert_array_almost_equal(S_mean, S_rotated.flatten().Reuss_average().full_tensor())
         np.testing.assert_array_almost_equal(S_mean, S_rotated.Reuss_average().full_tensor())
 
+    def test_to_from_Kelvin(self):
+        matrix = S.to_Kelvin()
+        S2 = ComplianceTensor.from_Kelvin(matrix, symmetry=S.symmetry)
+        np.testing.assert_array_almost_equal(S.matrix, S2.matrix)
+
 class TestStiffnessConstructor(unittest.TestCase):
     def test_averages(self):
         """Check that the Voigt, Reuss and Hill averages are consistent with those provided by MP."""
@@ -803,6 +808,12 @@ class TestStiffnessConstructor(unittest.TestCase):
 
         np.testing.assert_array_almost_equal(eigen_stiffnesses, np.sort(S.eig_stiffnesses))
         np.testing.assert_array_almost_equal(eigen_compliances, np.sort(C.eig_compliances))
+
+    def test_to_from_Kelvin(self):
+        C = S.inv()
+        matrix = C.to_Kelvin()
+        C2 = StiffnessTensor.from_Kelvin(matrix, symmetry=C.symmetry)
+        np.testing.assert_array_almost_equal(C.matrix, C2.matrix)
 
 if __name__ == '__main__':
     unittest.main()
