@@ -1568,7 +1568,7 @@ class StiffnessTensor(SymmetricTensor):
         Returns
         -------
         numpy.ndarray
-            6 eigenvalues of the Kelvin's compliance matrix, in ascending order
+            Inverses of the 6 eigenvalues of the Kelvin's stiffness matrix, in descending order
 
         See Also
         --------
