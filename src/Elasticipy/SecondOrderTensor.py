@@ -1471,7 +1471,7 @@ class SymmetricSecondOrderTensor(SecondOrderTensor):
         Parameters
         ----------
         array : np.ndarray or list
-
+            Vectors, or slices of vectors, consisting in components following the Kelvin convention
         Returns
         -------
         SymmetricSecondOrderTensor
