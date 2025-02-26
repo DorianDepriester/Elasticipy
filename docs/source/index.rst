@@ -32,6 +32,10 @@ Welcome to Elasticipy's Documentation!
 .. image:: https://img.shields.io/pypi/pyversions/Elasticipy
    :alt: PyPI - Python Version
 
+.. image:: https://joss.theoj.org/papers/8cce91b782f17f52e9ee30916cd86ad5/status.svg
+   :alt: JOSS status
+   :target: https://joss.theoj.org/papers/8cce91b782f17f52e9ee30916cd86ad5
+
 
 
 Purpose of this package
