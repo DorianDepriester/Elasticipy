@@ -785,6 +785,7 @@ class TestStressStrainTensors(unittest.TestCase):
                 assert strain_voigt[i, j, 3] == 2 * strain.matrix[i, j, 2, 1]
                 assert strain_voigt[i, j, 4] == 2 * strain.matrix[i, j, 2, 0]
                 assert strain_voigt[i, j, 5] == 2 * strain.matrix[i, j, 1, 0]
+        assert np.all(strain == StrainTensor.from_Voigt(strain_voigt))
 
     def test_stress_Kelvin(self):
         m, n = 3, 2
