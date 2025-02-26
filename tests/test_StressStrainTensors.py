@@ -753,11 +753,11 @@ class TestStressStrainTensors(unittest.TestCase):
                     g_mat = g_2d.to_matrix()[j,k]
                     np.testing.assert_array_almost_equal(a_rot[i,j,k].matrix, np.matmul(np.matmul(g_mat, t_1d[i].matrix), g_mat.T), )
 
-    def test_eigenstiffness(self):
+    def test_eigenstiffness_eigencompliance(self):
         C11, C12, C44 = 22, 12, 44
         C = StiffnessTensor.cubic(C11=C11, C12=C12, C44=C44)
         eigen_stiffnesses = C.eig_stiffnesses
-        eigen_stiffnesses_th = np.sort([C11 + 2 * C12, C11 - C12, 2 * C44]) # 10.1111/j.1365-2478.2011.01049.x
+        eigen_stiffnesses_th = [C11 + 2 * C12, C11 - C12, 2 * C44] # 10.1111/j.1365-2478.2011.01049.x
         for e in eigen_stiffnesses:
             assert np.any(np.isclose(e, eigen_stiffnesses_th))
         eigen_strains = C.eig_strains
@@ -765,6 +765,21 @@ class TestStressStrainTensors(unittest.TestCase):
             strain = StrainTensor.from_Kelvin(e)
             stress = C * strain
             np.testing.assert_array_almost_equal(stress.matrix, strain.matrix * eigen_stiffnesses[i])
+
+        S = C.inv()
+        eigen_compliances = S.eig_compliances
+        eigen_compliances_th = 1 / np.array([C11 + 2 * C12, C11 - C12, 2 * C44])  # 10.1111/j.1365-2478.2011.01049.x
+        for e in eigen_compliances:
+            assert np.any(np.isclose(e, eigen_compliances_th))
+        eigen_stresses = S.eig_stresses
+        for i, e in enumerate(eigen_stresses.T):
+            stress = StressTensor.from_Kelvin(e)
+            strain = S * stress
+            np.testing.assert_array_almost_equal(strain.matrix, stress.matrix * eigen_compliances[i])
+
+        np.testing.assert_array_almost_equal(eigen_stiffnesses, np.sort(S.eig_stiffnesses))
+        np.testing.assert_array_almost_equal(eigen_compliances, np.sort(C.eig_compliances))
+
 
 
 if __name__ == '__main__':
