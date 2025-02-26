@@ -53,18 +53,27 @@ def _is_single_rotation(rotation):
         raise TypeError('The input argument must be of class scipy.transform.Rotation or '
                         'orix.quaternion.rotation.Rotation')
 
+_voigt_numbering = [[0, 0], [1, 1], [2, 2], [1, 2], [0, 2], [0, 1]]
+
 def _unmap(array, mapping_convention):
     array = np.asarray(array)
     shape = array.shape
     if shape and (shape[-1] == 6):
         new_shape = shape[:-1] + (3, 3)
         unmapped_matrix = np.zeros(new_shape)
-        voigt = [[0, 0], [1, 1], [2, 2], [1, 2], [0, 2], [0, 1]]
         for i in range(6):
-            unmapped_matrix[..., voigt[i][0], voigt[i][1]] = array[..., i] / mapping_convention[i]
+            unmapped_matrix[..., _voigt_numbering[i][0], _voigt_numbering[i][1]] = array[..., i] / mapping_convention[i]
         return unmapped_matrix
     else:
         raise ValueError("array must be of shape (6,) or (...,6) with Voigt vector")
+
+def _map(matrix, mapping_convention):
+    shape = matrix.shape[:-2] + (6,)
+    array = np.zeros(shape)
+    for i in range(6):
+        j, k = _voigt_numbering[i]
+        array[...,i] = matrix[...,j,k]
+    return array * mapping_convention
 
 kelvin_mapping = [1, 1, 1, np.sqrt(2), np.sqrt(2), np.sqrt(2)]
 
@@ -1482,6 +1491,9 @@ class SymmetricSecondOrderTensor(SecondOrderTensor):
         """
         matrix = _unmap(array, kelvin_mapping)
         return cls(matrix)
+    
+    def to_Kelvin(self):
+        return _map(self.matrix, kelvin_mapping)
 
     def eig(self):
         """
