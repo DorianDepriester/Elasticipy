@@ -6,6 +6,7 @@
 [![DOI](https://zenodo.org/badge/876162900.svg)](https://doi.org/10.5281/zenodo.14501849)
 [![codecov](https://codecov.io/gh/DorianDepriester/Elasticipy/graph/badge.svg?token=VUZPEUPBH1)](https://codecov.io/gh/DorianDepriester/Elasticipy)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/Elasticipy)
+[![status](https://joss.theoj.org/papers/8cce91b782f17f52e9ee30916cd86ad5/status.svg)](https://joss.theoj.org/papers/8cce91b782f17f52e9ee30916cd86ad5)
 
 
 
