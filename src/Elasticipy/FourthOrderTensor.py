@@ -1561,6 +1561,7 @@ class StiffnessTensor(SymmetricTensor):
         """
         return self.eig()[1]
 
+    @property
     def eig_compliances(self):
         """
         Compute the eigencompliances from the Kelvin's matrix of stiffness
