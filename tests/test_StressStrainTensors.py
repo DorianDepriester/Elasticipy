@@ -10,6 +10,8 @@ from Elasticipy.StressStrainTensors import StrainTensor, StressTensor
 from pymatgen.analysis.elasticity import Strain as mgStrain, Stress as mgStress
 from orix.quaternion import Rotation as orix_rot
 
+from Examples.Example_StressStrain_arrays import stress
+
 Cmat = [[231, 127, 104, 0, -18, 0],
         [127, 240, 131, 0, 1, 0],
         [104, 131, 175, 0, -3, 0],
@@ -752,6 +754,33 @@ class TestStressStrainTensors(unittest.TestCase):
                 for k in range(m):
                     g_mat = g_2d.to_matrix()[j,k]
                     np.testing.assert_array_almost_equal(a_rot[i,j,k].matrix, np.matmul(np.matmul(g_mat, t_1d[i].matrix), g_mat.T), )
+
+    def test_Voigt(self):
+        m, n = 3, 2
+        shape = (m, n)
+        stress = StressTensor.rand(shape)
+        stress_voigt = stress.to_Voigt()
+        assert stress_voigt.shape == shape + (6,)
+        for i in range(m):
+            for j in range(n):
+                assert stress_voigt[i, j, 0] == stress.matrix[i, j, 0, 0]
+                assert stress_voigt[i, j, 1] == stress.matrix[i, j, 1, 1]
+                assert stress_voigt[i, j, 2] == stress.matrix[i, j, 2, 2]
+                assert stress_voigt[i, j, 3] == stress.matrix[i, j, 2, 1]
+                assert stress_voigt[i, j, 4] == stress.matrix[i, j, 2, 0]
+                assert stress_voigt[i, j, 5] == stress.matrix[i, j, 1, 0]
+
+        strain = StrainTensor.rand(shape)
+        strain_voigt = strain.to_Voigt()
+        assert strain_voigt.shape == shape + (6,)
+        for i in range(m):
+            for j in range(n):
+                assert strain_voigt[i, j, 0] == strain.matrix[i, j, 0, 0]
+                assert strain_voigt[i, j, 1] == strain.matrix[i, j, 1, 1]
+                assert strain_voigt[i, j, 2] == strain.matrix[i, j, 2, 2]
+                assert strain_voigt[i, j, 3] == 2 * strain.matrix[i, j, 2, 1]
+                assert strain_voigt[i, j, 4] == 2 * strain.matrix[i, j, 2, 0]
+                assert strain_voigt[i, j, 5] == 2 * strain.matrix[i, j, 1, 0]
 
 
 if __name__ == '__main__':
