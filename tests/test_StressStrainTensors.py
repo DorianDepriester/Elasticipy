@@ -755,7 +755,7 @@ class TestStressStrainTensors(unittest.TestCase):
                     g_mat = g_2d.to_matrix()[j,k]
                     np.testing.assert_array_almost_equal(a_rot[i,j,k].matrix, np.matmul(np.matmul(g_mat, t_1d[i].matrix), g_mat.T), )
 
-    def test_Voigt(self):
+    def test_stress_Voigt(self):
         m, n = 3, 2
         shape = (m, n)
         stress = StressTensor.rand(shape)
@@ -769,7 +769,11 @@ class TestStressStrainTensors(unittest.TestCase):
                 assert stress_voigt[i, j, 3] == stress.matrix[i, j, 2, 1]
                 assert stress_voigt[i, j, 4] == stress.matrix[i, j, 2, 0]
                 assert stress_voigt[i, j, 5] == stress.matrix[i, j, 1, 0]
+        assert np.all(stress == StressTensor.from_Voigt(stress_voigt))
 
+    def test_strain_Voigt(self):
+        m, n = 3, 2
+        shape = (m, n)
         strain = StrainTensor.rand(shape)
         strain_voigt = strain.to_Voigt()
         assert strain_voigt.shape == shape + (6,)
@@ -782,6 +786,39 @@ class TestStressStrainTensors(unittest.TestCase):
                 assert strain_voigt[i, j, 4] == 2 * strain.matrix[i, j, 2, 0]
                 assert strain_voigt[i, j, 5] == 2 * strain.matrix[i, j, 1, 0]
 
+    def test_stress_Kelvin(self):
+        m, n = 3, 2
+        shape = (m, n)
+        stress = StressTensor.rand(shape)
+        stress_kelvin = stress.to_Kelvin()
+        assert stress_kelvin.shape == shape + (6,)
+        s = np.sqrt(2)
+        for i in range(m):
+            for j in range(n):
+                assert stress_kelvin[i, j, 0] == stress.matrix[i, j, 0, 0]
+                assert stress_kelvin[i, j, 1] == stress.matrix[i, j, 1, 1]
+                assert stress_kelvin[i, j, 2] == stress.matrix[i, j, 2, 2]
+                assert stress_kelvin[i, j, 3] == s * stress.matrix[i, j, 2, 1]
+                assert stress_kelvin[i, j, 4] == s * stress.matrix[i, j, 2, 0]
+                assert stress_kelvin[i, j, 5] == s * stress.matrix[i, j, 1, 0]
+        np.testing.assert_array_almost_equal(stress.matrix, StressTensor.from_Kelvin(stress_kelvin).matrix)
+
+    def test_strain_Kelvin(self):
+        m, n = 3, 2
+        shape = (m, n)
+        strain = StrainTensor.rand(shape)
+        strain_kelvin = strain.to_Kelvin()
+        assert strain_kelvin.shape == shape + (6,)
+        s = np.sqrt(2)
+        for i in range(m):
+            for j in range(n):
+                assert strain_kelvin[i, j, 0] == strain.matrix[i, j, 0, 0]
+                assert strain_kelvin[i, j, 1] == strain.matrix[i, j, 1, 1]
+                assert strain_kelvin[i, j, 2] == strain.matrix[i, j, 2, 2]
+                assert strain_kelvin[i, j, 3] == s * strain.matrix[i, j, 2, 1]
+                assert strain_kelvin[i, j, 4] == s * strain.matrix[i, j, 2, 0]
+                assert strain_kelvin[i, j, 5] == s * strain.matrix[i, j, 1, 0]
+        np.testing.assert_array_almost_equal(strain.matrix, StrainTensor.from_Kelvin(strain_kelvin).matrix)
 
 if __name__ == '__main__':
     unittest.main()
