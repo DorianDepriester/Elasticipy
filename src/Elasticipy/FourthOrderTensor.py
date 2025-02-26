@@ -1686,26 +1686,6 @@ class ComplianceTensor(StiffnessTensor):
             raise ModuleNotFoundError('pymatgen module is required for this function.')
         return matgenElast.ComplianceTensor(self.full_tensor())
 
-    @property
-    def Kelvin(self):
-        """
-        Returns all the compliance components using the Kelvin(-Mandel) mapping convention.
-
-        Returns
-        -------
-        numpy.ndarray
-            (6,6) compliance matrix, according to the Kelvin mapping
-
-        See Also
-        --------
-        eig : returns the eigencompliances and the eigenstresses
-
-        Notes
-        -----
-        This mapping convention is discussed in [4]_.
-        """
-        return self.matrix / self.voigt_map * _voigt_to_kelvin_matrix
-
     def eig(self):
         """
         Compute the eigencompliances and the eigenstresses.
