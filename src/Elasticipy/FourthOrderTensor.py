@@ -1478,15 +1478,14 @@ class StiffnessTensor(SymmetricTensor):
             raise ModuleNotFoundError('pymatgen module is required for this function.')
         return matgenElast.ElasticTensor(self.full_tensor())
 
-    @property
-    def Kelvin(self):
+    def to_Kelvin(self):
         """
-        Returns all the stiffness components using the Kelvin(-Mandel) mapping convention.
+        Returns all the tensor components using the Kelvin(-Mandel) mapping convention.
 
         Returns
         -------
         numpy.ndarray
-            (6,6) stiffness matrix, according to the Kelvin mapping
+            (6,6) matrix, according to the Kelvin mapping
 
         See Also
         --------
@@ -1501,7 +1500,7 @@ class StiffnessTensor(SymmetricTensor):
         .. [4] Helbig, K. (2013). What Kelvin might have written about Elasticity. Geophysical Prospecting, 61(1), 1-20.
             doi: 10.1111/j.1365-2478.2011.01049.x
         """
-        return self.matrix * _voigt_to_kelvin_matrix
+        return self.matrix /self.voigt_map * _voigt_to_kelvin_matrix
 
     def eig(self):
         """
@@ -1526,7 +1525,7 @@ class StiffnessTensor(SymmetricTensor):
         -----
         The definition for eigenstiffnesses and the eigenstrains are introduced in [4]_.
         """
-        return np.linalg.eigh(self.Kelvin)
+        return np.linalg.eigh(self.to_Kelvin())
 
     @property
     def eig_stiffnesses(self):
@@ -1543,7 +1542,7 @@ class StiffnessTensor(SymmetricTensor):
         eig : returns the eigenstiffnesses and the eigenstrains
         eig_strains : returns the eigenstrains only
         """
-        return np.linalg.eigvalsh(self.Kelvin)
+        return np.linalg.eigvalsh(self.to_Kelvin())
 
     @property
     def eig_strains(self):
@@ -1730,7 +1729,7 @@ class ComplianceTensor(StiffnessTensor):
         -----
         The definition for eigencompliances and the eigenstresses are introduced in [4]_.
         """
-        return np.linalg.eigh(self.Kelvin)
+        return np.linalg.eigh(self.to_Kelvin())
 
     @property
     def eig_compliances(self):
@@ -1747,7 +1746,7 @@ class ComplianceTensor(StiffnessTensor):
         eig : returns the eigencompliances and the eigenstresses
         eig_strains : returns the eigenstresses only
         """
-        return np.linalg.eigvalsh(self.Kelvin)
+        return np.linalg.eigvalsh(self.to_Kelvin())
 
     @property
     def eig_stresses(self):
