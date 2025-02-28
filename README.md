@@ -9,7 +9,7 @@
 
 # ![Elasticipy](logo/logo_text.svg)
 
-A python toolkit to manipulate strain and strain tensors, and other linear elasticity-related tensors (e.g. stiffness). 
+A python toolkit to manipulate stress and strain tensors, and other linear elasticity-related tensors (e.g. stiffness). 
 This package also provides a collection of easy-to-use and very fast tools to work on stress and strain tensors.
 
 ## Main features
