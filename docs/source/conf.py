@@ -40,6 +40,7 @@ language = 'english'
 
 html_theme = "sphinx_rtd_theme"
 html_static_path = ['../_static']
+html_logo = "logo/logo_text_whitebg.png"
 numpydoc_class_members_toctree = False
 autoclass_content = 'both'
 
