@@ -101,7 +101,7 @@ class TestComplianceTensor(unittest.TestCase):
                                                 C12=lame1, symmetry='isotropic')
         C_full = C.full_tensor()
         eye = np.eye(3)
-        A = np.einsum('ij,kl->ijkl', eye, eye)
+        A = StiffnessTensor.identity(return_full_tensor=True)
         B = np.einsum('ik,jl->ijkl', eye, eye)
         C = np.einsum('il,kj->ijkl', eye, eye)
         C_th = lame1 * A + lame2 * (B + C)

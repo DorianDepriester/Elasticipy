@@ -851,6 +851,27 @@ class SymmetricTensor:
         else:
             return self._unrotate() * self.orientations[item]
 
+    @classmethod
+    def identity(cls, return_full_tensor=False):
+        """
+        Create a 4th-order identity tensor
+
+        Parameters
+        ----------
+        return_full_tensor : bool, optional
+            If True, return the full tensor as a (3,3,3,3) array. Otherwise, the tensor is returned as a SymmetricTensor
+            object.
+        Returns
+        -------
+        numpy.ndarray or SymmetricTensor
+            Identity tensor
+        """
+        full = np.einsum('ij,kl->ijkl',np.eye(3), np.eye(3))
+        if return_full_tensor:
+            return full
+        else:
+            return cls(full, symmetry='isotropic')
+
 
 class StiffnessTensor(SymmetricTensor):
     """
