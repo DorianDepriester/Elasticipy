@@ -1607,7 +1607,7 @@ class StiffnessTensor(SymmetricTensor):
         ----------
         matrix : list or numpy.ndarray
             (6,6) matrix of components
-        kwargs  : dict
+        kwargs
             keyword arguments passed to the constructor
         Returns
         -------
