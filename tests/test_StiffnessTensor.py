@@ -101,10 +101,8 @@ class TestComplianceTensor(unittest.TestCase):
                                                 C12=lame1, symmetry='isotropic')
         C_full = C.full_tensor()
         eye = np.eye(3)
-        A = StiffnessTensor.identity(return_full_tensor=True)
-        B = np.einsum('ik,jl->ijkl', eye, eye)
-        C = np.einsum('il,kj->ijkl', eye, eye)
-        C_th = lame1 * A + lame2 * (B + C)
+        A = np.einsum('ij,kl->ijkl', eye, eye)
+        C_th = lame1 * A + 2 * lame2 * StiffnessTensor.identity(return_full_tensor=True)
         np.testing.assert_almost_equal(C_th, C_full)
 
     def test_averages(self):
@@ -814,6 +812,36 @@ class TestStiffnessConstructor(unittest.TestCase):
         matrix = C.to_Kelvin()
         C2 = StiffnessTensor.from_Kelvin(matrix, symmetry=C.symmetry)
         np.testing.assert_array_almost_equal(C.matrix, C2.matrix)
+
+    def test_ddot(self):
+        # Check inverse
+        C1 = StiffnessTensor.cubic(C11=22, C12=12, C44=44)
+        C2 = StiffnessTensor.isotropic(E=210000, nu=0.3)
+        np.testing.assert_almost_equal(C1.ddot(C1.inv()).matrix, StiffnessTensor.identity().matrix)
+
+        # Check product between tensor arrays
+        m = 5
+        rot_1d = orix_rot.random(m)
+        C1_rot = C1 * rot_1d
+        C2_rot = C1 * rot_1d
+
+        C1C2_rot = C1_rot * C2
+        assert C1C2_rot.shape == (m, 3, 3, 3, 3)
+        for i in range(m):
+            np.testing.assert_array_almost_equal(C1C2_rot[i], np.einsum('ijmn,nmkl->ijkl', C1_rot[i].full_tensor(), C2.full_tensor()))
+
+        C1C2_rotrot = C1_rot * C2_rot
+        assert C1C2_rot.shape == (m, 3, 3, 3, 3)
+        for i in range(m):
+            np.testing.assert_array_almost_equal(C1C2_rotrot[i], np.einsum('ijmn,nmkl->ijkl', C1_rot[i].full_tensor(),
+                                                                        C2_rot[i].full_tensor()))
+
+        C1C2_rotrot_cross = C1_rot.ddot(C2_rot, mode='cross')
+        assert C1C2_rotrot_cross.shape == (m, m, 3, 3, 3, 3)
+        for i in range(m):
+            for j in range(m):
+                np.testing.assert_array_almost_equal(C1C2_rotrot_cross[i,j], np.einsum('ijmn,nmkl->ijkl', C1_rot[i].full_tensor(),
+                                                                           C2_rot[j].full_tensor()))
 
 if __name__ == '__main__':
     unittest.main()
