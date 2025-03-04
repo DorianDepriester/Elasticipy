@@ -376,7 +376,9 @@ class SymmetricTensor:
             return np.einsum(ein_str, self.full_tensor(), other.full_tensor())
 
     def __mul__(self, other):
-        if isinstance(other, SymmetricSecondOrderTensor):
+        if isinstance(other, SymmetricTensor):
+            return self.ddot(other)
+        elif isinstance(other, SymmetricSecondOrderTensor):
             return SymmetricSecondOrderTensor(self * other.matrix)
         elif isinstance(other, np.ndarray):
             if other.shape == (3, 3):
