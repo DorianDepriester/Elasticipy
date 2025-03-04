@@ -343,6 +343,38 @@ class SymmetricTensor:
         else:
             return self.__add__(-other)
 
+    def ddot(self, other, mode='pair'):
+        """
+        Perform tensor product contracted twice (":") between two fourth-order tensors
+
+        Parameters
+        ----------
+        other : SymmetricTensor
+            Right-hand side of ":" symbol
+        mode : str, optional
+            If mode=="pair", the tensors must be broadcastable, and the tensor product are performed on the last axes.
+            If mode=="cross", all cross-combinations are considered.
+
+        Returns
+        -------
+        SymmetricTensor or numpy.ndarray
+         If both the tensors are 0D (no orientation), the return value will be of type SymmetricTensor
+         Otherwise, the return value will be the full tensor, of shape (...,3,3,3,3).
+        """
+        if self.ndim == 0 and other.ndim == 0:
+            return SymmetricTensor(np.einsum('ijmn,nmkl->ijkl', self.full_tensor(), other.full_tensor()))
+        else:
+            if mode == 'pair':
+                ein_str = '...ijmn,...nmkl->...ijkl'
+            else:
+                ndim_0 = self.ndim
+                ndim_1 = other.ndim
+                indices_0 = ALPHABET[:ndim_0]
+                indices_1 = ALPHABET[:ndim_1].upper()
+                indices_2 = indices_0 + indices_1
+                ein_str = indices_0 + 'wxXY,' + indices_1 + 'YXyz->' + indices_2 + 'wxyz'
+            return np.einsum(ein_str, self.full_tensor(), other.full_tensor())
+
     def __mul__(self, other):
         if isinstance(other, SymmetricSecondOrderTensor):
             return SymmetricSecondOrderTensor(self * other.matrix)
