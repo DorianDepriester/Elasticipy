@@ -866,11 +866,13 @@ class SymmetricTensor:
         numpy.ndarray or SymmetricTensor
             Identity tensor
         """
-        full = np.einsum('ij,kl->ijkl',np.eye(3), np.eye(3))
+        a = np.einsum('ik,jl->ijkl',np.eye(3), np.eye(3))
+        b = np.einsum('il,jk->ijkl', np.eye(3), np.eye(3))
+        full = 0.5*(a+b)
         if return_full_tensor:
             return full
         else:
-            return cls(full, symmetry='isotropic')
+            return cls(full, symmetry='isotropic', check_positive_definite=False)
 
 
 class StiffnessTensor(SymmetricTensor):
