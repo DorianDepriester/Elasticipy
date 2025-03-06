@@ -62,19 +62,23 @@ def Kroner_Eshelby(C, orientations, method='stress',  max_iter=50, atol=1e-3, rt
     iter = 0
     reason = 'Maximum number of iterations is reached'
     while keep_on:
+        eigen_stiff_old = eigen_stiff
         A = np.zeros((m,3,3,3,3))
         for i in range(m):
             A[i] = localization_tensor(C_macro, C, orientations[i])
         LiAi = ddot(C_rotated, A)
         if method == 'stress':
-            C_macro_new = np.mean(LiAi, axis=0)
+            C_matrix = np.mean(LiAi, axis=0)
         elif method == 'strain':
             B = ddot(LiAi, C_macro.inv().full_tensor())
             LiBi_mean = np.mean(ddot(C_rotated.inv(), B),axis=0)
-            C_macro_new = invert_4th_order_tensor(LiBi_mean)
-        C_macro_old = C_macro.full_tensor()
-        abs_change = np.abs(C_macro_new - C_macro_old)
-        rel_change = np.max(abs_change[C_macro_old!=0] / np.abs(C_macro_old[C_macro_old!=0]))
+            C_matrix = invert_4th_order_tensor(LiBi_mean)
+        else:
+            raise ValueError('Only "strain" and "stress" are valid method names')
+        C_macro = StiffnessTensor(C_matrix, force_symmetry=True)
+        eigen_stiff = C_macro.eig_stiffnesses
+        abs_change = np.abs(eigen_stiff - eigen_stiff_old)
+        rel_change = np.max(abs_change / eigen_stiff_old)
         max_abs_change = np.max(abs_change)
         iter += 1
         reason = 'Maximum number of iterations is reached'
