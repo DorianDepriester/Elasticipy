@@ -81,19 +81,17 @@ def Kroner_Eshelby(C, orientations, method='stress',  max_iter=50, atol=1e-3, rt
         rel_change = np.max(abs_change / eigen_stiff_old)
         max_abs_change = np.max(abs_change)
         iter += 1
-        reason = 'Maximum number of iterations is reached'
         if  max_abs_change < atol:
             keep_on = False
             reason = 'Absolute change is below threshold value'
         if rel_change < rtol:
             keep_on = False
             reason = 'Relative change is below threshold value'
-        if iter > max_iter:
+        if iter == max_iter:
             keep_on = False
         if display:
             err = np.linalg.norm(np.mean(A, axis=0) - StiffnessTensor.identity(return_full_tensor=True))
             print('Iter #{}: abs. change={:0.5f}; rel. change={:0.5f}; error={:0.5f}'.format(iter, max_abs_change, rel_change,err))
-        C_macro = StiffnessTensor(C_macro_new, force_symmetry=True)
     return C_macro, reason
 
 m = 100
@@ -101,7 +99,7 @@ orientations = Rotation.random(m)
 C = StiffnessTensor.cubic(C11=110, C12=12, C44=44)
 
 C_stress, reason = Kroner_Eshelby(C, orientations, method='stress', max_iter=10, display=True)
-print(C_stress)
 
-C_strain, reason = Kroner_Eshelby(C, orientations, method='strain', max_iter=10, display=True)
-print(C_strain)
+Cstrip = StiffnessTensor.transverse_isotropic(Ex= 15, Ez=230, nu_zx=0.274, nu_yx=0.355, Gxz=7)
+Cmatrix = StiffnessTensor.isotropic(E=4.5, nu=0.4)
+
