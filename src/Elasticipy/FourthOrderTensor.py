@@ -120,7 +120,7 @@ def rotate_tensor(full_tensor, r):
         Rotated tensor. If r is an array, the corresponding axes will be added as first axes in the result array.
     """
     rot_mat = rotation_to_matrix(r)
-    str_ein = '...im,...jn,...ko,...lp,mnop->...ijkl'
+    str_ein = '...im,...jn,...ko,...lp,...mnop->...ijkl'
     return np.einsum(str_ein, rot_mat, rot_mat, rot_mat, rot_mat, full_tensor)
 
 
