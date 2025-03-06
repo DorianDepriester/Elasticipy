@@ -29,10 +29,8 @@ def Kroner_matrix(L, theta, phi, a1=1., a2=1., a3=1.):
     s2 = np.sin(theta)*np.sin(phi) / a2
     s3 = np.cos(theta) / a3
     s = [s1, s2, s3]
-    K = np.array([[L[0,0]*s1**2+L[5,5]*s2**2+L[4,4]*s3**2   ,(L[0,1]+L[5,5])*s1*s2                  ,(L[0,2]+L[4,4])*s1*s3],
-                  [(L[0,1]+L[5,5])*s1*s2                    ,L[5,5]*s1**2+L[1,1]*s2**2+L[3,3]*s3**2 ,(L[1,2]+L[3,3])*s2*s3],
-                  [(L[0,2]+L[4,4])*s1*s3                    ,(L[1,2]+L[3,3])*s2*s3                  ,L[4,4]*s1**2+L[3,3]*s2**2+L[2,2]*s3**2]])
-    return np.einsum('ikmn,jmn,lmn->ijklmn', np.linalg.inv(K.T).T, s, s)
+    D = np.einsum('kijl,kpq,lpq->ijpq', L.full_tensor(), s, s)
+    return np.einsum('ikmn,jmn,lmn->ijklmn', np.linalg.inv(D.T).T, s, s)
 
 def Morris_tensor(L):
     gamma = Kroner_matrix(L, theta, phi)
@@ -40,7 +38,7 @@ def Morris_tensor(L):
     return trapezoid(a, phi[:,0], axis=-1)/(4*np.pi)
 
 def localization_tensor(C_macro, C_incl, orientation):
-    E = Morris_tensor(C_macro.matrix)
+    E = Morris_tensor(C_macro)
     E_local = rotate_tensor(E, orientation.inv())
     C_macro_local = rotate_tensor(C_macro.full_tensor(), orientation.inv())
     I = StiffnessTensor.identity(return_full_tensor=True)
