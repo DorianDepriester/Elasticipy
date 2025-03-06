@@ -4,6 +4,9 @@ from scipy.integrate import trapezoid
 from Elasticipy.FourthOrderTensor import rotate_tensor
 from scipy.spatial.transform import Rotation
 
+I = StiffnessTensor.identity(return_full_tensor=True)
+
+
 def ddot(a, b):
     if isinstance(a, SymmetricTensor):
         a_full = a.full_tensor()
@@ -41,7 +44,6 @@ def localization_tensor(C_macro, C_incl, orientation):
     E = Morris_tensor(C_macro)
     E_local = rotate_tensor(E, orientation.inv())
     C_macro_local = rotate_tensor(C_macro.full_tensor(), orientation.inv())
-    I = StiffnessTensor.identity(return_full_tensor=True)
     Ainv = ddot(E_local, C_incl.full_tensor() - C_macro_local) + I
     A = invert_4th_order_tensor(Ainv)
     return rotate_tensor(A, orientation)
