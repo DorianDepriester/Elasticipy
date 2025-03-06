@@ -143,7 +143,7 @@ class SymmetricTensor:
     component_prefix = 'C'
 
     def __init__(self, M, phase_name=None, symmetry='Triclinic', orientations=None,
-                 check_symmetry=True, check_positive_definite=False):
+                 check_symmetry=True, check_positive_definite=False, force_symmetry=False):
         """
         Construct of stiffness tensor from a (6,6) matrix.
 
@@ -162,6 +162,8 @@ class SymmetricTensor:
             Whether to check or not that the input matrix is symmetric.
         check_positive_definite : bool, optional
             Whether to check or not that the input matrix is definite positive
+        force_symmetry : bool, optional
+            If true, the major symmetry of the tensor is forces
         """
         M = np.asarray(M)
         if M.shape == (6, 6):
@@ -170,6 +172,8 @@ class SymmetricTensor:
             matrix = self._full_to_matrix(M)
         else:
             raise ValueError('The input matrix must of shape (6,6)')
+        if force_symmetry:
+            matrix = 0.5*(matrix + matrix.T)
         if check_symmetry and not np.all(np.isclose(matrix, matrix.T)):
             raise ValueError('The input matrix must be symmetric')
         if check_positive_definite:
