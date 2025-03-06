@@ -60,6 +60,7 @@ def Kroner_Eshelby(C, orientations, method='stress',  max_iter=50, atol=1e-3, rt
     global_spherical_grid()
     keep_on = True
     iter = 0
+    reason = 'Maximum number of iterations is reached'
     while keep_on:
         A = np.zeros((m,3,3,3,3))
         for i in range(m):
