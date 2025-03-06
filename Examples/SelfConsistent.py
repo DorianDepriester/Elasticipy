@@ -1,5 +1,5 @@
 import numpy as np
-from Elasticipy.FourthOrderTensor import StiffnessTensor, SymmetricTensor
+from Elasticipy.FourthOrderTensor import StiffnessTensor, SymmetricTensor, ComplianceTensor
 from scipy.integrate import trapezoid
 from Elasticipy.FourthOrderTensor import rotate_tensor
 from scipy.spatial.transform import Rotation
@@ -25,28 +25,25 @@ def invert_4th_order_tensor(T):
     T_inv_mat = np.linalg.pinv(T_mat)
     return T_inv_mat.reshape(shape)
 
-def Kroner_matrix(L, theta, phi, a1=1., a2=1., a3=1.):
+def Kroner_tensor(L, theta, phi, a1=1., a2=1., a3=1.):
     theta = np.atleast_2d(theta)
     phi = np.atleast_2d(phi)
     s1 = np.sin(theta)*np.cos(phi) / a1
     s2 = np.sin(theta)*np.sin(phi) / a2
     s3 = np.cos(theta) / a3
     s = [s1, s2, s3]
-    D = np.einsum('kijl,kpq,lpq->ijpq', L.full_tensor(), s, s)
+    D = np.einsum('kijl,kpq,lpq->ijpq', L, s, s)
     return np.einsum('ikmn,jmn,lmn->ijklmn', np.linalg.inv(D.T).T, s, s)
 
 def Morris_tensor(L):
-    gamma = Kroner_matrix(L, theta, phi)
+    gamma = Kroner_tensor(L, theta, phi)
     a = trapezoid(gamma*np.sin(theta), theta[0], axis=-1)
     return trapezoid(a, phi[:,0], axis=-1)/(4*np.pi)
 
-def localization_tensor(C_macro, C_incl, orientation):
-    E = Morris_tensor(C_macro)
-    E_local = rotate_tensor(E, orientation.inv())
-    C_macro_local = rotate_tensor(C_macro.full_tensor(), orientation.inv())
-    Ainv = ddot(E_local, C_incl.full_tensor() - C_macro_local) + I
-    A = invert_4th_order_tensor(Ainv)
-    return rotate_tensor(A, orientation)
+def localization_tensor(C_macro_local, C_incl):
+    E = Morris_tensor(C_macro_local)
+    Ainv = ddot(E, C_incl.full_tensor() - C_macro_local) + I
+    return invert_4th_order_tensor(Ainv)
 
 def global_spherical_grid(n_theta=50, n_phi=100):
     global phi, theta
@@ -56,26 +53,33 @@ def global_spherical_grid(n_theta=50, n_phi=100):
 
 def Kroner_Eshelby(C, orientations, method='stress',  max_iter=50, atol=1e-3, rtol=1e-4, display=False):
     C_rotated = C * orientations
-    C_macro = C.Hill_average()
+    C_macro = C_rotated.Hill_average()
+    eigen_stiff = C_macro.eig_stiffnesses
     global_spherical_grid()
     keep_on = True
     iter = 0
     reason = 'Maximum number of iterations is reached'
+    m = len(orientations)
     while keep_on:
         eigen_stiff_old = eigen_stiff
-        A = np.zeros((m,3,3,3,3))
+        A_local = np.zeros((m,3,3,3,3))
+        C_macro_local = C_macro * orientations.inv()
         for i in range(m):
-            A[i] = localization_tensor(C_macro, C, orientations[i])
-        LiAi = ddot(C_rotated, A)
+            A_local[i] = localization_tensor(C_macro_local[i].full_tensor(), C)
+        LiAi_local = ddot(C, A_local)
         if method == 'stress':
+            LiAi = rotate_tensor(LiAi_local, orientations)
             C_matrix = np.mean(LiAi, axis=0)
+            C_macro = StiffnessTensor(C_matrix, force_symmetry=True)
         elif method == 'strain':
-            B = ddot(LiAi, C_macro.inv().full_tensor())
-            LiBi_mean = np.mean(ddot(C_rotated.inv(), B),axis=0)
-            C_matrix = invert_4th_order_tensor(LiBi_mean)
+            B_local = ddot(LiAi_local, C_macro_local.inv().full_tensor())
+            Bi = rotate_tensor(B_local, orientations)
+            LiBi_mean = np.mean(ddot(C_rotated.inv(), Bi),axis=0)
+            S_macro = ComplianceTensor(LiBi_mean, force_symmetry=True)
+            C_macro = S_macro.inv()
         else:
             raise ValueError('Only "strain" and "stress" are valid method names')
-        C_macro = StiffnessTensor(C_matrix, force_symmetry=True)
+
         eigen_stiff = C_macro.eig_stiffnesses
         abs_change = np.abs(eigen_stiff - eigen_stiff_old)
         rel_change = np.max(abs_change / eigen_stiff_old)
@@ -90,16 +94,12 @@ def Kroner_Eshelby(C, orientations, method='stress',  max_iter=50, atol=1e-3, rt
         if iter == max_iter:
             keep_on = False
         if display:
-            err = np.linalg.norm(np.mean(A, axis=0) - StiffnessTensor.identity(return_full_tensor=True))
+            err = np.max(np.mean(A_local, axis=0) - StiffnessTensor.identity(return_full_tensor=True))
             print('Iter #{}: abs. change={:0.5f}; rel. change={:0.5f}; error={:0.5f}'.format(iter, max_abs_change, rel_change,err))
     return C_macro, reason
 
-m = 100
-orientations = Rotation.random(m)
-C = StiffnessTensor.cubic(C11=110, C12=12, C44=44)
 
-C_stress, reason = Kroner_Eshelby(C, orientations, method='stress', max_iter=10, display=True)
-
-Cstrip = StiffnessTensor.transverse_isotropic(Ex= 15, Ez=230, nu_zx=0.274, nu_yx=0.355, Gxz=7)
-Cmatrix = StiffnessTensor.isotropic(E=4.5, nu=0.4)
+Cstrip = StiffnessTensor.transverse_isotropic(Ex= 10.2, Ez=146.8, nu_zx=0.274, nu_yx=0.355, Gxz=7)
+orientations = Rotation.from_euler('X', np.linspace(0,180,10), degrees=True)
+C_stress, reason = Kroner_Eshelby(Cstrip, orientations, method='strain', max_iter=20, display=True)
 
