@@ -4,8 +4,8 @@ from scipy.integrate import trapezoid
 from Elasticipy.FourthOrderTensor import rotate_tensor
 from scipy.spatial.transform import Rotation
 
-I = StiffnessTensor.identity(return_full_tensor=True)
-#I = np.einsum('ij,kl->ijkl', np.eye(3), np.eye(3))
+#I = StiffnessTensor.identity(return_full_tensor=True)
+I = np.einsum('ik,jl->ijkl', np.eye(3), np.eye(3))
 
 def ddot(a, b):
     if isinstance(a, SymmetricTensor):
@@ -22,10 +22,10 @@ def invert_4th_order_tensor(T):
     shape = T.shape
     *a,_,_,_,_ = shape
     T_mat = T.reshape(tuple(a) + (9, 9))
-    T_inv_mat = np.linalg.pinv(T_mat)
+    T_inv_mat = np.linalg.inv(T_mat)
     return T_inv_mat.reshape(shape)
 
-def gamma(C_macro_local, a1=1., a2=1., a3=1.):
+def gamma(C_macro_local, a1=10., a2=1., a3=1.):
     s1 = np.sin(theta)*np.cos(phi) / a1
     s2 = np.sin(theta)*np.sin(phi) / a2
     s3 = np.cos(theta) / a3
