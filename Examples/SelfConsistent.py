@@ -4,6 +4,8 @@ from scipy.integrate import trapezoid
 from Elasticipy.FourthOrderTensor import rotate_tensor
 from scipy.spatial.transform import Rotation
 
+from tests.test_StiffnessTensor import rotations
+
 I = StiffnessTensor.identity(return_full_tensor=True)
 
 
@@ -16,7 +18,7 @@ def ddot(a, b):
         b_full = b.full_tensor()
     else:
         b_full = b
-    return np.einsum('...ijmn,...mnkl->...ijkl', a_full, b_full)
+    return np.einsum('...ijmn,...nmkl->...ijkl', a_full, b_full)
 
 def invert_4th_order_tensor(T):
     shape = T.shape
@@ -94,12 +96,17 @@ def Kroner_Eshelby(C, orientations, method='stress',  max_iter=50, atol=1e-3, rt
         if iter == max_iter:
             keep_on = False
         if display:
-            err = np.max(np.mean(A_local, axis=0) - StiffnessTensor.identity(return_full_tensor=True))
+            if method == 'stress':
+                AB = rotate_tensor(A_local, orientations)
+            else:
+                AB = rotate_tensor(B_local, orientations)
+            err = np.max(np.mean(AB, axis=0) - I)
             print('Iter #{}: abs. change={:0.5f}; rel. change={:0.5f}; error={:0.5f}'.format(iter, max_abs_change, rel_change,err))
     return C_macro, reason
 
 
 Cstrip = StiffnessTensor.transverse_isotropic(Ex= 10.2, Ez=146.8, nu_zx=0.274, nu_yx=0.355, Gxz=7)
-orientations = Rotation.from_euler('X', np.linspace(0,180,10), degrees=True)
-C_stress, reason = Kroner_Eshelby(Cstrip, orientations, method='strain', max_iter=20, display=True)
+Cstrip = Cstrip * Rotation.from_euler('Y', 90, degrees=True)
+orientations = Rotation.from_euler('Z', np.linspace(0,180,10, endpoint=False), degrees=True)
+C_stress, reason = Kroner_Eshelby(Cstrip, orientations, method='stress', max_iter=50, rtol=1e-6, atol=1e-5, display=True)
 
