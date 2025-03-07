@@ -16,7 +16,7 @@ def ddot(a, b):
         b_full = b.full_tensor()
     else:
         b_full = b
-    return np.einsum('...ijmn,...mnkl->...ijkl', a_full, b_full)
+    return np.einsum('ijmn,...mnkl->...ijkl', a_full, b_full)
 
 def invert_4th_order_tensor(T):
     shape = T.shape
