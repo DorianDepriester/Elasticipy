@@ -60,9 +60,9 @@ def Kroner_Eshelby(C, g, method='stress', max_iter=50, atol=1e-3, rtol=1e-4, dis
     k = 0
     message = 'Maximum number of iterations is reached'
     m = len(g)
+    A_local = np.zeros((m, 3, 3, 3, 3))
     while keep_on:
         eigen_stiff_old = eigen_stiff
-        A_local = np.zeros((m,3,3,3,3))
         C_macro_local = C_macro * g.inv()
         for i in range(m):
             A_local[i] = localization_tensor(C_macro_local[i].full_tensor(), C)
