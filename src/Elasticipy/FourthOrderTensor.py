@@ -137,7 +137,7 @@ class SymmetricTensor:
 
     """
     tensor_name = 'Symmetric'
-    voigt_map = np.ones((6, 6))
+    voigt_map = _voigt_to_kelvin_matrix
     C11_C12_factor = 0.5
     C46_C56_factor = 1.0
     component_prefix = 'C'
@@ -932,6 +932,7 @@ class StiffnessTensor(SymmetricTensor):
     """
     Class for manipulating fourth-order stiffness tensors.
     """
+    voigt_map = np.ones((6, 6))
     tensor_name = 'Stiffness'
     C11_C12_factor = 0.5
 
