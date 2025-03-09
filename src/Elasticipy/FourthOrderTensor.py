@@ -927,6 +927,10 @@ class SymmetricTensor:
         else:
             return cls(full, symmetry='isotropic', check_positive_definite=False)
 
+    def inv(self):
+        new_matrix = np.linalg.inv(self.matrix)
+        return SymmetricTensor(new_matrix)
+
 
 class StiffnessTensor(SymmetricTensor):
     """
