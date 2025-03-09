@@ -1,5 +1,5 @@
 import numpy as np
-from Elasticipy.FourthOrderTensor import StiffnessTensor, SymmetricTensor, ComplianceTensor
+from Elasticipy.FourthOrderTensor import StiffnessTensor, SymmetricFourthOrderTensor, ComplianceTensor
 from scipy.integrate import trapezoid
 from Elasticipy.FourthOrderTensor import rotate_tensor
 from scipy.spatial.transform import Rotation
@@ -8,11 +8,11 @@ I = np.einsum('ik,jl->ijkl', np.eye(3), np.eye(3))
 global phi, theta
 
 def ddot(a, b):
-    if isinstance(a, SymmetricTensor):
+    if isinstance(a, SymmetricFourthOrderTensor):
         a_full = a.full_tensor()
     else:
         a_full = a
-    if isinstance(b, SymmetricTensor):
+    if isinstance(b, SymmetricFourthOrderTensor):
         b_full = b.full_tensor()
     else:
         b_full = b

@@ -124,7 +124,7 @@ def rotate_tensor(full_tensor, r):
     return np.einsum(str_ein, rot_mat, rot_mat, rot_mat, rot_mat, full_tensor)
 
 
-class SymmetricTensor:
+class SymmetricFourthOrderTensor:
     """
     Template class for manipulating symmetric fourth-order tensors.
 
@@ -259,7 +259,7 @@ class SymmetricTensor:
 
         Returns
         -------
-        SymmetricTensor
+        SymmetricFourthOrderTensor
             Flattened tensor
         """
         tensor_flat = self._unrotate()
@@ -289,7 +289,7 @@ class SymmetricTensor:
 
         Returns
         -------
-        SymmetricTensor
+        SymmetricFourthOrderTensor
             Rotated tensor
         """
         if _is_single_rotation(rotation):
@@ -347,7 +347,7 @@ class SymmetricTensor:
                 mat = self._full_to_matrix(self.full_tensor() + other)
             else:
                 raise ValueError('The input argument must be either a 6x6 matrix or a (3,3,3,3) array.')
-        elif isinstance(other, SymmetricTensor):
+        elif isinstance(other, SymmetricFourthOrderTensor):
             if type(other) == type(self):
                 mat = self.matrix + other.matrix
             else:
@@ -357,7 +357,7 @@ class SymmetricTensor:
         return self.__class__(mat)
 
     def __sub__(self, other):
-        if isinstance(other, SymmetricTensor):
+        if isinstance(other, SymmetricFourthOrderTensor):
             return self.__add__(-other.matrix)
         else:
             return self.__add__(-other)
@@ -368,7 +368,7 @@ class SymmetricTensor:
 
         Parameters
         ----------
-        other : SymmetricTensor
+        other : SymmetricFourthOrderTensor
             Right-hand side of ":" symbol
         mode : str, optional
             If mode=="pair", the tensors must be broadcastable, and the tensor product are performed on the last axes.
@@ -381,7 +381,7 @@ class SymmetricTensor:
          Otherwise, the return value will be the full tensor, of shape (...,3,3,3,3).
         """
         if self.ndim == 0 and other.ndim == 0:
-            return SymmetricTensor(np.einsum('ijmn,nmkl->ijkl', self.full_tensor(), other.full_tensor()))
+            return SymmetricFourthOrderTensor(np.einsum('ijmn,nmkl->ijkl', self.full_tensor(), other.full_tensor()))
         else:
             if mode == 'pair':
                 ein_str = '...ijmn,...nmkl->...ijkl'
@@ -395,7 +395,7 @@ class SymmetricTensor:
             return np.einsum(ein_str, self.full_tensor(), other.full_tensor())
 
     def __mul__(self, other):
-        if isinstance(other, SymmetricTensor):
+        if isinstance(other, SymmetricFourthOrderTensor):
             return self.ddot(other)
         elif isinstance(other, SymmetricSecondOrderTensor):
             return SymmetricSecondOrderTensor(self * other.matrix)
@@ -461,7 +461,7 @@ class SymmetricTensor:
             raise NotImplementedError
 
     def __eq__(self, other):
-        if isinstance(other, SymmetricTensor):
+        if isinstance(other, SymmetricFourthOrderTensor):
             return np.all(self.matrix == other.matrix) and np.all(self.orientations == other.orientations)
         elif isinstance(other, np.ndarray) and other.shape == (6, 6):
             return np.all(self.matrix == other)
@@ -866,7 +866,7 @@ class SymmetricTensor:
 
         Returns
         -------
-        SymmetricTensor
+        SymmetricFourthOrderTensor
             The reconstructed tensor read from the file.
 
         See Also
@@ -929,10 +929,10 @@ class SymmetricTensor:
 
     def inv(self):
         new_matrix = np.linalg.inv(self.matrix)
-        return SymmetricTensor(new_matrix)
+        return SymmetricFourthOrderTensor(new_matrix)
 
 
-class StiffnessTensor(SymmetricTensor):
+class StiffnessTensor(SymmetricFourthOrderTensor):
     """
     Class for manipulating fourth-order stiffness tensors.
     """
