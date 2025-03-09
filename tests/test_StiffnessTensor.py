@@ -218,6 +218,12 @@ class TestComplianceTensor(unittest.TestCase):
         S2 = ComplianceTensor.from_Kelvin(matrix, symmetry=S.symmetry)
         np.testing.assert_array_almost_equal(S.matrix, S2.matrix)
 
+    def test_full_tensor(self):
+        S_full = S.full_tensor()
+        S2 = ComplianceTensor(S_full)
+        assert S == S2
+        np.testing.assert_array_equal(S.full_tensor(), S2.full_tensor())
+
 class TestStiffnessConstructor(unittest.TestCase):
     def test_averages(self):
         """Check that the Voigt, Reuss and Hill averages are consistent with those provided by MP."""
@@ -817,7 +823,7 @@ class TestStiffnessConstructor(unittest.TestCase):
         # Check inverse
         C1 = StiffnessTensor.cubic(C11=22, C12=12, C44=44)
         C2 = StiffnessTensor.isotropic(E=210000, nu=0.3)
-        np.testing.assert_almost_equal(C1.ddot(C1.inv()).matrix, StiffnessTensor.identity().matrix)
+        np.testing.assert_almost_equal(C1.ddot(C1.inv()).full_tensor(), StiffnessTensor.identity().full_tensor())
 
         # Check product between tensor arrays
         m = 5
@@ -842,6 +848,13 @@ class TestStiffnessConstructor(unittest.TestCase):
             for j in range(m):
                 np.testing.assert_array_almost_equal(C1C2_rotrot_cross[i,j], np.einsum('ijmn,nmkl->ijkl', C1_rot[i].full_tensor(),
                                                                            C2_rot[j].full_tensor()))
+
+    def test_full_tensor(self):
+        C=S.inv()
+        C_full = C.full_tensor()
+        C2 = StiffnessTensor(C_full)
+        np.testing.assert_array_almost_equal(C.matrix, C2.matrix)
+        np.testing.assert_array_almost_equal(C.full_tensor(), C2.full_tensor())
 
 if __name__ == '__main__':
     unittest.main()
