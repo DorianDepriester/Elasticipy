@@ -3,7 +3,6 @@ import re
 
 from Elasticipy.SecondOrderTensor import SymmetricSecondOrderTensor, rotation_to_matrix, is_orix_rotation, \
     SecondOrderTensor, ALPHABET
-from Elasticipy.SecondOrderTensor import _is_single_rotation
 from Elasticipy.StressStrainTensors import StrainTensor, StressTensor
 from Elasticipy.SphericalFunction import SphericalFunction, HyperSphericalFunction
 from scipy.spatial.transform import Rotation
@@ -138,7 +137,7 @@ class FourthOrderTensor:
     C46_C56_factor = 1.0
     component_prefix = 'C'
 
-    def __init__(self, M, phase_name=None):
+    def __init__(self, M):
         """
         Construct of stiffness tensor from a (6,6) matrix.
 
@@ -161,8 +160,6 @@ class FourthOrderTensor:
             raise ValueError('The input matrix must of shape (6,6)')
 
         self.matrix = matrix
-        self.phase_name = phase_name
-
         for i in range(0, 6):
             for j in range(0, 6):
                 def getter(obj, I=i, J=j):
@@ -173,11 +170,11 @@ class FourthOrderTensor:
                 setattr(self.__class__, component_name, property(getter))  # Dynamically create the property
 
     def __repr__(self):
-        if self.phase_name is None:
-            heading = '{} tensor (in Voigt notation):\n'.format(self.tensor_name)
+        if (self.ndim == 0) or ((self.ndim==1) and self.shape[0]<5):
+            msg = '{} tensor (in Voigt notation):\n'.format(self.tensor_name)
+            msg += self.matrix.__str__()
         else:
-            heading = '{} tensor (in Voigt notation) for {}:\n'.format(self.tensor_name, self.phase_name)
-        msg = heading + self.matrix.__str__()
+            msg = '{} tensor array of shape {}'.format(self.tensor_name, self.shape)
         return msg
 
     @property
@@ -220,8 +217,10 @@ class FourthOrderTensor:
         """
         shape = self.shape
         if shape:
+            t2 = deepcopy(self)
             p = (np.prod(self.shape), 6, 6)
-            return self.__class__(self.matrix.reshape(p))
+            t2.matrix = self.matrix.reshape(p)
+            return t2
         else:
             return self
 
@@ -449,7 +448,7 @@ class FourthOrderTensor:
             return cls(full)
 
     def inv(self):
-        t2 = copy(self)
+        t2 = deepcopy(self)
         new_matrix = np.linalg.inv(self.matrix)
         t2.matrix = new_matrix
         return t2
