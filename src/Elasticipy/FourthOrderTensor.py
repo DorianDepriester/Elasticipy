@@ -190,7 +190,7 @@ class FourthOrderTensor:
             Shape of the tensor array
         """
         *shape, _, _ = self.matrix.shape
-        return shape
+        return tuple(shape)
 
     def full_tensor(self):
         """
@@ -220,7 +220,7 @@ class FourthOrderTensor:
         """
         shape = self.shape
         if shape:
-            p = np.prod(self.shape) + (6,6)
+            p = (np.prod(self.shape), 6, 6)
             return self.__class__(self.matrix.reshape(p))
         else:
             return self
@@ -355,7 +355,7 @@ class FourthOrderTensor:
                 # other is a single tensor
                 matrix = np.einsum('...ijkl,kl->...ij', self.full_tensor(), other)
                 return SecondOrderTensor(matrix)
-            elif self.shape is None:
+            elif self.shape == ():
                 # other is an array, but self is single
                 matrix = np.einsum('ijkl,...kl->...ij', self.full_tensor(), other)
                 return SecondOrderTensor(matrix)
@@ -373,10 +373,7 @@ class FourthOrderTensor:
             else:
                 raise ValueError('The arrays to multiply could not be broadcast with shapes {} and {}'.format(self.shape, other.shape[:-2]))
         elif isinstance(other, Rotation) or is_orix_rotation(other):
-            if _is_single_rotation(other):
-                return self.rotate(other)
-            else:
-                return self.__class__(self.matrix)
+            return self.rotate(other)
         else:
             return self.__class__(self.matrix * other)
 
@@ -445,8 +442,10 @@ class FourthOrderTensor:
             return cls(full)
 
     def inv(self):
+        t2 = copy(self)
         new_matrix = np.linalg.inv(self.matrix)
-        return SymmetricFourthOrderTensor(new_matrix)
+        t2.matrix = new_matrix
+        return t2
 
 class SymmetricFourthOrderTensor(FourthOrderTensor):
     tensor_name = 'symmetric'
@@ -474,7 +473,7 @@ class SymmetricFourthOrderTensor(FourthOrderTensor):
         super().__init__(M, **kwargs)
         if force_symmetry:
             self.matrix = 0.5*(self.matrix + self.matrix.T)
-        elif check_symmetry and not np.all(np.isclose(self.matrix, self.matrix.T)):
+        elif check_symmetry and not np.all(np.isclose(self.matrix, self.matrix.swapaxes(-1,-2))):
             raise ValueError('The input matrix must be symmetric')
 
 
@@ -486,7 +485,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
     tensor_name = 'Stiffness'
     C11_C12_factor = 0.5
 
-    def __init__(self, M, symmetry='Triclinic', check_positive_definite=True, **kwargs):
+    def __init__(self, M, symmetry='Triclinic', check_positive_definite=True, phase_name= None, **kwargs):
         """
         Construct of stiffness tensor from a (6,6) matrix.
 
@@ -510,6 +509,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         if check_positive_definite:
             _check_definite_positive(self.matrix)
         self.symmetry = symmetry
+        self.phase_name = phase_name
 
     def __mul__(self, other):
         if isinstance(other, StrainTensor):
@@ -729,7 +729,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         """
         matrix = cls._matrixFromCrystalSymmetry(point_group=point_group, diad=diad, symmetry=symmetry, prefix=prefix,
                                                 **kwargs)
-        return cls(matrix, phase_name=phase_name)
+        return cls(matrix, phase_name=phase_name, symmetry=symmetry)
 
 
     @classmethod
