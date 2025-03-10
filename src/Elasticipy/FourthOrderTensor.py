@@ -1495,8 +1495,8 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         """
         if self.ndim:
             raise ValueError('The universal anisotropy factor cannot be computed on tensor arrays.')
-        Cvoigt = C.Voigt_average()
-        Creuss = C.Reuss_average()
+        Cvoigt = self.Voigt_average()
+        Creuss = self.Reuss_average()
         Gv = Cvoigt.matrix[3, 3]
         Gr = Creuss.matrix[3, 3]
         Kv = Cvoigt.bulk_modulus
