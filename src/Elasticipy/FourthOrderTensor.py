@@ -341,7 +341,8 @@ class FourthOrderTensor:
                     indices_1 = ALPHABET[:ndim_1].upper()
                     indices_2 = indices_0 + indices_1
                     ein_str = indices_0 + 'wxXY,' + indices_1 + 'YXyz->' + indices_2 + 'wxyz'
-                return np.einsum(ein_str, self.full_tensor(), other.full_tensor())
+                matrix = np.einsum(ein_str, self.full_tensor(), other.full_tensor())
+                return FourthOrderTensor(matrix)
         elif isinstance(other, SecondOrderTensor):
             if self.ndim == 0 and other.ndim == 0:
                 return SymmetricSecondOrderTensor(np.einsum('ijkl,kl->ij', self.full_tensor(), other.matrix))
@@ -511,7 +512,7 @@ class FourthOrderTensor:
         return cls(zeros)
 
 class SymmetricFourthOrderTensor(FourthOrderTensor):
-    tensor_name = 'symmetric'
+    tensor_name = 'Symmetric'
 
     def __init__(self, M, check_symmetry=True, force_symmetry=False):
         """
