@@ -328,19 +328,36 @@ class FourthOrderTensor:
          If both the tensors are 0D (no orientation), the return value will be of type SymmetricTensor
          Otherwise, the return value will be the full tensor, of shape (...,3,3,3,3).
         """
-        if self.ndim == 0 and other.ndim == 0:
-            return SymmetricFourthOrderTensor(np.einsum('ijmn,nmkl->ijkl', self.full_tensor(), other.full_tensor()))
-        else:
-            if mode == 'pair':
-                ein_str = '...ijmn,...nmkl->...ijkl'
+        if isinstance(other, FourthOrderTensor):
+            if self.ndim == 0 and other.ndim == 0:
+                return SymmetricFourthOrderTensor(np.einsum('ijmn,nmkl->ijkl', self.full_tensor(), other.full_tensor()))
             else:
-                ndim_0 = self.ndim
-                ndim_1 = other.ndim
-                indices_0 = ALPHABET[:ndim_0]
-                indices_1 = ALPHABET[:ndim_1].upper()
-                indices_2 = indices_0 + indices_1
-                ein_str = indices_0 + 'wxXY,' + indices_1 + 'YXyz->' + indices_2 + 'wxyz'
-            return np.einsum(ein_str, self.full_tensor(), other.full_tensor())
+                if mode == 'pair':
+                    ein_str = '...ijmn,...nmkl->...ijkl'
+                else:
+                    ndim_0 = self.ndim
+                    ndim_1 = other.ndim
+                    indices_0 = ALPHABET[:ndim_0]
+                    indices_1 = ALPHABET[:ndim_1].upper()
+                    indices_2 = indices_0 + indices_1
+                    ein_str = indices_0 + 'wxXY,' + indices_1 + 'YXyz->' + indices_2 + 'wxyz'
+                return np.einsum(ein_str, self.full_tensor(), other.full_tensor())
+        elif isinstance(other, SecondOrderTensor):
+            if self.ndim == 0 and other.ndim == 0:
+                return SymmetricFourthOrderTensor(np.einsum('ijkl,kl->ij', self.full_tensor(), other.matrix))
+            else:
+                if mode == 'pair':
+                    ein_str = '...ijkl,...kl->...ij'
+                else:
+                    ndim_0 = self.ndim
+                    ndim_1 = other.ndim
+                    indices_0 = ALPHABET[:ndim_0]
+                    indices_1 = ALPHABET[:ndim_1].upper()
+                    indices_2 = indices_0 + indices_1
+                    ein_str = indices_0 + 'wxXY,' + indices_1 + 'XY->' + indices_2 + 'wx'
+                matrix = np.einsum(ein_str, self.full_tensor(), other.matrix)
+                return SecondOrderTensor(matrix)
+
 
     def __mul__(self, other):
         if isinstance(other, SymmetricFourthOrderTensor):
