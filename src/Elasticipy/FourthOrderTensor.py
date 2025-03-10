@@ -245,9 +245,10 @@ class FourthOrderTensor:
         SymmetricFourthOrderTensor
             Rotated tensor
         """
+        t2 = deepcopy(self)
         rotated_tensor = rotate_tensor(self.full_tensor(), rotation)
-        rotated_matrix = self._full_to_matrix(rotated_tensor)
-        return self.__class__(rotated_matrix)
+        t2.matrix = self._full_to_matrix(rotated_tensor)
+        return t2
 
     @property
     def ndim(self):
