@@ -384,13 +384,13 @@ class FourthOrderTensor:
         Returns
         -------
         FourthOrderTensor
-            The same tensor, but with transposed orientations
+            The same tensor, but with transposed axes
         """
         ndim = self.ndim
         if ndim==0 or ndim==1:
             return self
         else:
-            new_axes = tuple(range(ndim))[::-1] + (ndim - 2, ndim - 1)
+            new_axes = tuple(range(ndim))[::-1] + (ndim, ndim + 1)
             transposed_matrix = self.matrix.transpose(new_axes)
             return self.__class__(transposed_matrix)
 
