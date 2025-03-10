@@ -285,11 +285,6 @@ class FourthOrderTensor:
         t2.matrix = np.mean(self.matrix, axis=axis)
         return t2
 
-    def _unrotate(self):
-        unrotated_tensor = deepcopy(self)
-        unrotated_tensor.orientations = None
-        return unrotated_tensor
-
     def __add__(self, other):
         if isinstance(other, np.ndarray):
             if other.shape == (6, 6):
