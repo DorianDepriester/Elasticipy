@@ -158,22 +158,21 @@ class FourthOrderTensor:
             Name of the crystal's symmetry
         """
         M = np.asarray(M)
-        if M.shape == (6, 6):
+        if M.shape[-2:] == (6, 6):
             matrix = M
-        elif M.shape == (3, 3, 3, 3):
+        elif M.shape[-4:] == (3, 3, 3, 3):
             matrix = self._full_to_matrix(M)
         else:
             raise ValueError('The input matrix must of shape (6,6)')
 
         self.matrix = matrix
         self.phase_name = phase_name
-        self.symmetry = symmetry
         self.orientations = orientations
 
         for i in range(0, 6):
             for j in range(0, 6):
                 def getter(obj, I=i, J=j):
-                    return obj.matrix[I, J]
+                    return obj.matrix[...,I, J]
 
                 getter.__doc__ = f"Returns the ({i + 1},{j + 1}) component of the {self.tensor_name} matrix."
                 component_name = 'C{}{}'.format(i + 1, j + 1)
@@ -838,52 +837,6 @@ class FourthOrderTensor:
             for row in self.matrix:
                 f.write("  " + "  ".join(f"{value:8.2f}" for value in row) + "\n")
 
-    @classmethod
-    def from_txt_file(cls, filename):
-        """
-        Load the tensor from a text file.
-
-        The two first lines can have data about phase name and symmetry, but this is not mandatory.
-
-        Parameters
-        ----------
-        filename : str
-            Filename to load the tensor from.
-
-        Returns
-        -------
-        SymmetricFourthOrderTensor
-            The reconstructed tensor read from the file.
-
-        See Also
-        --------
-        save_to_txt : create a tensor from text file
-
-        """
-        with open(filename, 'r') as f:
-            lines = f.readlines()
-
-        # Initialize defaults
-        phase_name = None
-        symmetry = 'Triclinic'
-        matrix_start_index = 0
-
-        # Parse phase name if available
-        if lines and lines[0].startswith("Phase Name:"):
-            phase_name = lines[0].split(": ", 1)[1].strip()
-            matrix_start_index += 1
-
-        # Parse symmetry if available
-        if len(lines) > matrix_start_index and lines[matrix_start_index].startswith("Symmetry:"):
-            symmetry = lines[matrix_start_index].split(": ", 1)[1].strip()
-            matrix_start_index += 1
-
-        # Parse matrix
-        matrix = np.loadtxt(lines[matrix_start_index:])
-
-        # Return the reconstructed object
-        return cls(matrix, phase_name=phase_name, symmetry=symmetry)
-
     def __getitem__(self, item):
         if self.orientations is None:
             raise IndexError('The tensor has no orientation, therefore it cannot be indexed.')
@@ -911,7 +864,7 @@ class FourthOrderTensor:
         if return_full_tensor:
             return full
         else:
-            return cls(full, symmetry='isotropic')
+            return cls(full)
 
     def inv(self):
         new_matrix = np.linalg.inv(self.matrix)
@@ -978,6 +931,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         super().__init__(M, **kwargs)
         if check_positive_definite:
             _check_definite_positive(self.matrix)
+        self.symmetry = symmetry
 
     def __mul__(self, other):
         if isinstance(other, StrainTensor):
@@ -999,6 +953,52 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         """
         C = np.linalg.inv(self.matrix)
         return ComplianceTensor(C, symmetry=self.symmetry, phase_name=self.phase_name, orientations=self.orientations)
+
+    @classmethod
+    def from_txt_file(cls, filename):
+        """
+        Load the tensor from a text file.
+
+        The two first lines can have data about phase name and symmetry, but this is not mandatory.
+
+        Parameters
+        ----------
+        filename : str
+            Filename to load the tensor from.
+
+        Returns
+        -------
+        SymmetricFourthOrderTensor
+            The reconstructed tensor read from the file.
+
+        See Also
+        --------
+        save_to_txt : create a tensor from text file
+
+        """
+        with open(filename, 'r') as f:
+            lines = f.readlines()
+
+        # Initialize defaults
+        phase_name = None
+        symmetry = 'Triclinic'
+        matrix_start_index = 0
+
+        # Parse phase name if available
+        if lines and lines[0].startswith("Phase Name:"):
+            phase_name = lines[0].split(": ", 1)[1].strip()
+            matrix_start_index += 1
+
+        # Parse symmetry if available
+        if len(lines) > matrix_start_index and lines[matrix_start_index].startswith("Symmetry:"):
+            symmetry = lines[matrix_start_index].split(": ", 1)[1].strip()
+            matrix_start_index += 1
+
+        # Parse matrix
+        matrix = np.loadtxt(lines[matrix_start_index:])
+
+        # Return the reconstructed object
+        return cls(matrix, phase_name=phase_name, symmetry=symmetry)
 
     @property
     def Young_modulus(self):
