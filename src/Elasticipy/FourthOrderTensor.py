@@ -469,6 +469,14 @@ class FourthOrderTensor:
             return cls(full)
 
     def inv(self):
+        """
+        Invert the tensor. The inverted tensors inherits the properties (if any)
+
+        Returns
+        -------
+        FourthOrderTensor
+            Inverse tensor
+        """
         t2 = deepcopy(self)
         new_matrix = np.linalg.inv(self.matrix)
         t2.matrix = new_matrix
