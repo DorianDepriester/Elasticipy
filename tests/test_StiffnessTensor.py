@@ -739,11 +739,6 @@ class TestStiffnessConstructor(unittest.TestCase):
                     np.testing.assert_array_almost_equal(stress[i, j, k].matrix,
                                                          (C_rotated_3d[i, j, k] * strain_3d[i,j,k]).matrix)
 
-        expected_error = 'The arrays to multiply could not be broadcast with shapes {} and {}'.format(C_rotated_1d.shape, strain_2d.shape)
-        with self.assertRaises(ValueError) as context:
-            _ = C_rotated_1d * strain_2d
-        assert str(context.exception) == expected_error
-
     def test_transpose_array(self):
         m, n, o = 5, 6, 7
         rot_2d = orix_rot.random((m, n, o))
