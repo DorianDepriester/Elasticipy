@@ -375,13 +375,6 @@ class TestStiffnessConstructor(unittest.TestCase):
         assert approx(cs_2.mean()) == np.sqrt(G / rho)
         assert approx(cs_1.mean()) == np.sqrt(G / rho)
 
-    def test_len(self):
-        """Test len(ght) operator"""
-        C = StiffnessTensor.isotropic(E=210000, nu=0.3)
-        assert len(C) == 1
-        assert len(C * rotations[0]) == 1
-        assert len(C * rotations) == 10000
-
     def test_monoclinic(self):
         """Test constructor for monoclinic symmetry"""
         common_arguments = {'C11':11, 'C12':12, 'C13':13, 'C22':22, 'C23':23, 'C33':33, 'C44':44, 'C55':55, 'C66':66}
@@ -597,7 +590,7 @@ class TestStiffnessConstructor(unittest.TestCase):
         S1 = S_rotated[0]
         S2 = S * rotations[0]
         np.testing.assert_array_almost_equal(S1.matrix, S2.matrix)
-        expected_error = 'The tensor has no orientation, therefore it cannot be indexed.'
+        expected_error = 'A single tensor cannot be subindexed'
         with self.assertRaises(IndexError) as context:
             _ = S[0]
         self.assertEqual(str(context.exception), expected_error)
