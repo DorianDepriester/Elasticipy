@@ -1058,7 +1058,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         average : generic function for calling either the Voigt, Reuss or Hill average
         """
         if self.ndim:
-            return StiffnessTensor(self.mean())
+            return self.mean()
         else:
             c = self.matrix
             C11 = (c[0, 0] + c[1, 1] + c[2, 2]) / 5 \
@@ -1706,7 +1706,7 @@ class ComplianceTensor(StiffnessTensor):
 
     def Reuss_average(self):
         if self.ndim:
-            return ComplianceTensor(self.mean())
+            return self.mean()
         else:
             s = self.matrix
             S11 = (s[0, 0] + s[1, 1] + s[2, 2]) / 5 \
