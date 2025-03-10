@@ -281,7 +281,9 @@ class FourthOrderTensor:
             If no axis is given, the result will be of shape (3,3,3,3).
             Otherwise, if T.ndim=m, and len(axis)=n, the returned value will be of shape (...,3,3,3,3), with ndim=m-n+4
         """
-        return np.mean(self.matrix, axis=axis)
+        t2 = deepcopy(self)
+        t2.matrix = np.mean(self.matrix, axis=axis)
+        return t2
 
     def _unrotate(self):
         unrotated_tensor = deepcopy(self)
