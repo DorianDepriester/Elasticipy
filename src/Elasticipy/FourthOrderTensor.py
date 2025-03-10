@@ -141,7 +141,7 @@ class FourthOrderTensor:
     C46_C56_factor = 1.0
     component_prefix = 'C'
 
-    def __init__(self, M, phase_name=None, symmetry='Triclinic', orientations=None):
+    def __init__(self, M, phase_name=None, orientations=None):
         """
         Construct of stiffness tensor from a (6,6) matrix.
 
@@ -955,7 +955,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
     tensor_name = 'Stiffness'
     C11_C12_factor = 0.5
 
-    def __init__(self, M, check_positive_definite=True, **kwargs):
+    def __init__(self, M, symmetry='Triclinic', check_positive_definite=True, **kwargs):
         """
         Construct of stiffness tensor from a (6,6) matrix.
 
