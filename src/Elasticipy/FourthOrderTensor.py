@@ -268,7 +268,7 @@ class FourthOrderTensor:
 
     def mean(self, axis=None):
         """
-        Compute the mean value of the tensor T, considering the orientations
+        Compute the mean value of the tensor T
 
         Parameters
         ----------
@@ -281,9 +281,7 @@ class FourthOrderTensor:
             If no axis is given, the result will be of shape (3,3,3,3).
             Otherwise, if T.ndim=m, and len(axis)=n, the returned value will be of shape (...,3,3,3,3), with ndim=m-n+4
         """
-        if axis is None:
-            axis = tuple([i for i in range(self.ndim)])
-        return np.mean(self.full_tensor(), axis=axis)
+        return np.mean(self.matrix, axis=axis)
 
     def _unrotate(self):
         unrotated_tensor = deepcopy(self)
@@ -1496,7 +1494,8 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         .. [3] S. I. Ranganathan and M. Ostoja-Starzewski, Universal Elastic Anisotropy Index,
            *Phys. Rev. Lett.*, 101(5), 055504, 2008. https://doi.org/10.1103/PhysRevLett.101.055504
         """
-        C = self._unrotate()  # Ensure that the averages do not use the orientations
+        if self.ndim:
+            raise ValueError('The universal anisotropy factor cannot be computed on tensor arrays.')
         Cvoigt = C.Voigt_average()
         Creuss = C.Reuss_average()
         Gv = Cvoigt.matrix[3, 3]
