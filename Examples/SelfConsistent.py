@@ -1,10 +1,12 @@
 import numpy as np
-from Elasticipy.FourthOrderTensor import StiffnessTensor, SymmetricFourthOrderTensor, ComplianceTensor
+from Elasticipy.FourthOrderTensor import StiffnessTensor, SymmetricFourthOrderTensor, ComplianceTensor, \
+    FourthOrderTensor
 from scipy.integrate import trapezoid
 from Elasticipy.FourthOrderTensor import rotate_tensor
 from scipy.spatial.transform import Rotation
 
-I = np.einsum('ik,jl->ijkl', np.eye(3), np.eye(3))
+I = FourthOrderTensor.identity()
+#I = np.einsum('ik,jl->ijkl', np.eye(3), np.eye(3))
 global phi, theta
 
 def ddot(a, b):
@@ -31,17 +33,19 @@ def gamma(C_macro_local, a1=1, a2=1, a3=1):
     s3 = np.cos(theta) / a3
     s = [s1, s2, s3]
     D = np.einsum('kijl,kpq,lpq->ijpq', C_macro_local, s, s)
-    return np.einsum('ikmn,jmn,lmn->ijklmn', np.linalg.inv(D.T).T, s, s)
+    return np.einsum('ikmn,jmn,lmn->mnijkl', np.linalg.inv(D.T).T, s, s)
 
 def Morris_tensor(C_macro_local):
     g = gamma(C_macro_local)
-    a = trapezoid(g*np.sin(theta), theta[0], axis=-1)
-    return trapezoid(a, phi[:,0], axis=-1)/(4*np.pi)
+    gsin = (g.T*np.sin(theta.T))
+    a = trapezoid(gsin, theta[0], axis=-2)
+    b= trapezoid(a, phi[:,0], axis=-1)/(4*np.pi)
+    return FourthOrderTensor(b)
 
 def localization_tensor(C_macro_local, C_incl):
     E = Morris_tensor(C_macro_local)
-    Ainv = ddot(E, C_incl.full_tensor() - C_macro_local) + I
-    return invert_4th_order_tensor(Ainv)
+    Ainv = E.ddot(C_incl - C_macro_local) + I
+    return Ainv.inv()
 
 def global_spherical_grid(n_theta=50, n_phi=100):
     global phi, theta
