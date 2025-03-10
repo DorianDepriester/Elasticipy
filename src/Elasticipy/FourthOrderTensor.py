@@ -501,13 +501,17 @@ class FourthOrderTensor:
 
         Parameters
         ----------
-        shape : tuple, optional
+        shape : int or tuple, optional
             Shape of the tensor to create
         Returns
         -------
         FourthOrderTensor
         """
-        zeros = np.zeros(shape + (6,6))
+        if isinstance(shape, int):
+            shape = (shape, 6, 6)
+        else:
+            shape = shape + (6,6)
+        zeros = np.zeros(shape)
         return cls(zeros)
 
 class SymmetricFourthOrderTensor(FourthOrderTensor):
