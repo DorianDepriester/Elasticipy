@@ -460,9 +460,7 @@ class FourthOrderTensor:
         numpy.ndarray or SymmetricTensor
             Identity tensor
         """
-        a = np.einsum('ik,jl->ijkl',np.eye(3), np.eye(3))
-        b = np.einsum('il,jk->ijkl', np.eye(3), np.eye(3))
-        full = 0.5*(a+b)
+        full = np.einsum('ik,jl->ijkl', np.eye(3), np.eye(3))
         if return_full_tensor:
             return full
         else:
@@ -522,6 +520,16 @@ class SymmetricFourthOrderTensor(FourthOrderTensor):
             self.matrix = 0.5*(self.matrix + self.matrix.swapaxes(-1,-2))
         elif check_symmetry and not np.all(np.isclose(self.matrix, self.matrix.swapaxes(-1,-2))):
             raise ValueError('The input matrix must be symmetric')
+
+    @classmethod
+    def identity(cls, return_full_tensor=False):
+        a = np.einsum('ik,jl->ijkl',np.eye(3), np.eye(3))
+        b = np.einsum('il,jk->ijkl', np.eye(3), np.eye(3))
+        full = 0.5*(a+b)
+        if return_full_tensor:
+            return full
+        else:
+            return cls(full)
 
 
 class StiffnessTensor(SymmetricFourthOrderTensor):
