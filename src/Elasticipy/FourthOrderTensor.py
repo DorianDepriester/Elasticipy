@@ -474,6 +474,22 @@ class FourthOrderTensor:
         t2.matrix = new_matrix
         return t2
 
+    @classmethod
+    def zeros(cls, shape=()):
+        """
+        Create a fourth-order tensor populated with zeros
+
+        Parameters
+        ----------
+        shape : tuple, optional
+            Shape of the tensor to create
+        Returns
+        -------
+        FourthOrderTensor
+        """
+        zeros = np.zeros(shape + (6,6))
+        return cls(zeros)
+
 class SymmetricFourthOrderTensor(FourthOrderTensor):
     tensor_name = 'symmetric'
 
