@@ -316,7 +316,7 @@ class FourthOrderTensor:
 
         Parameters
         ----------
-        other : SymmetricFourthOrderTensor
+        other : FourthOrderTensor
             Right-hand side of ":" symbol
         mode : str, optional
             If mode=="pair", the tensors must be broadcastable, and the tensor product are performed on the last axes.
@@ -324,13 +324,13 @@ class FourthOrderTensor:
 
         Returns
         -------
-        SymmetricTensor or numpy.ndarray
+        FourthOrderTensor or numpy.ndarray
          If both the tensors are 0D (no orientation), the return value will be of type SymmetricTensor
          Otherwise, the return value will be the full tensor, of shape (...,3,3,3,3).
         """
         if isinstance(other, FourthOrderTensor):
             if self.ndim == 0 and other.ndim == 0:
-                return SymmetricFourthOrderTensor(np.einsum('ijmn,nmkl->ijkl', self.full_tensor(), other.full_tensor()))
+                return FourthOrderTensor(np.einsum('ijmn,nmkl->ijkl', self.full_tensor(), other.full_tensor()))
             else:
                 if mode == 'pair':
                     ein_str = '...ijmn,...nmkl->...ijkl'
