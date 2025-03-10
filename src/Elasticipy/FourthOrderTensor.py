@@ -295,7 +295,7 @@ class FourthOrderTensor:
                 mat = self._full_to_matrix(self.full_tensor() + other)
             else:
                 raise ValueError('The input argument must be either a 6x6 matrix or a (3,3,3,3) array.')
-        elif isinstance(other, SymmetricFourthOrderTensor):
+        elif isinstance(other, FourthOrderTensor):
             if type(other) == type(self):
                 mat = self.matrix + other.matrix
             else:
@@ -305,7 +305,7 @@ class FourthOrderTensor:
         return self.__class__(mat)
 
     def __sub__(self, other):
-        if isinstance(other, SymmetricFourthOrderTensor):
+        if isinstance(other, FourthOrderTensor):
             return self.__add__(-other.matrix)
         else:
             return self.__add__(-other)
