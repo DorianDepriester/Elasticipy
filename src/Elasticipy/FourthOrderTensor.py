@@ -437,6 +437,14 @@ class FourthOrderTensor:
         else:
             raise IndexError('A single tensor cannot be subindexed')
 
+    def __setitem__(self, index, value):
+        if isinstance(value, np.ndarray):
+            self.matrix[index] = value
+        elif isinstance(value, FourthOrderTensor):
+            self.matrix[index] = value.matrix / value.voigt_map * self.voigt_map
+        else:
+            raise NotImplementedError('The r.h.s must be either an ndarray or an object of class {}'.format(self.__class__))
+
     @classmethod
     def identity(cls, return_full_tensor=False):
         """
