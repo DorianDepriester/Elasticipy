@@ -3,7 +3,7 @@ import re
 
 from Elasticipy.SecondOrderTensor import SymmetricSecondOrderTensor, rotation_to_matrix, is_orix_rotation, \
     SecondOrderTensor, ALPHABET
-from Elasticipy.SecondOrderTensor import _orientation_shape, _is_single_rotation
+from Elasticipy.SecondOrderTensor import _is_single_rotation
 from Elasticipy.StressStrainTensors import StrainTensor, StressTensor
 from Elasticipy.SphericalFunction import SphericalFunction, HyperSphericalFunction
 from scipy.spatial.transform import Rotation
@@ -131,9 +131,6 @@ class FourthOrderTensor:
     ----------
     matrix : np.ndarray
         (6,6) matrix gathering all the components of the tensor, using the Voigt notation.
-    symmetry : str
-        Symmetry of the tensor
-
     """
     tensor_name = 'Symmetric'
     voigt_map = _voigt_to_kelvin_matrix
@@ -141,7 +138,7 @@ class FourthOrderTensor:
     C46_C56_factor = 1.0
     component_prefix = 'C'
 
-    def __init__(self, M, phase_name=None, orientations=None):
+    def __init__(self, M, phase_name=None):
         """
         Construct of stiffness tensor from a (6,6) matrix.
 
@@ -154,8 +151,6 @@ class FourthOrderTensor:
             (3,3,3,3).
         phase_name : str, default None
             Name to display
-        symmetry : str, default Triclinic
-            Name of the crystal's symmetry
         """
         M = np.asarray(M)
         if M.shape[-2:] == (6, 6):
@@ -167,7 +162,6 @@ class FourthOrderTensor:
 
         self.matrix = matrix
         self.phase_name = phase_name
-        self.orientations = orientations
 
         for i in range(0, 6):
             for j in range(0, 6):
@@ -183,25 +177,8 @@ class FourthOrderTensor:
             heading = '{} tensor (in Voigt notation):\n'.format(self.tensor_name)
         else:
             heading = '{} tensor (in Voigt notation) for {}:\n'.format(self.tensor_name, self.phase_name)
-        print_symmetry = '\nSymmetry: {}'.format(self.symmetry)
-        msg = heading + self.matrix.__str__() + print_symmetry
-        if self.orientations is not None:
-            shape = self.shape
-            if len(shape) == 1:
-                msg = msg + '\n{} orientations'.format(shape[0])
-            else:
-                msg = msg + '\n{} orientations'.format(shape)
+        msg = heading + self.matrix.__str__()
         return msg
-
-    def __len__(self):
-        o = self.orientations
-        if o is None:
-            return 1
-        else:
-            if is_orix_rotation(o):
-                return o.shape[0]
-            else:
-                return len(o)
 
     @property
     def shape(self):
@@ -212,11 +189,8 @@ class FourthOrderTensor:
         tuple
             Shape of the tensor array
         """
-        o = self.orientations
-        if o is None:
-            return None
-        else:
-            return _orientation_shape(o)
+        *shape, _, _ = self.matrix.shape
+        return shape
 
     def full_tensor(self):
         """
@@ -230,11 +204,8 @@ class FourthOrderTensor:
         i, j, k, ell = np.indices((3, 3, 3, 3))
         ij = voigt_indices(i, j)
         kl = voigt_indices(k, ell)
-        m = self.matrix[ij, kl] / self.voigt_map[ij, kl]
-        if self.orientations is None:
-            return m
-        else:
-            return rotate_tensor(m, self.orientations)
+        m = self.matrix[..., ij, kl] / self.voigt_map[ij, kl]
+        return m
 
     def flatten(self):
         """
@@ -247,21 +218,19 @@ class FourthOrderTensor:
         SymmetricFourthOrderTensor
             Flattened tensor
         """
-        tensor_flat = self._unrotate()
-        o = self.orientations
-        if is_orix_rotation(o):
-            o_flat = o.flatten()
+        shape = self.shape
+        if shape:
+            p = np.prod(self.shape) + (6,6)
+            return self.__class__(self.matrix.reshape(p))
         else:
-            o_flat = o
-        tensor_flat.orientations = o_flat
-        return tensor_flat
+            return self
 
     @classmethod
     def _full_to_matrix(cls, full_tensor):
         ij, kl = np.indices((6, 6))
         i, j = unvoigt_index(ij).T
         k, ell = unvoigt_index(kl).T
-        return full_tensor[i, j, k, ell] * cls.voigt_map[ij, kl]
+        return full_tensor[..., i, j, k, ell] * cls.voigt_map[ij, kl]
 
     def rotate(self, rotation):
         """
@@ -277,12 +246,9 @@ class FourthOrderTensor:
         SymmetricFourthOrderTensor
             Rotated tensor
         """
-        if _is_single_rotation(rotation):
-            rotated_tensor = rotate_tensor(self.full_tensor(), rotation)
-            rotated_matrix = self._full_to_matrix(rotated_tensor)
-            return self.__class__(rotated_matrix)
-        else:
-            raise ValueError('The rotation to apply must be single')
+        rotated_tensor = rotate_tensor(self.full_tensor(), rotation)
+        rotated_matrix = self._full_to_matrix(rotated_tensor)
+        return self.__class__(rotated_matrix)
 
     @property
     def ndim(self):
@@ -410,10 +376,9 @@ class FourthOrderTensor:
             if _is_single_rotation(other):
                 return self.rotate(other)
             else:
-                return self.__class__(self.matrix, symmetry=self.symmetry, orientations=other,
-                                      phase_name=self.phase_name)
+                return self.__class__(self.matrix)
         else:
-            return self.__class__(self.matrix * other, symmetry=self.symmetry)
+            return self.__class__(self.matrix * other)
 
     def transpose_array(self):
         """
@@ -428,10 +393,9 @@ class FourthOrderTensor:
         if ndim==0 or ndim==1:
             return self
         else:
-            new_tensor = self._unrotate()
-            new_order = np.flip(range(ndim))
-            new_tensor.orientations = self.orientations.transpose(*new_order)
-            return new_tensor
+            new_axes = tuple(range(ndim))[::-1] + (ndim - 2, ndim - 1)
+            transposed_matrix = self.matrix.transpose(new_axes)
+            return self.__class__(transposed_matrix)
 
     def __rmul__(self, other):
         if isinstance(other, (Rotation, float, int, np.number)) or is_orix_rotation(other):
@@ -441,31 +405,202 @@ class FourthOrderTensor:
 
     def __truediv__(self, other):
         if isinstance(other, (float, int, np.number)):
-            return self.__class__(self.matrix / other, symmetry=self.symmetry)
+            return self.__class__(self.matrix / other)
         else:
             raise NotImplementedError
 
     def __eq__(self, other):
         if isinstance(other, SymmetricFourthOrderTensor):
-            return np.all(self.matrix == other.matrix) and np.all(self.orientations == other.orientations)
-        elif isinstance(other, np.ndarray) and other.shape == (6, 6):
-            return np.all(self.matrix == other)
+            return np.all(self.matrix == other.matrix, axis=(-1,-2))
+        elif isinstance(other, np.ndarray) and other.shape[-2:] == (6, 6):
+            return np.all(self.matrix == other, axis=(-1,-2))
         else:
             raise NotImplementedError('The element to compare with must be a fourth-order tensor '
                                       'or an array of shape (6,6).')
 
-    def matmul(self, other):
-        if isinstance(other, SecondOrderTensor):
-            other_matrix = other.matrix
+    def __getitem__(self, item):
+        return self.__class__(self.matrix[item])
+
+    @classmethod
+    def identity(cls, return_full_tensor=False):
+        """
+        Create a 4th-order identity tensor
+
+        Parameters
+        ----------
+        return_full_tensor : bool, optional
+            If True, return the full tensor as a (3,3,3,3) array. Otherwise, the tensor is returned as a SymmetricTensor
+            object.
+        Returns
+        -------
+        numpy.ndarray or SymmetricTensor
+            Identity tensor
+        """
+        a = np.einsum('ik,jl->ijkl',np.eye(3), np.eye(3))
+        b = np.einsum('il,jk->ijkl', np.eye(3), np.eye(3))
+        full = 0.5*(a+b)
+        if return_full_tensor:
+            return full
         else:
-            other_matrix = other
-        indices_0= 'abcdefgh'
-        indices_1= indices_0.upper()
-        indices_0 = indices_0[:self.ndim]
-        indices_1 = indices_1[:other_matrix.ndim-2]
-        ein_str = indices_0 + 'ijkl,' + indices_1 +'kl->' + indices_0 + indices_1 + 'ij'
-        new_mat = np.einsum(ein_str, self.full_tensor(), other_matrix)
-        return StrainTensor(new_mat)
+            return cls(full)
+
+    def inv(self):
+        new_matrix = np.linalg.inv(self.matrix)
+        return SymmetricFourthOrderTensor(new_matrix)
+
+class SymmetricFourthOrderTensor(FourthOrderTensor):
+    tensor_name = 'symmetric'
+
+    def __init__(self, M, check_symmetry=True, force_symmetry=False, **kwargs):
+        """
+        Construct of symmetric fourth-order tensor from a (6,6) matrix.
+
+        The input matrix must be symmetric, otherwise an error is thrown (except if check_symmetry==False, see below)
+
+        Parameters
+        ----------
+        M : np.ndarray
+            (6,6) matrix corresponding to the stiffness tensor, written using the Voigt notation, or array of shape
+            (3,3,3,3).
+        phase_name : str, default None
+            Name to display
+        symmetry : str, default Triclinic
+            Name of the crystal's symmetry
+        check_symmetry : bool, optional
+            Whether to check or not that the input matrix is symmetric.
+        force_symmetry : bool, optional
+            If true, the major symmetry of the tensor is forces
+        """
+        super().__init__(M, **kwargs)
+        if force_symmetry:
+            self.matrix = 0.5*(self.matrix + self.matrix.T)
+        elif check_symmetry and not np.all(np.isclose(self.matrix, self.matrix.T)):
+            raise ValueError('The input matrix must be symmetric')
+
+
+class StiffnessTensor(SymmetricFourthOrderTensor):
+    """
+    Class for manipulating fourth-order stiffness tensors.
+    """
+    voigt_map = np.ones((6, 6))
+    tensor_name = 'Stiffness'
+    C11_C12_factor = 0.5
+
+    def __init__(self, M, symmetry='Triclinic', check_positive_definite=True, **kwargs):
+        """
+        Construct of stiffness tensor from a (6,6) matrix.
+
+        The input matrix must be symmetric, otherwise an error is thrown (except if check_symmetry==False, see below)
+
+        Parameters
+        ----------
+        M : np.ndarray
+            (6,6) matrix corresponding to the stiffness tensor, written using the Voigt notation, or array of shape
+            (3,3,3,3).
+        phase_name : str, default None
+            Name to display
+        symmetry : str, default Triclinic
+            Name of the crystal's symmetry
+        check_symmetry : bool, optional
+            Whether to check or not that the input matrix is symmetric.
+        force_symmetry : bool, optional
+            If true, the major symmetry of the tensor is forces
+        """
+        super().__init__(M, **kwargs)
+        if check_positive_definite:
+            _check_definite_positive(self.matrix)
+        self.symmetry = symmetry
+
+    def __mul__(self, other):
+        if isinstance(other, StrainTensor):
+            new_tensor = super().__mul__(other)
+            return StressTensor(new_tensor.matrix)
+        elif isinstance(other, StressTensor):
+            raise ValueError('You cannot multiply a stiffness tensor with a Stress tensor.')
+        else:
+            return super().__mul__(other)
+
+    def inv(self):
+        """
+        Compute the reciprocal compliance tensor
+
+        Returns
+        -------
+        ComplianceTensor
+            Reciprocal tensor
+        """
+        C = np.linalg.inv(self.matrix)
+        return ComplianceTensor(C, symmetry=self.symmetry, phase_name=self.phase_name)
+
+    @classmethod
+    def from_txt_file(cls, filename):
+        """
+        Load the tensor from a text file.
+
+        The two first lines can have data about phase name and symmetry, but this is not mandatory.
+
+        Parameters
+        ----------
+        filename : str
+            Filename to load the tensor from.
+
+        Returns
+        -------
+        SymmetricFourthOrderTensor
+            The reconstructed tensor read from the file.
+
+        See Also
+        --------
+        save_to_txt : create a tensor from text file
+
+        """
+        with open(filename, 'r') as f:
+            lines = f.readlines()
+
+        # Initialize defaults
+        phase_name = None
+        symmetry = 'Triclinic'
+        matrix_start_index = 0
+
+        # Parse phase name if available
+        if lines and lines[0].startswith("Phase Name:"):
+            phase_name = lines[0].split(": ", 1)[1].strip()
+            matrix_start_index += 1
+
+        # Parse symmetry if available
+        if len(lines) > matrix_start_index and lines[matrix_start_index].startswith("Symmetry:"):
+            symmetry = lines[matrix_start_index].split(": ", 1)[1].strip()
+            matrix_start_index += 1
+
+        # Parse matrix
+        matrix = np.loadtxt(lines[matrix_start_index:])
+
+        # Return the reconstructed object
+        return cls(matrix, phase_name=phase_name, symmetry=symmetry)
+
+    def save_to_txt(self, filename, matrix_only=False):
+        """
+        Save the tensor to a text file.
+
+        Parameters
+        ----------
+        filename : str
+            Filename to save the tensor to.
+        matrix_only : bool, False
+            If true, only the components of tje stiffness tensor is saved (no data about phase nor symmetry)
+
+        See Also
+        --------
+        from_txt_file : create a tensor from text file
+
+        """
+        with open(filename, 'w') as f:
+            if not matrix_only:
+                if self.phase_name is not None:
+                    f.write(f"Phase Name: {self.phase_name}\n")
+                f.write(f"Symmetry: {self.symmetry}\n")
+            for row in self.matrix:
+                f.write("  " + "  ".join(f"{value:8.2f}" for value in row) + "\n")
 
     @classmethod
     def _matrixFromCrystalSymmetry(cls, symmetry='Triclinic', point_group=None, diad='y', prefix=None, **kwargs):
@@ -594,7 +729,8 @@ class FourthOrderTensor:
         """
         matrix = cls._matrixFromCrystalSymmetry(point_group=point_group, diad=diad, symmetry=symmetry, prefix=prefix,
                                                 **kwargs)
-        return cls(matrix, symmetry=symmetry, phase_name=phase_name)
+        return cls(matrix, phase_name=phase_name)
+
 
     @classmethod
     def hexagonal(cls, *, C11=0., C12=0., C13=0., C33=0., C44=0., phase_name=None):
@@ -813,193 +949,6 @@ class FourthOrderTensor:
                            [C16, C26, C36, C46, C56, C66]])
         return cls(matrix, phase_name=phase_name)
 
-    def save_to_txt(self, filename, matrix_only=False):
-        """
-        Save the tensor to a text file.
-
-        Parameters
-        ----------
-        filename : str
-            Filename to save the tensor to.
-        matrix_only : bool, False
-            If true, only the components of tje stiffness tensor is saved (no data about phase nor symmetry)
-
-        See Also
-        --------
-        from_txt_file : create a tensor from text file
-
-        """
-        with open(filename, 'w') as f:
-            if not matrix_only:
-                if self.phase_name is not None:
-                    f.write(f"Phase Name: {self.phase_name}\n")
-                f.write(f"Symmetry: {self.symmetry}\n")
-            for row in self.matrix:
-                f.write("  " + "  ".join(f"{value:8.2f}" for value in row) + "\n")
-
-    def __getitem__(self, item):
-        if self.orientations is None:
-            raise IndexError('The tensor has no orientation, therefore it cannot be indexed.')
-        else:
-            return self._unrotate() * self.orientations[item]
-
-    @classmethod
-    def identity(cls, return_full_tensor=False):
-        """
-        Create a 4th-order identity tensor
-
-        Parameters
-        ----------
-        return_full_tensor : bool, optional
-            If True, return the full tensor as a (3,3,3,3) array. Otherwise, the tensor is returned as a SymmetricTensor
-            object.
-        Returns
-        -------
-        numpy.ndarray or SymmetricTensor
-            Identity tensor
-        """
-        a = np.einsum('ik,jl->ijkl',np.eye(3), np.eye(3))
-        b = np.einsum('il,jk->ijkl', np.eye(3), np.eye(3))
-        full = 0.5*(a+b)
-        if return_full_tensor:
-            return full
-        else:
-            return cls(full)
-
-    def inv(self):
-        new_matrix = np.linalg.inv(self.matrix)
-        return SymmetricFourthOrderTensor(new_matrix)
-
-class SymmetricFourthOrderTensor(FourthOrderTensor):
-    tensor_name = 'symmetric'
-
-    def __init__(self, M, check_symmetry=True, force_symmetry=False, **kwargs):
-        """
-        Construct of symmetric fourth-order tensor from a (6,6) matrix.
-
-        The input matrix must be symmetric, otherwise an error is thrown (except if check_symmetry==False, see below)
-
-        Parameters
-        ----------
-        M : np.ndarray
-            (6,6) matrix corresponding to the stiffness tensor, written using the Voigt notation, or array of shape
-            (3,3,3,3).
-        phase_name : str, default None
-            Name to display
-        symmetry : str, default Triclinic
-            Name of the crystal's symmetry
-        check_symmetry : bool, optional
-            Whether to check or not that the input matrix is symmetric.
-        force_symmetry : bool, optional
-            If true, the major symmetry of the tensor is forces
-        """
-        super().__init__(M, **kwargs)
-        if force_symmetry:
-            self.matrix = 0.5*(self.matrix + self.matrix.T)
-        elif check_symmetry and not np.all(np.isclose(self.matrix, self.matrix.T)):
-            raise ValueError('The input matrix must be symmetric')
-
-
-class StiffnessTensor(SymmetricFourthOrderTensor):
-    """
-    Class for manipulating fourth-order stiffness tensors.
-    """
-    voigt_map = np.ones((6, 6))
-    tensor_name = 'Stiffness'
-    C11_C12_factor = 0.5
-
-    def __init__(self, M, symmetry='Triclinic', check_positive_definite=True, **kwargs):
-        """
-        Construct of stiffness tensor from a (6,6) matrix.
-
-        The input matrix must be symmetric, otherwise an error is thrown (except if check_symmetry==False, see below)
-
-        Parameters
-        ----------
-        M : np.ndarray
-            (6,6) matrix corresponding to the stiffness tensor, written using the Voigt notation, or array of shape
-            (3,3,3,3).
-        phase_name : str, default None
-            Name to display
-        symmetry : str, default Triclinic
-            Name of the crystal's symmetry
-        check_symmetry : bool, optional
-            Whether to check or not that the input matrix is symmetric.
-        force_symmetry : bool, optional
-            If true, the major symmetry of the tensor is forces
-        """
-        super().__init__(M, **kwargs)
-        if check_positive_definite:
-            _check_definite_positive(self.matrix)
-        self.symmetry = symmetry
-
-    def __mul__(self, other):
-        if isinstance(other, StrainTensor):
-            new_tensor = super().__mul__(other)
-            return StressTensor(new_tensor.matrix)
-        elif isinstance(other, StressTensor):
-            raise ValueError('You cannot multiply a stiffness tensor with a Stress tensor.')
-        else:
-            return super().__mul__(other)
-
-    def inv(self):
-        """
-        Compute the reciprocal compliance tensor
-
-        Returns
-        -------
-        ComplianceTensor
-            Reciprocal tensor
-        """
-        C = np.linalg.inv(self.matrix)
-        return ComplianceTensor(C, symmetry=self.symmetry, phase_name=self.phase_name, orientations=self.orientations)
-
-    @classmethod
-    def from_txt_file(cls, filename):
-        """
-        Load the tensor from a text file.
-
-        The two first lines can have data about phase name and symmetry, but this is not mandatory.
-
-        Parameters
-        ----------
-        filename : str
-            Filename to load the tensor from.
-
-        Returns
-        -------
-        SymmetricFourthOrderTensor
-            The reconstructed tensor read from the file.
-
-        See Also
-        --------
-        save_to_txt : create a tensor from text file
-
-        """
-        with open(filename, 'r') as f:
-            lines = f.readlines()
-
-        # Initialize defaults
-        phase_name = None
-        symmetry = 'Triclinic'
-        matrix_start_index = 0
-
-        # Parse phase name if available
-        if lines and lines[0].startswith("Phase Name:"):
-            phase_name = lines[0].split(": ", 1)[1].strip()
-            matrix_start_index += 1
-
-        # Parse symmetry if available
-        if len(lines) > matrix_start_index and lines[matrix_start_index].startswith("Symmetry:"):
-            symmetry = lines[matrix_start_index].split(": ", 1)[1].strip()
-            matrix_start_index += 1
-
-        # Parse matrix
-        matrix = np.loadtxt(lines[matrix_start_index:])
-
-        # Return the reconstructed object
-        return cls(matrix, phase_name=phase_name, symmetry=symmetry)
-
     @property
     def Young_modulus(self):
         """
@@ -1104,7 +1053,9 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         Hill_average : compute the Voigt-Reuss-Hill average
         average : generic function for calling either the Voigt, Reuss or Hill average
         """
-        if self.orientations is None:
+        if self.ndim:
+            return StiffnessTensor(self.mean())
+        else:
             c = self.matrix
             C11 = (c[0, 0] + c[1, 1] + c[2, 2]) / 5 \
                   + (c[0, 1] + c[0, 2] + c[1, 2]) * 2 / 15 \
@@ -1115,8 +1066,6 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
             C44 = (c[0, 0] + c[1, 1] + c[2, 2] - c[0, 1] - c[0, 2] - c[1, 2]) / 15 + (c[3, 3] + c[4, 4] + c[5, 5]) / 5
             mat = _isotropic_matrix(C11, C12, C44)
             return StiffnessTensor(mat, symmetry='isotropic', phase_name=self.phase_name)
-        else:
-            return StiffnessTensor(self.mean())
 
     def Reuss_average(self):
         """
@@ -1748,10 +1697,12 @@ class ComplianceTensor(StiffnessTensor):
             Reciprocal tensor
         """
         S = np.linalg.inv(self.matrix)
-        return StiffnessTensor(S, symmetry=self.symmetry, phase_name=self.phase_name, orientations=self.orientations)
+        return StiffnessTensor(S, symmetry=self.symmetry, phase_name=self.phase_name)
 
     def Reuss_average(self):
-        if self.orientations is None:
+        if self.ndim:
+            return ComplianceTensor(self.mean())
+        else:
             s = self.matrix
             S11 = (s[0, 0] + s[1, 1] + s[2, 2]) / 5 \
                   + (s[0, 1] + s[0, 2] + s[1, 2]) * 2 / 15 \
@@ -1763,8 +1714,6 @@ class ComplianceTensor(StiffnessTensor):
                    (s[3, 3] + s[4, 4] + s[5, 5]) / 5)
             mat = _isotropic_matrix(S11, S12, S44)
             return ComplianceTensor(mat, symmetry='isotropic', phase_name=self.phase_name)
-        else:
-            return ComplianceTensor(self.mean())
 
     def Voigt_average(self):
         return self.inv().Voigt_average().inv()
