@@ -123,8 +123,7 @@ def rotate_tensor(full_tensor, r):
     str_ein = '...im,...jn,...ko,...lp,...mnop->...ijkl'
     return np.einsum(str_ein, rot_mat, rot_mat, rot_mat, rot_mat, full_tensor)
 
-
-class SymmetricFourthOrderTensor:
+class FourthOrderTensor:
     """
     Template class for manipulating symmetric fourth-order tensors.
 
@@ -142,8 +141,7 @@ class SymmetricFourthOrderTensor:
     C46_C56_factor = 1.0
     component_prefix = 'C'
 
-    def __init__(self, M, phase_name=None, symmetry='Triclinic', orientations=None,
-                 check_symmetry=True, check_positive_definite=False, force_symmetry=False):
+    def __init__(self, M, phase_name=None, symmetry='Triclinic', orientations=None):
         """
         Construct of stiffness tensor from a (6,6) matrix.
 
@@ -158,12 +156,6 @@ class SymmetricFourthOrderTensor:
             Name to display
         symmetry : str, default Triclinic
             Name of the crystal's symmetry
-        check_symmetry : bool, optional
-            Whether to check or not that the input matrix is symmetric.
-        check_positive_definite : bool, optional
-            Whether to check or not that the input matrix is definite positive
-        force_symmetry : bool, optional
-            If true, the major symmetry of the tensor is forces
         """
         M = np.asarray(M)
         if M.shape == (6, 6):
@@ -172,12 +164,6 @@ class SymmetricFourthOrderTensor:
             matrix = self._full_to_matrix(M)
         else:
             raise ValueError('The input matrix must of shape (6,6)')
-        if force_symmetry:
-            matrix = 0.5*(matrix + matrix.T)
-        if check_symmetry and not np.all(np.isclose(matrix, matrix.T)):
-            raise ValueError('The input matrix must be symmetric')
-        if check_positive_definite:
-            _check_definite_positive(matrix)
 
         self.matrix = matrix
         self.phase_name = phase_name
@@ -925,11 +911,40 @@ class SymmetricFourthOrderTensor:
         if return_full_tensor:
             return full
         else:
-            return cls(full, symmetry='isotropic', check_positive_definite=False)
+            return cls(full, symmetry='isotropic')
 
     def inv(self):
         new_matrix = np.linalg.inv(self.matrix)
         return SymmetricFourthOrderTensor(new_matrix)
+
+class SymmetricFourthOrderTensor(FourthOrderTensor):
+    tensor_name = 'symmetric'
+
+    def __init__(self, M, check_symmetry=True, force_symmetry=False, **kwargs):
+        """
+        Construct of symmetric fourth-order tensor from a (6,6) matrix.
+
+        The input matrix must be symmetric, otherwise an error is thrown (except if check_symmetry==False, see below)
+
+        Parameters
+        ----------
+        M : np.ndarray
+            (6,6) matrix corresponding to the stiffness tensor, written using the Voigt notation, or array of shape
+            (3,3,3,3).
+        phase_name : str, default None
+            Name to display
+        symmetry : str, default Triclinic
+            Name of the crystal's symmetry
+        check_symmetry : bool, optional
+            Whether to check or not that the input matrix is symmetric.
+        force_symmetry : bool, optional
+            If true, the major symmetry of the tensor is forces
+        """
+        super().__init__(M, **kwargs)
+        if force_symmetry:
+            self.matrix = 0.5*(self.matrix + self.matrix.T)
+        elif check_symmetry and not np.all(np.isclose(self.matrix, self.matrix.T)):
+            raise ValueError('The input matrix must be symmetric')
 
 
 class StiffnessTensor(SymmetricFourthOrderTensor):
@@ -940,8 +955,29 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
     tensor_name = 'Stiffness'
     C11_C12_factor = 0.5
 
-    def __init__(self, S, check_positive_definite=True, **kwargs):
-        super().__init__(S, check_positive_definite=check_positive_definite, **kwargs)
+    def __init__(self, M, check_positive_definite=True, **kwargs):
+        """
+        Construct of stiffness tensor from a (6,6) matrix.
+
+        The input matrix must be symmetric, otherwise an error is thrown (except if check_symmetry==False, see below)
+
+        Parameters
+        ----------
+        M : np.ndarray
+            (6,6) matrix corresponding to the stiffness tensor, written using the Voigt notation, or array of shape
+            (3,3,3,3).
+        phase_name : str, default None
+            Name to display
+        symmetry : str, default Triclinic
+            Name of the crystal's symmetry
+        check_symmetry : bool, optional
+            Whether to check or not that the input matrix is symmetric.
+        force_symmetry : bool, optional
+            If true, the major symmetry of the tensor is forces
+        """
+        super().__init__(M, **kwargs)
+        if check_positive_definite:
+            _check_definite_positive(self.matrix)
 
     def __mul__(self, other):
         if isinstance(other, StrainTensor):
