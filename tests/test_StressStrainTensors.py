@@ -231,7 +231,7 @@ class TestStressStrainTensors(unittest.TestCase):
         eps = Tensors.StrainTensor(matrix, force_symmetry=True)
         ori = Rotation.random(n_ori)
         C_rotated = C * ori
-        sigma = C_rotated.matmul(eps)
+        sigma = C_rotated.ddot(eps, mode='cross')
 
         # Rotate stress and stress by their own
         eps_rot = eps.rotate(ori, mode='cross')
