@@ -416,7 +416,14 @@ class FourthOrderTensor:
                                       'or an array of shape (6,6).')
 
     def __getitem__(self, item):
-        return self.__class__(self.matrix[item])
+        if self.ndim:
+            sub_mat= self.matrix[item]
+            if sub_mat.shape[-2:] != (6,6):
+                raise IndexError('Too many indices for tensor array: array is {}-dimensional, but {} were provided'.format(self.ndim, len(item)))
+            else:
+                return self.__class__(sub_mat)
+        else:
+            raise IndexError('A single tensor cannot be subindexed')
 
     @classmethod
     def identity(cls, return_full_tensor=False):
