@@ -651,7 +651,7 @@ class TestStiffnessConstructor(unittest.TestCase):
                 np.testing.assert_array_almost_equal(C_rotated_full[i,j], tensor_i)
 
         # Check that the result is consistent with scipy.Rotation
-        orix_rotations = orix_rotations.flatten()
+        orix_rotations = orix_rotations.transpose().flatten()   # orix seems to use the opposite order from numpy for flattening
         C_rotated_flat = C_rotated.flatten()
         euler = orix_rotations.to_euler()
         scipy_rotations = Rotation.from_euler('ZXZ', euler)
