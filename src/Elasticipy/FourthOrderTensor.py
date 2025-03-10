@@ -344,7 +344,7 @@ class FourthOrderTensor:
                 return np.einsum(ein_str, self.full_tensor(), other.full_tensor())
         elif isinstance(other, SecondOrderTensor):
             if self.ndim == 0 and other.ndim == 0:
-                return SymmetricFourthOrderTensor(np.einsum('ijkl,kl->ij', self.full_tensor(), other.matrix))
+                return SymmetricSecondOrderTensor(np.einsum('ijkl,kl->ij', self.full_tensor(), other.matrix))
             else:
                 if mode == 'pair':
                     ein_str = '...ijkl,...kl->...ij'
@@ -360,10 +360,8 @@ class FourthOrderTensor:
 
 
     def __mul__(self, other):
-        if isinstance(other, SymmetricFourthOrderTensor):
+        if isinstance(other, (SymmetricFourthOrderTensor, SymmetricSecondOrderTensor)):
             return self.ddot(other)
-        elif isinstance(other, SymmetricSecondOrderTensor):
-            return SymmetricSecondOrderTensor(self * other.matrix)
         elif isinstance(other, np.ndarray):
             if other.shape == (3, 3):
                 # other is a single tensor
