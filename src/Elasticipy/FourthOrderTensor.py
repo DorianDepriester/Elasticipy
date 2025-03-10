@@ -447,13 +447,13 @@ class FourthOrderTensor:
             raise NotImplementedError('The r.h.s must be either an ndarray or an object of class {}'.format(self.__class__))
 
     @classmethod
-    def identity(cls, shape=(), return_full_tensor=False, symmetry=False):
+    def identity(cls, shape=(), return_full_tensor=False):
         """
         Create a 4th-order identity tensor
 
         Parameters
         ----------
-        shape : tuple, optional
+        shape : int or tuple, optional
             Shape of the tensor to create
         return_full_tensor : bool, optional
             If True, return the full tensor as a (3,3,3,3) or a (...,3,3,3,3) array. Otherwise, the tensor is returned
@@ -467,15 +467,14 @@ class FourthOrderTensor:
             Identity tensor
         """
         eye = np.eye(3)
+        if isinstance(shape, int):
+            shape = (shape,)
         if len(shape):
             for n in shape:
                 eye = np.repeat(eye[np.newaxis,...], n, axis=0)
-        a = np.einsum('...ik,...jl->...ijkl', np.eye(3), np.eye(3))
-        if symmetry:
-            b = np.einsum('...il,...jk->...ijkl', np.eye(3), np.eye(3))
-            full = 0.5*(a + b)
-        else:
-            full = a
+        a = np.einsum('...ik,...jl->...ijkl', eye, eye)
+        b = np.einsum('...il,...jk->...ijkl', eye, eye)
+        full = 0.5*(a + b)
         if return_full_tensor:
             return full
         else:
@@ -535,11 +534,6 @@ class SymmetricFourthOrderTensor(FourthOrderTensor):
             self.matrix = 0.5*(self.matrix + self.matrix.swapaxes(-1,-2))
         elif check_symmetry and not np.all(np.isclose(self.matrix, self.matrix.swapaxes(-1,-2))):
             raise ValueError('The input matrix must be symmetric')
-
-    @classmethod
-    def identity(cls, shape=(), return_full_tensor=False, symmetry=True):
-        return super().identity(shape=shape, return_full_tensor=return_full_tensor)
-
 
 class StiffnessTensor(SymmetricFourthOrderTensor):
     """
