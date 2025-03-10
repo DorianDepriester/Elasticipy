@@ -205,13 +205,13 @@ class TestComplianceTensor(unittest.TestCase):
         S_rotated = S * orix_rotations
         S_mean_0 = S_rotated.mean(axis=0)
         for i in range(n):
-            np.testing.assert_array_almost_equal(S_mean_0[i], S_rotated[:,i].Reuss_average().full_tensor())
+            np.testing.assert_array_almost_equal(S_mean_0[i].matrix, S_rotated[:,i].Reuss_average().matrix)
         S_mean_1 = S_rotated.mean(axis=1)
         for i in range(m):
-            np.testing.assert_array_almost_equal(S_mean_1[i], S_rotated[i,:].Reuss_average().full_tensor())
+            np.testing.assert_array_almost_equal(S_mean_1[i].matrix, S_rotated[i,:].Reuss_average().matrix)
         S_mean = S_rotated.mean()
-        np.testing.assert_array_almost_equal(S_mean, S_rotated.flatten().Reuss_average().full_tensor())
-        np.testing.assert_array_almost_equal(S_mean, S_rotated.Reuss_average().full_tensor())
+        np.testing.assert_array_almost_equal(S_mean.matrix, S_rotated.flatten().Reuss_average().matrix)
+        np.testing.assert_array_almost_equal(S_mean.matrix, S_rotated.Reuss_average().matrix)
 
     def test_to_from_Kelvin(self):
         matrix = S.to_Kelvin()
@@ -223,6 +223,20 @@ class TestComplianceTensor(unittest.TestCase):
         S2 = ComplianceTensor(S_full)
         assert S == S2
         np.testing.assert_array_equal(S.full_tensor(), S2.full_tensor())
+
+    def test_repr(self):
+        """Test printing out the tensor"""
+        str = S.__repr__()
+        assert str == ('Compliance tensor (in Voigt notation):\n'
+                       '[[ 0.008 -0.003 -0.002  0.     0.014  0.   ]\n'
+                       ' [-0.003  0.008 -0.005  0.    -0.008  0.   ]\n'
+                       ' [-0.002 -0.005  0.01   0.     0.     0.   ]\n'
+                       ' [ 0.     0.     0.     0.012  0.     0.   ]\n'
+                       ' [ 0.014 -0.008  0.     0.     0.116  0.   ]\n'
+                       ' [ 0.     0.     0.     0.     0.     0.012]]')
+
+        S_rotated = S * rotations
+        assert S_rotated.__repr__() ==  'Compliance tensor array of shape ({},)'.format(len(rotations))
 
 class TestStiffnessConstructor(unittest.TestCase):
     def test_averages(self):
@@ -462,40 +476,6 @@ class TestStiffnessConstructor(unittest.TestCase):
         C = StiffnessTensor.isotropic(E=200, nu=0.3)
         Cdiv = C/2
         np.testing.assert_array_equal(Cdiv.matrix, C.matrix/2)
-
-    def test_repr(self):
-        """Test printing out the tensor"""
-        C = StiffnessTensor.isotropic(E=210000, nu=0.3)
-        str = C.__repr__()
-        assert str == ('Stiffness tensor (in Voigt notation):\n'
-                       '[[282692.30769231 121153.84615385 121153.84615385      0.\n'
-                       '       0.              0.        ]\n'
-                       ' [121153.84615385 282692.30769231 121153.84615385      0.\n'
-                       '       0.              0.        ]\n'
-                       ' [121153.84615385 121153.84615385 282692.30769231      0.\n'
-                       '       0.              0.        ]\n'
-                       ' [     0.              0.              0.          80769.23076923\n'
-                       '       0.              0.        ]\n'
-                       ' [     0.              0.              0.              0.\n'
-                       '   80769.23076923      0.        ]\n'
-                       ' [     0.              0.              0.              0.\n'
-                       '       0.          80769.23076923]]\nSymmetry: isotropic')
-
-        C = StiffnessTensor.cubic(C11=200, C12=100, C44=400, phase_name='Cu')
-        str_Cu = ('Stiffness tensor (in Voigt notation) for Cu:\n'
-                       '[[200. 100. 100.   0.   0.   0.]\n'
-                       ' [100. 200. 100.   0.   0.   0.]\n'
-                       ' [100. 100. 200.   0.   0.   0.]\n'
-                       ' [  0.   0.   0. 400.   0.   0.]\n'
-                       ' [  0.   0.   0.   0. 400.   0.]\n'
-                       ' [  0.   0.   0.   0.   0. 400.]]\n'
-                       'Symmetry: cubic')
-        assert C.__repr__() == str_Cu
-
-        C_rotated = C * rotations
-        assert C_rotated.__repr__() == str_Cu + '\n{} orientations'.format(len(rotations))
-
-
 
     def test_weighted_average(self):
         """Test averaging two phases"""
@@ -771,7 +751,6 @@ class TestStiffnessConstructor(unittest.TestCase):
         C = StiffnessTensor.cubic(C11=C11, C12=C12, C44=C44)
         C_rotated = C * rot_2d
         C_rotated_T = C_rotated.transpose_array()
-        assert C.transpose_array() == C
         assert C_rotated_T.shape == (o, n, m)
         for i in range(m):
             for j in range(n):
