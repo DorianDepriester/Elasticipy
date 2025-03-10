@@ -501,7 +501,7 @@ class FourthOrderTensor:
 class SymmetricFourthOrderTensor(FourthOrderTensor):
     tensor_name = 'symmetric'
 
-    def __init__(self, M, check_symmetry=True, force_symmetry=False, **kwargs):
+    def __init__(self, M, check_symmetry=True, force_symmetry=False):
         """
         Construct of symmetric fourth-order tensor from a (6,6) matrix.
 
@@ -512,18 +512,14 @@ class SymmetricFourthOrderTensor(FourthOrderTensor):
         M : np.ndarray
             (6,6) matrix corresponding to the stiffness tensor, written using the Voigt notation, or array of shape
             (3,3,3,3).
-        phase_name : str, default None
-            Name to display
-        symmetry : str, default Triclinic
-            Name of the crystal's symmetry
         check_symmetry : bool, optional
             Whether to check or not that the input matrix is symmetric.
         force_symmetry : bool, optional
             If true, the major symmetry of the tensor is forces
         """
-        super().__init__(M, **kwargs)
+        super().__init__(M)
         if force_symmetry:
-            self.matrix = 0.5*(self.matrix + self.matrix.T)
+            self.matrix = 0.5*(self.matrix + self.matrix.swapaxes(-1,-2))
         elif check_symmetry and not np.all(np.isclose(self.matrix, self.matrix.swapaxes(-1,-2))):
             raise ValueError('The input matrix must be symmetric')
 
