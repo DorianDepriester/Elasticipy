@@ -282,6 +282,8 @@ class FourthOrderTensor:
             Otherwise, if T.ndim=m, and len(axis)=n, the returned value will be of shape (...,3,3,3,3), with ndim=m-n+4
         """
         t2 = deepcopy(self)
+        if axis is None:
+            axis = tuple([i for i in range(0,self.ndim)])
         t2.matrix = np.mean(self.matrix, axis=axis)
         return t2
 
