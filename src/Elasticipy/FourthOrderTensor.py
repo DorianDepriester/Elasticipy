@@ -226,7 +226,7 @@ class FourthOrderTensor:
 
     @classmethod
     def _full_to_matrix(cls, full_tensor):
-        ij, kl = np.indices((6, 6))
+        kl, ij = np.indices((6, 6))
         i, j = unvoigt_index(ij).T
         k, ell = unvoigt_index(kl).T
         return full_tensor[..., i, j, k, ell] * cls.voigt_map[ij, kl]
@@ -537,8 +537,8 @@ class SymmetricFourthOrderTensor(FourthOrderTensor):
             raise ValueError('The input matrix must be symmetric')
 
     @classmethod
-    def identity(cls, return_full_tensor=False):
-        return super().identity(return_full_tensor=return_full_tensor)
+    def identity(cls, shape=(), return_full_tensor=False, symmetry=True):
+        return super().identity(shape=shape, return_full_tensor=return_full_tensor)
 
 
 class StiffnessTensor(SymmetricFourthOrderTensor):
