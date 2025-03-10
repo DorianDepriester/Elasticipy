@@ -131,7 +131,7 @@ class FourthOrderTensor:
     matrix : np.ndarray
         (6,6) matrix gathering all the components of the tensor, using the Voigt notation.
     """
-    tensor_name = 'Symmetric'
+    tensor_name = ''
     voigt_map = _voigt_to_kelvin_matrix
     C11_C12_factor = 0.5
     C46_C56_factor = 1.0
