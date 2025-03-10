@@ -249,7 +249,7 @@ class TestStressStrainTensors(unittest.TestCase):
         strain = Tensors.StrainTensor.ones(shape_strain)
         ori = Rotation.random(n_ori)
         C_rotated = C * ori
-        stress = C_rotated.matmul(strain)
+        stress = C_rotated.ddot(strain, mode='cross')
         self.assertEqual(stress.shape, (n_ori,) + shape_strain)
         for i in range(5):
             for j in range(4):
