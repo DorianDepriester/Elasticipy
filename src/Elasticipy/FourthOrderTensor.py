@@ -446,21 +446,35 @@ class FourthOrderTensor:
             raise NotImplementedError('The r.h.s must be either an ndarray or an object of class {}'.format(self.__class__))
 
     @classmethod
-    def identity(cls, return_full_tensor=False):
+    def identity(cls, shape=(), return_full_tensor=False, symmetry=False):
         """
         Create a 4th-order identity tensor
 
         Parameters
         ----------
+        shape : tuple, optional
+            Shape of the tensor to create
         return_full_tensor : bool, optional
-            If True, return the full tensor as a (3,3,3,3) array. Otherwise, the tensor is returned as a SymmetricTensor
-            object.
+            If True, return the full tensor as a (3,3,3,3) or a (...,3,3,3,3) array. Otherwise, the tensor is returned
+            as a SymmetricTensor object.
+        symmetry : bool, optional
+            If true, the returned value will correspond to the identity tensor for symmetric fourth-order tensors
+
         Returns
         -------
         numpy.ndarray or SymmetricTensor
             Identity tensor
         """
-        full = np.einsum('ik,jl->ijkl', np.eye(3), np.eye(3))
+        eye = np.eye(3)
+        if len(shape):
+            for n in shape:
+                eye = np.repeat(eye[np.newaxis,...], n, axis=0)
+        a = np.einsum('...ik,...jl->...ijkl', np.eye(3), np.eye(3))
+        if symmetry:
+            b = np.einsum('...il,...jk->...ijkl', np.eye(3), np.eye(3))
+            full = 0.5*(a + b)
+        else:
+            full = a
         if return_full_tensor:
             return full
         else:
@@ -523,13 +537,7 @@ class SymmetricFourthOrderTensor(FourthOrderTensor):
 
     @classmethod
     def identity(cls, return_full_tensor=False):
-        a = np.einsum('ik,jl->ijkl',np.eye(3), np.eye(3))
-        b = np.einsum('il,jk->ijkl', np.eye(3), np.eye(3))
-        full = 0.5*(a+b)
-        if return_full_tensor:
-            return full
-        else:
-            return cls(full)
+        return super().identity(return_full_tensor=return_full_tensor)
 
 
 class StiffnessTensor(SymmetricFourthOrderTensor):
