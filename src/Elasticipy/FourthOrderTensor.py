@@ -138,7 +138,7 @@ class FourthOrderTensor:
     matrix : np.ndarray
         (6,6) matrix gathering all the components of the tensor, using the Voigt notation.
     """
-    tensor_name = ''
+    tensor_name = '4th-order'
 
     def __init__(self, M, mapping='Kelvin'):
         """
@@ -151,18 +151,24 @@ class FourthOrderTensor:
         M : np.ndarray
             (6,6) matrix corresponding to the stiffness tensor, written using the Voigt notation, or array of shape
             (3,3,3,3).
-        phase_name : str, default None
-            Name to display
+        mapping : str or list of list, or numpy/ndarray, optional
+            Mapping convention to translate the (3,3,3,3) array to (6,6) matrix
         """
         mapping = mapping.capitalize()
-        self.mapping_name = mapping
-        if mapping == 'Kelvin':
-            self.mapping_matrix = _voigt_to_kelvin_matrix
+        if isinstance(mapping, (list, tuple, np.ndarray)):
+            self.mapping_matrix = mapping
+            self.mapping_name = 'custom'
         else:
-            if isinstance(self, ComplianceTensor):
-                self.mapping_matrix = _compliance_mapping_voigt
+            self.mapping_name = mapping
+            if mapping == 'Kelvin':
+                self.mapping_matrix = _voigt_to_kelvin_matrix
+            elif mapping == 'Voigt':
+                if isinstance(self, ComplianceTensor):
+                    self.mapping_matrix = _compliance_mapping_voigt
+                else:
+                    self.mapping_matrix = np.ones((6,6))
             else:
-                self.mapping_matrix = np.ones((6,6))
+                raise ValueError('The mapping to use can be either "Kelvin", "Voigt", or a (6,6) matrix.')
 
         M = np.asarray(M)
         if M.shape[-2:] == (6, 6):
@@ -185,7 +191,7 @@ class FourthOrderTensor:
 
     def __repr__(self):
         if (self.ndim == 0) or ((self.ndim==1) and self.shape[0]<5):
-            msg = '{} tensor (in Voigt notation):\n'.format(self.tensor_name)
+            msg = '{} tensor (in {} mapping):\n'.format(self.tensor_name, self.mapping_name)
             msg += self.matrix.__str__()
         else:
             msg = '{} tensor array of shape {}'.format(self.tensor_name, self.shape)
@@ -528,7 +534,7 @@ class FourthOrderTensor:
         return cls(zeros)
 
 class SymmetricFourthOrderTensor(FourthOrderTensor):
-    tensor_name = 'Symmetric'
+    tensor_name = 'Symmetric 4th-order'
 
     def __init__(self, M, check_symmetry=True, force_symmetry=False, **kwargs):
         """
@@ -581,7 +587,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         force_symmetry : bool, optional
             If true, the major symmetry of the tensor is forces
         """
-        super().__init__(M, mapping_name=mapping, **kwargs)
+        super().__init__(M, mapping=mapping, **kwargs)
         if check_positive_definite:
             _check_definite_positive(self.matrix)
         self.symmetry = symmetry
