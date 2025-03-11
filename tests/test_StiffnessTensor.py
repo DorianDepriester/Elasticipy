@@ -799,21 +799,21 @@ class TestStiffnessConstructor(unittest.TestCase):
         C2_rot = C1 * rot_1d
 
         C1C2_rot = C1_rot * C2
-        assert C1C2_rot.shape == (m, 3, 3, 3, 3)
+        assert C1C2_rot.shape == (m,)
         for i in range(m):
-            np.testing.assert_array_almost_equal(C1C2_rot[i], np.einsum('ijmn,nmkl->ijkl', C1_rot[i].full_tensor(), C2.full_tensor()))
+            np.testing.assert_array_almost_equal(C1C2_rot[i].full_tensor(), np.einsum('ijmn,nmkl->ijkl', C1_rot[i].full_tensor(), C2.full_tensor()))
 
         C1C2_rotrot = C1_rot * C2_rot
-        assert C1C2_rot.shape == (m, 3, 3, 3, 3)
+        assert C1C2_rot.shape == (m,)
         for i in range(m):
-            np.testing.assert_array_almost_equal(C1C2_rotrot[i], np.einsum('ijmn,nmkl->ijkl', C1_rot[i].full_tensor(),
+            np.testing.assert_array_almost_equal(C1C2_rotrot[i].full_tensor(), np.einsum('ijmn,nmkl->ijkl', C1_rot[i].full_tensor(),
                                                                         C2_rot[i].full_tensor()))
 
         C1C2_rotrot_cross = C1_rot.ddot(C2_rot, mode='cross')
-        assert C1C2_rotrot_cross.shape == (m, m, 3, 3, 3, 3)
+        assert C1C2_rotrot_cross.shape == (m, m)
         for i in range(m):
             for j in range(m):
-                np.testing.assert_array_almost_equal(C1C2_rotrot_cross[i,j], np.einsum('ijmn,nmkl->ijkl', C1_rot[i].full_tensor(),
+                np.testing.assert_array_almost_equal(C1C2_rotrot_cross[i,j].full_tensor(), np.einsum('ijmn,nmkl->ijkl', C1_rot[i].full_tensor(),
                                                                            C2_rot[j].full_tensor()))
 
     def test_full_tensor(self):
