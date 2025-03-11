@@ -97,6 +97,13 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         else:
             return super().__mul__(other)
 
+    def __repr__(self):
+        str = super().__repr__()
+        if self.phase_name is not None:
+            str += '\nPhase: {}'.format(self.phase_name)
+        str += '\nSymmetry: {}'.format(self.symmetry)
+        return str
+
     def inv(self):
         """
         Compute the reciprocal compliance tensor
