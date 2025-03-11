@@ -7,11 +7,12 @@ Submodules
 .. toctree::
    :maxdepth: 4
 
-   Elasticipy.FourthOrderTensor
-   Elasticipy.SecondOrderTensor
-   Elasticipy.SphericalFunction
-   Elasticipy.StressStrainTensors
-   Elasticipy.Plasticity
+   Elasticipy.tensors.fourth_order
+   Elasticipy.tensors.second_order
+   Elasticipy.tensor.stress_strain
+   Elasticipy.spherical_function
+   Elasticipy.plasticity
+
 
 Module contents
 ---------------
