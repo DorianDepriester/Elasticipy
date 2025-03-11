@@ -15,13 +15,30 @@ class TestFourthOrderTensor(unittest.TestCase):
     def test_inversion(self):
         m = 5
         a = np.random.random((m, 6, 6))
-        a = a + np.swapaxes(a, axis1=-1, axis2=-2)
         T = FourthOrderTensor(a)
         Tinv = T.inv()
         TTinv = Tinv.ddot(T)
-        eye = SymmetricFourthOrderTensor.identity(m)
+        eye = FourthOrderTensor.identity(m)
         for i in range(m):
             np.testing.assert_array_almost_equal(TTinv[i].full_tensor(), eye[i].full_tensor())
+
+    def test_mult(self):
+        m, n, o = 5, 4, 3
+        a = np.random.random((m,n,o,6,6))
+        a = FourthOrderTensor(a)
+        b = 5
+        ab = a * b
+        for i in range(m):
+            for j in range(n):
+                for k in range(o):
+                    np.testing.assert_array_equal(ab[i,j,k].matrix, a[i,j,k].matrix * b)
+
+        b = np.random.random((n,o))
+        ab = a * b
+        for i in range(m):
+            for j in range(n):
+                for k in range(o):
+                    np.testing.assert_array_equal(ab[i,j,k].matrix, a[i,j,k].matrix * b[j,k])
 
 
 class TestSymmetricFourthOrderTensor(unittest.TestCase):
