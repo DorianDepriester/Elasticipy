@@ -140,7 +140,7 @@ class FourthOrderTensor:
     """
     tensor_name = ''
 
-    def __init__(self, M, mapping_matrix=None, mapping_name='Kelvin'):
+    def __init__(self, M, mapping='Kelvin'):
         """
         Construct of stiffness tensor from a (6,6) matrix.
 
@@ -154,11 +154,16 @@ class FourthOrderTensor:
         phase_name : str, default None
             Name to display
         """
-        self.mapping_name = mapping_name
-        if mapping_matrix is None:
-            self.voigt_map = _voigt_to_kelvin_matrix
+        mapping = mapping.capitalize()
+        self.mapping_name = mapping
+        if mapping == 'Kelvin':
+            self.mapping_matrix = _voigt_to_kelvin_matrix
         else:
-            self.voigt_map = mapping_matrix
+            if isinstance(self, ComplianceTensor):
+                self.mapping_matrix = _compliance_mapping_voigt
+            else:
+                self.mapping_matrix = np.ones((6,6))
+
         M = np.asarray(M)
         if M.shape[-2:] == (6, 6):
             matrix = M
@@ -210,7 +215,7 @@ class FourthOrderTensor:
         i, j, k, ell = np.indices((3, 3, 3, 3))
         ij = voigt_indices(i, j)
         kl = voigt_indices(k, ell)
-        m = self.matrix[..., ij, kl] / self.voigt_map[ij, kl]
+        m = self.matrix[..., ij, kl] / self.mapping_matrix[ij, kl]
         return m
 
     def flatten(self):
@@ -237,7 +242,7 @@ class FourthOrderTensor:
         kl, ij = np.indices((6, 6))
         i, j = unvoigt_index(ij).T
         k, ell = unvoigt_index(kl).T
-        return full_tensor[..., i, j, k, ell] * self.voigt_map[ij, kl]
+        return full_tensor[..., i, j, k, ell] * self.mapping_matrix[ij, kl]
 
     def rotate(self, rotation):
         """
@@ -450,7 +455,7 @@ class FourthOrderTensor:
         if isinstance(value, np.ndarray):
             self.matrix[index] = value
         elif isinstance(value, FourthOrderTensor):
-            self.matrix[index] = value.matrix / value.voigt_map * self.voigt_map
+            self.matrix[index] = value.matrix / value.mapping_matrix * self.mapping_matrix
         else:
             raise NotImplementedError('The r.h.s must be either an ndarray or an object of class {}'.format(self.__class__))
 
@@ -556,8 +561,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
     C46_C56_factor = 1.0
     component_prefix = 'C'
 
-    def __init__(self, M, symmetry='Triclinic', check_positive_definite=True, phase_name= None,
-                 mapping_matrix=np.ones((6, 6)), mapping_name='Voigt', **kwargs):
+    def __init__(self, M, symmetry='Triclinic', check_positive_definite=True, phase_name= None, mapping='Voigt', **kwargs):
         """
         Construct of stiffness tensor from a (6,6) matrix.
 
@@ -577,7 +581,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         force_symmetry : bool, optional
             If true, the major symmetry of the tensor is forces
         """
-        super().__init__(M, mapping_matrix=mapping_matrix, mapping_name=mapping_name, **kwargs)
+        super().__init__(M, mapping_name=mapping, **kwargs)
         if check_positive_definite:
             _check_definite_positive(self.matrix)
         self.symmetry = symmetry
@@ -1640,7 +1644,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         .. [4] Helbig, K. (2013). What Kelvin might have written about Elasticity. Geophysical Prospecting, 61(1), 1-20.
             doi: 10.1111/j.1365-2478.2011.01049.x
         """
-        return self.matrix /self.voigt_map * _voigt_to_kelvin_matrix
+        return self.matrix /self.mapping_matrix * _voigt_to_kelvin_matrix
 
     def eig(self):
         """
@@ -1732,7 +1736,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         StiffnessTensor
         """
         t = cls(matrix / _voigt_to_kelvin_matrix, **kwargs)
-        t.matrix *= t.voigt_map
+        t.matrix *= t.mapping_matrix
         return t
 
 
@@ -1746,8 +1750,7 @@ class ComplianceTensor(StiffnessTensor):
     C46_C56_factor = 2.0
 
     def __init__(self, C, check_positive_definite=True, **kwargs):
-        super().__init__(C, check_positive_definite=check_positive_definite, mapping_matrix=_compliance_mapping_voigt,
-                         mapping_name='Voigt', **kwargs)
+        super().__init__(C, check_positive_definite=check_positive_definite, **kwargs)
 
     def __mul__(self, other):
         if isinstance(other, StressTensor):
