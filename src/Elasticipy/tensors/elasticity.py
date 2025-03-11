@@ -535,9 +535,10 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
                            [C16, C26, C36, C46, C56, C66]])
         return cls(matrix, phase_name=phase_name)
 
-    def _single_tensor_only(self):
+    def _single_tensor_only(self, fun_name=''):
         if self.ndim:
-            raise ValueError('This function is not suitable for tensor array. Consider subscripting (e.g. C[0].fun)')
+            err_msg = fun_name + ' is not suitable for tensor array. Consider subscripting (e.g. C[0].fun).'
+            raise ValueError(err_msg)
 
     @property
     def Young_modulus(self):
@@ -549,7 +550,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         SphericalFunction
             Young's modulus
         """
-        self._single_tensor_only()
+        self._single_tensor_only('Young_modulus')
         def compute_young_modulus(n):
             eps = _compute_unit_strain_along_direction(self, n, n)
             return 1 / eps
@@ -566,7 +567,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         HyperSphericalFunction
             Shear modulus
         """
-        self._single_tensor_only()
+        self._single_tensor_only('shear_modulus')
         def compute_shear_modulus(m, n):
             eps = _compute_unit_strain_along_direction(self, m, n)
             return 1 / (4 * eps)
@@ -583,7 +584,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         HyperSphericalFunction
             Poisson's ratio
         """
-        self._single_tensor_only()
+        self._single_tensor_only('Poisson_ratio')
         def compute_PoissonRatio(m, n):
             eps1 = _compute_unit_strain_along_direction(self, m, m)
             eps2 = _compute_unit_strain_along_direction(self, m, n, direction='transverse')
@@ -605,7 +606,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         --------
         bulk_modulus : bulk modulus of the material
         """
-        self._single_tensor_only()
+        self._single_tensor_only('linear_compressibility')
         def compute_linear_compressibility(n):
             return _compute_unit_strain_along_direction(self, n, n, direction='spherical')
 
@@ -625,7 +626,6 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         --------
         linear_compressibility : directional linear compressibility
         """
-        self._single_tensor_only()
         return self.inv().bulk_modulus
 
     def Voigt_average(self):
