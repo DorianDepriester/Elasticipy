@@ -2,7 +2,7 @@ import unittest
 from matplotlib import pyplot as plt
 import numpy as np
 
-from Elasticipy.FourthOrderTensor import StiffnessTensor
+from Elasticipy.Elasticity import StiffnessTensor
 from pytest import approx
 
 from Elasticipy.SphericalFunction import HyperSphericalFunction

@@ -3,7 +3,7 @@ from pytest import approx
 import numpy as np
 from scipy.spatial.transform import Rotation
 
-from Elasticipy.FourthOrderTensor import StiffnessTensor
+from Elasticipy.Elasticity import StiffnessTensor
 import Elasticipy.StressStrainTensors as Tensors
 from Elasticipy.SecondOrderTensor import SecondOrderTensor, SymmetricSecondOrderTensor, SkewSymmetricSecondOrderTensor
 from Elasticipy.StressStrainTensors import StrainTensor, StressTensor
