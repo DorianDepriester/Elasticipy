@@ -17,6 +17,13 @@ _voigt_to_kelvin_matrix = np.array([[1, 1, 1, a, a, a],
                                     [a, a, a, 2, 2, 2],
                                     [a, a, a, 2, 2, 2],])
 
+_compliance_mapping_voigt = np.array([[1., 1., 1., 2., 2., 2.],
+                                      [1., 1., 1., 2., 2., 2.],
+                                      [1., 1., 1., 2., 2., 2.],
+                                      [2., 2., 2., 4., 4., 4.],
+                                      [2., 2., 2., 4., 4., 4.],
+                                      [2., 2., 2., 4., 4., 4.]])
+
 
 def _parse_tensor_components(prefix, **kwargs):
     pattern = r'^{}(\d{{2}})$'.format(prefix)
@@ -132,12 +139,8 @@ class FourthOrderTensor:
         (6,6) matrix gathering all the components of the tensor, using the Voigt notation.
     """
     tensor_name = ''
-    voigt_map = _voigt_to_kelvin_matrix
-    C11_C12_factor = 0.5
-    C46_C56_factor = 1.0
-    component_prefix = 'C'
 
-    def __init__(self, M):
+    def __init__(self, M, mapping_matrix=None, mapping_name='Kelvin'):
         """
         Construct of stiffness tensor from a (6,6) matrix.
 
@@ -151,6 +154,11 @@ class FourthOrderTensor:
         phase_name : str, default None
             Name to display
         """
+        self.mapping_name = mapping_name
+        if mapping_matrix is None:
+            self.voigt_map = _voigt_to_kelvin_matrix
+        else:
+            self.voigt_map = mapping_matrix
         M = np.asarray(M)
         if M.shape[-2:] == (6, 6):
             matrix = M
@@ -158,6 +166,7 @@ class FourthOrderTensor:
             matrix = self._full_to_matrix(M)
         else:
             raise ValueError('The input matrix must of shape (6,6)')
+
 
         self.matrix = matrix
         for i in range(0, 6):
@@ -224,12 +233,11 @@ class FourthOrderTensor:
         else:
             return self
 
-    @classmethod
-    def _full_to_matrix(cls, full_tensor):
+    def _full_to_matrix(self, full_tensor):
         kl, ij = np.indices((6, 6))
         i, j = unvoigt_index(ij).T
         k, ell = unvoigt_index(kl).T
-        return full_tensor[..., i, j, k, ell] * cls.voigt_map[ij, kl]
+        return full_tensor[..., i, j, k, ell] * self.voigt_map[ij, kl]
 
     def rotate(self, rotation):
         """
@@ -517,7 +525,7 @@ class FourthOrderTensor:
 class SymmetricFourthOrderTensor(FourthOrderTensor):
     tensor_name = 'Symmetric'
 
-    def __init__(self, M, check_symmetry=True, force_symmetry=False):
+    def __init__(self, M, check_symmetry=True, force_symmetry=False, **kwargs):
         """
         Construct of symmetric fourth-order tensor from a (6,6) matrix.
 
@@ -533,7 +541,7 @@ class SymmetricFourthOrderTensor(FourthOrderTensor):
         force_symmetry : bool, optional
             If true, the major symmetry of the tensor is forces
         """
-        super().__init__(M)
+        super().__init__(M, **kwargs)
         if force_symmetry:
             self.matrix = 0.5*(self.matrix + self.matrix.swapaxes(-1,-2))
         elif check_symmetry and not np.all(np.isclose(self.matrix, self.matrix.swapaxes(-1,-2))):
@@ -543,11 +551,13 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
     """
     Class for manipulating fourth-order stiffness tensors.
     """
-    voigt_map = np.ones((6, 6))
     tensor_name = 'Stiffness'
     C11_C12_factor = 0.5
+    C46_C56_factor = 1.0
+    component_prefix = 'C'
 
-    def __init__(self, M, symmetry='Triclinic', check_positive_definite=True, phase_name= None, **kwargs):
+    def __init__(self, M, symmetry='Triclinic', check_positive_definite=True, phase_name= None,
+                 mapping_matrix=np.ones((6, 6)), mapping_name='Voigt', **kwargs):
         """
         Construct of stiffness tensor from a (6,6) matrix.
 
@@ -567,7 +577,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         force_symmetry : bool, optional
             If true, the major symmetry of the tensor is forces
         """
-        super().__init__(M, **kwargs)
+        super().__init__(M, mapping_matrix=mapping_matrix, mapping_name=mapping_name, **kwargs)
         if check_positive_definite:
             _check_definite_positive(self.matrix)
         self.symmetry = symmetry
@@ -1721,7 +1731,9 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         -------
         StiffnessTensor
         """
-        return cls(matrix * cls.voigt_map / _voigt_to_kelvin_matrix, **kwargs)
+        t = cls(matrix / _voigt_to_kelvin_matrix, **kwargs)
+        t.matrix *= t.voigt_map
+        return t
 
 
 class ComplianceTensor(StiffnessTensor):
@@ -1729,18 +1741,13 @@ class ComplianceTensor(StiffnessTensor):
     Class for manipulating compliance tensors
     """
     tensor_name = 'Compliance'
-    voigt_map = np.array([[1., 1., 1., 2., 2., 2.],
-                          [1., 1., 1., 2., 2., 2.],
-                          [1., 1., 1., 2., 2., 2.],
-                          [2., 2., 2., 4., 4., 4.],
-                          [2., 2., 2., 4., 4., 4.],
-                          [2., 2., 2., 4., 4., 4.]])
     C11_C12_factor = 2.0
     component_prefix = 'S'
     C46_C56_factor = 2.0
 
     def __init__(self, C, check_positive_definite=True, **kwargs):
-        super().__init__(C, check_positive_definite=check_positive_definite, **kwargs)
+        super().__init__(C, check_positive_definite=check_positive_definite, mapping_matrix=_compliance_mapping_voigt,
+                         mapping_name='Voigt', **kwargs)
 
     def __mul__(self, other):
         if isinstance(other, StressTensor):
