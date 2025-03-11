@@ -363,9 +363,9 @@ class FourthOrderTensor:
             raise NotImplementedError
 
     def __eq__(self, other):
-        if isinstance(other, SymmetricFourthOrderTensor):
+        if isinstance(other, FourthOrderTensor):
             return np.all(self.matrix == other.matrix, axis=(-1,-2))
-        elif isinstance(other, np.ndarray) and other.shape[-2:] == (6, 6):
+        elif isinstance(other, (float, int)) or (isinstance(other, np.ndarray) and other.shape[-2:] == (6, 6)):
             return np.all(self.matrix == other, axis=(-1,-2))
         else:
             raise NotImplementedError('The element to compare with must be a fourth-order tensor '
@@ -383,7 +383,12 @@ class FourthOrderTensor:
 
     def __setitem__(self, index, value):
         if isinstance(value, np.ndarray):
-            self.matrix[index] = value
+            shape = value.shape
+            if (len(shape) > 1) and (value.shape[-2:] == (6,6)):
+                self.matrix[index] = value
+            elif (len(shape) > 3) and (value.shape[-4:] == (3,3,3,3)):
+                submatrix = self._full_to_matrix(value)
+                self.matrix[index] = submatrix
         elif isinstance(value, FourthOrderTensor):
             self.matrix[index] = value.matrix / value.mapping_matrix * self.mapping_matrix
         else:
