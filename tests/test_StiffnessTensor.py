@@ -233,10 +233,33 @@ class TestComplianceTensor(unittest.TestCase):
                        ' [-0.002 -0.005  0.01   0.     0.     0.   ]\n'
                        ' [ 0.     0.     0.     0.012  0.     0.   ]\n'
                        ' [ 0.014 -0.008  0.     0.     0.116  0.   ]\n'
-                       ' [ 0.     0.     0.     0.     0.     0.012]]')
+                       ' [ 0.     0.     0.     0.     0.     0.012]]'
+                       '\nSymmetry: Triclinic')
 
         S_rotated = S * rotations
-        assert S_rotated.__repr__() ==  'Compliance tensor array of shape ({},)'.format(len(rotations))
+        assert S_rotated.__repr__() ==  'Compliance tensor array of shape ({},)\nSymmetry: Triclinic'.format(len(rotations))
+
+    def test_multidimensional_attributes(self):
+        S_rotated = S * rotations
+        expected = 'Young_modulus is not suitable for tensor array. Consider subscripting (e.g. C[0].Young_modulus).'
+        with self.assertRaises(ValueError) as context:
+            _ = S_rotated.Young_modulus
+        self.assertEqual(str(context.exception), expected)
+
+        expected = 'shear_modulus is not suitable for tensor array. Consider subscripting (e.g. C[0].shear_modulus).'
+        with self.assertRaises(ValueError) as context:
+            _ = S_rotated.shear_modulus
+        self.assertEqual(str(context.exception), expected)
+
+        expected = 'linear_compressibility is not suitable for tensor array. Consider subscripting (e.g. C[0].linear_compressibility).'
+        with self.assertRaises(ValueError) as context:
+            _ = S_rotated.linear_compressibility
+        self.assertEqual(str(context.exception), expected)
+
+        expected = 'wave_velocity is not suitable for tensor array. Consider subscripting (e.g. C[0].wave_velocity).'
+        with self.assertRaises(ValueError) as context:
+            _ = S_rotated.wave_velocity(5)
+        self.assertEqual(str(context.exception), expected)
 
 class TestStiffnessConstructor(unittest.TestCase):
     def test_averages(self):
