@@ -90,7 +90,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
     def __mul__(self, other):
         if isinstance(other, StrainTensor):
-            new_tensor = super().__mul__(other)
+            new_tensor = self.ddot(other)
             return StressTensor(new_tensor.matrix)
         elif isinstance(other, StressTensor):
             raise ValueError('You cannot multiply a stiffness tensor with a Stress tensor.')
@@ -1269,7 +1269,8 @@ class ComplianceTensor(StiffnessTensor):
 
     def __mul__(self, other):
         if isinstance(other, StressTensor):
-            return StrainTensor(self * other.matrix)
+            new_tensor = self.ddot(other)
+            return StrainTensor(new_tensor.matrix)
         elif isinstance(other, StrainTensor):
             raise ValueError('You cannot multiply a compliance tensor with Strain tensor.')
         else:
