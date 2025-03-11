@@ -36,7 +36,7 @@ behaviour. In this case, the aforementioned averages can be estimated as follows
     Let's see how ``C_Hill`` looks like:
 
     >>> print(C_Hill)
-    Stiffness tensor (in Voigt notation):
+    Stiffness tensor (in Voigt mapping):
     [[200.92610744 119.59583533 119.59583533   0.           0.
         0.        ]
      [119.59583533 200.92610744 119.59583533   0.           0.

@@ -35,7 +35,7 @@ As an example, create a stiffness tensor corresponding to steel:
     >>> from Elasticipy.tensors.elasticity import StiffnessTensor
     >>> C = StiffnessTensor.isotropic(E=210e3, nu=0.28)
     >>> print(C)
-    Stiffness tensor (in Voigt notation):
+    Stiffness tensor (in Voigt mapping):
     [[268465.90909091 104403.40909091 104403.40909091      0.
            0.              0.        ]
      [104403.40909091 268465.90909091 104403.40909091      0.
@@ -64,7 +64,7 @@ Conversely, one can compute the compliance tensor:
 
     >>> S = C.inv()
     >>> print(S)
-    Compliance tensor (in Voigt notation):
+    Compliance tensor (in Voigt mapping):
     [[ 4.76190476e-06 -1.33333333e-06 -1.33333333e-06  0.00000000e+00
        0.00000000e+00  0.00000000e+00]
      [-1.33333333e-06  4.76190476e-06 -1.33333333e-06  0.00000000e+00
@@ -97,13 +97,14 @@ As an illustration, we consider the anisotropic behaviour of ferrite:
     >>> C = StiffnessTensor.fromCrystalSymmetry(symmetry='cubic', phase_name='ferrite',
     ...                                         C11=274, C12=175, C44=89)
     >>> print(C)
-    Stiffness tensor (in Voigt notation) for ferrite:
+    Stiffness tensor (in Voigt mapping):
     [[274. 175. 175.   0.   0.   0.]
      [175. 274. 175.   0.   0.   0.]
      [175. 175. 274.   0.   0.   0.]
      [  0.   0.   0.  89.   0.   0.]
      [  0.   0.   0.   0.  89.   0.]
      [  0.   0.   0.   0.   0.  89.]]
+    Phase: ferrite
     Symmetry: cubic
 
 Let's start by creating an array of 10 stresses:
