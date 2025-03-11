@@ -383,12 +383,13 @@ class FourthOrderTensor:
 
     def __setitem__(self, index, value):
         if isinstance(value, np.ndarray):
-            shape = value.shape
-            if (len(shape) > 1) and (value.shape[-2:] == (6,6)):
+            if value.shape[-2:] == (6,6):
                 self.matrix[index] = value
-            elif (len(shape) > 3) and (value.shape[-4:] == (3,3,3,3)):
+            elif value.shape[-4:] == (3,3,3,3):
                 submatrix = self._full_to_matrix(value)
                 self.matrix[index] = submatrix
+            else:
+                return ValueError('The R.h.s must be either of shape (...,6,6) or (...,3,3,3,3)')
         elif isinstance(value, FourthOrderTensor):
             self.matrix[index] = value.matrix / value.mapping_matrix * self.mapping_matrix
         else:
