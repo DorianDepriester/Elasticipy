@@ -1,7 +1,7 @@
-Elasticipy.spherical_function module
+Elasticipy.tensors.elasticity module
 ====================================
 
-.. automodule:: Elasticipy.spherical_function
+.. automodule:: Elasticipy.tensors.elasticity
    :members:
    :undoc-members:
    :show-inheritance:

@@ -16,7 +16,7 @@ We thus start by defining the stiffness tensor for forsterite:
     ...                                  C11=320, C12=68.2, C13=71.6, C22=196.5, C23=76.8,
     ...                                  C33=233.5, C44=64, C55=77, C66=78.7)
     >>> print(C)
-    Stiffness tensor (in Voigt notation) for forsterite:
+    Stiffness tensor (in Voigt mapping):
     [[320.   68.2  71.6   0.    0.    0. ]
      [ 68.2 196.5  76.8   0.    0.    0. ]
      [ 71.6  76.8 233.5   0.    0.    0. ]

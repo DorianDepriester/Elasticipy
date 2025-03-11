@@ -1,7 +1,7 @@
-Elasticipy.Plasticity module
+Elasticipy.tensor.plasticity module
 =====================================
 
-.. automodule:: Elasticipy.Plasticity
+.. automodule:: Elasticipy.plasticity
    :members:
    :undoc-members:
    :show-inheritance:

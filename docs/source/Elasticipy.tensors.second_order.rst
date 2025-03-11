@@ -1,7 +1,7 @@
-Elasticipy.SecondOrderTensor module
-===================================
+Elasticipy.tensors.second_order module
+======================================
 
-.. automodule:: Elasticipy.SecondOrderTensor
+.. automodule:: Elasticipy.tensors.second_order
    :members:
    :undoc-members:
    :show-inheritance:

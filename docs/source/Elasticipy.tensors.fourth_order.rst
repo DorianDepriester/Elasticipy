@@ -1,7 +1,7 @@
-Elasticipy.FourthOrderTensor module
-===================================
+Elasticipy.tensors.fourth_order module
+======================================
 
-.. automodule:: Elasticipy.FourthOrderTensor
+.. automodule:: Elasticipy.tensors.fourth_order
    :members:
    :undoc-members:
    :show-inheritance:

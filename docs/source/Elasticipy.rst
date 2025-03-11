@@ -8,8 +8,9 @@ Submodules
    :maxdepth: 4
 
    Elasticipy.tensors.fourth_order
+   Elasticipy.tensors.elasticity
    Elasticipy.tensors.second_order
-   Elasticipy.tensor.stress_strain
+   Elasticipy.tensors.stress_strain
    Elasticipy.spherical_function
    Elasticipy.plasticity
 
