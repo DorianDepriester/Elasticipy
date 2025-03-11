@@ -274,7 +274,7 @@ class FourthOrderTensor:
 
         Parameters
         ----------
-        other : FourthOrderTensor
+        other : FourthOrderTensor or SecondOrderTensor
             Right-hand side of ":" symbol
         mode : str, optional
             If mode=="pair", the tensors must be broadcastable, and the tensor product are performed on the last axes.
@@ -322,27 +322,12 @@ class FourthOrderTensor:
         if isinstance(other, (SymmetricFourthOrderTensor, SymmetricSecondOrderTensor)):
             return self.ddot(other)
         elif isinstance(other, np.ndarray):
-            if other.shape == (3, 3):
-                # other is a single tensor
-                matrix = np.einsum('...ijkl,kl->...ij', self.full_tensor(), other)
-                return SecondOrderTensor(matrix)
-            elif self.shape == ():
-                # other is an array, but self is single
-                matrix = np.einsum('ijkl,...kl->...ij', self.full_tensor(), other)
-                return SecondOrderTensor(matrix)
-            elif (self.ndim >= (other.ndim - 2)) and self.shape[-other.ndim+2:]==other.shape[:-2]:
-                # self.shape==(m,n,o,p) and other.shape==(o,p,3,3)
-                indices_0 = ALPHABET[:self.ndim]
-                indices_1 = indices_0[-other.ndim+2:]
-                ein_str = indices_0 + 'IJKL,' + indices_1 + 'KL->' + indices_0 + 'IJ'
-                matrix = np.einsum(ein_str, self.full_tensor(), other)
-                return SecondOrderTensor(matrix)
-            elif self.shape == other.shape[:-2]:
-                # other and self are arrays of the same shape
-                matrix = np.einsum('...ijkl,...kl->...ij', self.full_tensor(), other)
-                return SecondOrderTensor(matrix)
+            shape = other.shape
+            if other.shape == self.shape[-len(shape):]:
+                matrix = self.matrix * other[...,np.newaxis, np.newaxis]
+                return self.__class__(matrix)
             else:
-                raise ValueError('The arrays to multiply could not be broadcast with shapes {} and {}'.format(self.shape, other.shape[:-2]))
+                raise ValueError('The arrays to multiply could not be broadcasted with shapes {} and {}'.format(self.shape, other.shape[:-2]))
         elif isinstance(other, Rotation) or is_orix_rotation(other):
             return self.rotate(other)
         else:
