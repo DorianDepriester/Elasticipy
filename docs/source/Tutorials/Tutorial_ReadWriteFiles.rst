@@ -25,7 +25,7 @@ To read entries from an existing text file, just run ``StiffnessTensor.from_txt_
 Using the example above:
 
     >>> StiffnessTensor.from_txt_file('Stiffness_Cu.txt')
-    Stiffness tensor (in Voigt notation) for Cu:
+    Stiffness tensor (in Voigt mapping):
     [[186. 134. 134.   0.   0.   0.]
      [134. 186. 134.   0.   0.   0.]
      [134. 134. 186.   0.   0.   0.]

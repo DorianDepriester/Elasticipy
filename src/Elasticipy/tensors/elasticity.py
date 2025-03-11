@@ -281,34 +281,36 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
         Examples
         --------
-        >>> from Elasticipy.Elasticity import StiffnessTensor\n
+        >>> from Elasticipy.tensors.elasticity import StiffnessTensor\n
         >>> StiffnessTensor.fromCrystalSymmetry(symmetry='monoclinic', diad='y', phase_name='TiNi',
         ...                                     C11=231, C12=127, C13=104,
         ...                                     C22=240, C23=131, C33=175,
         ...                                     C44=81, C55=11, C66=85,
         ...                                     C15=-18, C25=1, C35=-3, C46=3)
-        Stiffness tensor (in Voigt notation) for TiNi:
+        Stiffness tensor (in Voigt mapping):
         [[231. 127. 104.   0. -18.   0.]
          [127. 240. 131.   0.   1.   0.]
          [104. 131. 175.   0.  -3.   0.]
          [  0.   0.   0.  81.   0.   3.]
          [-18.   1.  -3.   0.  11.   0.]
          [  0.   0.   0.   3.   0.  85.]]
+        Phase: TiNi
         Symmetry: monoclinic
 
-        >>> from Elasticipy.Elasticity import ComplianceTensor\n
+        >>> from Elasticipy.tensors.elasticity import ComplianceTensor\n
         >>> ComplianceTensor.fromCrystalSymmetry(symmetry='monoclinic', diad='y', phase_name='TiNi',
         ...                                      S11=8, S12=-3, S13=-2,
         ...                                      S22=8, S23=-5, S33=10,
         ...                                      S44=12, S55=116, S66=12,
         ...                                      S15=14, S25=-8, S35=0, S46=0)
-        Compliance tensor (in Voigt notation) for TiNi:
+        Compliance tensor (in Voigt mapping):
         [[  8.  -3.  -2.   0.  14.   0.]
          [ -3.   8.  -5.   0.  -8.   0.]
          [ -2.  -5.  10.   0.   0.   0.]
          [  0.   0.   0.  12.   0.   0.]
          [ 14.  -8.   0.   0. 116.   0.]
          [  0.   0.   0.   0.   0.  12.]]
+        Phase: TiNi
         Symmetry: monoclinic
         """
         matrix = cls._matrixFromCrystalSymmetry(point_group=point_group, diad=diad, symmetry=symmetry, prefix=prefix,
@@ -748,7 +750,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         --------
         On can check that the shear modulus for steel is around 82 GPa:
 
-        >>> from Elasticipy.FourthOrderTensor import StiffnessTensor
+        >>> from Elasticipy.tensors.elasticity import StiffnessTensor
         >>> C=StiffnessTensor.isotropic(E=210e3, nu=0.28)
         >>> C.shear_modulus
         Hyperspherical function
