@@ -1364,7 +1364,7 @@ class SecondOrderTensor:
         flatten : Converts a tensor array to 1D tensor array
         """
         try:
-            from Elasticipy.StressStrainTensors import StrainTensor, StressTensor
+            from Elasticipy.tensors.stress_strain import StrainTensor, StressTensor
             if isinstance(self, StrainTensor):
                 from pymatgen.analysis.elasticity import Strain as Constructor
             elif isinstance(self, StressTensor):

@@ -1,7 +1,5 @@
-from docutils.utils.math.latex2mathml import layout_styles
-
-from Elasticipy.StressStrainTensors import StrainTensor
-from Elasticipy.Elasticity import StiffnessTensor
+from Elasticipy.tensors.stress_strain import StrainTensor
+from Elasticipy.tensors.elasticity import StiffnessTensor
 from matplotlib import pyplot as plt
 import matplotlib as mpl
 mpl.use('Qt5Agg')   # Ensure interactive plot

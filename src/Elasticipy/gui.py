@@ -8,8 +8,8 @@ from PyQt5.QtWidgets import (
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 
-from Elasticipy.CrystalSymmetries import SYMMETRIES
-from Elasticipy.Elasticity import StiffnessTensor
+from Elasticipy.crystal_symmetries import SYMMETRIES
+from Elasticipy.tensors.elasticity import StiffnessTensor
 
 WHICH_OPTIONS = {'Mean': 'mean', 'Max': 'max', 'Min': 'min', 'Std. dev.': 'std'}
 

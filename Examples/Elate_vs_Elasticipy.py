@@ -1,9 +1,9 @@
 import numpy as np
 from elastic import Elastic
-from Elasticipy.Elasticity import StiffnessTensor
+from Elasticipy.tensors.elasticity import StiffnessTensor
 import matplotlib as mpl
 mpl.use('Qt5Agg')   # Ensure interactive plot
-from Elasticipy.SphericalFunction import sph2cart, _plot3D
+from Elasticipy.spherical_function import sph2cart, _plot3D
 import time
 import matplotlib.pyplot as plt
 

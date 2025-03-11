@@ -1,7 +1,7 @@
 import warnings
 
-from Elasticipy.SecondOrderTensor import SymmetricSecondOrderTensor, ALPHABET, is_orix_rotation
-from Elasticipy.StressStrainTensors import StrainTensor
+from Elasticipy.tensors.second_order import SymmetricSecondOrderTensor, ALPHABET, is_orix_rotation
+from Elasticipy.tensors.stress_strain import StrainTensor
 import numpy as np
 from scipy.spatial.transform import Rotation
 

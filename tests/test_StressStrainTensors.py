@@ -3,10 +3,10 @@ from pytest import approx
 import numpy as np
 from scipy.spatial.transform import Rotation
 
-from Elasticipy.Elasticity import StiffnessTensor
-import Elasticipy.StressStrainTensors as Tensors
-from Elasticipy.SecondOrderTensor import SecondOrderTensor, SymmetricSecondOrderTensor, SkewSymmetricSecondOrderTensor
-from Elasticipy.StressStrainTensors import StrainTensor, StressTensor
+from Elasticipy.tensors.elasticity import StiffnessTensor
+import Elasticipy.tensors.stress_strain as Tensors
+from Elasticipy.tensors.second_order import SecondOrderTensor, SymmetricSecondOrderTensor, SkewSymmetricSecondOrderTensor
+from Elasticipy.tensors.stress_strain import StrainTensor, StressTensor
 from pymatgen.analysis.elasticity import Strain as mgStrain, Stress as mgStress
 from orix.quaternion import Rotation as OrixRot
 

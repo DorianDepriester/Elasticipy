@@ -1,5 +1,5 @@
 import numpy as np
-from Elasticipy.StressStrainTensors import StrainTensor, StressTensor
+from Elasticipy.tensors.stress_strain import StrainTensor, StressTensor
 
 
 class IsotropicHardening:

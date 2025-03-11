@@ -4,11 +4,11 @@ from pytest import approx
 import os
 import pandas as pd
 
-from Elasticipy.Elasticity import StiffnessTensor, ComplianceTensor
+from Elasticipy.tensors.elasticity import StiffnessTensor, ComplianceTensor
 from scipy.spatial.transform import Rotation
-from Elasticipy.Elasticity import _indices2str
-from Elasticipy.CrystalSymmetries import SYMMETRIES
-from Elasticipy.StressStrainTensors import StressTensor, StrainTensor
+from Elasticipy.tensors.elasticity import _indices2str
+from Elasticipy.crystal_symmetries import SYMMETRIES
+from Elasticipy.tensors.stress_strain import StressTensor, StrainTensor
 from pymatgen.analysis.elasticity import elastic as mg
 from orix.quaternion import Rotation as orix_rot
 

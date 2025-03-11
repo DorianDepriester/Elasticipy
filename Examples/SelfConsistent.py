@@ -1,5 +1,5 @@
 import numpy as np
-from Elasticipy.FourthOrderTensor import StiffnessTensor, SymmetricFourthOrderTensor, ComplianceTensor, FourthOrderTensor
+from Elasticipy.tensors.fourth_order import StiffnessTensor, ComplianceTensor, FourthOrderTensor
 from scipy.integrate import trapezoid
 from scipy.spatial.transform import Rotation
 

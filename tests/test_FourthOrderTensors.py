@@ -1,5 +1,5 @@
 import unittest
-from Elasticipy.FourthOrderTensor import FourthOrderTensor, SymmetricFourthOrderTensor
+from Elasticipy.tensors.fourth_order import FourthOrderTensor, SymmetricFourthOrderTensor
 import numpy as np
 
 

@@ -1,5 +1,5 @@
 import numpy as np
-from Elasticipy.SecondOrderTensor import SymmetricSecondOrderTensor, rotation_to_matrix, is_orix_rotation, \
+from Elasticipy.tensors.second_order import SymmetricSecondOrderTensor, rotation_to_matrix, is_orix_rotation, \
     SecondOrderTensor, ALPHABET
 from scipy.spatial.transform import Rotation
 from copy import deepcopy

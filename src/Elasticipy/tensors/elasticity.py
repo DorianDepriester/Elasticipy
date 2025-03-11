@@ -1,7 +1,7 @@
-from Elasticipy.FourthOrderTensor import SymmetricFourthOrderTensor, KELVIN_MAPPING_MATRIX
-from Elasticipy.SphericalFunction import SphericalFunction, HyperSphericalFunction
-from Elasticipy.CrystalSymmetries import SYMMETRIES
-from Elasticipy.StressStrainTensors import StrainTensor, StressTensor
+from Elasticipy.tensors.fourth_order import SymmetricFourthOrderTensor, KELVIN_MAPPING_MATRIX
+from Elasticipy.spherical_function import SphericalFunction, HyperSphericalFunction
+from Elasticipy.crystal_symmetries import SYMMETRIES
+from Elasticipy.tensors.stress_strain import StrainTensor, StressTensor
 import numpy as np
 import re
 

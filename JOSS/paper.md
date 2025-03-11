@@ -143,7 +143,7 @@ with ease. It already implements thermal expansion.
 
 ````python
 
-from Elasticipy.Elasticity import StiffnessTensor
+from Elasticipy.tensors.elasticity import StiffnessTensor
 
 C = StiffnessTensor.cubic(C11=186, C12=134, C44=77)
 E = C.Young_modulus
@@ -183,10 +183,11 @@ Efforts have been made to provide out-of-the-box simple syntaxes for common oper
 will create a tensor array corresponding to evenly-spaced strain along $[1,0,0]$ axis:
 
 ````python
-from Elasticipy.StressStrainTensors import StrainTensor
-m = 1000                     # length of tensor array
-mag = np.linspace(0, 0.1, m) # Strain magnitude
-strain = StrainTensor.tensile([1,0,0], mag)
+from Elasticipy.tensors.stress_strain import StrainTensor
+
+m = 1000  # length of tensor array
+mag = np.linspace(0, 0.1, m)  # Strain magnitude
+strain = StrainTensor.tensile([1, 0, 0], mag)
 ````
 
 Given the stiffness tensor ``C`` (see above), one can compute the corresponding stress array with:
