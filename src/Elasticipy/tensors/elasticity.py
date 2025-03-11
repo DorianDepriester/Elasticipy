@@ -628,10 +628,17 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         """
         return self.inv().bulk_modulus
 
-    def Voigt_average(self):
+    def Voigt_average(self, axis=None):
         """
-        Compute the Voigt average of the stiffness tensor. If the tensor contains no orientation, we assume isotropic
-        behaviour. Otherwise, the mean is computed over all orientations.
+        Compute the Voigt average of the stiffness tensor.
+
+        If the tensor is a tensor array, all its values are considered. Otherwise (i.e. if single), the corresponding
+        isotropic tensor is returned.
+
+        Parameters
+        ----------
+        axis : int, optional
+            If provided, the average is computed along this axis. Otherwise, the mean is computed on the flattened array.
 
         Returns
         -------
@@ -645,7 +652,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         average : generic function for calling either the Voigt, Reuss or Hill average
         """
         if self.ndim:
-            return self.mean()
+            return self.mean(axis=axis)
         else:
             c = self.matrix
             C11 = (c[0, 0] + c[1, 1] + c[2, 2]) / 5 \
@@ -658,10 +665,15 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
             mat = _isotropic_matrix(C11, C12, C44)
             return StiffnessTensor(mat, symmetry='isotropic', phase_name=self.phase_name)
 
-    def Reuss_average(self):
+    def Reuss_average(self, axis=None):
         """
         Compute the Reuss average of the stiffness tensor. If the tensor contains no orientation, we assume isotropic
         behaviour. Otherwise, the mean is computed over all orientations.
+
+        Parameters
+        ----------
+        axis : int, optional
+            If provided, axis to compute the average along with. If none, the average is computed on the flattened array
 
         Returns
         -------
@@ -674,12 +686,17 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         Hill_average : compute the Voigt-Reuss-Hill average
         average : generic function for calling either the Voigt, Reuss or Hill average
         """
-        return self.inv().Reuss_average().inv()
+        return self.inv().Reuss_average(axis=axis).inv()
 
-    def Hill_average(self):
+    def Hill_average(self, axis=None):
         """
         Compute the (Voigt-Reuss-)Hill average of the stiffness tensor. If the tensor contains no orientation, we assume
         isotropic behaviour. Otherwise, the mean is computed over all orientations.
+
+        Parameters
+        ----------
+        axis : int, optional
+            If provided, axis to compute the average along with. If none, the average is computed on the flattened array
 
         Returns
         -------
@@ -692,11 +709,11 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         Reuss_average : compute the Reuss average
         average : generic function for calling either the Voigt, Reuss or Hill average
         """
-        Reuss = self.Reuss_average()
-        Voigt = self.Voigt_average()
+        Reuss = self.Reuss_average(axis=axis)
+        Voigt = self.Voigt_average(axis=axis)
         return (Reuss + Voigt) * 0.5
 
-    def average(self, method):
+    def average(self, method, axis=None):
         """
         Compute either the Voigt, Reuss, or Hill average of the stiffness tensor.
 
@@ -704,8 +721,10 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
         Parameters
         ----------
+        axis : int, optional
+            If provided, axis to compute the average along with. If none, the average is computed on the flattened array
         method : str {'Voigt', 'Reuss', 'Hill'}
-        Method to use to compute the average.
+            Method to use to compute the average.
 
         Returns
         -------
@@ -720,7 +739,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         method = method.capitalize()
         if method in ('Voigt', 'Reuss', 'Hill'):
             fun = getattr(self, method + '_average')
-            return fun()
+            return fun(axis=axis)
         else:
             raise NotImplementedError('Only Voigt, Reus, and Hill are implemented.')
 
@@ -1288,9 +1307,9 @@ class ComplianceTensor(StiffnessTensor):
         S = np.linalg.inv(self.matrix)
         return StiffnessTensor(S, symmetry=self.symmetry, phase_name=self.phase_name)
 
-    def Reuss_average(self):
+    def Reuss_average(self, axis=None):
         if self.ndim:
-            return self.mean()
+            return self.mean(axis=axis)
         else:
             s = self.matrix
             S11 = (s[0, 0] + s[1, 1] + s[2, 2]) / 5 \
@@ -1304,11 +1323,11 @@ class ComplianceTensor(StiffnessTensor):
             mat = _isotropic_matrix(S11, S12, S44)
             return ComplianceTensor(mat, symmetry='isotropic', phase_name=self.phase_name)
 
-    def Voigt_average(self):
-        return self.inv().Voigt_average().inv()
+    def Voigt_average(self, axis=None):
+        return self.inv().Voigt_average(axis=axis).inv()
 
-    def Hill_average(self):
-        return self.inv().Hill_average().inv()
+    def Hill_average(self, axis=None):
+        return self.inv().Hill_average(axis=axis).inv()
 
     @classmethod
     def isotropic(cls, E=None, nu=None, lame1=None, lame2=None, phase_name=None):
