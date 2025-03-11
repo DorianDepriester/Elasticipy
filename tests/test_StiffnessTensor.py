@@ -227,7 +227,7 @@ class TestComplianceTensor(unittest.TestCase):
     def test_repr(self):
         """Test printing out the tensor"""
         str = S.__repr__()
-        assert str == ('Compliance tensor (in Voigt notation):\n'
+        assert str == ('Compliance tensor (in Voigt mapping):\n'
                        '[[ 0.008 -0.003 -0.002  0.     0.014  0.   ]\n'
                        ' [-0.003  0.008 -0.005  0.    -0.008  0.   ]\n'
                        ' [-0.002 -0.005  0.01   0.     0.     0.   ]\n'
