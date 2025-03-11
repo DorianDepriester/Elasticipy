@@ -537,7 +537,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
     def _single_tensor_only(self, fun_name=''):
         if self.ndim:
-            err_msg = fun_name + ' is not suitable for tensor array. Consider subscripting (e.g. C[0].fun).'
+            err_msg = fun_name + ' is not suitable for tensor array. Consider subscripting (e.g. C[0].{}).'.format(fun_name)
             raise ValueError(err_msg)
 
     @property
@@ -947,7 +947,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
                Communications (207), 2016, https://doi.org/10.1016/j.cpc.2016.06.014.
 
         """
-
+        self._single_tensor_only('wave_velocity')
         def make_fun(index):
             def fun(n):
                 Gamma = self.Christoffel_tensor(n)
