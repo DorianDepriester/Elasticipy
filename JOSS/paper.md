@@ -142,7 +142,9 @@ with ease. It already implements thermal expansion.
 \autoref{fig:Young}.a) and b) were rendered with the following syntax:
 
 ````python
-from Elasticipy.FourthOrderTensor import StiffnessTensor
+
+from Elasticipy.Elasticity import StiffnessTensor
+
 C = StiffnessTensor.cubic(C11=186, C12=134, C44=77)
 E = C.Young_modulus
 E.plot3D(n_phi=500, n_theta=500)

@@ -4,9 +4,9 @@ from pytest import approx
 import os
 import pandas as pd
 
-from Elasticipy.FourthOrderTensor import StiffnessTensor, ComplianceTensor
+from Elasticipy.Elasticity import StiffnessTensor, ComplianceTensor
 from scipy.spatial.transform import Rotation
-from Elasticipy.FourthOrderTensor import _indices2str
+from Elasticipy.Elasticity import _indices2str
 from Elasticipy.CrystalSymmetries import SYMMETRIES
 from Elasticipy.StressStrainTensors import StressTensor, StrainTensor
 from pymatgen.analysis.elasticity import elastic as mg

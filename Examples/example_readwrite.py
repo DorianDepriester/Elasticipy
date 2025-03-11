@@ -1,4 +1,4 @@
-from Elasticipy.FourthOrderTensor import StiffnessTensor
+from Elasticipy.Elasticity import StiffnessTensor
 
 C = StiffnessTensor.from_MP("mp-1048")
 C.save_to_txt("TiNi.txt")

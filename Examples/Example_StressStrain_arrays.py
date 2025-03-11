@@ -23,7 +23,7 @@ print(strain.volumetric_strain())
 # ======================================================
 # Linear elasticity
 # ======================================================
-from Elasticipy.FourthOrderTensor import StiffnessTensor
+from Elasticipy.Elasticity import StiffnessTensor
 
 C = StiffnessTensor.fromCrystalSymmetry(symmetry='cubic', phase_name='ferrite',
                                         C11=274, C12=175, C44=89)

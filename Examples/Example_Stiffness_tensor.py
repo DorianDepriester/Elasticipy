@@ -1,4 +1,4 @@
-from Elasticipy.FourthOrderTensor import StiffnessTensor
+from Elasticipy.Elasticity import StiffnessTensor
 from scipy.spatial.transform import Rotation
 import matplotlib as mpl
 mpl.use('Qt5Agg')   # Ensure interactive plot

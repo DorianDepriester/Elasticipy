@@ -1,4 +1,4 @@
-from Elasticipy.FourthOrderTensor import StiffnessTensor
+from Elasticipy.Elasticity import StiffnessTensor
 import matplotlib as mpl
 mpl.use('Qt5Agg')   # Ensure interactive plot
 from matplotlib import pyplot as plt

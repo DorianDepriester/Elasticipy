@@ -1,6 +1,6 @@
 from Elasticipy.Plasticity import JohnsonCook
 from Elasticipy.StressStrainTensors import StressTensor, StrainTensor
-from Elasticipy.FourthOrderTensor import StiffnessTensor
+from Elasticipy.Elasticity import StiffnessTensor
 import numpy as np
 from matplotlib import pyplot as plt
 import matplotlib as mpl

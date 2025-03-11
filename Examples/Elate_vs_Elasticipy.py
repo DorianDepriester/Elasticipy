@@ -1,6 +1,6 @@
 import numpy as np
 from elastic import Elastic
-from Elasticipy.FourthOrderTensor import StiffnessTensor
+from Elasticipy.Elasticity import StiffnessTensor
 import matplotlib as mpl
 mpl.use('Qt5Agg')   # Ensure interactive plot
 from Elasticipy.SphericalFunction import sph2cart, _plot3D
