@@ -12,7 +12,7 @@ To save a given stiffness tensor to a plain text file, just use the ``save_to_tx
 
 .. doctest::
 
-    >>> from Elasticipy.FourthOrderTensor import StiffnessTensor
+    >>> from Elasticipy.tensors.elasticity import StiffnessTensor
     >>> C = StiffnessTensor.cubic(C11=186, C12=134, C44=77, phase_name='Cu')
     >>> C.save_to_txt('Stiffness_Cu.txt')
 

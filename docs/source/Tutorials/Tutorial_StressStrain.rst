@@ -11,7 +11,7 @@ equivalent stresses:
 
 .. doctest::
 
-    >>> from Elasticipy.StressStrainTensors import StressTensor, StrainTensor
+    >>> from Elasticipy.tensors.stress_strain import StressTensor, StrainTensor
             >>> stress = StressTensor.shear([1, 0, 0], [0, 1, 0], 1.0) # Unit XY shear stress
             >>> print(stress.vonMises(), stress.Tresca())
             1.7320508075688772 2.0
@@ -32,7 +32,7 @@ Linear elasticity
 This section is dedicated to linear elasticity, hence introducing the fourth-order stiffness tensor.
 As an example, create a stiffness tensor corresponding to steel:
 
-    >>> from Elasticipy.FourthOrderTensor import StiffnessTensor
+    >>> from Elasticipy.tensors.elasticity import StiffnessTensor
     >>> C = StiffnessTensor.isotropic(E=210e3, nu=0.28)
     >>> print(C)
     Stiffness tensor (in Voigt notation):
