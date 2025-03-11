@@ -416,8 +416,6 @@ class FourthOrderTensor:
         return_full_tensor : bool, optional
             If True, return the full tensor as a (3,3,3,3) or a (...,3,3,3,3) array. Otherwise, the tensor is returned
             as a SymmetricTensor object.
-        symmetry : bool, optional
-            If true, the returned value will correspond to the identity tensor for symmetric fourth-order tensors
 
         Returns
         -------
