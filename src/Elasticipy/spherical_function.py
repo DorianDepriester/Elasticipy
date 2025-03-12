@@ -4,7 +4,7 @@ from matplotlib.colors import Normalize
 from numpy import cos, sin
 from scipy import integrate as integrate
 from scipy import optimize
-from Elasticipy.PoleFigure import add_polefigure
+from Elasticipy.polefigure import add_polefigure
 
 
 def sph2cart(*args):

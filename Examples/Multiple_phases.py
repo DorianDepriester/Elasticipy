@@ -1,4 +1,4 @@
-from Elasticipy.FourthOrderTensor import StiffnessTensor
+from Elasticipy.tensors.elasticity import StiffnessTensor
 import numpy as np
 from matplotlib import pyplot as plt
 

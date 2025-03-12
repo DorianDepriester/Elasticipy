@@ -1,5 +1,5 @@
 import unittest
-from Elasticipy.ThermalExpansion import ThermalExpansionTensor as ThEx
+from Elasticipy.tensors.thermal_expansion import ThermalExpansionTensor as ThEx
 from scipy.spatial.transform import Rotation
 import numpy as np
 

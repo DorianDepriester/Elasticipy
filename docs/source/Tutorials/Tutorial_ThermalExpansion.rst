@@ -8,7 +8,7 @@ At first, let's consider steel as an example, assuming an isotropic behaviour:
 
 .. doctest::
 
-    >>> from Elasticipy.ThermalExpansion import ThermalExpansionTensor as ThEx
+    >>> from Elasticipy.tensors.thermal_expansion import ThermalExpansionTensor as ThEx
     >>> alpha = ThEx.isotropic(11e-6)
     >>> print(alpha)
     Thermal expansion tensor

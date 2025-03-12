@@ -1,10 +1,10 @@
 import unittest
 import numpy as np
-from Elasticipy.Plasticity import JohnsonCook
-from Elasticipy.Plasticity import TrescaPlasticity, VonMisesPlasticity, DruckerPrager
+from Elasticipy.plasticity import JohnsonCook
+from Elasticipy.plasticity import TrescaPlasticity, VonMisesPlasticity, DruckerPrager
 from pytest import approx
 
-from Elasticipy.StressStrainTensors import StressTensor, StrainTensor
+from Elasticipy.tensors.stress_strain import StressTensor, StrainTensor
 
 A, B, C = 792, 510, 0.014
 m, n = 1.03, 0.26

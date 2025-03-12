@@ -3,10 +3,10 @@ from pytest import approx
 import numpy as np
 from scipy.spatial.transform import Rotation
 
-from Elasticipy.FourthOrderTensor import StiffnessTensor
-import Elasticipy.StressStrainTensors as Tensors
-from Elasticipy.SecondOrderTensor import SecondOrderTensor, SymmetricSecondOrderTensor, SkewSymmetricSecondOrderTensor
-from Elasticipy.StressStrainTensors import StrainTensor, StressTensor
+from Elasticipy.tensors.elasticity import StiffnessTensor
+import Elasticipy.tensors.stress_strain as Tensors
+from Elasticipy.tensors.second_order import SecondOrderTensor, SymmetricSecondOrderTensor, SkewSymmetricSecondOrderTensor
+from Elasticipy.tensors.stress_strain import StrainTensor, StressTensor
 from pymatgen.analysis.elasticity import Strain as mgStrain, Stress as mgStress
 from orix.quaternion import Rotation as OrixRot
 
@@ -231,7 +231,7 @@ class TestStressStrainTensors(unittest.TestCase):
         eps = Tensors.StrainTensor(matrix, force_symmetry=True)
         ori = Rotation.random(n_ori)
         C_rotated = C * ori
-        sigma = C_rotated.matmul(eps)
+        sigma = C_rotated.ddot(eps, mode='cross')
 
         # Rotate stress and stress by their own
         eps_rot = eps.rotate(ori, mode='cross')
@@ -249,7 +249,7 @@ class TestStressStrainTensors(unittest.TestCase):
         strain = Tensors.StrainTensor.ones(shape_strain)
         ori = Rotation.random(n_ori)
         C_rotated = C * ori
-        stress = C_rotated.matmul(strain)
+        stress = C_rotated.ddot(strain, mode='cross')
         self.assertEqual(stress.shape, (n_ori,) + shape_strain)
         for i in range(5):
             for j in range(4):

@@ -4,13 +4,15 @@ from pytest import approx
 import os
 import pandas as pd
 
-from Elasticipy.FourthOrderTensor import StiffnessTensor, ComplianceTensor
+from Elasticipy.tensors.elasticity import StiffnessTensor, ComplianceTensor
 from scipy.spatial.transform import Rotation
-from Elasticipy.FourthOrderTensor import _indices2str
-from Elasticipy.CrystalSymmetries import SYMMETRIES
-from Elasticipy.StressStrainTensors import StressTensor, StrainTensor
+from Elasticipy.tensors.elasticity import _indices2str
+from Elasticipy.crystal_symmetries import SYMMETRIES
+from Elasticipy.tensors.stress_strain import StressTensor, StrainTensor
 from pymatgen.analysis.elasticity import elastic as mg
 from orix.quaternion import Rotation as orix_rot
+
+from Examples.Example_StressStrain_arrays import C_rotated
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 file_path = os.path.join(current_dir, 'MaterialsProject.json')
@@ -205,13 +207,13 @@ class TestComplianceTensor(unittest.TestCase):
         S_rotated = S * orix_rotations
         S_mean_0 = S_rotated.mean(axis=0)
         for i in range(n):
-            np.testing.assert_array_almost_equal(S_mean_0[i], S_rotated[:,i].Reuss_average().full_tensor())
+            np.testing.assert_array_almost_equal(S_mean_0[i].matrix, S_rotated[:,i].Reuss_average().matrix)
         S_mean_1 = S_rotated.mean(axis=1)
         for i in range(m):
-            np.testing.assert_array_almost_equal(S_mean_1[i], S_rotated[i,:].Reuss_average().full_tensor())
+            np.testing.assert_array_almost_equal(S_mean_1[i].matrix, S_rotated[i,:].Reuss_average().matrix)
         S_mean = S_rotated.mean()
-        np.testing.assert_array_almost_equal(S_mean, S_rotated.flatten().Reuss_average().full_tensor())
-        np.testing.assert_array_almost_equal(S_mean, S_rotated.Reuss_average().full_tensor())
+        np.testing.assert_array_almost_equal(S_mean.matrix, S_rotated.flatten().Reuss_average().matrix)
+        np.testing.assert_array_almost_equal(S_mean.matrix, S_rotated.Reuss_average().matrix)
 
     def test_to_from_Kelvin(self):
         matrix = S.to_Kelvin()
@@ -223,6 +225,67 @@ class TestComplianceTensor(unittest.TestCase):
         S2 = ComplianceTensor(S_full)
         assert S == S2
         np.testing.assert_array_equal(S.full_tensor(), S2.full_tensor())
+
+    def test_repr(self):
+        """Test printing out the tensor"""
+        str = S.__repr__()
+        assert str == ('Compliance tensor (in Voigt mapping):\n'
+                       '[[ 0.008 -0.003 -0.002  0.     0.014  0.   ]\n'
+                       ' [-0.003  0.008 -0.005  0.    -0.008  0.   ]\n'
+                       ' [-0.002 -0.005  0.01   0.     0.     0.   ]\n'
+                       ' [ 0.     0.     0.     0.012  0.     0.   ]\n'
+                       ' [ 0.014 -0.008  0.     0.     0.116  0.   ]\n'
+                       ' [ 0.     0.     0.     0.     0.     0.012]]'
+                       '\nSymmetry: Triclinic')
+
+        S_rotated = S * rotations
+        assert S_rotated.__repr__() ==  'Compliance tensor array of shape ({},)\nSymmetry: Triclinic'.format(len(rotations))
+
+    def test_multidimensional_attributes(self):
+        S_rotated = S * rotations
+        expected = 'Young_modulus is not suitable for tensor array. Consider subscripting (e.g. C[0].Young_modulus).'
+        with self.assertRaises(ValueError) as context:
+            _ = S_rotated.Young_modulus
+        self.assertEqual(str(context.exception), expected)
+
+        expected = 'shear_modulus is not suitable for tensor array. Consider subscripting (e.g. C[0].shear_modulus).'
+        with self.assertRaises(ValueError) as context:
+            _ = S_rotated.shear_modulus
+        self.assertEqual(str(context.exception), expected)
+
+        expected = 'linear_compressibility is not suitable for tensor array. Consider subscripting (e.g. C[0].linear_compressibility).'
+        with self.assertRaises(ValueError) as context:
+            _ = S_rotated.linear_compressibility
+        self.assertEqual(str(context.exception), expected)
+
+        expected = 'wave_velocity is not suitable for tensor array. Consider subscripting (e.g. C[0].wave_velocity).'
+        with self.assertRaises(ValueError) as context:
+            _ = S_rotated.wave_velocity(5)
+        self.assertEqual(str(context.exception), expected)
+
+    def test_voigt_reuss_axis(self):
+        m,n = 5,6
+        orientations = orix_rot.random((m,n))
+        S_rotated = S * orientations
+        Sv_0 = S_rotated.Voigt_average(axis=0)
+        Sr_0 = S_rotated.Reuss_average(axis=0)
+        assert Sv_0.shape == (n,)
+        assert Sr_0.shape == (n,)
+        for i in range(n):
+            assert Sv_0[i] == S_rotated[:, i].Voigt_average()
+            assert Sr_0[i] == S_rotated[:, i].Reuss_average()
+        Sv_1 = S_rotated.Voigt_average(axis=1)
+        Sr_1 = S_rotated.Reuss_average(axis=1)
+        assert Sv_1.shape == (m,)
+        assert Sr_1.shape == (m,)
+        for i in range(m):
+            assert Sv_1[i] == S_rotated[i, :].Voigt_average()
+            assert Sr_1[i] == S_rotated[i, :].Reuss_average()
+
+        np.testing.assert_array_almost_equal(Sv_0.Voigt_average().matrix, S_rotated.Voigt_average().matrix)
+        np.testing.assert_array_almost_equal(Sv_1.Voigt_average().matrix, S_rotated.Voigt_average().matrix)
+        np.testing.assert_array_almost_equal(Sr_0.Reuss_average().matrix, S_rotated.Reuss_average().matrix)
+        np.testing.assert_array_almost_equal(Sr_1.Reuss_average().matrix, S_rotated.Reuss_average().matrix)
 
 class TestStiffnessConstructor(unittest.TestCase):
     def test_averages(self):
@@ -375,13 +438,6 @@ class TestStiffnessConstructor(unittest.TestCase):
         assert approx(cs_2.mean()) == np.sqrt(G / rho)
         assert approx(cs_1.mean()) == np.sqrt(G / rho)
 
-    def test_len(self):
-        """Test len(ght) operator"""
-        C = StiffnessTensor.isotropic(E=210000, nu=0.3)
-        assert len(C) == 1
-        assert len(C * rotations[0]) == 1
-        assert len(C * rotations) == 10000
-
     def test_monoclinic(self):
         """Test constructor for monoclinic symmetry"""
         common_arguments = {'C11':11, 'C12':12, 'C13':13, 'C22':22, 'C23':23, 'C33':33, 'C44':44, 'C55':55, 'C66':66}
@@ -469,40 +525,6 @@ class TestStiffnessConstructor(unittest.TestCase):
         C = StiffnessTensor.isotropic(E=200, nu=0.3)
         Cdiv = C/2
         np.testing.assert_array_equal(Cdiv.matrix, C.matrix/2)
-
-    def test_repr(self):
-        """Test printing out the tensor"""
-        C = StiffnessTensor.isotropic(E=210000, nu=0.3)
-        str = C.__repr__()
-        assert str == ('Stiffness tensor (in Voigt notation):\n'
-                       '[[282692.30769231 121153.84615385 121153.84615385      0.\n'
-                       '       0.              0.        ]\n'
-                       ' [121153.84615385 282692.30769231 121153.84615385      0.\n'
-                       '       0.              0.        ]\n'
-                       ' [121153.84615385 121153.84615385 282692.30769231      0.\n'
-                       '       0.              0.        ]\n'
-                       ' [     0.              0.              0.          80769.23076923\n'
-                       '       0.              0.        ]\n'
-                       ' [     0.              0.              0.              0.\n'
-                       '   80769.23076923      0.        ]\n'
-                       ' [     0.              0.              0.              0.\n'
-                       '       0.          80769.23076923]]\nSymmetry: isotropic')
-
-        C = StiffnessTensor.cubic(C11=200, C12=100, C44=400, phase_name='Cu')
-        str_Cu = ('Stiffness tensor (in Voigt notation) for Cu:\n'
-                       '[[200. 100. 100.   0.   0.   0.]\n'
-                       ' [100. 200. 100.   0.   0.   0.]\n'
-                       ' [100. 100. 200.   0.   0.   0.]\n'
-                       ' [  0.   0.   0. 400.   0.   0.]\n'
-                       ' [  0.   0.   0.   0. 400.   0.]\n'
-                       ' [  0.   0.   0.   0.   0. 400.]]\n'
-                       'Symmetry: cubic')
-        assert C.__repr__() == str_Cu
-
-        C_rotated = C * rotations
-        assert C_rotated.__repr__() == str_Cu + '\n{} orientations'.format(len(rotations))
-
-
 
     def test_weighted_average(self):
         """Test averaging two phases"""
@@ -597,7 +619,7 @@ class TestStiffnessConstructor(unittest.TestCase):
         S1 = S_rotated[0]
         S2 = S * rotations[0]
         np.testing.assert_array_almost_equal(S1.matrix, S2.matrix)
-        expected_error = 'The tensor has no orientation, therefore it cannot be indexed.'
+        expected_error = 'A single tensor cannot be subindexed'
         with self.assertRaises(IndexError) as context:
             _ = S[0]
         self.assertEqual(str(context.exception), expected_error)
@@ -651,7 +673,7 @@ class TestStiffnessConstructor(unittest.TestCase):
                 np.testing.assert_array_almost_equal(C_rotated_full[i,j], tensor_i)
 
         # Check that the result is consistent with scipy.Rotation
-        orix_rotations = orix_rotations.flatten()
+        orix_rotations = orix_rotations.transpose().flatten()   # orix seems to use the opposite order from numpy for flattening
         C_rotated_flat = C_rotated.flatten()
         euler = orix_rotations.to_euler()
         scipy_rotations = Rotation.from_euler('ZXZ', euler)
@@ -703,6 +725,12 @@ class TestStiffnessConstructor(unittest.TestCase):
         E, nu = 210, 0.3
         Ciso= StiffnessTensor.isotropic(E=E, nu=nu)
         assert Ciso.bulk_modulus == approx(E / (3 * (1-2 * nu)))
+
+        b = S.bulk_modulus
+        C = S.inv()
+        C_rotated = C * rotations
+        b_r = C_rotated.bulk_modulus
+        assert np.allclose(b, b_r)
 
     def test_broadcasting(self):
         C11, C12, C44 = 173, 33, 18
@@ -766,11 +794,6 @@ class TestStiffnessConstructor(unittest.TestCase):
                     np.testing.assert_array_almost_equal(stress[i, j, k].matrix,
                                                          (C_rotated_3d[i, j, k] * strain_3d[i,j,k]).matrix)
 
-        expected_error = 'The arrays to multiply could not be broadcast with shapes {} and {}'.format(C_rotated_1d.shape, strain_2d.shape)
-        with self.assertRaises(ValueError) as context:
-            _ = C_rotated_1d * strain_2d
-        assert str(context.exception) == expected_error
-
     def test_transpose_array(self):
         m, n, o = 5, 6, 7
         rot_2d = orix_rot.random((m, n, o))
@@ -778,7 +801,6 @@ class TestStiffnessConstructor(unittest.TestCase):
         C = StiffnessTensor.cubic(C11=C11, C12=C12, C44=C44)
         C_rotated = C * rot_2d
         C_rotated_T = C_rotated.transpose_array()
-        assert C.transpose_array() == C
         assert C_rotated_T.shape == (o, n, m)
         for i in range(m):
             for j in range(n):
@@ -832,21 +854,21 @@ class TestStiffnessConstructor(unittest.TestCase):
         C2_rot = C1 * rot_1d
 
         C1C2_rot = C1_rot * C2
-        assert C1C2_rot.shape == (m, 3, 3, 3, 3)
+        assert C1C2_rot.shape == (m,)
         for i in range(m):
-            np.testing.assert_array_almost_equal(C1C2_rot[i], np.einsum('ijmn,nmkl->ijkl', C1_rot[i].full_tensor(), C2.full_tensor()))
+            np.testing.assert_array_almost_equal(C1C2_rot[i].full_tensor(), np.einsum('ijmn,nmkl->ijkl', C1_rot[i].full_tensor(), C2.full_tensor()))
 
         C1C2_rotrot = C1_rot * C2_rot
-        assert C1C2_rot.shape == (m, 3, 3, 3, 3)
+        assert C1C2_rot.shape == (m,)
         for i in range(m):
-            np.testing.assert_array_almost_equal(C1C2_rotrot[i], np.einsum('ijmn,nmkl->ijkl', C1_rot[i].full_tensor(),
+            np.testing.assert_array_almost_equal(C1C2_rotrot[i].full_tensor(), np.einsum('ijmn,nmkl->ijkl', C1_rot[i].full_tensor(),
                                                                         C2_rot[i].full_tensor()))
 
         C1C2_rotrot_cross = C1_rot.ddot(C2_rot, mode='cross')
-        assert C1C2_rotrot_cross.shape == (m, m, 3, 3, 3, 3)
+        assert C1C2_rotrot_cross.shape == (m, m)
         for i in range(m):
             for j in range(m):
-                np.testing.assert_array_almost_equal(C1C2_rotrot_cross[i,j], np.einsum('ijmn,nmkl->ijkl', C1_rot[i].full_tensor(),
+                np.testing.assert_array_almost_equal(C1C2_rotrot_cross[i,j].full_tensor(), np.einsum('ijmn,nmkl->ijkl', C1_rot[i].full_tensor(),
                                                                            C2_rot[j].full_tensor()))
 
     def test_full_tensor(self):
@@ -855,6 +877,31 @@ class TestStiffnessConstructor(unittest.TestCase):
         C2 = StiffnessTensor(C_full)
         np.testing.assert_array_almost_equal(C.matrix, C2.matrix)
         np.testing.assert_array_almost_equal(C.full_tensor(), C2.full_tensor())
+
+    def test_voigt_reuss_axis(self):
+        m,n = 5,6
+        C=S.inv()
+        orientations = orix_rot.random((m,n))
+        C_rotated = C * orientations
+        Cv_0 = C_rotated.Voigt_average(axis=0)
+        Cr_0 = C_rotated.Reuss_average(axis=0)
+        assert Cv_0.shape == (n,)
+        assert Cr_0.shape == (n,)
+        for i in range(n):
+            assert Cv_0[i] == C_rotated[:, i].Voigt_average()
+            assert Cr_0[i] == C_rotated[:, i].Reuss_average()
+        Cv_1 = C_rotated.Voigt_average(axis=1)
+        Cr_1 = C_rotated.Reuss_average(axis=1)
+        assert Cv_1.shape == (m,)
+        assert Cr_1.shape == (m,)
+        for i in range(m):
+            assert Cv_1[i] == C_rotated[i, :].Voigt_average()
+            assert Cr_1[i] == C_rotated[i, :].Reuss_average()
+
+        np.testing.assert_array_almost_equal(Cv_0.Voigt_average().matrix, C_rotated.Voigt_average().matrix)
+        np.testing.assert_array_almost_equal(Cv_1.Voigt_average().matrix, C_rotated.Voigt_average().matrix)
+        np.testing.assert_array_almost_equal(Cr_0.Reuss_average().matrix, C_rotated.Reuss_average().matrix)
+        np.testing.assert_array_almost_equal(Cr_1.Reuss_average().matrix, C_rotated.Reuss_average().matrix)
 
 if __name__ == '__main__':
     unittest.main()

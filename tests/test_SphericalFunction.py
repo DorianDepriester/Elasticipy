@@ -2,10 +2,10 @@ import unittest
 from matplotlib import pyplot as plt
 import numpy as np
 
-from Elasticipy.FourthOrderTensor import StiffnessTensor
+from Elasticipy.tensors.elasticity import StiffnessTensor
 from pytest import approx
 
-from Elasticipy.SphericalFunction import HyperSphericalFunction
+from Elasticipy.spherical_function import HyperSphericalFunction
 
 C = StiffnessTensor.cubic(C11=186, C12=134, C44=77)
 E = C.Young_modulus # SphericalFunction

@@ -2,7 +2,7 @@
 # Imports and simple example of stress
 # ======================================================
 import numpy as np
-from Elasticipy.StressStrainTensors import StressTensor, StrainTensor
+from Elasticipy.tensors.stress_strain import StressTensor, StrainTensor
 
 
 stress = StressTensor([[0, 1, 0],
@@ -23,7 +23,7 @@ print(strain.volumetric_strain())
 # ======================================================
 # Linear elasticity
 # ======================================================
-from Elasticipy.FourthOrderTensor import StiffnessTensor
+from Elasticipy.tensors.elasticity import StiffnessTensor
 
 C = StiffnessTensor.fromCrystalSymmetry(symmetry='cubic', phase_name='ferrite',
                                         C11=274, C12=175, C44=89)
