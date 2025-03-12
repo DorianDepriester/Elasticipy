@@ -269,7 +269,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
         See Also
         --------
-        StiffnessTensor.isotropic : creates an isotropic stiffness tensor from two paremeters (e.g. E and v).
+        isotropic : creates an isotropic stiffness tensor from two paremeters (e.g. E and v).
 
         Notes
         -----
