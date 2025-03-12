@@ -619,7 +619,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
         Returns
         -------
-        float
+        float or numpy.ndarray
             Bulk modulus
 
         See Also
@@ -1347,7 +1347,9 @@ class ComplianceTensor(StiffnessTensor):
 
     @property
     def bulk_modulus(self):
-        return 1 / np.sum(self.matrix[0:3, 0:3])
+        matrix_t = self.matrix.T
+        sub_matrix = matrix_t[0:3, 0:3]
+        return 1 / np.sum(sub_matrix, axis=(0,1))
 
     @property
     def universal_anisotropy(self):
