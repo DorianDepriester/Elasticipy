@@ -319,7 +319,7 @@ class FourthOrderTensor:
 
 
     def __mul__(self, other):
-        if isinstance(other, (SymmetricFourthOrderTensor, SymmetricSecondOrderTensor)):
+        if isinstance(other, (FourthOrderTensor, SecondOrderTensor)):
             return self.ddot(other)
         elif isinstance(other, np.ndarray):
             shape = other.shape
@@ -332,6 +332,13 @@ class FourthOrderTensor:
             return self.rotate(other)
         else:
             return self.__class__(self.matrix * other)
+
+    def __truediv__(self, other):
+        if isinstance(other, (SecondOrderTensor, FourthOrderTensor)):
+            return self * other.inv()
+        else:
+            return self * (1 / other)
+
 
     def transpose_array(self):
         """
@@ -355,12 +362,6 @@ class FourthOrderTensor:
             return self * other
         else:
             raise NotImplementedError('A fourth order tensor can be left-multiplied by rotations or scalar only.')
-
-    def __truediv__(self, other):
-        if isinstance(other, (float, int, np.number)):
-            return self.__class__(self.matrix / other)
-        else:
-            raise NotImplementedError
 
     def __eq__(self, other):
         if isinstance(other, FourthOrderTensor):
@@ -417,7 +418,7 @@ class FourthOrderTensor:
         if isinstance(shape, int):
             shape = (shape,)
         if len(shape):
-            for n in shape:
+            for n in np.flip(shape):
                 eye = np.repeat(eye[np.newaxis,...], n, axis=0)
         a = np.einsum('...ik,...jl->...ijkl', eye, eye)
         b = np.einsum('...il,...jk->...ijkl', eye, eye)
