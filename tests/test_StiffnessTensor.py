@@ -12,6 +12,8 @@ from Elasticipy.tensors.stress_strain import StressTensor, StrainTensor
 from pymatgen.analysis.elasticity import elastic as mg
 from orix.quaternion import Rotation as orix_rot
 
+from Examples.Example_StressStrain_arrays import C_rotated
+
 current_dir = os.path.dirname(os.path.abspath(__file__))
 file_path = os.path.join(current_dir, 'MaterialsProject.json')
 data_base = pd.read_json(file_path)
@@ -845,6 +847,26 @@ class TestStiffnessConstructor(unittest.TestCase):
         C2 = StiffnessTensor(C_full)
         np.testing.assert_array_almost_equal(C.matrix, C2.matrix)
         np.testing.assert_array_almost_equal(C.full_tensor(), C2.full_tensor())
+
+    def test_voigt_reuss_axis(self):
+        m,n = 5,6
+        C=S.inv()
+        orientations = orix_rot.random((m,n))
+        C_rotated = C * orientations
+        Cv_0 = C_rotated.Voigt_average(axis=0)
+        Cr_0 = C_rotated.Reuss_average(axis=0)
+        assert Cv_0.shape == (n,)
+        assert Cr_0.shape == (n,)
+        for i in range(n):
+            assert Cv_0[i] == C_rotated[:, i].Voigt_average()
+            assert Cr_0[i] == C_rotated[:, i].Reuss_average()
+        Cv_1 = C_rotated.Voigt_average(axis=1)
+        Cr_1 = C_rotated.Reuss_average(axis=1)
+        assert Cv_1.shape == (m,)
+        assert Cr_1.shape == (m,)
+        for i in range(m):
+            assert Cv_1[i] == C_rotated[i, :].Voigt_average()
+            assert Cr_1[i] == C_rotated[i, :].Reuss_average()
 
 if __name__ == '__main__':
     unittest.main()
