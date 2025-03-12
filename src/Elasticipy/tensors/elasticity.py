@@ -1020,7 +1020,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
                     matrix = material.elastic_tensor.ieee_format
                     symmetry = material.symmetry.crystal_system.value
                     phase_name = material.formula_pretty
-                    C = StiffnessTensor(matrix, symmetry=symmetry, phase_name=phase_name)
+                    C = StiffnessTensor(np.asarray(matrix), symmetry=str(symmetry), phase_name=phase_name)
                 else:
                     C = None
                 Cdict[key] = C
