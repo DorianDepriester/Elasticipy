@@ -726,6 +726,12 @@ class TestStiffnessConstructor(unittest.TestCase):
         Ciso= StiffnessTensor.isotropic(E=E, nu=nu)
         assert Ciso.bulk_modulus == approx(E / (3 * (1-2 * nu)))
 
+        b = S.bulk_modulus
+        C = S.inv()
+        C_rotated = C * rotations
+        b_r = C_rotated.bulk_modulus
+        assert np.allclose(b, b_r)
+
     def test_broadcasting(self):
         C11, C12, C44 = 173, 33, 18
         m,n,o = 9,7,5
