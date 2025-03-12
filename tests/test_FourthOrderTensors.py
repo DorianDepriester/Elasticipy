@@ -2,6 +2,8 @@ import unittest
 from Elasticipy.tensors.fourth_order import FourthOrderTensor, SymmetricFourthOrderTensor
 import numpy as np
 
+from Elasticipy.tensors.second_order import SecondOrderTensor
+
 
 class TestFourthOrderTensor(unittest.TestCase):
     def test_multidimensionalArrayTensors(self):
@@ -64,6 +66,21 @@ class TestFourthOrderTensor(unittest.TestCase):
         t0_th = np.ones((m, n))
         t0_th[1,3] = 0.
         assert np.all(t0== t0_th)
+
+    def test_div(self):
+        m, n, o = 5, 4, 3
+        a = np.random.random((m, n, o, 6, 6))
+        a = FourthOrderTensor(a)
+        a_div_a = a / a
+        np.testing.assert_array_almost_equal(a_div_a.full_tensor(), FourthOrderTensor.identity(return_full_tensor=True, shape=(m,n,o)))
+
+        half_a = a / 2
+        np.testing.assert_array_almost_equal(half_a.full_tensor(), a.full_tensor()/2)
+
+        b = SecondOrderTensor.rand(shape=(4,3))
+        a_div_b = a / b
+        np.testing.assert_array_almost_equal(a_div_b.matrix, (a * b.inv()).matrix)
+
 
 
 class TestSymmetricFourthOrderTensor(unittest.TestCase):
