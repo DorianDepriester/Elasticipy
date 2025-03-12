@@ -1,5 +1,5 @@
-Elasticipy.tensor.plasticity module
-=====================================
+Elasticipy.plasticity module
+============================
 
 .. automodule:: Elasticipy.plasticity
    :members:
