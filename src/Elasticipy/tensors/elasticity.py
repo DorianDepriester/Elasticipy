@@ -1369,7 +1369,7 @@ class ComplianceTensor(StiffnessTensor):
 
         Returns
         -------
-        pymatgen.analysis.elasticity.elastic.Compliance
+        ComplianceTensor
             Compliance tensor for pymatgen
         """
         try:
