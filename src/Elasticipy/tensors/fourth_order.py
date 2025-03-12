@@ -255,12 +255,12 @@ class FourthOrderTensor:
                 raise ValueError('The input argument must be either a 6x6 matrix or a (3,3,3,3) array.')
         elif isinstance(other, FourthOrderTensor):
             if type(other) == type(self):
-                mat = self.matrix + other.matrix
+                mat = self.full_tensor() + other.full_tensor()
             else:
                 raise ValueError('The two tensors to add must be of the same class.')
         else:
             raise ValueError('I don''t know how to add {} with {}.'.format(type(self), type(other)))
-        return self.__class__(mat)
+        return self.__class__(mat, mapping=self.mapping_matrix)
 
     def __sub__(self, other):
         if isinstance(other, FourthOrderTensor):
