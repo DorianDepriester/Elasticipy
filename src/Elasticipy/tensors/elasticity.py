@@ -98,11 +98,11 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
             return super().__mul__(other)
 
     def __repr__(self):
-        str = super().__repr__()
+        string = super().__repr__()
         if self.phase_name is not None:
-            str += '\nPhase: {}'.format(self.phase_name)
-        str += '\nSymmetry: {}'.format(self.symmetry)
-        return str
+            string += '\nPhase: {}'.format(self.phase_name)
+        string += '\nSymmetry: {}'.format(self.symmetry)
+        return string
 
     def inv(self):
         """
