@@ -263,6 +263,30 @@ class TestComplianceTensor(unittest.TestCase):
             _ = S_rotated.wave_velocity(5)
         self.assertEqual(str(context.exception), expected)
 
+    def test_voigt_reuss_axis(self):
+        m,n = 5,6
+        orientations = orix_rot.random((m,n))
+        S_rotated = S * orientations
+        Sv_0 = S_rotated.Voigt_average(axis=0)
+        Sr_0 = S_rotated.Reuss_average(axis=0)
+        assert Sv_0.shape == (n,)
+        assert Sr_0.shape == (n,)
+        for i in range(n):
+            assert Sv_0[i] == S_rotated[:, i].Voigt_average()
+            assert Sr_0[i] == S_rotated[:, i].Reuss_average()
+        Sv_1 = S_rotated.Voigt_average(axis=1)
+        Sr_1 = S_rotated.Reuss_average(axis=1)
+        assert Sv_1.shape == (m,)
+        assert Sr_1.shape == (m,)
+        for i in range(m):
+            assert Sv_1[i] == S_rotated[i, :].Voigt_average()
+            assert Sr_1[i] == S_rotated[i, :].Reuss_average()
+
+        np.testing.assert_array_almost_equal(Sv_0.Voigt_average().matrix, S_rotated.Voigt_average().matrix)
+        np.testing.assert_array_almost_equal(Sv_1.Voigt_average().matrix, S_rotated.Voigt_average().matrix)
+        np.testing.assert_array_almost_equal(Sr_0.Reuss_average().matrix, S_rotated.Reuss_average().matrix)
+        np.testing.assert_array_almost_equal(Sr_1.Reuss_average().matrix, S_rotated.Reuss_average().matrix)
+
 class TestStiffnessConstructor(unittest.TestCase):
     def test_averages(self):
         """Check that the Voigt, Reuss and Hill averages are consistent with those provided by MP."""
