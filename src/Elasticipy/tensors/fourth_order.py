@@ -397,7 +397,7 @@ class FourthOrderTensor:
             raise NotImplementedError('The r.h.s must be either an ndarray or an object of class {}'.format(self.__class__))
 
     @classmethod
-    def identity(cls, shape=(), return_full_tensor=False):
+    def identity(cls, shape=(), return_full_tensor=False, mapping='Kelvin'):
         """
         Create a 4th-order identity tensor
 
@@ -426,7 +426,7 @@ class FourthOrderTensor:
         if return_full_tensor:
             return full
         else:
-            return cls(full)
+            return cls(full, mapping=mapping)
 
     def inv(self):
         """
