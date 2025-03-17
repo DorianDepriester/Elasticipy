@@ -12,14 +12,14 @@ def gamma(C_macro_local, a1=1, a2=1, a3=1):
     s2 = np.sin(theta)*np.sin(phi) / a2
     s3 = np.cos(theta) / a3
     s = [s1, s2, s3]
-    D = np.einsum('kijl,kpq,lpq->ijpq', C_macro_local, s, s)
-    return np.einsum('ikmn,jmn,lmn->mnijkl', np.linalg.inv(D.T).T, s, s)
+    D = np.einsum('lmnp,pqr,lqr->qrmn', C_macro_local.full_tensor(), s, s)
+    return np.einsum('qrik,jqr,lqr->qrijkl', np.linalg.inv(D), s, s)
 
 def Morris_tensor(C_macro_local):
     g = gamma(C_macro_local)
-    gsin = (g.T*np.sin(theta.T))
-    a = trapezoid(gsin, theta[0], axis=-2)
-    b= trapezoid(a, phi[:,0], axis=-1)/(4*np.pi)
+    gsin = (g.T*np.sin(theta.T)).T
+    a = trapezoid(gsin, phi[:,0], axis=0)
+    b= trapezoid(a, theta[0], axis=0)/(4*np.pi)
     return FourthOrderTensor(b)
 
 def localization_tensor(C_macro_local, C_incl):
