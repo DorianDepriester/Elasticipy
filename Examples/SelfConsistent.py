@@ -6,7 +6,7 @@ from scipy.spatial.transform import Rotation
 from scipy.integrate import dblquad
 from scipy.optimize import minimize, Bounds
 
-I = FourthOrderTensor.identity()
+I = FourthOrderTensor.identity(mapping='Voigt')
 global phi, theta
 
 
@@ -35,7 +35,7 @@ def Morris_tensor(C_macro_local):
     gsin = (g.T*np.sin(theta.T)).T
     a = trapezoid(gsin, phi[:,0], axis=0)
     b= trapezoid(a, theta[0], axis=0)/(4*np.pi)
-    return FourthOrderTensor(b)
+    return b
 
 def gamma_int(C_macro_local, theta1, phi1):
     s1 = np.sin(theta1)*np.cos(phi1)
@@ -51,27 +51,31 @@ def Morris_tensor_int(C_macro_local):
         for w in range(3):
             for r in range(3):
                 for s in range(3):
-                    def fun(phi1, theta1):
-                        return np.sin(theta1) * gamma_int(C_macro_local, theta1, phi1)[n,w,r,s]
+                    def fun(phi_y, theta_x):
+                        return np.sin(theta_x) * gamma_int(C_macro_local, theta_x, phi_y)[n,w,r,s]
                     E[n,w,r,s] = 1/(4*np.pi) * dblquad(fun, 0, np.pi, 0, 2*np.pi)[0]
-    return FourthOrderTensor(E)
+    return E
 
 def localization_tensor(C_macro_local, C_incl):
     E = Morris_tensor(C_macro_local)
     delta = FourthOrderTensor(C_incl.full_tensor() - C_macro_local.full_tensor())
-    Ainv = E.ddot(delta) + I
+    Ainv = FourthOrderTensor(np.einsum('ijmn,mnkl->ijkl', E, delta.full_tensor())) + I
+    Sesh= np.einsum('ijmn,mnkl->ijkl', E, C_macro_local.full_tensor())
+    nu = C_macro_local.Poisson_ratio.mean()
+    beta = 2*(4-5*nu) / (15 * (1 - nu))
+    Sesh_th_full = (1-2*beta) * np.einsum('ij,kl->ijkl', np.eye(3), np.eye(3)) + beta * I.full_tensor()
+    Sesh_th = FourthOrderTensor(Sesh_th_full, mapping='Voigt')
     return Ainv.inv().full_tensor()
 
-def global_spherical_grid(n_theta=50, n_phi=100):
+def global_spherical_grid(n_theta=100, n_phi=100):
     global phi, theta
     theta = np.linspace(0, np.pi, n_theta)
     phi = np.linspace(0, 2 * np.pi, n_phi)
     phi, theta = np.meshgrid(phi, theta, indexing='ij')
 
 def Kroner_Eshelby(Ci, g, max_iter=5, atol=1e-3, rtol=1e-4, display=False):
-    theta = 0.1
     Ci_rotated = (Ci * g)
-    C_macro = Ci_rotated.Hill_average()
+    C_macro = Ci.Hill_average()
     eigen_stiff = C_macro.eig_stiffnesses
     global_spherical_grid()
     keep_on = True
@@ -84,10 +88,10 @@ def Kroner_Eshelby(Ci, g, max_iter=5, atol=1e-3, rtol=1e-4, display=False):
         C_macro_local = C_macro * (g.inv())
         for i in range(m):
             A_local[i] = localization_tensor(C_macro_local[i], Ci)
-        CiAi_local = Ci.ddot(A_local)
-        CiAi = CiAi_local * g
+        A = A_local * g
+        CiAi = Ci_rotated.ddot(A)
         CiAi_mean = CiAi.mean()
-        C_macro = StiffnessTensor(theta * CiAi_mean.full_tensor() + C_macro.full_tensor(), force_symmetry=True)
+        C_macro = StiffnessTensor(CiAi_mean.full_tensor(), force_symmetry=True)
 
         # Stopping criteria
         eigen_stiff = C_macro.eig_stiffnesses
@@ -104,8 +108,8 @@ def Kroner_Eshelby(Ci, g, max_iter=5, atol=1e-3, rtol=1e-4, display=False):
         if k == max_iter:
             keep_on = False
         if display:
-            err = A_local.matrix - I.matrix
-            err = np.max(np.abs(err))
+            err = A.mean() - FourthOrderTensor.identity()
+            err = np.max(np.abs(err.matrix))
             print('Iter #{}: abs. change={:0.5f}; rel. change={:0.5f}; error={:0.5f}'.format(k, max_abs_change, rel_change,err))
     return C_macro, message
 
@@ -123,30 +127,30 @@ def KE_iteration(Cmacro_flat, Ci, g):
     CiAi = CiAi_local * g
     CiAi_mean = CiAi.mean()
     C_macro_new = StiffnessTensor(CiAi_mean.full_tensor(), force_symmetry=True)
- #   return C_macro_new
-    return np.sum((C_macro_new.matrix - C_matrix)**2)
+    return C_macro_new
+ #   return np.sum((C_macro_new.matrix - C_matrix)**2)
 
 Cstrip = StiffnessTensor.transverse_isotropic(Ex= 10.2, Ez=146.8, nu_zx=0.274, nu_yx=0.355, Gxz=7)
 Cstrip = Cstrip * Rotation.from_euler('Y', 90, degrees=True)
-orientations = Rotation.random(2)
+orientations = Rotation.random(100)
 
 Ccub = StiffnessTensor.cubic(C11=110, C12=10, C44=44)
-#C_stress, reason = Kroner_Eshelby(Cstrip, orientations, max_iter=50, rtol=1e-6, atol=1e-5, display=True)
+C_stress, reason = Kroner_Eshelby(Cstrip, orientations, max_iter=50, rtol=1e-6, atol=1e-5, display=True)
 
-C_rotated = (Cstrip * orientations)
-C0 = C_rotated.Hill_average()
-C0_triu = extract_upper_triangular_stiffness(C0)
-Cmin_flat = C_rotated.Reuss_average().matrix.flatten()
-Cmax_flat = C_rotated.Voigt_average().matrix.flatten()
-unknown_bound = Cmin_flat > Cmax_flat
-Cmin_flat[unknown_bound] = -np.inf
-Cmax_flat[unknown_bound] = np.inf
-bounds = Bounds(Cmin_flat, Cmax_flat)
-
-def fun(C):
-    return KE_iteration(C, Cstrip, orientations)
-
-def print_inter(x):
-    print(reconstruct_symmetric_from_1d(x)[0,0])
-
-m = minimize(fun, C0_triu, options={'disp':True}, callback=print_inter, tol=1e-3)
+# C_rotated = (Cstrip * orientations)
+# C0 = C_rotated.Hill_average()
+# C0_triu = extract_upper_triangular_stiffness(C0)
+# Cmin_flat = C_rotated.Reuss_average().matrix.flatten()
+# Cmax_flat = C_rotated.Voigt_average().matrix.flatten()
+# unknown_bound = Cmin_flat > Cmax_flat
+# Cmin_flat[unknown_bound] = -np.inf
+# Cmax_flat[unknown_bound] = np.inf
+# bounds = Bounds(Cmin_flat, Cmax_flat)
+#
+# def fun(C):
+#     return KE_iteration(C, Cstrip, orientations)
+#
+# def print_inter(x):
+#     print(reconstruct_symmetric_from_1d(x)[0,0])
+#
+# m = minimize(fun, C0_triu, options={'disp':True}, callback=print_inter, tol=1e-3)
