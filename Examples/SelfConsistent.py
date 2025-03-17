@@ -50,7 +50,7 @@ def Kroner_Eshelby(Ci, g, max_iter=5, atol=1e-3, rtol=1e-3, display=False):
         A = A_local * g
         CiAi = Ci_rotated.ddot(A)
         CiAi_mean = CiAi.mean()
-        C_macro = StiffnessTensor(CiAi_mean.full_tensor(), force_symmetry=True)
+        C_macro = StiffnessTensor.from_Kelvin(CiAi_mean.matrix, force_symmetry=True)
 
         # Stopping criteria
         eigen_stiff = C_macro.eig_stiffnesses
