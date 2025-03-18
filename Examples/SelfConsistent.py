@@ -3,8 +3,28 @@ from Elasticipy.tensors.fourth_order import FourthOrderTensor
 from Elasticipy.tensors.elasticity import StiffnessTensor
 from scipy.integrate import trapezoid
 from scipy.spatial.transform import Rotation
+from scipy.integrate import dblquad
 
 I = FourthOrderTensor.identity()
+
+def gamma_int(C_macro_local, theta1, phi1, a1, a2, a3):
+    s1 = np.sin(theta1)*np.cos(phi1) / a1
+    s2 = np.sin(theta1)*np.sin(phi1) / a2
+    s3 = np.cos(theta1) / a3
+    s = [s1, s2, s3]
+    D = np.einsum('lmnp,p,l->mn', C_macro_local.full_tensor(), s, s)
+    return np.einsum('nr,w,s->nwrs', np.linalg.inv(D), s, s)
+
+def Morris_tensor_int(C_macro_local, a1=1, a2=1, a3=1):
+    E = np.zeros((3,3,3,3))
+    for n in range(3):
+        for w in range(3):
+            for r in range(3):
+                for s in range(3):
+                    def fun(phi_y, theta_x):
+                        return np.sin(theta_x) * gamma_int(C_macro_local, theta_x, phi_y, a1, a2, a3)[n,w,r,s]
+                    E[n,w,r,s] = 1/(4*np.pi) * dblquad(fun, 0, np.pi, 0, 2*np.pi)[0]
+    return E
 
 def gamma(C_macro_local, phi, theta, a1, a2, a3):
     s1 = np.sin(theta)*np.cos(phi) / a1
@@ -14,28 +34,26 @@ def gamma(C_macro_local, phi, theta, a1, a2, a3):
     D = np.einsum('lmnp,pqr,lqr->qrmn', C_macro_local.full_tensor(), s, s)
     return np.einsum('qrik,jqr,lqr->qrijkl', np.linalg.inv(D), s, s)
 
-def polarization_tensor(C_macro_local, phi, theta, a1, a2, a3):
-    g = gamma(C_macro_local, phi, theta, a1, a2, a3)
-    gsin = (g.T*np.sin(theta.T)).T
-    a = trapezoid(gsin, phi[:,0], axis=0)
-    b= trapezoid(a, theta[0], axis=0)/(4*np.pi)
+def polarization_tensor(C_macro_local, a1, a2, a3, n_phi, n_theta):
+    theta = np.linspace(0, np.pi, n_theta)
+    phi = np.linspace(0, 2 * np.pi, n_phi)
+    phi_grid, theta_grid = np.meshgrid(phi, theta, indexing='ij')
+    g = gamma(C_macro_local, phi_grid, theta_grid, a1, a2, a3)
+    gsin = (g.T*np.sin(theta_grid.T)).T
+    a = trapezoid(gsin, phi, axis=0)
+    b= trapezoid(a, theta, axis=0)/(4*np.pi)
     return b
 
-def localization_tensor(C_macro_local, C_incl, phi, theta):
-    E = polarization_tensor(C_macro_local, phi, theta, a1=1, a2=1, a3=1)
+def localization_tensor(C_macro_local, C_incl, n_phi, n_theta):
+    E = polarization_tensor(C_macro_local, 1, 1, 1, n_phi, n_theta)
+    E_int = Morris_tensor_int(C_macro_local, 1, 1, 1)
     delta = C_incl.full_tensor() - C_macro_local.full_tensor()
     Ainv = FourthOrderTensor(np.einsum('ijmn,mnkl->ijkl', E, delta)) + I
     return Ainv.inv().full_tensor()
 
-def spherical_grid(n_theta=50, n_phi=100):
-    theta = np.linspace(0, np.pi, n_theta)
-    phi = np.linspace(0, 2 * np.pi, n_phi)
-    return np.meshgrid(phi, theta, indexing='ij')
-
-def Kroner_Eshelby(Ci, g, max_iter=5, atol=1e-3, rtol=1e-3, display=False):
-    phi, theta = spherical_grid()
+def Kroner_Eshelby(Ci, g, max_iter=5, atol=1e-3, rtol=1e-3, display=False, n_phi=500, n_theta=200):
     Ci_rotated = (Ci * g)
-    C_macro = Ci_rotated.Hill_average()
+    C_macro = Ci.Hill_average()
     eigen_stiff = C_macro.eig_stiffnesses
     keep_on = True
     k = 0
@@ -46,7 +64,7 @@ def Kroner_Eshelby(Ci, g, max_iter=5, atol=1e-3, rtol=1e-3, display=False):
         eigen_stiff_old = eigen_stiff
         C_macro_local = C_macro * (g.inv())
         for i in range(m):
-            A_local[i] = localization_tensor(C_macro_local[i], Ci, phi, theta)
+            A_local[i] = localization_tensor(C_macro_local[i], Ci, n_phi, n_theta)
         A = A_local * g
         CiAi = Ci_rotated.ddot(A)
         CiAi_mean = CiAi.mean()
