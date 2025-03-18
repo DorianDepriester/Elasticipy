@@ -7,12 +7,8 @@ from scipy.integrate import dblquad
 
 I = FourthOrderTensor.identity()
 
-def gamma_int(C_macro_local, theta1, phi1, a1, a2, a3):
-    s1 = np.sin(theta1)*np.cos(phi1) / a1
-    s2 = np.sin(theta1)*np.sin(phi1) / a2
-    s3 = np.cos(theta1) / a3
-    s = [s1, s2, s3]
-    D = np.einsum('lmnp,p,l->mn', C_macro_local.full_tensor(), s, s)
+def gamma_int(C_macro_local, s):
+
     return np.einsum('nr,w,s->nwrs', np.linalg.inv(D), s, s)
 
 def Morris_tensor_int(C_macro_local, a1=1, a2=1, a3=1):
@@ -21,8 +17,14 @@ def Morris_tensor_int(C_macro_local, a1=1, a2=1, a3=1):
         for w in range(3):
             for r in range(3):
                 for s in range(3):
-                    def fun(phi_y, theta_x):
-                        return np.sin(theta_x) * gamma_int(C_macro_local, theta_x, phi_y, a1, a2, a3)[n,w,r,s]
+                    def fun(phi, theta):
+                        s1 = np.sin(theta) * np.cos(phi) / a1
+                        s2 = np.sin(theta) * np.sin(phi) / a2
+                        s3 = np.cos(theta) / a3
+                        k = [s1, s2, s3]
+                        D = np.einsum('lmnp,p,l->mn', C_macro_local.full_tensor(), k, k)
+                        # np.einsum('nr,w,s->nwrs', np.linalg.inv(D), s, s)
+                        return np.sin(theta) * np.linalg.inv(D)[n,r] * k[w] * k[s]
                     E[n,w,r,s] = 1/(4*np.pi) * dblquad(fun, 0, np.pi, 0, 2*np.pi)[0]
     return E
 
@@ -32,7 +34,12 @@ def gamma(C_macro_local, phi, theta, a1, a2, a3):
     s3 = np.cos(theta) / a3
     s = np.array([s1, s2, s3])
     D = np.einsum('lmnp,pqr,lqr->qrmn', C_macro_local.full_tensor(), s, s)
-    return np.einsum('qrik,jqr,lqr->qrijkl', np.linalg.inv(D), s, s)
+    Dinv = np.linalg.inv(D)
+    M1 = np.einsum('qrjk,iqr,lqr->qrijkl', Dinv, s, s)
+    M2 = np.einsum('qrik,jqr,lqr->qrijkl', Dinv, s, s)
+    M3 = np.einsum('qrjl,iqr,kqr->qrijkl', Dinv, s, s)
+    M4 = np.einsum('qril,jqr,kqr->qrijkl', Dinv, s, s)
+    return (M1+M2+M3+M4)/4
 
 def polarization_tensor(C_macro_local, a1, a2, a3, n_phi, n_theta):
     theta = np.linspace(0, np.pi, n_theta)
@@ -45,13 +52,13 @@ def polarization_tensor(C_macro_local, a1, a2, a3, n_phi, n_theta):
     return b
 
 def localization_tensor(C_macro_local, C_incl, n_phi, n_theta):
-    E = polarization_tensor(C_macro_local, 1, 1, 1, n_phi, n_theta)
-    E_int = Morris_tensor_int(C_macro_local, 1, 1, 1)
+    E = polarization_tensor(C_macro_local, 0.1, 1, 10, n_phi, n_theta)
+  #  E2 = Morris_tensor_int(C_macro_local, 10, 1, 0.1)
     delta = C_incl.full_tensor() - C_macro_local.full_tensor()
     Ainv = FourthOrderTensor(np.einsum('ijmn,mnkl->ijkl', E, delta)) + I
     return Ainv.inv().full_tensor()
 
-def Kroner_Eshelby(Ci, g, max_iter=5, atol=1e-3, rtol=1e-3, display=False, n_phi=500, n_theta=200):
+def Kroner_Eshelby(Ci, g, max_iter=5, atol=1e-3, rtol=1e-3, display=False, n_phi=100, n_theta=100):
     Ci_rotated = (Ci * g)
     C_macro = Ci.Hill_average()
     eigen_stiff = C_macro.eig_stiffnesses
@@ -93,6 +100,6 @@ def Kroner_Eshelby(Ci, g, max_iter=5, atol=1e-3, rtol=1e-3, display=False, n_phi
 Cstrip = StiffnessTensor.transverse_isotropic(Ex= 10.2, Ez=146.8, nu_zx=0.274, nu_yx=0.355, Gxz=7)
 Cstrip = Cstrip * Rotation.from_euler('Y', 90, degrees=True)
 #orientations = Rotation.from_euler('Z', np.linspace(0, 180, 10, endpoint=False), degrees=True)
-orientations = Rotation.random(10, random_state=1234)
+orientations = Rotation.random(100, random_state=1234)
 
 C_stress, reason = Kroner_Eshelby(Cstrip, orientations, display=True)
