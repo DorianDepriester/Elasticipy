@@ -162,7 +162,7 @@ class TestComplianceTensor(unittest.TestCase):
             if n != 6:
                 with self.assertRaises(ValueError) as context:
                     _ = ComplianceTensor(m)
-                self.assertEqual(str(context.exception), 'The input matrix must of shape (6,6)')
+                self.assertEqual(str(context.exception), 'The input matrix must of shape (...,6,6) or (...,3,3,3,3)')
 
     def test_full_tensor_as_input(self):
         a = ComplianceTensor.isotropic(E=210, nu=0.3)
