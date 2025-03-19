@@ -496,9 +496,9 @@ class SymmetricFourthOrderTensor(FourthOrderTensor):
             (6,6) matrix corresponding to the stiffness tensor, written using the Voigt notation, or array of shape
             (3,3,3,3).
         check_symmetries : bool, optional
-            Whether to check or not that the input matrix is symmetric.
+            Whether to check or not that the tensor to built displays both major and minor symmetries (see Notes).
         force_symmetries : bool, optional
-            If true, ensure that the tensor displays both minor and major symmetries
+            If true, ensure that the tensor displays both minor and major symmetries.
 
         Notes
         -----
@@ -514,7 +514,7 @@ class SymmetricFourthOrderTensor(FourthOrderTensor):
 
             M_{ijkl}=M_{jikl}=M_{jilk}=M_{ijlk}
         """
-        super().__init__(M, check_minor_symmetry=check_symmetries ,**kwargs)
+        super().__init__(M, check_minor_symmetry=check_symmetries, force_minor_symmetry=force_symmetries, **kwargs)
         if force_symmetries:
             self.matrix = 0.5*(self.matrix + self.matrix.swapaxes(-1,-2))
         elif check_symmetries and not np.all(np.isclose(self.matrix, self.matrix.swapaxes(-1, -2))):
