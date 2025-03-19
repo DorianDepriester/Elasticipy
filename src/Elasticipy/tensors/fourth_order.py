@@ -82,9 +82,9 @@ class FourthOrderTensor:
     """
     tensor_name = '4th-order'
 
-    def __init__(self, M, mapping='Kelvin'):
+    def __init__(self, M, mapping='Kelvin', force_minor_symmetry=False):
         """
-        Construct of stiffness tensor from a (6,6) matrix.
+        Construct of Fourth-order tensor with minor symmetry.
 
         The input matrix must be symmetric, otherwise an error is thrown (except if check_symmetry==False, see below)
 
@@ -95,6 +95,17 @@ class FourthOrderTensor:
             (3,3,3,3).
         mapping : str or list of list, or numpy/ndarray, optional
             Mapping convention to translate the (3,3,3,3) array to (6,6) matrix
+        force_minor_symmetry :
+            Ensure that the tensor displays minor symmetry (see Notes)
+
+        Notes
+        -----
+        The minor symmetry is defined so that:
+
+        ..math::
+
+            M_{ijkl}=M_{jikl}=M_{jilk}=M_{ijlk}
+
         """
         if isinstance(mapping, (list, tuple, np.ndarray)):
             self.mapping_matrix = mapping
@@ -113,9 +124,14 @@ class FourthOrderTensor:
         if M.shape[-2:] == (6, 6):
             matrix = M
         elif M.shape[-4:] == (3, 3, 3, 3):
+            if force_minor_symmetry:
+                Mijlk = np.swapaxes(M, -1, -2)
+                Mjikl = np.swapaxes(M, -3, -4)
+                Mjilk = np.swapaxes(Mjikl, -1, -2)
+                M = 0.25 * (M + Mijlk + Mjikl + Mjilk)
             matrix = self._full_to_matrix(M)
         else:
-            raise ValueError('The input matrix must of shape (6,6)')
+            raise ValueError('The input matrix must of shape (...,6,6) or (...,3,3,3,3)')
 
 
         self.matrix = matrix
