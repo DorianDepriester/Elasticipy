@@ -484,9 +484,9 @@ class FourthOrderTensor:
 class SymmetricFourthOrderTensor(FourthOrderTensor):
     tensor_name = 'Symmetric 4th-order'
 
-    def __init__(self, M, check_symmetry=True, force_symmetry=False, **kwargs):
+    def __init__(self, M, check_symmetries=True, force_symmetries=False, **kwargs):
         """
-        Construct of symmetric fourth-order tensor from a (6,6) matrix.
+        Construct a fully symmetric fourth-order tensor from a (...,6,6) or a (3,3,3,3) array.
 
         The input matrix must be symmetric, otherwise an error is thrown (except if check_symmetry==False, see below)
 
@@ -495,13 +495,27 @@ class SymmetricFourthOrderTensor(FourthOrderTensor):
         M : np.ndarray
             (6,6) matrix corresponding to the stiffness tensor, written using the Voigt notation, or array of shape
             (3,3,3,3).
-        check_symmetry : bool, optional
+        check_symmetries : bool, optional
             Whether to check or not that the input matrix is symmetric.
-        force_symmetry : bool, optional
-            If true, the major symmetry of the tensor is forces
+        force_symmetries : bool, optional
+            If true, ensure that the tensor displays both minor and major symmetries
+
+        Notes
+        -----
+        The major symmetry is defined so that:
+
+        ..math::
+
+            M_{ijkl}=M_{klij}
+
+        whereas the minor symmetry is:
+
+        ..math::
+
+            M_{ijkl}=M_{jikl}=M_{jilk}=M_{ijlk}
         """
-        super().__init__(M, **kwargs)
-        if force_symmetry:
+        super().__init__(M, check_minor_symmetry=check_symmetries ,**kwargs)
+        if force_symmetries:
             self.matrix = 0.5*(self.matrix + self.matrix.swapaxes(-1,-2))
-        elif check_symmetry and not np.all(np.isclose(self.matrix, self.matrix.swapaxes(-1,-2))):
+        elif check_symmetries and not np.all(np.isclose(self.matrix, self.matrix.swapaxes(-1, -2))):
             raise ValueError('The input matrix must be symmetric')
