@@ -82,11 +82,9 @@ class FourthOrderTensor:
     """
     tensor_name = '4th-order'
 
-    def __init__(self, M, mapping='Kelvin', force_minor_symmetry=False):
+    def __init__(self, M, mapping='Kelvin', check_minor_symmetry=True, force_minor_symmetry=False):
         """
         Construct of Fourth-order tensor with minor symmetry.
-
-        The input matrix must be symmetric, otherwise an error is thrown (except if check_symmetry==False, see below)
 
         Parameters
         ----------
@@ -95,8 +93,11 @@ class FourthOrderTensor:
             (3,3,3,3).
         mapping : str or list of list, or numpy/ndarray, optional
             Mapping convention to translate the (3,3,3,3) array to (6,6) matrix
+        check_minor_symmetry : bool, optional
+            If true (default), check that the input array have minor symmetries (see Notes). Only used if an array of
+            shape (...,3,3,3,3) is passed.
         force_minor_symmetry :
-            Ensure that the tensor displays minor symmetry (see Notes)
+            Ensure that the tensor displays minor symmetry.
 
         Notes
         -----
@@ -124,16 +125,18 @@ class FourthOrderTensor:
         if M.shape[-2:] == (6, 6):
             matrix = M
         elif M.shape[-4:] == (3, 3, 3, 3):
+            Mijlk = np.swapaxes(M, -1, -2)
+            Mjikl = np.swapaxes(M, -3, -4)
+            Mjilk = np.swapaxes(Mjikl, -1, -2)
             if force_minor_symmetry:
-                Mijlk = np.swapaxes(M, -1, -2)
-                Mjikl = np.swapaxes(M, -3, -4)
-                Mjilk = np.swapaxes(Mjikl, -1, -2)
                 M = 0.25 * (M + Mijlk + Mjikl + Mjilk)
+            elif check_minor_symmetry:
+                symmetry = np.all(M == Mijlk) and np.all(M == Mjikl) and np.all(M == Mjilk)
+                if not symmetry:
+                    raise ValueError('The input array does not have minor symmetry')
             matrix = self._full_to_matrix(M)
         else:
             raise ValueError('The input matrix must of shape (...,6,6) or (...,3,3,3,3)')
-
-
         self.matrix = matrix
         for i in range(0, 6):
             for j in range(0, 6):
