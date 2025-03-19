@@ -14,6 +14,20 @@ class TestFourthOrderTensor(unittest.TestCase):
         T2 = FourthOrderTensor(T.full_tensor())
         np.testing.assert_array_almost_equal(a, T2.matrix)
 
+    def test_nonsymmetry(self):
+        a = np.random.random((3,3,3,3))
+        with self.assertRaises(ValueError) as context:
+            _ = FourthOrderTensor(a)
+        self.assertEqual(str(context.exception), 'The input array does not have minor symmetry')
+        T = FourthOrderTensor(a, force_minor_symmetry=True)
+        Tfull = T.full_tensor()
+        for i in range(3):
+            for j in range(3):
+                for k in range(3):
+                    for l in range(3):
+                        b = 0.25 * (a[i,j,k,l] + a[j,i,k,l] + a[i,j,l,k] + a[j,i,l,k])
+                        np.testing.assert_array_almost_equal(Tfull[i,j,k,l], b)
+
     def test_inversion(self):
         m = 5
         a = np.random.random((m, 6, 6))
