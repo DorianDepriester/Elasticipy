@@ -101,7 +101,7 @@ class TestSymmetricFourthOrderTensor(unittest.TestCase):
     def test_inversion(self):
         m = 5
         a = np.random.random((m, 6, 6))
-        T = SymmetricFourthOrderTensor(a, force_symmetry=True)
+        T = SymmetricFourthOrderTensor(a, force_symmetries=True)
         Tinv = T.inv()
         TTinv = Tinv.ddot(T)
         eye = SymmetricFourthOrderTensor.identity(m)
