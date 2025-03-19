@@ -3,7 +3,6 @@ from Elasticipy.tensors.fourth_order import FourthOrderTensor
 from Elasticipy.tensors.elasticity import StiffnessTensor
 from scipy.integrate import trapezoid
 from scipy.spatial.transform import Rotation
-from scipy.integrate import dblquad
 
 I = FourthOrderTensor.identity()
 
@@ -30,7 +29,7 @@ def localization_tensor(C_macro_local, C_incl, n_phi, n_theta):
     E = polarization_tensor(C_macro_local, 0.1, 1, 10, n_phi, n_theta)
     delta = FourthOrderTensor(C_incl.matrix - C_macro_local.matrix)
     Ainv = E.ddot(delta) + I
-    return Ainv.inv().full_tensor()
+    return Ainv.inv()
 
 def Kroner_Eshelby(Ci, g, max_iter=5, atol=1e-3, rtol=1e-3, display=False, n_phi=100, n_theta=100):
     Ci_rotated = (Ci * g)
