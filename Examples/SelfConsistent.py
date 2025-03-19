@@ -7,27 +7,6 @@ from scipy.integrate import dblquad
 
 I = FourthOrderTensor.identity()
 
-def gamma_int(C_macro_local, s):
-
-    return np.einsum('nr,w,s->nwrs', np.linalg.inv(D), s, s)
-
-def Morris_tensor_int(C_macro_local, a1=1, a2=1, a3=1):
-    E = np.zeros((3,3,3,3))
-    for n in range(3):
-        for w in range(3):
-            for r in range(3):
-                for s in range(3):
-                    def fun(phi, theta):
-                        s1 = np.sin(theta) * np.cos(phi) / a1
-                        s2 = np.sin(theta) * np.sin(phi) / a2
-                        s3 = np.cos(theta) / a3
-                        k = [s1, s2, s3]
-                        D = np.einsum('lmnp,p,l->mn', C_macro_local.full_tensor(), k, k)
-                        # np.einsum('nr,w,s->nwrs', np.linalg.inv(D), s, s)
-                        return np.sin(theta) * np.linalg.inv(D)[n,r] * k[w] * k[s]
-                    E[n,w,r,s] = 1/(4*np.pi) * dblquad(fun, 0, np.pi, 0, 2*np.pi)[0]
-    return E
-
 def gamma(C_macro_local, phi, theta, a1, a2, a3):
     s1 = np.sin(theta)*np.cos(phi) / a1
     s2 = np.sin(theta)*np.sin(phi) / a2
