@@ -35,11 +35,7 @@ def gamma(C_macro_local, phi, theta, a1, a2, a3):
     s = np.array([s1, s2, s3])
     D = np.einsum('lmnp,pqr,lqr->qrmn', C_macro_local.full_tensor(), s, s)
     Dinv = np.linalg.inv(D)
-    M1 = np.einsum('qrjk,iqr,lqr->qrijkl', Dinv, s, s)
-    M2 = np.einsum('qrik,jqr,lqr->qrijkl', Dinv, s, s)
-    M3 = np.einsum('qrjl,iqr,kqr->qrijkl', Dinv, s, s)
-    M4 = np.einsum('qril,jqr,kqr->qrijkl', Dinv, s, s)
-    return (M1+M2+M3+M4)/4
+    return np.einsum('qrjk,iqr,lqr->qrijkl', Dinv, s, s)
 
 def polarization_tensor(C_macro_local, a1, a2, a3, n_phi, n_theta):
     theta = np.linspace(0, np.pi, n_theta)
@@ -49,7 +45,7 @@ def polarization_tensor(C_macro_local, a1, a2, a3, n_phi, n_theta):
     gsin = (g.T*np.sin(theta_grid.T)).T
     a = trapezoid(gsin, phi, axis=0)
     b= trapezoid(a, theta, axis=0)/(4*np.pi)
-    return b
+    return FourthOrderTensor(b, force_minor_symmetry=True)
 
 def localization_tensor(C_macro_local, C_incl, n_phi, n_theta):
     E = polarization_tensor(C_macro_local, 0.1, 1, 10, n_phi, n_theta)
