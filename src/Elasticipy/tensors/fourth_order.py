@@ -504,13 +504,13 @@ class SymmetricFourthOrderTensor(FourthOrderTensor):
         -----
         The major symmetry is defined so that:
 
-        ..math::
+        .. math::
 
             M_{ijkl}=M_{klij}
 
         whereas the minor symmetry is:
 
-        ..math::
+        .. math::
 
             M_{ijkl}=M_{jikl}=M_{jilk}=M_{ijlk}
         """
@@ -530,8 +530,8 @@ class SymmetricFourthOrderTensor(FourthOrderTensor):
         ----------
         order : str, optional
             If 'linear', only A1 and A2 are returned
-            If 'quadratic', A1**2, A2**2, B1, B2, B3, B4 and B5 are returned
-            If 'all' (default), A1, A2, A1**2, A2**2, B1, B2, B3, B4 and B5 are returned
+            If 'quadratic', A1², A2², B1, B2, B3, B4 and B5 are returned
+            If 'all' (default), A1, A2, A1², A2², B1, B2, B3, B4 and B5 are returned
 
         Returns
         -------
@@ -542,17 +542,24 @@ class SymmetricFourthOrderTensor(FourthOrderTensor):
         -----
         The nomenclature of the invariants follows that of [4]_. The linear invariants are:
 
-        ..math::
+        .. math::
+
             A_1=C_{ijij}
+
             A_2=C_{iijj}
 
         whereas the quadratic invariants are:
 
-        ..math:
+        .. math::
+
             B_1 = C_{ijkl}C_{ijkl}
+
             B_2 = C_{iikl}C_{jjkl}
+
             B_3 = C_{iikl}C_{jkjl}
+
             B_4 = C_{kiil}C_{kjjl}
+
             B_5 = C_{ijkl}C_{ikjl}
 
         References
