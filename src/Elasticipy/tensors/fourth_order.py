@@ -519,3 +519,61 @@ class SymmetricFourthOrderTensor(FourthOrderTensor):
             self.matrix = 0.5*(self.matrix + self.matrix.swapaxes(-1,-2))
         elif check_symmetries and not np.all(np.isclose(self.matrix, self.matrix.swapaxes(-1, -2))):
             raise ValueError('The input matrix must be symmetric')
+
+    def invariant(self, order='all'):
+        """
+        Compute the invariants of the tensor.
+
+        Compute the linear or/and quadratic invariant of the fourth-order tensor (see notes)
+
+        Parameters
+        ----------
+        order : str, optional
+            If 'linear', only A1 and A2 are returned
+            If 'quadratic', A1**2, A2**2, B1, B2, B3, B4 and B5 are returned
+            If 'all' (default), A1, A2, A1**2, A2**2, B1, B2, B3, B4 and B5 are returned
+
+        Returns
+        -------
+        tuple
+            invariants of the given order (see above)
+
+        Notes
+        -----
+        The nomenclature of the invariants follows that of [4]_. The linear invariants are:
+
+        ..math::
+            A_1=C_{ijij}
+            A_2=C_{iijj}
+
+        whereas the quadratic invariants are:
+
+        ..math:
+            B_1 = C_{ijkl}C_{ijkl}
+            B_2 = C_{iikl}C_{jjkl}
+            B_3 = C_{iikl}C_{jkjl}
+            B_4 = C_{kiil}C_{kjjl}
+            B_5 = C_{ijkl}C_{ikjl}
+
+        References
+        ----------
+        .. [4] Norris, A. N. (22 May 2007). "Quadratic invariants of elastic moduli". The Quarterly Journal of Mechanics
+         and Applied Mathematics. 60 (3): 367–389. doi:10.1093/qjmam/hbm007
+        """
+        t = self.full_tensor()
+        order = order.lower()
+        A1 = np.einsum('...ijij->...',t)
+        A2 = np.einsum('...iijj->...',t)
+        lin_inv = (A1, A2)
+        if order == 'linear':
+            return lin_inv
+        B1 = np.einsum('...ijkl,...ijkl->...',t, t)
+        B2 = np.einsum('...iikl,...jjkl->...', t, t)
+        B3 = np.einsum('...iikl,...jkjl->...', t, t)
+        B4 = np.einsum('...kiil,...kjjl->...', t, t)
+        B5 = np.einsum('...ijkl,...ikjl->...', t, t)
+        quad_inv = (A1**2, A2**2, A1*A2, B1, B2, B3, B4, B5)
+        if order == 'quadratic':
+            return quad_inv
+        else:
+            return lin_inv + quad_inv
