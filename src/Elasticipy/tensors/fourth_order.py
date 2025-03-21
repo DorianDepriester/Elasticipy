@@ -103,7 +103,7 @@ class FourthOrderTensor:
         -----
         The minor symmetry is defined so that:
 
-        ..math::
+        .. math::
 
             M_{ijkl}=M_{jikl}=M_{jilk}=M_{ijlk}
 
@@ -186,7 +186,7 @@ class FourthOrderTensor:
         """
         Flatten the tensor
 
-        If the tensor has (m,n,o...,r) orientations, the flattened tensor will have m*n*o*...*r orientations
+        If the tensor array is of shape (m,n,o...,r), the flattened array will be of shape (m*n*o*...*r,).
 
         Returns
         -------
@@ -286,6 +286,11 @@ class FourthOrderTensor:
             return self.__add__(-other.matrix)
         else:
             return self.__add__(-other)
+
+    def __neg__(self):
+        t = deepcopy(self)
+        t.matrix = -t.matrix
+        return t
 
     def ddot(self, other, mode='pair'):
         """
