@@ -520,7 +520,7 @@ class SymmetricFourthOrderTensor(FourthOrderTensor):
         elif check_symmetries and not np.all(np.isclose(self.matrix, self.matrix.swapaxes(-1, -2))):
             raise ValueError('The input matrix must be symmetric')
 
-    def invariant(self, order='all'):
+    def invariants(self, order='all'):
         """
         Compute the invariants of the tensor.
 
