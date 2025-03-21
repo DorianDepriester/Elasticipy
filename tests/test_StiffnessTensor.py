@@ -12,8 +12,6 @@ from Elasticipy.tensors.stress_strain import StressTensor, StrainTensor
 from pymatgen.analysis.elasticity import elastic as mg
 from orix.quaternion import Rotation as orix_rot
 
-from Examples.Example_StressStrain_arrays import C_rotated
-
 current_dir = os.path.dirname(os.path.abspath(__file__))
 file_path = os.path.join(current_dir, 'MaterialsProject.json')
 data_base = pd.read_json(file_path)
@@ -58,6 +56,7 @@ def crystal_symmetry_tester(symmetry_name, cls='stiffness', variant=None):
         constructor = getattr(class_constructor, symmetry_name.lower())
         C = constructor(**kwargs)
         assert np.all(C.matrix == approx(matrix, rel=0.5))
+        return C
 
 
 class TestComplianceTensor(unittest.TestCase):
@@ -310,7 +309,9 @@ class TestStiffnessConstructor(unittest.TestCase):
 
     def test_stiffness_cubic(self):
         """Check that all symmetries in stiffness are well taken into account for cubic case"""
-        crystal_symmetry_tester('Cubic')
+        C = crystal_symmetry_tester('Cubic')
+        C_rotated = C * rotations[0]
+        assert C_rotated.is_cubic()
 
     def test_stiffness_hexagonal(self):
         """Check that all symmetries in stiffness are well taken into account for hexagonal case"""
@@ -323,8 +324,12 @@ class TestStiffnessConstructor(unittest.TestCase):
 
     def test_stiffness_tetragonal(self):
         """Check that all symmetries in stiffness are well taken into account for tetragonal case"""
-        crystal_symmetry_tester('Tetragonal', variant='-42m')
-        crystal_symmetry_tester('Tetragonal', variant='-4')
+        C = crystal_symmetry_tester('Tetragonal', variant='-42m')
+        C_rotated = C * rotations[0]
+        assert C_rotated.is_tetragonal()
+        C = crystal_symmetry_tester('Tetragonal', variant='-4')
+        C_rotated = C * rotations[0]
+        assert C_rotated.is_tetragonal()
 
     def test_stiffness_orthorhombic(self):
         """Check that all symmetries in stiffness are well taken into account for orthorhombic case"""
