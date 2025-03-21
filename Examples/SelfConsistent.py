@@ -13,7 +13,7 @@ def gamma(C_macro_local, phi, theta, a1, a2, a3):
     s = np.array([s1, s2, s3])
     D = np.einsum('lmnp,pqr,lqr->qrmn', C_macro_local.full_tensor(), s, s)
     Dinv = np.linalg.inv(D)
-    return np.einsum('qrjk,iqr,lqr->qrijkl', Dinv, s, s) # The symmetrization is made afterward
+    return np.einsum('qrjk,iqr,lqr->qrijkl', Dinv, s, s) # The symmetrization is made afterward (see below)
 
 def polarization_tensor(C_macro_local, a1, a2, a3, n_phi, n_theta):
     theta = np.linspace(0, np.pi, n_theta)
@@ -23,32 +23,44 @@ def polarization_tensor(C_macro_local, a1, a2, a3, n_phi, n_theta):
     gsin = (g.T*np.sin(theta_grid.T)).T
     a = trapezoid(gsin, phi, axis=0)
     b= trapezoid(a, theta, axis=0)/(4*np.pi)
-    return FourthOrderTensor(b, force_minor_symmetry=True)
+    return FourthOrderTensor(b, force_minor_symmetry=True) # Symmetrization here (see above)
 
-def localization_tensor(C_macro_local, C_incl, n_phi, n_theta):
-    E = polarization_tensor(C_macro_local, 0.1, 1, 10, n_phi, n_theta)
+def localization_tensor(C_macro_local, C_incl, n_phi, n_theta, a1, a2, a3):
+    E = polarization_tensor(C_macro_local, a1, a2, a3, n_phi, n_theta)
     delta = FourthOrderTensor(C_incl.matrix - C_macro_local.matrix)
     Ainv = E.ddot(delta) + I
     return Ainv.inv()
 
-def Kroner_Eshelby(Ci, g, max_iter=5, atol=1e-3, rtol=1e-3, display=False, n_phi=100, n_theta=100):
+def Kroner_Eshelby(Ci, g, method='strain', max_iter=5, atol=1e-3, rtol=1e-3, display=False, n_phi=100, n_theta=100, particle_size=None):
     Ci_rotated = (Ci * g)
-    C_macro = Ci.Hill_average()
+    C_macro = Ci_rotated.Hill_average()
     eigen_stiff = C_macro.eig_stiffnesses
     keep_on = True
     k = 0
     message = 'Maximum number of iterations is reached'
     m = len(g)
     A_local = FourthOrderTensor.zeros(m)
+    if particle_size is None:
+        a1 = a2 = a3 = 1
+    else:
+        a1, a2, a3 = particle_size
     while keep_on:
         eigen_stiff_old = eigen_stiff
         C_macro_local = C_macro * (g.inv())
         for i in range(m):
-            A_local[i] = localization_tensor(C_macro_local[i], Ci, n_phi, n_theta)
+            A_local[i] = localization_tensor(C_macro_local[i], Ci, n_phi, n_theta, a1, a2, a3)
         A = A_local * g
-        CiAi = Ci_rotated.ddot(A)
-        CiAi_mean = CiAi.mean()
-        C_macro = StiffnessTensor.from_Kelvin(CiAi_mean.matrix, force_symmetry=True)
+        Q = Ci_rotated.ddot(A)
+        if method=='stress':
+            CiAi_mean = Q.mean()
+            C_macro = StiffnessTensor.from_Kelvin(CiAi_mean.matrix, force_symmetries=True)
+            err = A.mean() - FourthOrderTensor.identity()
+        else:
+            B = Q.ddot(C_macro.inv())
+            R = Ci_rotated.inv().ddot(B)
+            R_mean = R.mean()
+            C_macro = StiffnessTensor.from_Kelvin(R_mean.inv().matrix, force_symmetries=True)
+            err = B.mean() - FourthOrderTensor.identity()
 
         # Stopping criteria
         eigen_stiff = C_macro.eig_stiffnesses
@@ -65,7 +77,6 @@ def Kroner_Eshelby(Ci, g, max_iter=5, atol=1e-3, rtol=1e-3, display=False, n_phi
         if k == max_iter:
             keep_on = False
         if display:
-            err = A.mean() - FourthOrderTensor.identity()
             err = np.max(np.abs(err.matrix))
             print('Iter #{}: abs. change={:0.5f}; rel. change={:0.5f}; error={:0.5f}'.format(k, max_abs_change, rel_change,err))
     return C_macro, message
@@ -74,5 +85,5 @@ Cstrip = StiffnessTensor.transverse_isotropic(Ex= 10.2, Ez=146.8, nu_zx=0.274, n
 Cstrip = Cstrip * Rotation.from_euler('Y', 90, degrees=True)
 #orientations = Rotation.from_euler('Z', np.linspace(0, 180, 10, endpoint=False), degrees=True)
 orientations = Rotation.random(100, random_state=1234)
-
-C_stress, reason = Kroner_Eshelby(Cstrip, orientations, display=True)
+Cstrip = StiffnessTensor.cubic(C11=186, C12=134, C44=77)
+C_stress, reason = Kroner_Eshelby(Cstrip, orientations, display=True, method='strain')
