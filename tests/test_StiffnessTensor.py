@@ -287,6 +287,12 @@ class TestComplianceTensor(unittest.TestCase):
         np.testing.assert_array_almost_equal(Sr_0.Reuss_average().matrix, S_rotated.Reuss_average().matrix)
         np.testing.assert_array_almost_equal(Sr_1.Reuss_average().matrix, S_rotated.Reuss_average().matrix)
 
+    def test_invariants(self):
+        inv = S.invariants()
+        S_rotated = S * rotations
+        for i, inv_rotated_i in enumerate(S_rotated.invariants()):
+            np.testing.assert_array_almost_equal(inv_rotated_i, inv[i])
+
 class TestStiffnessConstructor(unittest.TestCase):
     def test_averages(self):
         """Check that the Voigt, Reuss and Hill averages are consistent with those provided by MP."""
@@ -909,5 +915,11 @@ class TestStiffnessConstructor(unittest.TestCase):
         np.testing.assert_array_almost_equal(Cr_0.Reuss_average().matrix, C_rotated.Reuss_average().matrix)
         np.testing.assert_array_almost_equal(Cr_1.Reuss_average().matrix, C_rotated.Reuss_average().matrix)
 
+    def test_invariants(self):
+        C = S.inv()
+        inv = C.invariants()
+        C_rotated = C * rotations
+        for i, inv_rotated_i in enumerate(C_rotated.invariants()):
+            np.testing.assert_array_almost_equal(inv_rotated_i, inv[i])
 if __name__ == '__main__':
     unittest.main()
