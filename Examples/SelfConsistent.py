@@ -13,7 +13,7 @@ def gamma(C_macro_local, phi, theta, a1, a2, a3):
     s = np.array([s1, s2, s3])
     D = np.einsum('lmnp,pqr,lqr->qrmn', C_macro_local.full_tensor(), s, s)
     Dinv = np.linalg.inv(D)
-    return np.einsum('qrjk,iqr,lqr->qrijkl', Dinv, s, s)
+    return np.einsum('qrjk,iqr,lqr->qrijkl', Dinv, s, s) # The symmetrization is made afterward
 
 def polarization_tensor(C_macro_local, a1, a2, a3, n_phi, n_theta):
     theta = np.linspace(0, np.pi, n_theta)
