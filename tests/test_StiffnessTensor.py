@@ -125,6 +125,7 @@ class TestComplianceTensor(unittest.TestCase):
         assert approx(C.Poisson_ratio.mean()) == nu
         C = StiffnessTensor.isotropic(lame2=G, nu=nu)
         assert approx(C.Young_modulus.mean()) == E
+        assert C.is_isotropic()
 
     def test_wave_velocity(self, E=210, nu=0.3, rho=7.8):
         C = StiffnessTensor.isotropic(E=E, nu=nu)
