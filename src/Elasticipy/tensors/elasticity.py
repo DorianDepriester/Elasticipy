@@ -1276,7 +1276,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         eig = self.eig_stiffnesses
         counts = []
         while eig.size:
-            duplicates = np.isclose(eig[0], eig, atol=0.1)
+            duplicates = np.isclose(eig[0], eig, atol=tol)
             counts.append(np.count_nonzero(duplicates))
             eig = eig[np.logical_not(duplicates)]
         return list(np.sort(counts))
