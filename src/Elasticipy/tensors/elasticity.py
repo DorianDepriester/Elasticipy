@@ -1272,6 +1272,97 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         t.matrix *= t.mapping_matrix
         return t
 
+    def _eig_signature(self, tol):
+        eig = self.eig_stiffnesses
+        counts = []
+        while eig.size:
+            duplicates = np.isclose(eig[0], eig, atol=0.1)
+            counts.append(np.count_nonzero(duplicates))
+            eig = eig[np.logical_not(duplicates)]
+        return list(np.sort(counts))
+
+    def is_isotropic(self, tol=0.01):
+        """Check that the tensor corresponds to isotropic symmetry, within a given tolerance.
+
+        The method relies on the multiplicity of eigenstiffnesses
+
+        Parameters
+        ----------
+        tol : float
+            Absolute tolerance to consider multiplicity of eigenstiffnesses
+
+        See Also
+        --------
+        is_cubic : check if the stiffness tensor has cubic symmetry
+        is_tetragonal : check if the stiffness tensor has tetragonal symmetry
+        eig_stiffnesses : compute eigenstiffnesses
+        """
+        return np.all(self._eig_signature(tol) == [1, 5])
+
+    def is_cubic(self, tol=0.01):
+        """Check that the tensor corresponds to cubic symmetry, within a given tolerance.
+
+        The method relies on the multiplicity of eigenstiffnesses.
+
+        Parameters
+        ----------
+        tol : float, optional
+            Absolute tolerance to consider multiplicity of eigenstiffnesses
+
+        See Also
+        --------
+        is_isotropic : check if the stiffness tensor is isotropic
+        is_tetragonal : check if the stiffness tensor has tetragonal symmetry
+        eig_stiffnesses : compute eigenstiffnesses
+
+        Examples
+        --------
+        >>> from Elasticipy.tensors.elasticity import StiffnessTensor
+        >>> from scipy.spatial.transform import Rotation
+        >>> C = StiffnessTensor.cubic(C11=186, C12=134, C44=77)
+        >>> C_rotated = C * Rotation.random(random_state=123)
+        >>> C_rotated
+        Stiffness tensor (in Voigt mapping):
+        [[237.71171578  96.41409344 119.87419078   8.1901353   -3.63846312
+          -20.34233446]
+         [ 96.41409344 250.74909842 106.83680814   9.33462785  -6.52548033
+            0.99714278]
+         [119.87419078 106.83680814 227.28900108 -17.52476315  10.16394345
+           19.34519167]
+         [  8.1901353    9.33462785 -17.52476315  49.83680814  19.34519167
+           -6.52548033]
+         [ -3.63846312  -6.52548033  10.16394345  19.34519167  62.87419078
+            8.1901353 ]
+         [-20.34233446   0.99714278  19.34519167  -6.52548033   8.1901353
+           39.41409344]]
+        Symmetry: cubic
+
+        Once rotated, it is not clear the stiffness tensors has cubic symmetry. Yet:
+        >>> C_rotated.is_cubic()
+        True
+
+        """
+        return np.all(self._eig_signature(tol) == [1, 2, 3])
+
+    def is_tetragonal(self, tol=0.01):
+        """Check that the tensor corresponds to tetragonal symmetry, within a given tolerance.
+
+        The method relies on the multiplicity of eigenstiffnesses.
+
+        Parameters
+        ----------
+        tol : float
+            Absolute tolerance to consider multiplicity of eigenstiffnesses
+
+        See Also
+        --------
+        is_isotropic : check if the stiffness tensor is isotropic
+        is_cubic : check if the stiffness tensor has cubic symmetry
+        eig_stiffnesses : compute eigenstiffnesses
+        """
+        return np.all(self._eig_signature(tol) == [1, 1, 1 ,1, 2])
+
+
 class ComplianceTensor(StiffnessTensor):
     """
     Class for manipulating compliance tensors
