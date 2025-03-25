@@ -1126,7 +1126,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
         .. math::
 
-                Z=\\frac{ 2C_{44} }{C11 - C12}
+                Z=\\frac{ 2C_{44} }{C_{11} - C_{12}}
 
         See Also
         --------
