@@ -1113,7 +1113,8 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         """
         Compute the Zener ratio (Z). Only valid for cubic symmetry.
 
-        It is only valid for cubic and isotropic symmetry. Will return NaN for other symmetries.
+        It is only valid for cubic and isotropic symmetry. Will return NaN for other symmetries. It is independent of
+        the basis used (see Notes).
 
         Returns
         -------
@@ -1122,15 +1123,19 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
         Notes
         -----
-        The Zener ratio is defined as:
+        If the tensor is written in canonical base with Voigt mapping, the Zener ratio is defined as:
 
         .. math::
 
                 Z=\\frac{ 2C_{44} }{C_{11} - C_{12}}
 
+        The present implementation takes advantage of eigenstiffness to compute the Zener ratio in *any* base, i.e. even
+        if the tensor is not given in canonical base (e.g. if rotated).
+
         See Also
         --------
         universal_anisotropy : compute the universal anisotropy factor
+        eig_stiffnesses : eigenstiffnesses of the tensor
         """
         if self.is_isotropic():
             return 1.0
