@@ -1275,11 +1275,16 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
     def _eig_signature(self, tol):
         eig = self.eig_stiffnesses
         counts = []
+        uniques = []
         while eig.size:
             duplicates = np.isclose(eig[0], eig, atol=tol)
             counts.append(np.count_nonzero(duplicates))
+            uniques.append(eig[0])
             eig = eig[np.logical_not(duplicates)]
-        return list(np.sort(counts))
+        i = np.argsort(counts)
+        sorted_counts = np.array(counts)[i]
+        sorted_uniques = np.array(uniques)[i]
+        return sorted_uniques, sorted_counts
 
     def is_isotropic(self, tol=0.01):
         """Check that the tensor corresponds to isotropic symmetry, within a given tolerance.
@@ -1297,7 +1302,8 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         is_tetragonal : check if the stiffness tensor has tetragonal symmetry
         eig_stiffnesses : compute eigenstiffnesses
         """
-        return np.all(self._eig_signature(tol) == [1, 5])
+        _, order = self._eig_signature(tol)
+        return np.all(order == [1, 5])
 
     def is_cubic(self, tol=0.01):
         """Check that the tensor corresponds to cubic symmetry, within a given tolerance.
@@ -1342,7 +1348,8 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         True
 
         """
-        return np.all(self._eig_signature(tol) == [1, 2, 3])
+        _, order = self._eig_signature(tol)
+        return np.all(order == [1, 2, 3])
 
     def is_tetragonal(self, tol=0.01):
         """Check that the tensor corresponds to tetragonal symmetry, within a given tolerance.
@@ -1360,7 +1367,8 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         is_cubic : check if the stiffness tensor has cubic symmetry
         eig_stiffnesses : compute eigenstiffnesses
         """
-        return np.all(self._eig_signature(tol) == [1, 1, 1 ,1, 2])
+        _, order = self._eig_signature(tol)
+        return np.all(order == [1, 1, 1 ,1, 2])
 
 
 class ComplianceTensor(StiffnessTensor):
