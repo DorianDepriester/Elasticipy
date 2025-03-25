@@ -1136,6 +1136,41 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         --------
         universal_anisotropy : compute the universal anisotropy factor
         eig_stiffnesses : eigenstiffnesses of the tensor
+        is_cubic : check whether the tensor has cubic symmetry or not
+
+        Examples
+        --------
+        >>> from Elasticipy.tensors.elasticity import StiffnessTensor
+        >>> C = StiffnessTensor.cubic(C11=200, C12=40, C44=20)
+        >>> C.Zener_ratio
+        0.25
+
+        which obvisouly corresponds to 2.C44/(C11-C12).
+
+        Now, rotate the tensor and see how it looks like:
+
+        >>> from scipy.spatial.transform import Rotation
+        >>> g = Rotation.from_euler('Z', 30, degrees=True)
+        >>> C_rot = C*g
+        >>> C_rot
+        Stiffness tensor (in Voigt mapping):
+        [[155.          85.          40.           0.           0.
+           25.98076211]
+         [ 85.         155.          40.           0.           0.
+          -25.98076211]
+         [ 40.          40.         200.           0.           0.
+            0.        ]
+         [  0.           0.           0.          20.           0.
+            0.        ]
+         [  0.           0.           0.           0.          20.
+            0.        ]
+         [ 25.98076211 -25.98076211   0.           0.           0.
+           65.        ]]
+        Symmetry: cubic
+
+        Still, we have
+        >>> C_rot.Zener_ratio
+        0.24999999999999983
         """
         if self.is_isotropic():
             return 1.0
