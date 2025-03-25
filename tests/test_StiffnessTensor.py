@@ -669,6 +669,9 @@ class TestStiffnessConstructor(unittest.TestCase):
         assert Ciso.universal_anisotropy == 0.0
         Cmono = S.inv()
         assert np.isnan(Cmono.Zener_ratio)
+        C_rot = C*rotations[0]
+        Zrot = C_rot.Zener_ratio
+        assert Zrot == approx(Z)
 
     def test_orix(self):
         # Orix allows multidimensional arrays of rotations
