@@ -1175,9 +1175,10 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         if self.is_isotropic():
             return 1.0
         elif self.is_cubic():
-            eigs, _ = self.eig_stiffnesses_multiplicity(1e-4)
-            _, C11mC12, C44 = eigs
-            return C44 / C11mC12
+            eigs, orders = self.eig_stiffnesses_multiplicity(1e-4)
+            numer = eigs[orders==3][0]  # 2*C44
+            denom = eigs[orders==2][0]  # C11-C12
+            return numer / denom
         else:
             return np.nan
 
@@ -1345,7 +1346,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         >>> C.eig_stiffnesses
         array([ 52.,  52., 154., 154., 154., 454.])
         >>> C.eig_stiffnesses_multiplicity()
-        (array([454.,  52., 154.]), array([1, 2, 3]))
+        ([51.99999999999997, 154.0, 454.0], [2, 3, 1])
         """
         eig = self.eig_stiffnesses
         counts = []
@@ -1355,10 +1356,11 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
             counts.append(np.count_nonzero(duplicates))
             uniques.append(eig[0])
             eig = eig[np.logical_not(duplicates)]
-        i = np.argsort(counts)
-        sorted_counts = np.array(counts)[i]
-        sorted_uniques = np.array(uniques)[i]
-        return sorted_uniques, sorted_counts
+        return np.array(uniques), np.array(counts)
+
+    def _check_eig_signature(self, signature, tol):
+        _, order = self.eig_stiffnesses_multiplicity(tol=tol)
+        return set(order) == set(signature)
 
     def is_isotropic(self, tol=0.01):
         """Check that the tensor corresponds to isotropic symmetry, within a given tolerance.
@@ -1376,8 +1378,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         is_tetragonal : check if the stiffness tensor has tetragonal symmetry
         eig_stiffnesses : compute eigenstiffnesses
         """
-        _, order = self.eig_stiffnesses_multiplicity(tol)
-        return np.array_equal(order, [1, 5])
+        return self._check_eig_signature([1, 5], tol)
 
     def is_cubic(self, tol=0.01):
         """Check that the tensor corresponds to cubic symmetry, within a given tolerance.
@@ -1422,8 +1423,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         True
 
         """
-        _, order = self.eig_stiffnesses_multiplicity(tol)
-        return np.array_equal(order, [1, 2, 3])
+        return self._check_eig_signature([1, 2, 3], tol)
 
     def is_tetragonal(self, tol=0.01):
         """Check that the tensor corresponds to tetragonal symmetry, within a given tolerance.
@@ -1441,8 +1441,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         is_cubic : check if the stiffness tensor has cubic symmetry
         eig_stiffnesses : compute eigenstiffnesses
         """
-        _, order = self.eig_stiffnesses_multiplicity(tol)
-        return np.array_equal(order, [1, 1, 1 ,1, 2])
+        return self._check_eig_signature([1, 1, 1, 1, 2], tol)
 
 
 class ComplianceTensor(StiffnessTensor):
