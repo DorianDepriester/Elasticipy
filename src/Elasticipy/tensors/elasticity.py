@@ -1260,6 +1260,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         --------
         eig : returns the eigenstiffnesses and the eigenstrains
         eig_strains : returns the eigenstrains only
+        eig_stiffnesses_multiplicity : returns the unique values of eigenstiffnesses with multiplicity
         """
         return np.linalg.eigvalsh(self.to_Kelvin())
 
