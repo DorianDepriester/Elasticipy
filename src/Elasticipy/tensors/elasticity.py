@@ -1315,7 +1315,38 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         t.matrix *= t.mapping_matrix
         return t
 
-    def eig_stiffnesses_multiplicity(self, tol):
+    def eig_stiffnesses_multiplicity(self, tol=1e-4):
+        """
+        Compute the eigenstiffnesses, then returns the multiplicity of each eigenstiffness.
+
+        Given an absolute tolerance, duplicates in eigenstiffnesses are considered to compute the multiplicity of each
+        value.
+
+        Parameters
+        ----------
+        tol : float, optional
+            Absolute tolerance to assume that two distinct eigenstiffnesses are the same
+
+        Returns
+        -------
+        numpy.ndarray
+            Unique values of eigenstiffnesses, sorted by increasing multiplicity
+        numpy.ndarray
+            Multiplicity of each unique eigenstiffness, sorted by ascending value
+
+        See Also
+        --------
+        eig_stiffnesses : compute the eigenstiffnesses
+
+        Examples
+        --------
+        >>> from Elasticipy.tensors.elasticity import StiffnessTensor
+        >>> C = StiffnessTensor.cubic(C11=186, C12=134, C44=77)
+        >>> C.eig_stiffnesses
+        array([ 52.,  52., 154., 154., 154., 454.])
+        >>> C.eig_stiffnesses_multiplicity()
+        (array([454.,  52., 154.]), array([1, 2, 3]))
+        """
         eig = self.eig_stiffnesses
         counts = []
         uniques = []
