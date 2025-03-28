@@ -1108,13 +1108,17 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         Kr = Creuss.bulk_modulus
         return 5 * Gv / Gr + Kv / Kr - 6
 
-    @property
-    def Zener_ratio(self):
+    def Zener_ratio(self, tol=1e-4):
         """
         Compute the Zener ratio (Z). Only valid for cubic symmetry.
 
-        It is only valid for cubic and isotropic symmetry. Will return NaN for other symmetries. It is independent of
-        the basis used (see Notes).
+        This function first checks that the tensor has cubic symmetry within a given tolerance. If not, an error is
+        raised.
+
+        Parameters
+        ----------
+        tol : float, optional
+            Tolerance to consider that the material has cubic symmetry
 
         Returns
         -------
@@ -1142,7 +1146,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         --------
         >>> from Elasticipy.tensors.elasticity import StiffnessTensor
         >>> C = StiffnessTensor.cubic(C11=200, C12=40, C44=20)
-        >>> C.Zener_ratio
+        >>> C.Zener_ratio()
         0.25
 
         which obvisouly corresponds to 2.C44/(C11-C12).
@@ -1169,7 +1173,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         Symmetry: cubic
 
         Still, we have
-        >>> C_rot.Zener_ratio
+        >>> C_rot.Zener_ratio()
         0.24999999999999983
         """
         if self.is_isotropic():
@@ -1180,7 +1184,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
             denom = eigs[orders==2][0]  # C11-C12
             return numer / denom
         else:
-            return np.nan
+            raise ValueError('The tensor does not seem to have cubic symmetry within the given tolerance ({})'.format(tol))
 
     def to_pymatgen(self):
         """
