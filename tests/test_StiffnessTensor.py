@@ -660,17 +660,19 @@ class TestStiffnessConstructor(unittest.TestCase):
     def test_Zener_universal_anisotropy(self):
         C11, C12, C44 = 173, 33, 18
         C = StiffnessTensor.cubic(C11=C11, C12=C12, C44=C44)
-        Z = C.Zener_ratio
+        Z = C.Zener_ratio()
         assert 6/5 * (Z**0.5 - Z**(-0.5))**2 == approx(C.universal_anisotropy)
         C_cub_iso = StiffnessTensor.cubic(C11=C11, C12=C12, C44=(C11-C12)/2)
-        assert C_cub_iso.Zener_ratio == 1.0
+        assert C_cub_iso.Zener_ratio() == 1.0
         Ciso = StiffnessTensor.isotropic(E=210, nu=0.3)
-        assert Ciso.Zener_ratio == 1.0
+        assert Ciso.Zener_ratio() == 1.0
         assert Ciso.universal_anisotropy == 0.0
         Cmono = S.inv()
-        assert np.isnan(Cmono.Zener_ratio)
+        with self.assertRaises(ValueError) as context:
+            Cmono.Zener_ratio()
+        self.assertEqual(str(context.exception), 'The tensor does not seem to have cubic symmetry within the given tolerance (0.0001)')
         C_rot = C*rotations[0]
-        Zrot = C_rot.Zener_ratio
+        Zrot = C_rot.Zener_ratio()
         assert Zrot == approx(Z)
 
     def test_orix(self):
@@ -924,5 +926,6 @@ class TestStiffnessConstructor(unittest.TestCase):
         C_rotated = C * rotations
         for i, inv_rotated_i in enumerate(C_rotated.invariants()):
             np.testing.assert_array_almost_equal(inv_rotated_i, inv[i])
+
 if __name__ == '__main__':
     unittest.main()
