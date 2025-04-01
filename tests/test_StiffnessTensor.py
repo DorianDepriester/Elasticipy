@@ -313,6 +313,8 @@ class TestStiffnessConstructor(unittest.TestCase):
         C = StiffnessTensor.isotropic(lame2=G, nu=nu)
         assert approx(C.Young_modulus.mean()) == E
         assert C.is_isotropic()
+        assert C.is_cubic()
+        assert C.is_tetragonal()
 
     def test_stiffness_cubic(self):
         """Check that all symmetries in stiffness are well taken into account for cubic case"""
@@ -322,6 +324,8 @@ class TestStiffnessConstructor(unittest.TestCase):
         is_cubic = C_rotated.is_cubic()
         assert is_cubic.shape == shape
         assert np.all(is_cubic)
+        assert np.all(C.is_tetragonal())
+        assert not np.any(C.is_isotropic())
 
     def test_stiffness_hexagonal(self):
         """Check that all symmetries in stiffness are well taken into account for hexagonal case"""
