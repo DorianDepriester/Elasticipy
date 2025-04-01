@@ -1363,8 +1363,16 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         return np.array(uniques), np.array(counts)
 
     def _check_eig_signature(self, signature, tol):
-        _, order = self.eig_stiffnesses_multiplicity(tol=tol)
-        return set(order) == set(signature)
+        if self.shape:
+            flat = self.flatten()
+            bool_array = np.zeros(flat.shape[0], dtype=bool)
+            for i, t in enumerate(flat):
+                _, order = t.eig_stiffnesses_multiplicity(tol=tol)
+                bool_array[i] = set(order) == set(signature)
+            return bool_array.reshape(self.shape)
+        else:
+            _, order = self.eig_stiffnesses_multiplicity(tol=tol)
+            return set(order) == set(signature)
 
     def is_isotropic(self, tol=0.01):
         """Check that the tensor corresponds to isotropic symmetry, within a given tolerance.
@@ -1375,6 +1383,12 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         ----------
         tol : float
             Absolute tolerance to consider multiplicity of eigenstiffnesses
+
+        Returns
+        -------
+        bool or numpy.ndarray
+            If the tensor is single, the returned value is boolean.
+            If the object is a tensor array, the returned value is an array of bools, the same shape as the tensor array.
 
         See Also
         --------
@@ -1393,6 +1407,12 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         ----------
         tol : float, optional
             Absolute tolerance to consider multiplicity of eigenstiffnesses
+
+        Returns
+        -------
+        bool or numpy.ndarray
+            If the tensor is single, the returned value is boolean.
+            If the object is a tensor array, the returned value is an array of bools, the same shape as the tensor array.
 
         See Also
         --------
@@ -1438,6 +1458,12 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         ----------
         tol : float
             Absolute tolerance to consider multiplicity of eigenstiffnesses
+
+        Returns
+        -------
+        bool or numpy.ndarray
+            If the tensor is single, the returned value is boolean.
+            If the object is a tensor array, the returned value is an array of bools, the same shape as the tensor array.
 
         See Also
         --------
