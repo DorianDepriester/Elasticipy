@@ -1447,7 +1447,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         True
 
         """
-        return self._check_eig_signature([1, 2, 3], tol)
+        return np.logical_or(self._check_eig_signature([1, 2, 3], tol), self.is_isotropic(tol=tol))
 
     def is_tetragonal(self, tol=0.01):
         """Check that the tensor corresponds to tetragonal symmetry, within a given tolerance.
