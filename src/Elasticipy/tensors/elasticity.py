@@ -1368,7 +1368,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
             bool_array = np.zeros(flat.shape[0], dtype=bool)
             for i, t in enumerate(flat):
                 _, order = t.eig_stiffnesses_multiplicity(tol=tol)
-                bool_array[i] = set(order) == set(signature)
+                bool_array[i] = np.array_equal(np.sort(order), np.sort(signature))
             return bool_array.reshape(self.shape)
         else:
             _, order = self.eig_stiffnesses_multiplicity(tol=tol)
