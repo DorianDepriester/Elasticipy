@@ -1372,7 +1372,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
             return bool_array.reshape(self.shape)
         else:
             _, order = self.eig_stiffnesses_multiplicity(tol=tol)
-            return set(order) == set(signature)
+            return np.array_equal(np.sort(order), np.sort(signature))
 
     def is_isotropic(self, tol=0.01):
         """Check that the tensor corresponds to isotropic symmetry, within a given tolerance.
