@@ -317,8 +317,11 @@ class TestStiffnessConstructor(unittest.TestCase):
     def test_stiffness_cubic(self):
         """Check that all symmetries in stiffness are well taken into account for cubic case"""
         C = crystal_symmetry_tester('Cubic')
-        C_rotated = C * rotations[0]
-        assert C_rotated.is_cubic()
+        shape = (50,100)
+        C_rotated = C * (orix_rot.random(shape))
+        is_cubic = C_rotated.is_cubic()
+        assert is_cubic.shape == shape
+        assert np.all(is_cubic)
 
     def test_stiffness_hexagonal(self):
         """Check that all symmetries in stiffness are well taken into account for hexagonal case"""
