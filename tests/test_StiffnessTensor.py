@@ -329,21 +329,27 @@ class TestStiffnessConstructor(unittest.TestCase):
 
     def test_stiffness_hexagonal(self):
         """Check that all symmetries in stiffness are well taken into account for hexagonal case"""
-        crystal_symmetry_tester('Hexagonal')
+        C = crystal_symmetry_tester('Hexagonal')
+        assert not C.is_tetragonal()
+        assert not np.any(C.is_cubic())
 
     def test_stiffness_trigonal(self):
         """Check that all symmetries in stiffness are well taken into account for trigonal case"""
-        crystal_symmetry_tester('Trigonal', variant='32')
-        crystal_symmetry_tester('Trigonal', variant='-3')
+        C = crystal_symmetry_tester('Trigonal', variant='32')
+        C_rotated = C * rotations
+        assert not np.any(C_rotated.is_tetragonal())
+        C = crystal_symmetry_tester('Trigonal', variant='-3')
+        C_rotated = C * rotations
+        assert not np.any(C_rotated.is_tetragonal())
 
     def test_stiffness_tetragonal(self):
         """Check that all symmetries in stiffness are well taken into account for tetragonal case"""
         C = crystal_symmetry_tester('Tetragonal', variant='-42m')
-        C_rotated = C * rotations[0]
-        assert C_rotated.is_tetragonal()
+        C_rotated = C * rotations
+        assert np.all(C_rotated.is_tetragonal())
         C = crystal_symmetry_tester('Tetragonal', variant='-4')
-        C_rotated = C * rotations[0]
-        assert C_rotated.is_tetragonal()
+        C_rotated = C * rotations
+        assert np.all(C_rotated.is_tetragonal())
 
     def test_stiffness_orthorhombic(self):
         """Check that all symmetries in stiffness are well taken into account for orthorhombic case"""
