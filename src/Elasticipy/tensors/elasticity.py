@@ -1471,7 +1471,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         is_cubic : check if the stiffness tensor has cubic symmetry
         eig_stiffnesses : compute eigenstiffnesses
         """
-        return self._check_eig_signature([1, 1, 1, 1, 2], tol)
+        return np.logical_or(self._check_eig_signature([1, 1, 1, 1, 2], tol), self.is_cubic(tol=tol))
 
 
 class ComplianceTensor(StiffnessTensor):
