@@ -116,16 +116,6 @@ class TestComplianceTensor(unittest.TestCase):
             assert approx(average.shear_modulus.eval([1,0,0],[0,1,0]), rel=1e-4) == G_mean_th[i]
             assert approx(average.Poisson_ratio.eval([1,0,0],[0,1,0]), rel=1e-4) == nu_mean_th[i]
 
-    def test_isotropic(self, E=210000, nu=0.28):
-        C = StiffnessTensor.isotropic(E=E, nu=nu)
-        G = C.shear_modulus.mean()
-        assert approx(G) == E / (1+nu) /2
-        C = StiffnessTensor.isotropic(E=E, lame2=G)
-        assert approx(C.Poisson_ratio.mean()) == nu
-        C = StiffnessTensor.isotropic(lame2=G, nu=nu)
-        assert approx(C.Young_modulus.mean()) == E
-        assert C.is_isotropic()
-
     def test_wave_velocity(self, E=210, nu=0.3, rho=7.8):
         C = StiffnessTensor.isotropic(E=E, nu=nu)
         M = E * (1 - nu) / ((1 + nu) * (1 - 2 * nu))
@@ -312,6 +302,17 @@ class TestStiffnessConstructor(unittest.TestCase):
                     assert row['G' + method] == approx(Gavg, rel=rel)
                     Gavg = C_rotated.average(method).shear_modulus.mean(n_evals=10000)
                     assert row['G' + method] == approx(Gavg, rel=rel)
+
+    def test_isotropic(self):
+        E, nu = 210000, 0.28
+        C = StiffnessTensor.isotropic(E=E, nu=nu)
+        G = C.shear_modulus.mean()
+        assert approx(G) == E / (1+nu) /2
+        C = StiffnessTensor.isotropic(E=E, lame2=G)
+        assert approx(C.Poisson_ratio.mean()) == nu
+        C = StiffnessTensor.isotropic(lame2=G, nu=nu)
+        assert approx(C.Young_modulus.mean()) == E
+        assert C.is_isotropic()
 
     def test_stiffness_cubic(self):
         """Check that all symmetries in stiffness are well taken into account for cubic case"""
