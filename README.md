@@ -17,7 +17,7 @@ Among other features, this package implements:
 
 - Computation of elasticity tensors,
 - Analysis of elastic anisotropy and wave propagation,
-- Working with multidimensional arrays of strain and stress tensors,
+- Working with multidimensional arrays of tensors,
 - Thermal expansion tensors,
 - Rotation of tensors,
 - Integration with crystal symmetry groups,
@@ -48,3 +48,19 @@ Certain parts of the code, particularly those related to graphical user interfac
 **excluded from code coverage analysis**. This includes the following file:
 
 - **`src/Elasticipy/gui.py`**
+
+## Cite this package
+If you use Elasticipy, please cite [![DOI](https://zenodo.org/badge/876162900.svg)](https://doi.org/10.5281/zenodo.14501849)
+
+You can use the following BibTeX entry:
+````bibtex
+@software{Elasticipy,
+author = {Depriester, Dorian},
+doi = {10.5281/zenodo.15188346},
+month = apr,
+title = {{Elasticipy}},
+url = {https://github.com/DorianDepriester/Elasticipy},
+version = {4.0.0},
+year = {2025}
+}
+````
