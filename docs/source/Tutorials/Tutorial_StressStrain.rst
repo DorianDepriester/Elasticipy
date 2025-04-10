@@ -12,9 +12,9 @@ equivalent stresses:
 .. doctest::
 
     >>> from Elasticipy.tensors.stress_strain import StressTensor, StrainTensor
-            >>> stress = StressTensor.shear([1, 0, 0], [0, 1, 0], 1.0) # Unit XY shear stress
-            >>> print(stress.vonMises(), stress.Tresca())
-            1.7320508075688772 2.0
+    >>> stress = StressTensor.shear([1, 0, 0], [0, 1, 0], 1.0) # Unit XY shear stress
+    >>> print(stress.vonMises(), stress.Tresca())
+    1.7320508075688772 2.0
 
 So now, let's have a look on the strain tensor, and compute the principal strains and the volumetric change:
 
