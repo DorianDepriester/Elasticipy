@@ -819,5 +819,12 @@ class TestStressStrainTensors(unittest.TestCase):
                 assert strain_kelvin[i, j, 5] == s * strain.matrix[i, j, 1, 0]
         np.testing.assert_array_almost_equal(strain.matrix, StrainTensor.from_Kelvin(strain_kelvin).matrix)
 
+    def test_deprecated_path(self):
+        expected_warn = ("The module 'Elasticipy.StressStrainTensors' is deprecated and will be removed in a future "
+                            "release. Please use 'Elasticipy.tensors.stress_strain' instead.")
+        with self.assertWarns(DeprecationWarning) as context:
+            from Elasticipy.StressStrainTensors import StressTensor, StrainTensor
+        self.assertEqual(str(context.warning), expected_warn)
+
 if __name__ == '__main__':
     unittest.main()
