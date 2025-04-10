@@ -102,6 +102,12 @@ class TestThermalExpansion(unittest.TestCase):
             for j in range(n):
                 np.testing.assert_array_equal(strain[i,j].matrix, alphas[i].matrix*T[j])
 
+    def test_deprecated_path(self):
+        expected_warn = ("The module 'Elasticipy.ThermalExpansion' is deprecated and will be removed in a future "
+                            "release. Please use 'Elasticipy.tensors.thermal_expansion' instead.")
+        with self.assertWarns(DeprecationWarning) as context:
+            from Elasticipy.ThermalExpansion import ThermalExpansionTensor
+        self.assertEqual(str(context.warning), expected_warn)
 
 if __name__ == '__main__':
     unittest.main()
