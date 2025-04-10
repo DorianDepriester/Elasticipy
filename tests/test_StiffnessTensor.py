@@ -287,7 +287,7 @@ class TestComplianceTensor(unittest.TestCase):
         expected_warn = ("The module 'Elasticipy.FourthOrderTensor' is deprecated and will be removed in a future "
                             "release. Please use 'Elasticipy.tensors.elasticity' instead.")
         with self.assertWarns(DeprecationWarning) as context:
-            from Elasticipy.FourthOrderTensor import ComplianceTensor
+            from Elasticipy.FourthOrderTensor import ComplianceTensor, StiffnessTensor
         self.assertEqual(str(context.warning), expected_warn)
 
 
@@ -948,13 +948,6 @@ class TestStiffnessConstructor(unittest.TestCase):
         C_rotated = C * rotations
         for i, inv_rotated_i in enumerate(C_rotated.invariants()):
             np.testing.assert_array_almost_equal(inv_rotated_i, inv[i])
-
-    def test_deprecated_path(self):
-        expected_warn = ("The module 'Elasticipy.FourthOrderTensor' is deprecated and will be removed in a future "
-                            "release. Please use 'Elasticipy.tensors.elasticity' instead.")
-        with self.assertWarns(DeprecationWarning) as context:
-            from Elasticipy.FourthOrderTensor import StiffnessTensor
-        self.assertEqual(str(context.warning), expected_warn)
 
 if __name__ == '__main__':
     unittest.main()
