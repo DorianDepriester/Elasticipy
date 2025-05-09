@@ -595,6 +595,20 @@ class TestStiffnessConstructor(unittest.TestCase):
         assert nu.eval([0, 0, 1], [0, 1, 0]) == approx(nu_zy)
         assert nu.eval([0, 0, 1], [1, 0, 0]) == approx(nu_zx)
 
+        # Now check with "inverted" Poisson ratio
+        nu_xy = nu.eval([1, 0, 0], [0, 1, 0])
+        nu_xz = nu.eval([1, 0, 0], [0, 0, 1])
+        nu_yz = nu.eval([0, 1, 0], [0, 0, 1])
+        C2 = StiffnessTensor.orthotropic(Ex=Ex, Ey=Ey, Ez=Ez, nu_xy=nu_xy, nu_xz=nu_xz, nu_yz=nu_yz,
+                                        Gxy=G_xy, Gxz=G_xz, Gyz=G_yz)
+        np.testing.assert_array_almost_equal(C.matrix, C2.matrix)
+
+        # Now try passing both nu_yz and nu_zy
+        with self.assertRaises(ValueError) as context:
+            StiffnessTensor.orthotropic(Ex=Ex, Ey=Ey, Ez=Ez, nu_xy=nu_xy, nu_xz=nu_xz, nu_yz=nu_yz, nu_zy=nu_zy,
+                                        Gxy=G_xy, Gxz=G_xz, Gyz=G_yz)
+        self.assertEqual(str(context.exception), 'Either nu_yz or nu_zy must be provided')
+
     def test_transverse_isotropic(self):
         """Check if the engineering constants are well retrieved in the transverse-isotropic case"""
         Ex, Ez = 100., 200.
