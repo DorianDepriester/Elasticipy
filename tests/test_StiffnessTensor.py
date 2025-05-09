@@ -609,6 +609,16 @@ class TestStiffnessConstructor(unittest.TestCase):
                                         Gxy=G_xy, Gxz=G_xz, Gyz=G_yz)
         self.assertEqual(str(context.exception), 'Either nu_yz or nu_zy must be provided')
 
+        # Check that the Poisson ratios are consistent with tensile test
+        stress = StressTensor.tensile([1,0,0],1)
+        strain = C.inv()*stress
+        assert strain.C[1,1]/strain.C[0,0] == approx(-nu_xy)
+        assert strain.C[2,2]/strain.C[0,0] == approx(-nu_xz)
+        stress = StressTensor.tensile([0,1,0],1)
+        strain = C.inv()*stress
+        assert strain.C[0,0]/strain.C[1,1] == approx(-nu_yx)
+        assert strain.C[2,2]/strain.C[1,1] == approx(-nu_yz)
+
     def test_transverse_isotropic(self):
         """Check if the engineering constants are well retrieved in the transverse-isotropic case"""
         Ex, Ez = 100., 200.
@@ -636,8 +646,6 @@ class TestStiffnessConstructor(unittest.TestCase):
         with self.assertRaises(ValueError) as context:
             StiffnessTensor.transverse_isotropic(Ex=Ex, Ez=Ez, nu_yx=nu_yx, nu_zx=nu_zx, Gxz=Gxz, nu_xy=nu_xy)
         self.assertEqual(str(context.exception), 'Either nu_xy or nu_yx must be provided')
-
-
 
     def test_straining_energy(self):
         """Test if the elastic energies are consistent."""
