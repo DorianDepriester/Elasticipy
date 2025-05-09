@@ -1376,9 +1376,14 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
             (6,6) matrix of components
         kwargs
             keyword arguments passed to the constructor
+
         Returns
         -------
         StiffnessTensor
+
+        See Also
+        --------
+        to_Kelvin : return the components as a (6,6) matrix following the Kelvin convention
         """
         t = cls(matrix / KELVIN_MAPPING_MATRIX, **kwargs)
         t.matrix *= t.mapping_matrix
