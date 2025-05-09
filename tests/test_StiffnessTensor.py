@@ -622,9 +622,22 @@ class TestStiffnessConstructor(unittest.TestCase):
         G = C.shear_modulus
         assert G.eval([1, 0, 0], [0, 0, 1]) == approx(Gxz)
         nu = C.Poisson_ratio
-        assert nu.eval([0,1,0], [1,0,0]) == approx(nu_yx)
+        assert nu.eval([0, 1, 0], [1, 0, 0]) == approx(nu_yx)
         assert nu.eval([0, 0, 1], [0, 1, 0]) == approx(nu_zx)
         assert nu.eval([0, 0, 1], [1, 0, 0]) == approx(nu_zx)
+
+        # Try passing the opposite Poisson ratios
+        nu_xy = nu.eval([1, 0, 0], [0, 1, 0])
+        nu_xz = nu.eval([1, 0, 0], [0, 0, 1])
+        C2 = StiffnessTensor.transverse_isotropic(Ex=Ex, Ez=Ez, nu_xy=nu_xy, nu_xz=nu_xz, Gxz=Gxz)
+        np.testing.assert_array_almost_equal(C.matrix, C2.matrix)
+
+        # Now try passing both nu_xy and nu_yx
+        with self.assertRaises(ValueError) as context:
+            StiffnessTensor.transverse_isotropic(Ex=Ex, Ez=Ez, nu_yx=nu_yx, nu_zx=nu_zx, Gxz=Gxz, nu_xy=nu_xy)
+        self.assertEqual(str(context.exception), 'Either nu_xy or nu_yx must be provided')
+
+
 
     def test_straining_energy(self):
         """Test if the elastic energies are consistent."""
