@@ -591,6 +591,17 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         -------
         HyperSphericalFunction
             Poisson's ratio
+
+        Notes
+        -----
+        If the material undergoes tensile strain :math:`\\varepsilon_{ii}` along the i-th direction, the Poisson ratios
+        are defined as:
+
+        .. math::
+
+            \\nu_{ij}=-\\frac{\\partial \\varepsilon_{jj}}{\\partial \\varepsilon_{ii}}
+
+        where :math:`\\varepsilon_{jj}` denotes the (compressive) longitudinal strain along the j-th direction.
         """
         self._single_tensor_only('Poisson_ratio')
         def compute_PoissonRatio(m, n):
