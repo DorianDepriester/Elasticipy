@@ -836,9 +836,12 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
             Shear modulus in the x-z plane
         Gyz : float
             Shear modulus in the y-z plane
-        nu_xy, nu_yx, nu_xz, nu_zx, nu_yz, nu_zy : float, optional
-            Poisson ratios along x, y, and z axes. For each pair of axes, exactly one Poisson ratio must be passed (e.g.
-            either nu_xy or nu_yx, not both).
+        nu_xy, nu_yx : float, optional
+            Poisson ratio along x and y axes. Either nu_xy or nu_yx must be provided, not both.
+        nu_xz, nu_zx : float, optional
+            Poisson ratio along x and z axes. Either nu_xz or nu_zx must be provided, not both.
+        nu_yz, nu_zy : float, optional
+            Poisson ratio along y and z axes. Either nu_yz or nu_zy must be provided, not both.
         kwargs : dict, optional
             Keyword arguments to pass to the StiffnessTensor constructor
 
@@ -863,7 +866,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         return StiffnessTensor(np.linalg.inv(S), symmetry='orthotropic', **kwargs)
 
     @classmethod
-    def transverse_isotropic(cls, *, Ex, Ez, Gxz, nu_yx=None, nu_zx=None, nu_xy=None, nu_xz=None, **kwargs):
+    def transverse_isotropic(cls, *, Ex, Ez, Gxz, nu_yx=None, nu_xy=None, nu_zx=None, nu_xz=None, **kwargs):
         """
         Create a stiffness tensor corresponding to the transversely isotropic symmetry with respect to Z axis, given the
         engineering constants.
@@ -876,9 +879,10 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
             Young modulus along the y axis
         Gxz : float
             Shear modulus in the x-z plane
-        nu_xz, nu_zx, nu_xy, nu_yx : float, optional
-            Poisson ratios. For each pair of axes, exactly one Poisson ratio must be passed (e.g. nu_xy or nu_yx, not
-            both)
+        nu_xy, nu_yx : float, optional
+            Poisson ratio along x and y. Either nu_xy or nu_yx must be provided, not both.
+        nu_xz, nu_zx : float, optional
+            Poisson ratio along x and z. Either nu_xz or nu_zx must be provided, not both.
         kwargs : dict
             Keyword arguments to pass to the StiffnessTensor constructor
 
