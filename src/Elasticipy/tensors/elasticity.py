@@ -822,6 +822,8 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         """
         Create a stiffness tensor corresponding to orthotropic symmetry, given the engineering constants.
 
+        Exactly three Poisson ratios must be provided. See Notes for details.
+
         Parameters
         ----------
         Ex : float
@@ -852,6 +854,23 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         See Also
         --------
         transverse_isotropic : create a stiffness tensor for transverse-isotropic symmetry
+
+        Notes
+        -----
+        If the material undergoes tensile strain :math:`\\varepsilon_{ii}` along the i-th direction, the Poisson ratios
+        are defined as:
+
+        .. math::
+
+            \\nu_{ij}=-\\frac{\\partial \\varepsilon_{jj}}{\\partial \\varepsilon_{ii}}
+
+        where :math:`\\varepsilon_{jj}` denotes the (compressive) longitudinal strain along the j-th direction. If
+        :math:`E_x` and :math:`E_y` are the Young moduli along `x` and `y`, we have:
+
+        .. math::
+
+            \\frac{\\nu_{xy}}{E_x} = \\frac{\\nu_{yx}}{E_y}
+
         """
         nu_yx = _switch_poisson_ratios(nu_xy, nu_yx, Ex, Ey,'xy')
         nu_zx = _switch_poisson_ratios(nu_xz, nu_zx, Ex, Ez,'xz')
@@ -870,6 +889,8 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         """
         Create a stiffness tensor corresponding to the transversely isotropic symmetry with respect to Z axis, given the
         engineering constants.
+
+        Exactly two Poisson ratios must be provided (nu_xy or nu_yx, and nu_xz or nu_zx). See Notes for details.
 
         Parameters
         ----------
@@ -893,6 +914,22 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         See Also
         --------
         orthotropic : create a stiffness tensor for orthotropic symmetry
+
+        Notes
+        -----
+        If the material undergoes tensile strain :math:`\\varepsilon_{ii}` along the i-th direction, the Poisson ratios
+        are defined as:
+
+        .. math::
+
+            \\nu_{ij}=-\\frac{\\partial \\varepsilon_{jj}}{\\partial \\varepsilon_{ii}}
+
+        where :math:`\\varepsilon_{jj}` denotes the (compressive) longitudinal strain along the j-th direction. If
+        :math:`E_x` and :math:`E_y` are the Young moduli along `x` and `y`, we have:
+
+        .. math::
+
+            \\frac{\\nu_{xy}}{E_x} = \\frac{\\nu_{yx}}{E_y}
         """
         nu_yx = _switch_poisson_ratios(nu_xy, nu_yx, Ex, Ex,'xy')
         Gxy = Ex / (2 * (1 + nu_yx))
