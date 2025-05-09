@@ -863,9 +863,10 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         return StiffnessTensor(np.linalg.inv(S), symmetry='orthotropic', **kwargs)
 
     @classmethod
-    def transverse_isotropic(cls, *, Ex, Ez, nu_yx, nu_zx, Gxz, **kwargs):
+    def transverse_isotropic(cls, *, Ex, Ez, Gxz, nu_yx=None, nu_zx=None, nu_xy=None, nu_xz=None, **kwargs):
         """
-        Create a stiffness tensor corresponding to the transverse isotropic symmetry, given the engineering constants.
+        Create a stiffness tensor corresponding to the transversely isotropic symmetry with respect to Z axis, given the
+        engineering constants.
 
         Parameters
         ----------
@@ -873,12 +874,11 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
             Young modulus along the x axis
         Ez : float
             Young modulus along the y axis
-        nu_yx : float
-            Poisson ratio between x and y axes
-        nu_zx : float
-            Poisson ratio between x and z axes
         Gxz : float
             Shear modulus in the x-z plane
+        nu_xz, nu_zx, nu_xy, nu_yx : float, optional
+            Poisson ratios. For each pair of axes, exactly one Poisson ratio must be passed (e.g. nu_xy or nu_yx, not
+            both)
         kwargs : dict
             Keyword arguments to pass to the StiffnessTensor constructor
 
@@ -890,9 +890,11 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         --------
         orthotropic : create a stiffness tensor for orthotropic symmetry
         """
+        nu_yx = _switch_poisson_ratios(nu_xy, nu_yx, Ex, Ex,'xy')
         Gxy = Ex / (2 * (1 + nu_yx))
         C = StiffnessTensor.orthotropic(Ex=Ex, Ey=Ex, Ez=Ez,
                                         nu_yx=nu_yx, nu_zx=nu_zx, nu_zy=nu_zx,
+                                        nu_xz=nu_xz, nu_yz=nu_xz,
                                         Gxy=Gxy, Gxz=Gxz, Gyz=Gxz, **kwargs)
         C.symmetry = 'transverse-isotropic'
         return C
