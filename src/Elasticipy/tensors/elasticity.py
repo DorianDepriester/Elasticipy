@@ -1281,7 +1281,19 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
         Notes
         -----
-        This mapping convention is discussed in [4]_.
+        This mapping convention is defined as follows [4]_:
+
+        .. math::
+
+            C_K = \\begin{bmatrix}
+                C_{11}          & C_{12}            & C_{13}            & \\sqrt{2}C_{14} & \\sqrt{2}C_{15} & \\sqrt{2}C_{16}\\\\
+                C_{12}          & C_{22}            & C_{23}            & \\sqrt{2}C_{24} & \\sqrt{2}C_{25} & \\sqrt{2}C_{26}\\\\
+                C_{13}          & C_{23}            & C_{33}            & \\sqrt{2}C_{34} & \\sqrt{2}C_{35} & \\sqrt{2}C_{36}\\\\
+                \\sqrt{2}C_{14} & \\sqrt{2}C_{24}   & \\sqrt{2}C_{34}   & 2C_{44}         & 2C_{45}         & 2C_{46}\\\\
+                \\sqrt{2}C_{15} & \\sqrt{2}C_{25}   & \\sqrt{2}C_{35}   & 2C_{45}         & 2C_{55}         & 2C_{56}\\\\
+                \\sqrt{2}C_{16} & \\sqrt{2}C_{26}   & \\sqrt{2}C_{36}   & 2C_{46}         & 2C_{56}         & 2C_{66}\\\\
+            \\end{bmatrix}
+
 
         References
         ----------
