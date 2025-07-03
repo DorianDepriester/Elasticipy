@@ -23,6 +23,7 @@ dependencies = [
     "numpy",
     "scipy",
     "matplotlib"
+    "qtpy"
 ]
 requires-python = ">=3.10"
 

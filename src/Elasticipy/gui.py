@@ -1,7 +1,7 @@
 import sys
 
 import numpy as np
-from PyQt5.QtWidgets import (
+from qtpy.QtWidgets import (
     QApplication, QMainWindow, QComboBox, QGridLayout, QLabel,
     QLineEdit, QPushButton, QVBoxLayout, QHBoxLayout, QWidget, QFrame, QMessageBox
 )
