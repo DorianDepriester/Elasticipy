@@ -75,33 +75,6 @@ That's all. Finally, let us plot the applied stress as a function of the overall
     >>> ax.set_xlabel(r'$\varepsilon_{xx}$') # doctest: +SKIP
     >>> ax.set_ylabel('Tensile stress (MPa)') # doctest: +SKIP
 
-Now, let say that we want to investigate the material's response for the tensile stress ranging from 0 to 725 MPa:
-
-    >>> import numpy as np
-    >>> n_step = 100
-    >>> stress_mag = np.linspace(0, 725, n_step)
-    >>> stress = StressTensor.tensile([1,0,0], stress_mag)
-
-At least, we can directly compute the elastic strain for each step:
-
-    >>> elastic_strain = C.inv() * stress
-
-So now, the plastic strain can be computed using an iterative approach:
-
-    >>> plastic_strain = StrainTensor.zeros(n_step)
-    >>> for i in range(1, n_step):
-    ...       strain_increment = JC.compute_strain_increment(stress[i])
-    ...       plastic_strain[i] = plastic_strain[i-1] + strain_increment
-
-That's all. Finally, let us plot the applied stress as a function of the overall elongation:
-
-    >>> from matplotlib import pyplot as plt
-    >>> elong = elastic_strain.C[0,0]+plastic_strain.C[0,0]
-    >>> fig, ax = plt.subplots()
-    >>> ax.plot(elong, stress_mag, label='Stress-controlled') # doctest: +SKIP
-    >>> ax.set_xlabel(r'$\varepsilon_{xx}$') # doctest: +SKIP
-    >>> ax.set_ylabel('Tensile stress (MPa)') # doctest: +SKIP
-
 .. image:: images/Stress-controlled.png
 
 
