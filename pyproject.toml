@@ -22,7 +22,7 @@ classifiers = [
 dependencies = [
     "numpy",
     "scipy",
-    "matplotlib"
+    "matplotlib",
     "qtpy"
 ]
 requires-python = ">=3.10"
