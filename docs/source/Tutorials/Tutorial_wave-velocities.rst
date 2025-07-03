@@ -33,7 +33,7 @@ And define the mass density:
 .. note::
 
     You should be careful about the unit you use. Since our stiffness is given in GPa, we have to use ``rho`` in kg/dm³
-    in order to get the velocities in km/s. Look at `the full documentation <../Elasticipy.FourthOrderTensor.html#Elasticipy.FourthOrderTensor.StiffnessTensor.wave_velocity>`_ for details.
+    in order to get the velocities in km/s. Look at `the full documentation <../Elasticipy.tensors.elasticity.html#Elasticipy.tensors.elasticity.StiffnessTensor.wave_velocity>`_ for details.
 
 Now, we can define 3 spherical functions, which correspond to velocities of:
 
