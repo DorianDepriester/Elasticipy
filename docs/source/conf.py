@@ -29,7 +29,8 @@ extensions = [
    'sphinx.ext.githubpages',
    'sphinx.ext.autosectionlabel',
    'sphinx.ext.mathjax',
-   'sphinx.ext.linkcode']
+   'sphinx.ext.linkcode',
+   'sphinx_copybutton']
 templates_path = ['_templates']
 exclude_patterns = []
 
