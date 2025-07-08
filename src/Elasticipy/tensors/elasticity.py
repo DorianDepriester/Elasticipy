@@ -789,6 +789,12 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         --------
         transverse_isotropic : create a transverse-isotropic tensor
 
+        Notes
+        -----
+        The units you use when passing the elastic moduli must be consistent with that of the stress tensor. For
+        instance, if you expect to work in MPa, the Young's modulus and the Lamé's coefficient must be given in MPa as
+        well.
+
         Examples
         --------
         On can check that the shear modulus for steel is around 82 GPa:
