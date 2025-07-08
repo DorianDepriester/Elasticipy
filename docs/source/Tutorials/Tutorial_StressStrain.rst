@@ -60,6 +60,10 @@ Considering the previous strain, evaluate the corresponding stress:
      [164.0625   0.       0.    ]
      [  0.       0.       0.    ]]
 
+.. note::
+
+    As the components for the stiffness tensor were provided in MPa, the computed stress is given in MPa as well.
+
 Conversely, one can compute the compliance tensor:
 
     >>> S = C.inv()
