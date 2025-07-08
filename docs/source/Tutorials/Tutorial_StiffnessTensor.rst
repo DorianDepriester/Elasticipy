@@ -32,6 +32,11 @@ let's see its value along the x, y and z directions:
     >>> print((Ex, Ey, Ez))
     (124.52232440357189, 120.92120854784433, 96.13750721721384)
 
+.. note::
+
+    As the components for the stiffness tensor were provided in GPa, the values for the Young modulus are given in GPa
+    as well.
+
 Actually, a more compact syntax, and a faster way to do that, is to use:
 
     >>> import numpy as np
