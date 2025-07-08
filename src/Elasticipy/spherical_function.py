@@ -541,8 +541,6 @@ class SphericalFunction:
         u, evals = self.evaluate_on_spherical_grid((n_phi, n_theta), return_in_spherical=False, use_symmetry=False)
         ax = _plot3D(new_fig, u, evals, **kwargs)
         ax.axis('equal')
-        if fig is None:
-            plt.show()
         return new_fig, ax
 
     def plot_xyz_sections(self, n_theta=500, fig=None, axs=None, **kwargs):
@@ -590,8 +588,6 @@ class SphericalFunction:
             r = self.eval_spherical(angles)
             ax.plot(theta_polar, r, **kwargs)
             axs_new.append(ax)
-        if fig is None:
-            new_fig.show()
         return new_fig, axs_new
 
     def plot_as_pole_figure(self, n_theta=50, n_phi=200, projection='lambert',
@@ -656,8 +652,6 @@ class SphericalFunction:
         ax.set_rlim(*self.domain[1])
         ax.set_title(title)
         new_fig.colorbar(sc)
-        if show:
-            plt.show()
         return new_fig, ax
 
 
@@ -886,8 +880,6 @@ class HyperSphericalFunction(SphericalFunction):
         else:
             r_grid = np.mean(values, axis=2)
         ax = _plot3D(new_fig, u[:, :, 0, :], r_grid, **kwargs)
-        if fig is None:
-            plt.show()
         return new_fig, ax
 
     def plot_xyz_sections(self, n_theta=500, n_psi=100, color_minmax='blue', alpha_minmax=0.2, color_mean='red',
@@ -950,8 +942,6 @@ class HyperSphericalFunction(SphericalFunction):
         handles.extend([line, area])
         labels.extend([line.get_label(), area.get_label()])
         new_fig.legend(handles, labels, loc='upper center', ncol=2, bbox_to_anchor=(0.5, 0.95))
-        if fig is None:
-            new_fig.show()
         return new_fig, axs
 
     def plot_as_pole_figure(self, n_theta=50, n_phi=200, n_psi=50, which='mean', projection='lambert', fig=None,
@@ -1033,6 +1023,4 @@ class HyperSphericalFunction(SphericalFunction):
         ax.set_rlim(*self.domain[1])
         ax.set_title(title)
         fig.colorbar(sc)
-        if show:
-            plt.show()
         return fig, ax
