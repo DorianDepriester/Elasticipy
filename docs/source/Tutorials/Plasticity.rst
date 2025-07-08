@@ -152,12 +152,11 @@ Tresca's plasticity criterion
 Above, we have used the von Mises plasticity criterion (a.k.a J2 criterion). This can be switched to Tresca by passing
 the plasticity criterion to the model constructor:
 
-    >>> JC = JohnsonCook(A=363, B=792.7122, n=0.5756, criterion='Tresca')
+    >>> JC_tresca = JohnsonCook(A=363, B=792.7122, n=0.5756, criterion='Tresca')
 
 For instance, one can highlight the difference between the J2 and Tresca plasticity in shear:
 
     >>> JC.reset_strain()
-    >>> JC_tresca = JohnsonCook(A=363, B=792.7122, n=0.5756, criterion='Tresca')
     >>> stress_mag = np.linspace(0, 500, n_step)
     >>> stress = StressTensor.shear([1,0,0], [0,1,0],stress_mag)
     >>> models = (JC, JC_tresca)
