@@ -67,6 +67,9 @@ class IsotropicHardening:
 
 
 class JohnsonCook(IsotropicHardening):
+    """
+    Special case of isotropic hardening with an underlying Johnson Cook hardening evolution rule
+    """
     def __init__(self, A, B, n, C=None, eps_dot_ref=1.0, m=None, T0=25, Tm=None, criterion='von Mises'):
         """
         Constructor for a Jonhson-Cook (JC) model.
@@ -235,6 +238,9 @@ class JohnsonCook(IsotropicHardening):
 
 
 class PlasticityCriterion:
+    """
+    Template class for plasticity criteria
+    """
     @staticmethod
     def eq_stress(stress, **kwargs):
         """
@@ -271,6 +277,9 @@ class PlasticityCriterion:
         pass
 
 class VonMisesPlasticity(PlasticityCriterion):
+    """
+    von Mises plasticity criterion, with associated normality rule
+    """
     @staticmethod
     def eq_stress(stress, **kwargs):
         return stress.vonMises()
@@ -283,6 +292,9 @@ class VonMisesPlasticity(PlasticityCriterion):
         return StrainTensor(3 / 2 * gradient_tensor.matrix)
 
 class TrescaPlasticity(PlasticityCriterion):
+    """
+    Tresca plasticity criterion, with associated normality rule
+    """
     @staticmethod
     def eq_stress(stress, **kwargs):
         return stress.Tresca()
@@ -305,6 +317,9 @@ class TrescaPlasticity(PlasticityCriterion):
         return strain / strain.eq_strain()
 
 class DruckerPrager(PlasticityCriterion):
+    """
+    Drucker-Prager pressure-dependent plasticity criterion, with associated normality rule
+    """
     def __init__(self, alpha):
         """
         Create a Drucker-Prager (DG) plasticity criterion.
