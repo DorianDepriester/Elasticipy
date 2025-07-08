@@ -33,6 +33,9 @@ extensions = [
    'sphinx_copybutton']
 templates_path = ['_templates']
 exclude_patterns = []
+copybutton_prompt_text = r">>> |\.\.\. "
+copybutton_prompt_is_regexp = True
+
 
 language = 'english'
 
