@@ -165,12 +165,12 @@ For instance, one can highlight the difference between the J2 and Tresca plastic
     >>> elastic_strain = C.inv() * stress
     >>> fig, ax = plt.subplots()
     >>> for j, model in enumerate(models):
-        ... plastic_strain = StrainTensor.zeros(n_step)
-        ... for i in range(1, n_step):
-        ...     strain_increment = model.compute_strain_increment(stress[i])
-        ...     plastic_strain[i] = plastic_strain[i-1] + strain_increment
-        ... eps_xy = elastic_strain.C[0,1]+plastic_strain.C[0,1]
-        ... ax.plot(eps_xy, stress_mag, label=labels[j])
+    ...     plastic_strain = StrainTensor.zeros(n_step)
+    ...     for i in range(1, n_step):
+    ...         strain_increment = model.compute_strain_increment(stress[i])
+    ...         plastic_strain[i] = plastic_strain[i-1] + strain_increment
+    ...     eps_xy = elastic_strain.C[0,1]+plastic_strain.C[0,1]
+    ...     ax.plot(eps_xy, stress_mag, label=labels[j])
     >>> ax.set_xlabel(r'$\varepsilon_{xy}$') # doctest: +SKIP
     >>> ax.set_ylabel('Shear stress (MPa)') # doctest: +SKIP
     >>> ax.legend() # doctest: +SKIP
