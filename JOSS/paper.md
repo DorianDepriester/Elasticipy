@@ -144,11 +144,13 @@ with ease. It already implements thermal expansion.
 ````python
 
 from Elasticipy.tensors.elasticity import StiffnessTensor
+from matplotlib import pyplot as plt
 
 C = StiffnessTensor.cubic(C11=186, C12=134, C44=77)
 E = C.Young_modulus
 E.plot3D(n_phi=500, n_theta=500)
 E.plot_as_pole_figure()
+plt.show()
 ````
 
 ## Create an array of rotated stiffness tensors and compute average
@@ -175,6 +177,7 @@ Finally, the corresponding Young moduli can be plotted in orthogonal sections, a
 
 ````python
 C_VRH.Young_modulus.plot_xyz_sections()
+plt.show()
 ````
 
 ## Arrays of stress/strain tensor
