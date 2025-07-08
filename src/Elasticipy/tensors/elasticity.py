@@ -92,10 +92,10 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
         Notes
         -----
-        The units used when building the stiffness tensor are up to the user (GPa, MPa, dyn etc.). Therefor, the
+        The units used when building the stiffness tensor are up to the user (GPa, MPa, psi etc.). Therefor, the
         results you will get when performing operations (Young's modulus, "product" with strain tensor etc.) will be
-        consistent with the these units. For instance, if the stiffness tensor is defined in GPa, the computed stress
-        will be given in GPa as well.
+        consistent with these units. For instance, if the stiffness tensor is defined in GPa, the computed stress will
+        be given in GPa as well.
         """
         super().__init__(M, mapping=mapping, **kwargs)
         if check_positive_definite:
