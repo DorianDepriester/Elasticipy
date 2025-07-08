@@ -92,7 +92,9 @@ Spherical functions
 ~~~~~~~~~~~~~~~~~~~
 In order to fully evidence the directional dependence of the Young moduli, we can plot them as 3D surface:
 
+    >>> from matplotlib import pyplot as plt
     >>> E.plot3D() # doctest: +SKIP
+    >>> plt.show()
 
     .. image:: images/E_plot3D.png
         :width: 400
@@ -101,6 +103,7 @@ It is advised to use interactive plot to be able to zoom/rotate the surface. For
 document/articles), we can plot the values as a Pole Figure (PF):
 
     >>> E.plot_as_pole_figure() # doctest: +SKIP
+    >>> plt.show()
 
     .. image:: images/E_PF.png
         :width: 400
@@ -108,6 +111,7 @@ document/articles), we can plot the values as a Pole Figure (PF):
 Alternatively, we can plot the Young moduli on X-Y, X-Z and Y-Z sections only:
 
     >>> E.plot_xyz_sections() # doctest: +SKIP
+    >>> plt.show()
 
     .. image:: images/E_xyz_sections.png
         :width: 600
@@ -119,6 +123,7 @@ But at least, for a each direction **u**, we can consider the mean value for all
 plotting:
 
     >>> G.plot3D() # doctest: +SKIP
+    >>> plt.show()
 
     .. image:: images/G_plot3D.png
         :width: 400
@@ -126,6 +131,7 @@ plotting:
 Instead of the mean value, we can consider other statistics, e.g.:
 
     >>> G.plot3D(which='min')   # doctest: +SKIP
+    >>> plt.show()
 
     .. image:: images/G_plot3D_min.png
         :width: 400
@@ -135,6 +141,7 @@ This also works for ``max`` and ``std``. These parameters also apply for pole fi
 When plotting the X-Y, X-Z and Y-Z sections, the min, max and mean values are plotted at once:
 
     >>> G.plot_xyz_sections() # doctest: +SKIP
+    >>> plt.show()
 
     .. image:: images/G_xyz_sections.png
         :width: 600
