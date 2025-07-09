@@ -336,7 +336,7 @@ class DruckerPrager(PlasticityCriterion):
     """
     Drucker-Prager pressure-dependent plasticity criterion, with associated normality rule
     """
-    name = 'Drucker'
+    name = 'Drucker-Prager'
 
     def __init__(self, alpha):
         """
