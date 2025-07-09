@@ -198,7 +198,7 @@ Given the stiffness tensor ``C`` (see above), one can compute the corresponding 
 ````python
 stress = C * strain
 ````
-Finally, ``stress.von_Mises()`` returns an array of length ``n`` and data type ``float64``, providing all the 
+Finally, ``stress.vonMises()`` returns an array of length ``n`` and data type ``float64``, providing all the 
 corresponding von Mises equivalent stresses.
 
 # References
