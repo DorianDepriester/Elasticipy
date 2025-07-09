@@ -164,7 +164,7 @@ n = 10000
 phi1 = np.random.random(n)*2*np.pi  # Random sampling from 0 to 2pi
 Euler_angles = np.array([phi1,  np.zeros(n),  np.zeros(n)]).T # Fibre texture
 rotations = Rotation.from_euler('ZXZ', Euler_angles) # Bunge-Euler angles
-C_rotated = C * rotations # n-lenght tensor array
+C_rotated = C * rotations # n-length tensor array
 ````
 
 Then, the Voigt--Reuss--Hill average [@hill] can be computed from the tensor array:
