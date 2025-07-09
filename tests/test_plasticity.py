@@ -15,9 +15,30 @@ JC_rd = JohnsonCook(A=A, B=B, n=n, C=C, eps_dot_ref=eps_dot_ref)
 JC_td = JohnsonCook(A=A, B=B, n=n, m=1.03, T0=T0, Tm=Tm)
 JC_rtd= JohnsonCook(A=A, B=B, n=n, C=C, eps_dot_ref=eps_dot_ref, m=m, T0=T0, Tm=Tm)
 K = 3 / 2 * 1 / 3 ** 0.5
+JC_tresca = JohnsonCook(A=A, B=B, n=n, criterion='Tresca')
 
 
 class TestJohnsonCook(unittest.TestCase):
+    def test_JC_string(self):
+        assert JC.__repr__() == ('Johnson-Cook plasticity model\n'
+                                 ' type: Isotropic\n'
+                                 ' criterion: von Mises\n'
+                                 ' current strain: 0.0')
+        JC.apply_strain(0.1)
+        assert JC.__repr__() == ('Johnson-Cook plasticity model\n'
+                                 ' type: Isotropic\n'
+                                 ' criterion: von Mises\n'
+                                 ' current strain: 0.1')
+        JC.reset_strain()
+        assert JC.__repr__() == ('Johnson-Cook plasticity model\n'
+                                 ' type: Isotropic\n'
+                                 ' criterion: von Mises\n'
+                                 ' current strain: 0.0')
+        assert JC_tresca.__repr__() == ('Johnson-Cook plasticity model\n'
+                                        ' type: Isotropic\n'
+                                        ' criterion: Tresca\n'
+                                        ' current strain: 0.0')
+
     def test_yield_stress(self):
         assert JC.flow_stress(0) == A
         assert JC_rd.flow_stress(0, eps_dot=eps_dot_ref) == A
