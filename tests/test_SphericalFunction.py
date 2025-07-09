@@ -48,7 +48,7 @@ class TestSphericalFunction(unittest.TestCase):
         assert axs[2].title._text == 'Y-Z plane'
 
     def test_plot_as_pole_figure(self):
-        _, ax = E.plot_as_pole_figure(show=False)
+        _, ax = E.plot_as_pole_figure()
         np.testing.assert_allclose(ax.dataLim.intervalx, [-0.01578689775673263, 6.298972204936319])
         np.testing.assert_allclose(ax.dataLim.intervaly, [-0.0160285339468867, 1.5868248607417832])
 
