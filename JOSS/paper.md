@@ -142,6 +142,7 @@ This section presents the syntaxes of few basic operations performed with Elasti
 
 \autoref{fig:Young}.a) and b) were rendered with the following syntax:
 
+---
 ````python
 from Elasticipy.tensors.elasticity import StiffnessTensor
 C = StiffnessTensor.cubic(C11=186, C12=134, C44=77)
@@ -151,11 +152,13 @@ fig.show()
 fig, _ = E.plot_as_pole_figure()
 fig.show()
 ````
+---
 
 ## Create an array of rotated stiffness tensors and compute average
 
 When considering a finite set of orientations, an array of stiffness tensors can be built to account for the rotations:
 
+---
 ````python
 from scipy.spatial.transform import Rotation
 import numpy as np
@@ -165,36 +168,46 @@ Euler_angles = np.array([phi1,  np.zeros(n),  np.zeros(n)]).T # Fibre texture
 rotations = Rotation.from_euler('ZXZ', Euler_angles) # Bunge-Euler angles
 C_rotated = C * rotations # n-length tensor array
 ````
-
+---
 Then, the Voigt--Reuss--Hill average [@hill] can be computed from the tensor array:
 
+---
 ````python
 C_VRH = C_rotated.Hill_average()
 ````
+---
 
 Finally, the corresponding Young moduli can be plotted in orthogonal sections, as shown in \autoref{fig:Young}.c), with:
 
+---
 ````python
 fig, ax = C_VRH.Young_modulus.plot_xyz_sections()
 fig.show()
 ````
+---
 
 ## Arrays of stress/strain tensor
 
 Efforts have been made to provide out-of-the-box simple syntaxes for common operations. For example, the following
 will create a tensor array corresponding to evenly-spaced strain along $[1,0,0]$ axis:
 
+---
 ````python
 from Elasticipy.tensors.stress_strain import StrainTensor
 m = 1000  # length of tensor array
 mag = np.linspace(0, 0.1, m)  # Strain magnitude
 strain = StrainTensor.tensile([1, 0, 0], mag)
 ````
+---
 
 Given the stiffness tensor ``C`` (see above), one can compute the corresponding stress array with:
+
+---
 ````python
 stress = C * strain
 ````
+---
+
 Finally, ``stress.vonMises()`` returns an array of length ``n`` and data type ``float64``, providing all the 
 corresponding von Mises equivalent stresses.
 
