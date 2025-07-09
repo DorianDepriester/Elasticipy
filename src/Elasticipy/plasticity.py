@@ -6,6 +6,9 @@ class IsotropicHardening:
     """
     Template class for isotropic hardening plasticity models
     """
+    type = "Isotropic"
+    name = 'Generic'
+
     def __init__(self, criterion='von Mises'):
         """
         Create an instance of a plastic model, assuming isotropic hardening
@@ -26,6 +29,12 @@ class IsotropicHardening:
         else:
             self.criterion = criterion
         self.plastic_strain = 0.0
+
+    def __repr__(self):
+        return (('{} plasticity model\n'.format(self.name) +
+                ' type: {}\n'.format(self.type)) +
+                ' criterion: {}\n'.format(self.criterion.name) +
+                ' current strain: {}'.format(self.plastic_strain))
 
     def flow_stress(self, strain, **kwargs):
         pass
@@ -70,9 +79,11 @@ class JohnsonCook(IsotropicHardening):
     """
     Special case of isotropic hardening with an underlying Johnson Cook hardening evolution rule
     """
+    name = "Johnson-Cook"
+
     def __init__(self, A, B, n, C=None, eps_dot_ref=1.0, m=None, T0=25, Tm=None, criterion='von Mises'):
         """
-        Constructor for a Jonhson-Cook (JC) model.
+        Constructor for a Johnson-Cook (JC) model.
 
         The JC model is an exponential-law strain hardening model, which can take into account strain-rate sensibility
         and temperature-dependence (although they are not mandatory). See notes for details.
@@ -241,6 +252,8 @@ class PlasticityCriterion:
     """
     Template class for plasticity criteria
     """
+    name = 'generic'
+
     @staticmethod
     def eq_stress(stress, **kwargs):
         """
@@ -280,6 +293,7 @@ class VonMisesPlasticity(PlasticityCriterion):
     """
     von Mises plasticity criterion, with associated normality rule
     """
+    name = 'von Mises'
     @staticmethod
     def eq_stress(stress, **kwargs):
         return stress.vonMises()
@@ -295,6 +309,8 @@ class TrescaPlasticity(PlasticityCriterion):
     """
     Tresca plasticity criterion, with associated normality rule
     """
+    name = 'Tresca'
+
     @staticmethod
     def eq_stress(stress, **kwargs):
         return stress.Tresca()
@@ -320,6 +336,8 @@ class DruckerPrager(PlasticityCriterion):
     """
     Drucker-Prager pressure-dependent plasticity criterion, with associated normality rule
     """
+    name = 'Drucker'
+
     def __init__(self, alpha):
         """
         Create a Drucker-Prager (DG) plasticity criterion.
