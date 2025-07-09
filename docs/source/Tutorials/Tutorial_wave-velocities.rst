@@ -56,7 +56,9 @@ Plotting the wave velocities
 ----------------------------
 Now, we can plot all the velocities on three independent pole figures:
 
->>> fig, _ = cp.plot_as_pole_figure(subplot_args=(131,), title='p wave')
+>>> import matplotlib.pyplot as plt
+>>> fig = plt.figure(figsize=(20, 5))
+>>> cp.plot_as_pole_figure(subplot_args=(131,), title='p wave', fig=fig)
 >>> cs_fast.plot_as_pole_figure(subplot_args=(132,), title='s wave (fast)', fig=fig) # doctest: +SKIP
 >>> cs_slow.plot_as_pole_figure(subplot_args=(133,), title='s wave (slow)', fig=fig) # doctest: +SKIP
 >>> fig.show()
