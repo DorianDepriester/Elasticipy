@@ -176,7 +176,7 @@ C_VRH = C_rotated.Hill_average()
 Finally, the corresponding Young moduli can be plotted in orthogonal sections, as shown in \autoref{fig:Young}.c), with:
 
 ````python
-fig, ax =C_VRH.Young_modulus.plot_xyz_sections()
+fig, ax = C_VRH.Young_modulus.plot_xyz_sections()
 fig.show()
 ````
 
