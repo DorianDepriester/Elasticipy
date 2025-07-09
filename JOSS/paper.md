@@ -143,7 +143,6 @@ This section presents the syntaxes of few basic operations performed with Elasti
 \autoref{fig:Young}.a) and b) were rendered with the following syntax:
 
 ````python
-
 from Elasticipy.tensors.elasticity import StiffnessTensor
 from matplotlib import pyplot as plt
 
@@ -177,8 +176,8 @@ C_VRH = C_rotated.Hill_average()
 Finally, the corresponding Young moduli can be plotted in orthogonal sections, as shown in \autoref{fig:Young}.c), with:
 
 ````python
-C_VRH.Young_modulus.plot_xyz_sections()
-plt.show()
+fig, ax =C_VRH.Young_modulus.plot_xyz_sections()
+fig.show()
 ````
 
 ## Arrays of stress/strain tensor
