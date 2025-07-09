@@ -56,16 +56,12 @@ Plotting the wave velocities
 ----------------------------
 Now, we can plot all the velocities on three independent pole figures:
 
->>> fig, _ = cp.plot_as_pole_figure(subplot_args=(131,), title='p wave', show=False)
->>> cs_fast.plot_as_pole_figure(subplot_args=(132,), title='s wave (fast)', fig=fig, show=False) # doctest: +SKIP
->>> cs_slow.plot_as_pole_figure(subplot_args=(133,), title='s wave (slow)', fig=fig, show=True)  # doctest: +SKIP
+>>> fig, _ = cp.plot_as_pole_figure(subplot_args=(131,), title='p wave')
+>>> cs_fast.plot_as_pole_figure(subplot_args=(132,), title='s wave (fast)', fig=fig) # doctest: +SKIP
+>>> cs_slow.plot_as_pole_figure(subplot_args=(133,), title='s wave (slow)', fig=fig) # doctest: +SKIP
+>>> fig.show()
 
 .. image:: images/WaveVelocities.png
 
-
-.. note::
-
-    We pass ``subplot_args`` to create the subplots. The option ``show=false`` temporary disables showing the figure;
-    this is necessary here to be plot multiple figures at once.
 
 For further details about plotting options, see :ref:`here<plotting>`.
