@@ -613,7 +613,7 @@ class SphericalFunction:
         plot_type : str, optional
             The type of plot to generate: 'imshow', 'contourf', or 'contour', by default 'imshow'.
         title : str, optional
-            Title to add to the current axis. Defaut is None.
+            Title to add to the current axis. Default is None.
         subplot_args : tuple
             List of arguments to pass to the subplot function, by default ()
         subplot_kwargs : dict
