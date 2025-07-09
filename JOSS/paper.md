@@ -144,13 +144,13 @@ This section presents the syntaxes of few basic operations performed with Elasti
 
 ````python
 from Elasticipy.tensors.elasticity import StiffnessTensor
-from matplotlib import pyplot as plt
 
 C = StiffnessTensor.cubic(C11=186, C12=134, C44=77)
 E = C.Young_modulus
-E.plot3D(n_phi=500, n_theta=500)
-E.plot_as_pole_figure()
-plt.show()
+fig, _ = E.plot3D(n_phi=500, n_theta=500)
+fig.show()
+fig, _ = E.plot_as_pole_figure()
+fig.show()
 ````
 
 ## Create an array of rotated stiffness tensors and compute average
