@@ -112,7 +112,7 @@ orthogonal sections.
 
 ![Young modulus (GPa) of Cu single crystal as a 3D surface (a) or a pole figure (b); 
 Young modulus of Cu polycrystal with $[001]$ fiber texture, plotted in three orthogonal sections, depending on the
-averaging method. \label{fig:Young}](YoungModulus.png)
+averaging method (c). \label{fig:Young}](YoungModulus.png)
 
 Elasticipy also introduces the concept of *tensor arrays*, in a similar way as in MTEX [@MTEX], allowing to 
 process several tensors at once with simple and highly efficient commands. In order to highlight the performances 
