@@ -591,7 +591,7 @@ class SphericalFunction:
         return new_fig, axs_new
 
     def plot_as_pole_figure(self, n_theta=50, n_phi=200, projection='lambert',
-                            fig=None, plot_type='imshow', show=True, title=None,
+                            fig=None, plot_type='imshow', title=None,
                             subplot_args=(), subplot_kwargs=None, **kwargs):
         """
         Plots a pole figure visualization of spherical data using specified parameters and plot types.
