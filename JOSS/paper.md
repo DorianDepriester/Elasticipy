@@ -144,7 +144,6 @@ This section presents the syntaxes of few basic operations performed with Elasti
 
 ````python
 from Elasticipy.tensors.elasticity import StiffnessTensor
-
 C = StiffnessTensor.cubic(C11=186, C12=134, C44=77)
 E = C.Young_modulus
 fig, _ = E.plot3D(n_phi=500, n_theta=500)
@@ -187,7 +186,6 @@ will create a tensor array corresponding to evenly-spaced strain along $[1,0,0]$
 
 ````python
 from Elasticipy.tensors.stress_strain import StrainTensor
-
 m = 1000  # length of tensor array
 mag = np.linspace(0, 0.1, m)  # Strain magnitude
 strain = StrainTensor.tensile([1, 0, 0], mag)
