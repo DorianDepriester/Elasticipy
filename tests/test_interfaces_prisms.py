@@ -3,8 +3,10 @@ from Elasticipy.interfaces.prisms_plasticity import from_quadrature_file, from_s
 from Elasticipy.tensors.second_order import SecondOrderTensor
 from Elasticipy.tensors.stress_strain import StressTensor
 import numpy as np
+import os
 
-quadrature_file = 'QuadratureOutputs.csv'
+current_dir = os.path.dirname(os.path.abspath(__file__))
+quadrature_file = os.path.join(current_dir, 'QuadratureOutputs.csv')
 
 class TestPRISMInterfaces(unittest.TestCase):
     def test_from_quadrature(self):
