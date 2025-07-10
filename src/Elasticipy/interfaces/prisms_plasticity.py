@@ -3,7 +3,7 @@ from Elasticipy.tensors.stress_strain import StressTensor
 import pandas as pd
 import numpy as np
 
-def rebuild_tensor(F11, F22, F33, F12, F13, F21, F23, F31, F32):
+def _rebuild_tensor(F11, F22, F33, F12, F13, F21, F23, F31, F32):
     return np.array([[F11, F12, F13], [F21, F22, F23], [F31, F32, F33]]).transpose((2,0,1))
 
 def from_quadrature_file(file, returns='stress'):
@@ -57,13 +57,13 @@ def from_quadrature_file(file, returns='stress'):
         elif rl == 'orientation':
             returned_values.append(np.array([rot1, rot2, rot3]).T)
         elif rl == 'elastic gradient':
-            Fe = rebuild_tensor(Fe11, Fe22, Fe33, Fe12, Fe13, Fe21, Fe23, Fe31, Fe32)
+            Fe = _rebuild_tensor(Fe11, Fe22, Fe33, Fe12, Fe13, Fe21, Fe23, Fe31, Fe32)
             returned_values.append(SecondOrderTensor(Fe))
         elif rl == 'plastic gradient':
-            Fp = rebuild_tensor(Fp11, Fp22, Fp33, Fp12, Fp13, Fp21, Fp23, Fp31, Fp32)
+            Fp = _rebuild_tensor(Fp11, Fp22, Fp33, Fp12, Fp13, Fp21, Fp23, Fp31, Fp32)
             returned_values.append(SecondOrderTensor(Fp))
         elif rl == 'stress':
-            stress = rebuild_tensor(*stress_compo)
+            stress = _rebuild_tensor(*stress_compo)
             returned_values.append(StressTensor(stress))
         else:
             raise ValueError('Unknown return type')
