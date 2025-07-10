@@ -4,6 +4,7 @@ from Elasticipy.tensors.second_order import SecondOrderTensor
 from Elasticipy.tensors.stress_strain import StressTensor
 import numpy as np
 import os
+import pandas as pd
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 quadrature_file = os.path.join(current_dir, 'QuadratureOutputs.csv')
@@ -13,6 +14,7 @@ quadrature_data = pd.read_csv(quadrature_file, header=None, usecols=range(0,37))
 class TestPRISMSInterfaces(unittest.TestCase):
     def test_from_quadrature(self):
         stress = from_quadrature_file(quadrature_file)
+        assert stress.shape == (len(quadrature_data),)
         assert isinstance(stress, StressTensor)
         for i in range(0,len(quadrature_data)):
             assert stress[i].C[0, 0] == quadrature_data.iloc[i,28]
