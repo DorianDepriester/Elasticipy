@@ -1,6 +1,6 @@
 import unittest
 from Elasticipy.interfaces.prisms_plasticity import from_quadrature_file, from_stressstrain_file
-from Elasticipy.tensors.second_order import SecondOrderTensor
+from Elasticipy.tensors.second_order import SecondOrderTensor, SymmetricSecondOrderTensor
 from Elasticipy.tensors.stress_strain import StressTensor
 import numpy as np
 import os
@@ -8,8 +8,10 @@ import pandas as pd
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 quadrature_file = os.path.join(current_dir, 'QuadratureOutputs.csv')
+stressstrain_file = os.path.join(current_dir, 'stressstrain.txt')
 
 quadrature_data = pd.read_csv(quadrature_file, header=None, usecols=range(0,37))
+stressstrain_data = pd.read_csv(stressstrain_file, sep='\t')
 
 class TestPRISMSInterfaces(unittest.TestCase):
     def test_from_quadrature(self):
@@ -39,7 +41,24 @@ class TestPRISMSInterfaces(unittest.TestCase):
         assert isinstance(a[7], SecondOrderTensor)
         assert isinstance(a[8], StressTensor)
 
-
+    def test_from_stressstrain(self):
+        E, stress = from_stressstrain_file(stressstrain_file)
+        assert E.shape == stress.shape == (len(stressstrain_data),)
+        assert isinstance(E, SymmetricSecondOrderTensor)
+        assert isinstance(stress, StressTensor)
+        for i in range(0,len(stressstrain_data)):
+            assert E[i].C[0, 0] == stressstrain_data['Exx'][i]
+            assert E[i].C[1, 1] == stressstrain_data['Eyy'][i]
+            assert E[i].C[2, 2] == stressstrain_data['Ezz'][i]
+            assert E[i].C[1, 2] == stressstrain_data['Eyz'][i]
+            assert E[i].C[0, 2] == stressstrain_data['Exz'][i]
+            assert E[i].C[0, 1] == stressstrain_data['Exy'][i]
+            assert stress[i].C[0, 0] == stressstrain_data['Txx'][i]
+            assert stress[i].C[1, 1] == stressstrain_data['Tyy'][i]
+            assert stress[i].C[2, 2] == stressstrain_data['Tzz'][i]
+            assert stress[i].C[1, 2] == stressstrain_data['Tyz'][i]
+            assert stress[i].C[0, 2] == stressstrain_data['Txz'][i]
+            assert stress[i].C[0, 1] == stressstrain_data['Txy'][i]
 
 
 
