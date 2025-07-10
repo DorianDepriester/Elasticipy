@@ -9,6 +9,7 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 quadrature_file = os.path.join(current_dir, 'QuadratureOutputs.csv')
 
 class TestPRISMInterfaces(unittest.TestCase):
+class TestPRISMSInterfaces(unittest.TestCase):
     def test_from_quadrature(self):
         stress = from_quadrature_file(quadrature_file)
         assert isinstance(stress, StressTensor)
