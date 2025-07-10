@@ -1444,7 +1444,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         >>> C.eig_stiffnesses
         array([ 52.,  52., 154., 154., 154., 454.])
         >>> C.eig_stiffnesses_multiplicity()
-        ([51.99999999999997, 154.0, 454.0], [2, 3, 1])
+        (array([ 52., 154., 454.]), array([2, 3, 1]))
         """
         eig = self.eig_stiffnesses
         counts = []
