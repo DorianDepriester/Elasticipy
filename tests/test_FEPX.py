@@ -3,7 +3,7 @@ from Elasticipy.interfaces.FEPX import from_step_file, from_results_folder
 from Elasticipy.tensors.second_order import SecondOrderTensor
 from Elasticipy.tensors.stress_strain import StrainTensor, StressTensor
 
-FEPX_DATA = 'simulation.sim/results/elts/'
+FEPX_DATA = 'interfaces/FEPX/simulation.sim/results/elts/'
 SIZE_FEPX_DATA = 2453
 NSTEP_FEPX_DATA = 3
 
