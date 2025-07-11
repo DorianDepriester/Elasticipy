@@ -1487,7 +1487,7 @@ class SymmetricSecondOrderTensor(SecondOrderTensor):
                              'matrices.')
 
     @classmethod
-    def from_Voigt(cls, array):
+    def from_Voigt(cls, array, voigt_map=None):
         """
         Construct a SymmetricSecondOrderTensor from a Voigt vector, or slices of Voigt vectors.
 
@@ -1498,6 +1498,10 @@ class SymmetricSecondOrderTensor(SecondOrderTensor):
         ----------
         array : np.ndarray or list
             array to build the SymmetricSecondOrderTensor from. We must have array.ndim>0 and array.shape[-1]==6.
+
+        Voigt_map : list or tuple, optional
+            6-lenght list of factors to use for mapping. If None (default), the default Voigt map of the constructor is
+            used.
 
         Returns
         -------
@@ -1516,7 +1520,9 @@ class SymmetricSecondOrderTensor(SecondOrderTensor):
          [12. 22. 23.]
          [13. 23. 33.]]
         """
-        matrix = _unmap(array, cls.voigt_map)
+        if voigt_map is None:
+            voigt_map = cls.voigt_map
+        matrix = _unmap(array, voigt_map)
         return cls(matrix)
 
     def to_Voigt(self):
