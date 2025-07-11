@@ -1,6 +1,7 @@
 import unittest
 from Elasticipy.interfaces.FEPX import from_step_file, from_results_folder
-from Elasticipy.tensors.second_order import SecondOrderTensor, SymmetricSecondOrderTensor
+from Elasticipy.tensors.second_order import SecondOrderTensor, SymmetricSecondOrderTensor, \
+    SkewSymmetricSecondOrderTensor
 from Elasticipy.tensors.stress_strain import StrainTensor, StressTensor
 import os
 
@@ -35,6 +36,10 @@ class TestFEPX(unittest.TestCase):
         assert isinstance(a, SecondOrderTensor) and not isinstance(a, SymmetricSecondOrderTensor)
         assert a.shape == (NSTEP_FEPX_DATA, SIZE_FEPX_DATA)
 
+    def test_spinrate_from_folder(self):
+        a = from_results_folder(FEPX_DATA + 'spinrate')
+        assert isinstance(a, SkewSymmetricSecondOrderTensor)
+        assert a.shape == (NSTEP_FEPX_DATA, SIZE_FEPX_DATA)
 
 if __name__ == '__main__':
     unittest.main()
