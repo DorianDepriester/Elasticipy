@@ -826,5 +826,16 @@ class TestStressStrainTensors(unittest.TestCase):
             from Elasticipy.StressStrainTensors import StressTensor, StrainTensor
         self.assertEqual(str(context.warning), expected_warn)
 
+    def test_stack(self):
+        size = 5
+        a = SecondOrderTensor.rand(shape=size)
+        b = SecondOrderTensor.rand(shape=size)
+        c = SecondOrderTensor.stack((a, b))
+        assert c.shape == (2, size)
+        assert np.all(c[0] == a) and np.all(c[1] == b)
+        c = SecondOrderTensor.stack((a,b), axis=1)
+        assert c.shape == (size, 2)
+        assert np.all(c[:,0] == a) and np.all(c[:,1] == b)
+
 if __name__ == '__main__':
     unittest.main()
