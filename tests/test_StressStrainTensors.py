@@ -833,9 +833,11 @@ class TestStressStrainTensors(unittest.TestCase):
         c = SecondOrderTensor.stack((a, b))
         assert c.shape == (2, size)
         assert np.all(c[0] == a) and np.all(c[1] == b)
-        c = SecondOrderTensor.stack((a,b), axis=1)
-        assert c.shape == (size, 2)
-        assert np.all(c[:,0] == a) and np.all(c[:,1] == b)
+        c2 = SecondOrderTensor.stack((a,b), axis=1)
+        assert c2.shape == (size, 2)
+        assert np.all(c2[:,0] == a) and np.all(c2[:,1] == b)
+        c3 = SecondOrderTensor.stack((a,b), axis=-1)
+        assert np.all(c3 == c2)
 
 if __name__ == '__main__':
     unittest.main()
