@@ -18,6 +18,7 @@ class TestFEPX(unittest.TestCase):
     def test_strain_from_file(self):
         a = from_step_file(FEPX_DATA + 'stress/stress.step0')
         assert isinstance(a, StressTensor)
+        assert a.shape == (SIZE_FEPX_DATA,)
 
     def test_stress_from_folder(self):
         a = from_results_folder(FEPX_DATA + 'strain')
