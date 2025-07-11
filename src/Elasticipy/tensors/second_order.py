@@ -1422,6 +1422,8 @@ class SecondOrderTensor:
         True
         """
         mat_array = [a.matrix for a in arrays]
+        if axis<0:
+            axis = axis - 2
         mat_stacked = np.stack(mat_array, axis=axis)
         return cls(mat_stacked)
 
