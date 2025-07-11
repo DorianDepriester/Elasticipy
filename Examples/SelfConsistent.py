@@ -81,9 +81,6 @@ def Kroner_Eshelby(Ci, g, method='strain', max_iter=5, atol=1e-3, rtol=1e-3, dis
             print('Iter #{}: abs. change={:0.5f}; rel. change={:0.5f}; error={:0.5f}'.format(k, max_abs_change, rel_change,err))
     return C_macro, message
 
-Cstrip = StiffnessTensor.transverse_isotropic(Ex= 10.2, Ez=146.8, nu_zx=0.274, nu_yx=0.355, Gxz=7)
-Cstrip = Cstrip * Rotation.from_euler('Y', 90, degrees=True)
-#orientations = Rotation.from_euler('Z', np.linspace(0, 180, 10, endpoint=False), degrees=True)
-orientations = Rotation.random(100, random_state=1234)
-Cstrip = StiffnessTensor.cubic(C11=186, C12=134, C44=77)
-C_stress, reason = Kroner_Eshelby(Cstrip, orientations, display=True, method='strain')
+C=StiffnessTensor.cubic(C11=108, C44=28.3, C12=62)
+orientations = Rotation.random(1000)
+Cmacro, msg = Kroner_Eshelby(C, orientations, method='stress')
