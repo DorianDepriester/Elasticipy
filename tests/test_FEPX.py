@@ -2,8 +2,10 @@ import unittest
 from Elasticipy.interfaces.FEPX import from_step_file, from_results_folder
 from Elasticipy.tensors.second_order import SecondOrderTensor
 from Elasticipy.tensors.stress_strain import StrainTensor, StressTensor
+import os
 
-FEPX_DATA = 'interfaces/FEPX/simulation.sim/results/elts/'
+current_dir = os.path.dirname(os.path.abspath(__file__))
+FEPX_DATA = os.path.join(current_dir,'interfaces/FEPX/simulation.sim/results/elts/')
 SIZE_FEPX_DATA = 2453
 NSTEP_FEPX_DATA = 3
 
