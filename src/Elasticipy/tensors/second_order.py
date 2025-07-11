@@ -1380,6 +1380,51 @@ class SecondOrderTensor:
         else:
             return Constructor(self.matrix)
 
+    @classmethod
+    def stack(cls, arrays, axis=0):
+        """
+        Stack tensor arrays along the specified axis.
+
+        Parameters
+        ----------
+        arrays : list of SecondOrderTensor or tuple of SecondOrderTensor
+            List of tensor to stack together
+        axis : int, optional
+            Axis along which to stack
+
+        Returns
+        -------
+        SecondOrderTensor
+            Stacked tensor array
+
+        Examples
+        --------
+        >>> from Elasticipy.tensors.second_order import SecondOrderTensor
+        >>> import numpy as np
+        >>> a = SecondOrderTensor.rand(shape=3)
+        >>> b = SecondOrderTensor.rand(shape=3)
+        >>> c = SecondOrderTensor.stack((a, b))
+        >>> c.shape
+        (2, 3)
+        >>> np.all(c[0] == a)
+        True
+        >>> np.all(c[1] == b)
+        True
+
+        >>> a = SecondOrderTensor.rand(shape=(3, 4))
+        >>> b = SecondOrderTensor.rand(shape=(3, 4))
+        >>> c = SecondOrderTensor.stack((a, b), axis=1)
+        >>> c.shape
+        (3, 2, 4)
+        >>> np.all(c[:,0,:] == a)
+        True
+        >>> np.all(c[:,1,:] == b)
+        True
+        """
+        mat_array = [a.matrix for a in arrays]
+        mat_stacked = np.stack(mat_array, axis=axis)
+        return cls(mat_stacked)
+
 
 class SymmetricSecondOrderTensor(SecondOrderTensor):
     voigt_map = [1, 1, 1, 1, 1, 1]
