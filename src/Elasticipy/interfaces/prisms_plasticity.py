@@ -31,7 +31,7 @@ def from_quadrature_file(file, returns='stress'):
     Returns
     -------
     ndarray or SecondOrderTensor or StressTensor
-        The number of returned value depends on the requested fields.
+        The number of returned values depends on the requested fields.
     """
     data=pd.read_csv(file, header=None, dtype=float, usecols=range(0,37))
     grainID, phaseID, detJ, twin, x, y, z, rot1, rot2, rot3, *other = data.T.to_numpy()
