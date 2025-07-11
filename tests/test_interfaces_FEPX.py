@@ -1,6 +1,6 @@
 import unittest
 from Elasticipy.interfaces.FEPX import from_step_file, from_results_folder
-from Elasticipy.tensors.second_order import SecondOrderTensor
+from Elasticipy.tensors.second_order import SecondOrderTensor, SymmetricSecondOrderTensor
 from Elasticipy.tensors.stress_strain import StrainTensor, StressTensor
 import os
 
@@ -27,7 +27,12 @@ class TestFEPX(unittest.TestCase):
 
     def test_defrate_from_folder(self):
         a = from_results_folder(FEPX_DATA + 'defrate')
-        assert isinstance(a, SecondOrderTensor)
+        assert isinstance(a, SymmetricSecondOrderTensor)
+        assert a.shape == (NSTEP_FEPX_DATA, SIZE_FEPX_DATA)
+
+    def test_velgrad_from_folder(self):
+        a = from_results_folder(FEPX_DATA + 'velgrad')
+        assert isinstance(a, SecondOrderTensor) and not isinstance(a, SymmetricSecondOrderTensor)
         assert a.shape == (NSTEP_FEPX_DATA, SIZE_FEPX_DATA)
 
 
