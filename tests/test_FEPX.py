@@ -1,0 +1,32 @@
+import unittest
+from Elasticipy.interfaces.FEPX import from_step_file, from_results_folder
+from Elasticipy.tensors.second_order import SecondOrderTensor
+from Elasticipy.tensors.stress_strain import StrainTensor, StressTensor
+
+FEPX_DATA = 'simulation.sim/results/elts/'
+SIZE_FEPX_DATA = 2453
+NSTEP_FEPX_DATA = 3
+
+class TestFEPX(unittest.TestCase):
+    def test_stress_from_file(self):
+        a = from_step_file(FEPX_DATA + 'strain/strain.step0')
+        assert isinstance(a, StrainTensor)
+        assert a.shape == (SIZE_FEPX_DATA,)
+
+    def test_strain_from_file(self):
+        a = from_step_file(FEPX_DATA + 'stress/stress.step0')
+        assert isinstance(a, StressTensor)
+
+    def test_stress_from_folder(self):
+        a = from_results_folder(FEPX_DATA + 'strain')
+        assert isinstance(a, StrainTensor)
+        assert a.shape == (NSTEP_FEPX_DATA, SIZE_FEPX_DATA)
+
+    def test_defrate_from_folder(self):
+        a = from_results_folder(FEPX_DATA + 'defrate')
+        assert isinstance(a, SecondOrderTensor)
+        assert a.shape == (NSTEP_FEPX_DATA, SIZE_FEPX_DATA)
+
+
+if __name__ == '__main__':
+    unittest.main()
