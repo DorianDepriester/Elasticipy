@@ -1,4 +1,5 @@
-from Elasticipy.tensors.second_order import SymmetricSecondOrderTensor, SecondOrderTensor
+from Elasticipy.tensors.second_order import SymmetricSecondOrderTensor, SecondOrderTensor, \
+    SkewSymmetricSecondOrderTensor
 from Elasticipy.tensors.stress_strain import StressTensor, StrainTensor
 import pandas as pd
 import numpy as np
@@ -38,9 +39,16 @@ def from_step_file(file):
     elif base_name == 'stress':
         return StressTensor.from_Voigt(array)
     else:
-        if array.shape[1] == 6:
+        n_compo = array.shape[1]
+        if n_compo == 3:
+            zeros = np.zeros(array.shape[0])
+            mat = np.array([[ zeros,         array[:, 0],   array[:, 1]],
+                            [-array[:, 0],  zeros,          array[:, 2]],
+                            [-array[:, 1], -array[:, 2],    zeros     ]]).transpose((2, 0, 1))
+            return SkewSymmetricSecondOrderTensor(mat)
+        elif n_compo == 6:
             return SymmetricSecondOrderTensor.from_Voigt(array)
-        elif array.shape[1] == 9:
+        elif n_compo == 9:
             mat = np.array([[array[:,0], array[:,1], array[:,2]],
                             [array[:,3], array[:,4], array[:,5]],
                             [array[:,6], array[:,7], array[:,8]]]).transpose((2,0,1))
