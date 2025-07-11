@@ -7,8 +7,8 @@ import os
 import pandas as pd
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
-quadrature_file = os.path.join(current_dir, 'QuadratureOutputs.csv')
-stressstrain_file = os.path.join(current_dir, 'stressstrain.txt')
+quadrature_file = os.path.join(current_dir, 'interfaces/PRISMS/QuadratureOutputs.csv')
+stressstrain_file = os.path.join(current_dir, 'interfaces/PRISMS/stressstrain.txt')
 
 quadrature_data = pd.read_csv(quadrature_file, header=None, usecols=range(0,37))
 stressstrain_data = pd.read_csv(stressstrain_file, sep='\t')
