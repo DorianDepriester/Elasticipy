@@ -111,5 +111,5 @@ def from_results_folder(folder, dtype=None):
                 constructor = type(data_file)
             elif constructor != type(data_file):
                 raise ValueError('The types of data contained in {} seem to be inconsistent.'.format(folder))
-            array.append(from_step_file(file))
-    return dtype.stack(array)
+            array.append(data_file)
+    return constructor.stack(array)
