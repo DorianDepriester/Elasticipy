@@ -73,7 +73,7 @@ def from_step_file(file, dtype=None):
             return SecondOrderTensor(mat)
 
 
-def from_results_folder(folder):
+def from_results_folder(folder, dtype=None):
     """
     Import all result data (all steps) from a given FEPX's results folder
 
@@ -81,6 +81,16 @@ def from_results_folder(folder):
     ----------
     folder : str
         Path to the results folder
+    dtype : str, optional
+        If provided, force sets the type of returned array. It can be:
+          - None (let the function infer the dtype from the data)
+          - SecondOrderTensor
+          - SymmetricSecondOrderTensor
+          - SkewSymmetricSecondOrderTensor
+          - stressTensor
+          - strainTensor
+          - float
+          - int
 
     Returns
     -------
@@ -92,14 +102,14 @@ def from_results_folder(folder):
     folder_name = dir_path.name
     if not dir_path.is_dir():
         raise ValueError(f"{folder} is not a valid directory.")
-    dtype = None
+    constructor = None
     array = []
     for file in dir_path.iterdir():
         if file.is_file() and file.name.startswith(folder_name):
-            data_file = from_step_file(str(file))
-            if dtype is None:
-                dtype = type(data_file)
-            elif dtype != type(data_file):
+            data_file = from_step_file(str(file), dtype=dtype)
+            if constructor is None:
+                constructor = type(data_file)
+            elif constructor != type(data_file):
                 raise ValueError('The types of data contained in {} seem to be inconsistent.'.format(folder))
             array.append(from_step_file(file))
     return dtype.stack(array)
