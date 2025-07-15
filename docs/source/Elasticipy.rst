@@ -13,7 +13,8 @@ Submodules
    Elasticipy.tensors.stress_strain
    Elasticipy.spherical_function
    Elasticipy.plasticity
-
+   Elasticipy.interfaces.PRISMS
+   Elasticipy.interfaces.FEPX
 
 Module contents
 ---------------
