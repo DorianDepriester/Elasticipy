@@ -7,6 +7,16 @@ import os
 import re
 from pathlib import Path
 
+DTYPES={'stress':StressTensor,
+        'strain':StrainTensor,
+        'strain_el':StrainTensor,
+        'strain_pl':StrainTensor,
+        'velgrad':SecondOrderTensor,
+        'defrate':SymmetricSecondOrderTensor,
+        'defrate_pl':SymmetricSecondOrderTensor,
+        'spinrate':SkewSymmetricSecondOrderTensor,
+        }
+
 
 def _list_valid_filenames(folder, startswith='strain'):
     file_list = os.listdir(folder)
@@ -17,86 +27,77 @@ def from_step_file(file, dtype=None):
     """
     Import data from a single step file given by FEPX.
 
-    The type of data is inferred from the file basename ("strain.stepX" -> StrainTensor, "stress.stepX" -> StressTensor
-    etc.)
+    The type of returns is inferred from the data one wants to parse
+    (according the `FEPX documentation <https://fepx.info/doc/output.html>`_ ).
 
     Parameters
     ----------
     file : str
         Path to the file to read
-    dtype : str, optional
-        If provided, force sets the type of returned array. It can be:
-          - None (let the function infer the dtype from the data)
+    dtype : type, optional
+        If provided, sets the type of returned array. It can be:
+          - float
           - SecondOrderTensor
           - SymmetricSecondOrderTensor
           - SkewSymmetricSecondOrderTensor
           - stressTensor
           - strainTensor
-          - float
-          - int
 
     Returns
     -------
-    SecondOrderTensor
+    SecondOrderTensor or numpy.ndarray
         Array of second-order tensors built from the read data. The array will be of shape (n,), where n is the number
         of elements in the mesh.
     """
     data = pd.read_csv(file, header=None, sep=' ')
     array = data.to_numpy()
     base_name = os.path.splitext(os.path.basename(file))[0]
-    if isinstance(dtype, str):
-        dtype = re.sub('[^A-Za-z0-9]+', '', dtype).lower()
-    if base_name == 'strain' or dtype=='straintensor':
-        return StrainTensor.from_Voigt(array, voigt_map=[1,1,1,1,1,1])
-    elif base_name == 'stress' or dtype=='stresstensor':
-        return StressTensor.from_Voigt(array)
-    else:
-        n_compo = array.shape[1]
-        if n_compo == 3:
-            if dtype is None:
-                raise ValueError('I cannot automatically infer the dtype from the data. Use dtype option to set whether'
-                                 ' it is a float array or a skew-symmetric second-order tensor array.')
-            elif dtype == 'skewsymmetricsecondordertensor':
-                zeros = np.zeros(array.shape[0])
-                mat = np.array([[ zeros,         array[:, 0],   array[:, 1]],
-                                [-array[:, 0],  zeros,          array[:, 2]],
-                                [-array[:, 1], -array[:, 2],    zeros     ]]).transpose((2, 0, 1))
-                return SkewSymmetricSecondOrderTensor(mat)
-            elif dtype == 'float':
-                return array
-        elif n_compo == 6:
-            return SymmetricSecondOrderTensor.from_Voigt(array)
-        elif n_compo == 9:
-            mat = np.array([[array[:,0], array[:,1], array[:,2]],
-                            [array[:,3], array[:,4], array[:,5]],
-                            [array[:,6], array[:,7], array[:,8]]]).transpose((2,0,1))
-            return SecondOrderTensor(mat)
+    if dtype is None:
+        if base_name in DTYPES:
+            dtype = DTYPES[base_name]
+        else:
+            dtype = float
+    if issubclass(dtype,SymmetricSecondOrderTensor):
+        return dtype.from_Voigt(array, voigt_map=[1,1,1,1,1,1])
+    elif dtype == SkewSymmetricSecondOrderTensor:
+        zeros = np.zeros(array.shape[0])
+        mat = np.array([[ zeros,         array[:, 0],   array[:, 1]],
+                        [-array[:, 0],  zeros,          array[:, 2]],
+                        [-array[:, 1], -array[:, 2],    zeros     ]]).transpose((2, 0, 1))
+        return SkewSymmetricSecondOrderTensor(mat)
+    elif dtype == SecondOrderTensor:
+        length = array.shape[0]
+        return SecondOrderTensor(array.reshape((length,3,3)))
+    elif dtype == float:
+        return array
+
 
 
 def from_results_folder(folder, dtype=None):
     """
-    Import all result data (all steps) from a given FEPX's results folder
+    Import all data of a given field from FEPX results folder.
+
+    The type of returns is inferred from the data one wants to parse
+    (according the `FEPX documentation <https://fepx.info/doc/output.html>`_ ).
 
     Parameters
     ----------
     folder : str
-        Path to the results folder
-    dtype : str, optional
-        If provided, force sets the type of returned array. It can be:
-          - None (let the function infer the dtype from the data)
+        Path to the folder to read the results from
+    dtype : type, optional
+        If provided, sets the type of returned array. It can be:
+          - float
           - SecondOrderTensor
           - SymmetricSecondOrderTensor
           - SkewSymmetricSecondOrderTensor
           - stressTensor
           - strainTensor
-          - float
-          - int
 
     Returns
     -------
-    SecondOrderTensor
-        Array of second-order tensors built from the read data. The array will be of shape (m,n), where m is the number
-        of steps and n is the number of elements in the mesh.
+    SecondOrderTensor or numpy.ndarray
+        Array of second-order tensors built from the read data. The array will be of shape (m, n), where m is the number
+         of time increment n is the number of elements in the mesh.
     """
     dir_path = Path(folder)
     folder_name = dir_path.name
@@ -112,4 +113,7 @@ def from_results_folder(folder, dtype=None):
             elif constructor != type(data_file):
                 raise ValueError('The types of data contained in {} seem to be inconsistent.'.format(folder))
             array.append(data_file)
-    return constructor.stack(array)
+    if constructor == np.ndarray:
+        return np.stack(array, axis=0)
+    else:
+        return constructor.stack(array)
