@@ -4,6 +4,7 @@ from Elasticipy.tensors.second_order import SecondOrderTensor, SymmetricSecondOr
     SkewSymmetricSecondOrderTensor
 from Elasticipy.tensors.stress_strain import StrainTensor, StressTensor
 import os
+import numpy as np
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 FEPX_DATA = os.path.join(current_dir,'interfaces/FEPX/simulation.sim/results/elts/')
@@ -40,6 +41,11 @@ class TestFEPX(unittest.TestCase):
         a = from_results_folder(FEPX_DATA + 'spinrate')
         assert isinstance(a, SkewSymmetricSecondOrderTensor)
         assert a.shape == (NSTEP_FEPX_DATA, SIZE_FEPX_DATA)
+
+    def test_orientation_from_folder(self):
+        a = from_results_folder(FEPX_DATA + 'ori')
+        assert isinstance(a, np.ndarray)
+        assert a.shape == (NSTEP_FEPX_DATA, SIZE_FEPX_DATA, 3)
 
 if __name__ == '__main__':
     unittest.main()
