@@ -37,12 +37,7 @@ class TestFEPX(unittest.TestCase):
         assert a.shape == (NSTEP_FEPX_DATA, SIZE_FEPX_DATA)
 
     def test_spinrate_from_folder(self):
-        with self.assertRaises(ValueError) as context:
-            _ = from_results_folder(FEPX_DATA + 'spinrate')
-        expected_error = ('I cannot automatically infer the dtype from the data. Use dtype option to set whether '
-                          'it is a float array or a skew-symmetric second-order tensor array.')
-        a = from_results_folder(FEPX_DATA + 'spinrate', dtype = 'skew-symmetric second-order tensor')
-        self.assertEqual(str(context.exception), expected_error)
+        a = from_results_folder(FEPX_DATA + 'spinrate')
         assert isinstance(a, SkewSymmetricSecondOrderTensor)
         assert a.shape == (NSTEP_FEPX_DATA, SIZE_FEPX_DATA)
 
