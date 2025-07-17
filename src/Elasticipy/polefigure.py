@@ -101,6 +101,27 @@ class LambertScale(mscale.ScaleBase):
 mscale.register_scale(LambertScale)
 
 def add_polefigure(fig, *args, projection='stereographic', **kwargs):
+    """
+    Add a pole figure to the figure object.
+
+    Parameters
+    ----------
+    fig : matplotlib.figure.Figure
+        Handle to an existing figure
+    args : list
+        Positional arguments to pass to the subplot constructor
+    projection : str, optional
+        Projection to use. I can be 'stereographic' (default), 'equal area' or 'lambert' (which is equivalent to equal
+        area).
+
+    kwargs : dict
+        Keyword arguments to pass to the subplot constructor
+
+    Returns
+    -------
+    matplotlib.axes._subplots.AxesSubplot
+        Handle to the added axes
+    """
     if projection.lower() == 'equal area':
         projection = 'lambert'
     ax = fig.add_subplot(*args, projection='polar', **kwargs)
