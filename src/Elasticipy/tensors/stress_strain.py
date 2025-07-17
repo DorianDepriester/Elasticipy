@@ -49,7 +49,8 @@ class StrainTensor(SymmetricSecondOrderTensor):
 
         Returns
         -------
-        Volumetric elastic energy
+        float or numpy.ndarray
+            Volumetric elastic energy
         """
         return 0.5 * self.ddot(stress)
 
