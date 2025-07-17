@@ -1619,6 +1619,19 @@ class SymmetricSecondOrderTensor(SecondOrderTensor):
         return np.flip(eigvals,axis=-1)
 
     def draw_Mohr_circles(self):
+        """
+        Draw the Mohr circles of the symmetric second-order tensor
+
+        Given a tensor, the Mohr circles are meant to visually illustrate the possible shear components one can find
+        when randomly rotating the tensor. See `here <https://en.wikipedia.org/wiki/Mohr%27s_circle>`_ for details.
+
+        Returns
+        -------
+        fig : matplotlib.figure.Figure
+            The Matplotlib figure containing the plot.
+        ax : matplotlib.axes._axes.Axes
+            The Matplotlib axes of the plot.
+        """
         c,b,a = self.eigvals()
 
         # Sizes and locations of circles
