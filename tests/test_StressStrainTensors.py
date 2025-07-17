@@ -839,5 +839,22 @@ class TestStressStrainTensors(unittest.TestCase):
         c3 = SecondOrderTensor.stack((a,b), axis=-1)
         assert np.all(c3 == c2)
 
+    def test_Mohr_circles(self):
+        s11 = 5
+        t = StressTensor.tensile([1,0,0], s11)
+        fig, ax = t.draw_Mohr_circles()
+        assert ax.get_xlabel() == 'Normal stress'
+        assert ax.get_ylabel() == 'Shear stress'
+        assert np.all(ax.get_xticks() == (0, 0.5*s11, s11))
+        assert np.all(ax.get_yticks() == (-0.5*s11, 0., 0.5*s11))
+
+        e12 = 5
+        t = StrainTensor.shear([1,0,0], [0,1,0], e12)
+        fig, ax = t.draw_Mohr_circles()
+        assert ax.get_xlabel() == 'Normal strain'
+        assert ax.get_ylabel() == 'Shear strain'
+        assert np.all(ax.get_xticks() == (-e12, -e12/2, 0, e12/2, e12))
+        assert np.all(ax.get_yticks() == (-e12, -e12/2, 0, e12/2, e12))
+
 if __name__ == '__main__':
     unittest.main()
