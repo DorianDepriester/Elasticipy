@@ -103,7 +103,7 @@ Let's consider a random stress tensor:
      [0.57185244 0.54433445 0.81975456]]
 
 A practical way to visualize its principal stresses and the possible shear stresses is to draw the
-`Mohr circles <https://en.wikipedia.org/wiki/Mohr%27s_circle>`_ :
+`Mohr circles <https://en.wikipedia.org/wiki/Mohr%27s_circle>`_:
 
     >>> fig, ax = s.draw_Mohr_circles()
     >>> fig.show()
