@@ -1653,8 +1653,10 @@ class SymmetricSecondOrderTensor(SecondOrderTensor):
         ax.set_xlabel(f"Normal")
         ax.set_ylabel(f"Shear")
         ax.grid(True)
-        ax.set_xticks((a,b,c, center1[0], center2[0]))
-        ax.set_yticks((-r3, -r2, -r1, 0, r1, r2, r3))
+        xticks = (a,b,c, center1[0], center2[0])
+        ax.set_xticks(np.unique(xticks))
+        yticks = (-r3, -r2, -r1, 0, r1, r2, r3)
+        ax.set_yticks(np.unique(yticks))
 
         return fig, ax
 
