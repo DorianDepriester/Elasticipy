@@ -111,6 +111,18 @@ A practical way to visualize its principal stresses and the possible shear stres
 .. image:: images/Mohr.png
         :width: 600
 
+In this figure, one can see that the principal stresses are around 1.512, 0.352 and -0.186 (in decreasing order); and
+that the maximum shear stress is around 0.849. Those can be checked by:
+
+    >>> s.principal_stresses()
+    array([ 1.51167769,  0.3519979 , -0.18566326])
+    >>> s.Tresca() / 2
+    0.848670477704235
+
+
+.. note::
+
+    As a recall, the Tresca's equivalent stress is defined as half the maximum shear stress.
 
 .. _multidimensional-arrays:
 
