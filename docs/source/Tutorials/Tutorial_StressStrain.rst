@@ -91,6 +91,27 @@ and check that we retrieve the correct (initial) strain:
      [0.001 0.    0.   ]
      [0.    0.    0.   ]]
 
+The Mohr circles
+----------------
+Let's consider a random stress tensor:
+
+    >>> s = StressTensor.rand(seed=123) # Use seed to ensure reproducibility
+    >>> s
+    Stress tensor
+    [[0.68235186 0.11909641 0.57185244]
+     [0.11909641 0.1759059  0.54433445]
+     [0.57185244 0.54433445 0.81975456]]
+
+A practical way to visualize its principal stresses and the possible shear stresses is to draw the
+`Mohr circles <https://en.wikipedia.org/wiki/Mohr%27s_circle>`_ :
+
+    >>> fig, ax = s.draw_Mohr_circles()
+    >>> fig.show()
+
+.. image:: images/Mohr.png
+        :width: 600
+
+
 .. _multidimensional-arrays:
 
 Multidimensional tensor arrays
