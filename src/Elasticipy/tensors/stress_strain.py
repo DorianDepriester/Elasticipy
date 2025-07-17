@@ -38,7 +38,7 @@ class StrainTensor(SymmetricSecondOrderTensor):
         """von Mises equivalent strain"""
         return np.sqrt(2/3 * self.ddot(self))
 
-    def elastic_energy(self, stress):
+    def elastic_energy(self, stress, mode='pair'):
         """
         Compute the elastic energy.
 
@@ -46,13 +46,16 @@ class StrainTensor(SymmetricSecondOrderTensor):
         ----------
         stress : StressTensor
             Corresponding stress tensor
+        mode : str, optional
+            If 'pair' (default), the elastic energies are computed element-wise. Broadcasting rule applies.
+            If 'cross', each cross-combination of stress and strain are considered.
 
         Returns
         -------
         float or numpy.ndarray
             Volumetric elastic energy
         """
-        return 0.5 * self.ddot(stress)
+        return 0.5 * self.ddot(stress, mode=mode)
 
     def draw_Mohr_circles(self):
         fig, ax = super().draw_Mohr_circles()
