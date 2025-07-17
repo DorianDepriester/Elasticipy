@@ -1,5 +1,5 @@
 import warnings
-
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from scipy.spatial.transform import Rotation
@@ -74,6 +74,15 @@ def _map(matrix, mapping_convention):
         j, k = _voigt_numbering[i]
         array[...,i] = matrix[...,j,k]
     return array * mapping_convention
+
+def filldraw_circle(ax, center, radius, color, fill=False, alpha=1.):
+    theta = np.linspace(0, 2 * np.pi, 500)
+    x = center[0] + radius * np.cos(theta)
+    y = center[1] + radius * np.sin(theta)
+    if fill:
+        ax.fill(x, y, color=color, alpha=alpha)
+    else:
+        ax.plot(x, y, color=color)
 
 kelvin_mapping = [1, 1, 1, np.sqrt(2), np.sqrt(2), np.sqrt(2)]
 
@@ -1608,6 +1617,33 @@ class SymmetricSecondOrderTensor(SecondOrderTensor):
         """
         eigvals = np.linalg.eigvalsh(self.matrix)
         return np.flip(eigvals,axis=-1)
+
+    def draw_Mohr_circles(self):
+        c,b,a = self.eigvals()
+
+        # Sizes and locations of circles
+        r1 = (c - b) / 2
+        r2 = (b - a) / 2
+        r3 = (c - a) / 2
+        center1 = ((b + c) /2, 0)
+        center2 = ((a + b) /2, 0)
+        center3 = ((a + c) /2, 0)
+
+        fig, ax = plt.subplots()
+        filldraw_circle(ax, center1, r1, 'skyblue')
+        filldraw_circle(ax, center2, r2, 'lightgreen')
+        filldraw_circle(ax, center3, r3, 'red')
+        filldraw_circle(ax, center3, r3, 'red', fill=True, alpha=0.2)
+        filldraw_circle(ax, center1, r1, 'white', fill=True)
+        filldraw_circle(ax, center2, r2, 'white', fill=True)
+        ax.set_aspect('equal')
+        ax.set_xlabel(f"Normal")
+        ax.set_ylabel(f"Shear")
+        ax.grid(True)
+        ax.set_xticks((a,b,c, center1[0], center2[0]))
+        ax.set_yticks((-r3, -r2, -r1, 0, r1, r2, r3))
+
+        return fig, ax
 
 
 class SkewSymmetricSecondOrderTensor(SecondOrderTensor):

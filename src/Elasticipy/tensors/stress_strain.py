@@ -53,6 +53,12 @@ class StrainTensor(SymmetricSecondOrderTensor):
         """
         return 0.5 * self.ddot(stress)
 
+    def draw_Mohr_circles(self):
+        fig, ax = super().draw_Mohr_circles()
+        ax.set_xlabel(ax.get_xlabel() + ' strain')
+        ax.set_ylabel(ax.get_ylabel() + ' strain')
+        return fig, ax
+
 
 class StressTensor(SymmetricSecondOrderTensor):
     """
@@ -136,3 +142,9 @@ class StressTensor(SymmetricSecondOrderTensor):
             Volumetric elastic energy
         """
         return 0.5 * self.ddot(strain, mode=mode)
+
+    def draw_Mohr_circles(self):
+        fig, ax = super().draw_Mohr_circles()
+        ax.set_xlabel(ax.get_xlabel() + ' stress')
+        ax.set_ylabel(ax.get_ylabel() + ' stress')
+        return fig, ax
