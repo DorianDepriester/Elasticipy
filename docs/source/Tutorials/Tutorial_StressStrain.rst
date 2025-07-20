@@ -198,8 +198,8 @@ for details) or not. For instance, if we want to compute the divergence of ``sig
            [ 0.        , 11.11111111,  0.        ]])
 
 Here, the *i*-th row provides the divergence vector for the *i*-th stress tensor.
-See `the full documentation <../Elasticipy.SecondOrderTensor.html#Elasticipy.SecondOrderTensor.SecondOrderTensor.div>`_ for
-details about this function.
+See `the full documentation <../Elasticipy.tensors.second_order.html#Elasticipy.tensors.second_order.SecondOrderTensor.div>`_
+for details about this function.
 
 .. _strain_rotations:
 
