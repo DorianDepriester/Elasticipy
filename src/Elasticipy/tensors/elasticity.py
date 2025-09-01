@@ -645,8 +645,12 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         bulk_modulus : bulk modulus of the material
         """
         self._single_tensor_only('linear_compressibility')
-        def compute_linear_compressibility(n):
-            return _compute_unit_strain_along_direction(self, n, n, direction='spherical')
+        if isinstance(self, ComplianceTensor):
+            S = self
+        else:
+            S = self.inv()
+        def compute_linear_compressibility(u):
+            return np.einsum('ijkk,...i,...j->...',S.full_tensor(),u,u)
 
         return SphericalFunction(compute_linear_compressibility)
 
