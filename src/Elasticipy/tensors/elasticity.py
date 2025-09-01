@@ -619,10 +619,14 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         where :math:`\\varepsilon_{jj}` denotes the (compressive) longitudinal strain along the j-th direction.
         """
         self._single_tensor_only('Poisson_ratio')
-        def compute_PoissonRatio(m, n):
-            eps1 = _compute_unit_strain_along_direction(self, m, m)
-            eps2 = _compute_unit_strain_along_direction(self, m, n, direction='transverse')
-            return -eps2 / eps1
+        if isinstance(self, ComplianceTensor):
+            Sfull = self.full_tensor()
+        else:
+            Sfull = self.inv().full_tensor()
+        def compute_PoissonRatio(u, v):
+            numer = np.einsum('ijkl,...i,...j,...k,...l->...',Sfull,v,v,u,u)
+            denom = np.einsum('ijkl,...i,...j,...k,...l->...',Sfull,u,u,u,u)
+            return -numer / denom
 
         return HyperSphericalFunction(compute_PoissonRatio)
 
