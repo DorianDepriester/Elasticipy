@@ -583,9 +583,13 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
             Shear modulus
         """
         self._single_tensor_only('shear_modulus')
-        def compute_shear_modulus(m, n):
-            eps = _compute_unit_strain_along_direction(self, m, n)
-            return 1 / (4 * eps)
+        if isinstance(self, ComplianceTensor):
+            S = self
+        else:
+            S = self.inv()
+        def compute_shear_modulus(u, v):
+            G =  0.25/np.einsum('ijkl,...i,...j,...k,...l->...',S.full_tensor(),u,v,u,v)
+            return G
 
         return HyperSphericalFunction(compute_shear_modulus)
 
