@@ -12,19 +12,6 @@ _compliance_mapping_voigt = np.array([[1., 1., 1., 2., 2., 2.],
                                       [2., 2., 2., 4., 4., 4.],
                                       [2., 2., 2., 4., 4., 4.]])
 
-def _compute_unit_strain_along_direction(S, m, n, direction='longitudinal'):
-    if not isinstance(S, ComplianceTensor):
-        S = S.inv()
-    if direction == 'transverse':
-        ein_str = 'ijkl,pi,pj,pk,pl->p'
-        return np.einsum(ein_str, S.full_tensor(), m, m, n, n)
-    elif direction == 'longitudinal':
-        ein_str = 'ijkl,pi,pk,pj,pl->p'
-        return np.einsum(ein_str, S.full_tensor(), m, m, n, n)
-    else:
-        ein_str = 'ijkk,pi,pj->p'
-        return np.einsum(ein_str, S.full_tensor(), m, m)
-
 def _parse_tensor_components(prefix, **kwargs):
     pattern = r'^{}(\d{{2}})$'.format(prefix)
     value = dict()
