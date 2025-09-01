@@ -566,9 +566,13 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
             Young's modulus
         """
         self._single_tensor_only('Young_modulus')
-        def compute_young_modulus(n):
-            eps = _compute_unit_strain_along_direction(self, n, n)
-            return 1 / eps
+        if isinstance(self, ComplianceTensor):
+            S = self
+        else:
+            S = self.inv()
+        def compute_young_modulus(u):
+            a = np.einsum('ijkl,...i,...j,...k,...l->...', S.full_tensor(), u, u, u, u)
+            return 1 / a
 
         return SphericalFunction(compute_young_modulus)
 
