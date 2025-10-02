@@ -1007,7 +1007,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
         See Also
         --------
-        ChristoffelTensor : Computes the Christoffel tensor along a given direction
+        Christoffel_tensor : Computes the Christoffel tensor along a given direction
 
         Returns
         -------
