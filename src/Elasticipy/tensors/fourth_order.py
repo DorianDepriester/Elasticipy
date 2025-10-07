@@ -432,6 +432,8 @@ class FourthOrderTensor:
         return_full_tensor : bool, optional
             If True, return the full tensor as a (3,3,3,3) or a (...,3,3,3,3) array. Otherwise, the tensor is returned
             as a SymmetricTensor object.
+        mapping : str, optional
+            Mapping convention to use. Must be either Kelvin or Voigt.
 
         Returns
         -------
