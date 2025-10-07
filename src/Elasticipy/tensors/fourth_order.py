@@ -454,6 +454,34 @@ class FourthOrderTensor:
         else:
             return cls(full, mapping=mapping)
 
+    @classmethod
+    def identity_spherical_part(cls, shape=(), return_full_tensor=False, mapping='Kelvin'):
+        eye = np.eye(3)
+        if isinstance(shape, int):
+            shape = (shape,)
+        if len(shape):
+            for n in np.flip(shape):
+                eye = np.repeat(eye[np.newaxis,...], n, axis=0)
+        J = np.einsum('...ij,...kl->...ijkl',eye, eye)/3
+        if return_full_tensor:
+            return J
+        else:
+            return FourthOrderTensor(J, mapping=mapping)
+
+    @classmethod
+    def identity_deviatoric_part(cls, shape=(), return_full_tensor=False, mapping='Kelvin'):
+        I = FourthOrderTensor.identity(shape, return_full_tensor, mapping)
+        J = FourthOrderTensor.identity_spherical_part(shape, return_full_tensor, mapping)
+        return I-J
+
+    def spherical_part(self):
+        I = self.identity_spherical_part(shape=self.shape)
+        return I.ddot(self)
+
+    def deviatoric_part(self):
+        K = self.identity_deviatoric_part(shape=self.shape)
+        return K.ddot(self)
+
     def inv(self):
         """
         Invert the tensor. The inverted tensors inherits the properties (if any)
@@ -487,6 +515,7 @@ class FourthOrderTensor:
             shape = shape + (6,6)
         zeros = np.zeros(shape)
         return cls(zeros)
+
 
 class SymmetricFourthOrderTensor(FourthOrderTensor):
     tensor_name = 'Symmetric 4th-order'
