@@ -456,6 +456,22 @@ class FourthOrderTensor:
 
     @classmethod
     def identity_spherical_part(cls, shape=(), return_full_tensor=False, mapping='Kelvin'):
+        """
+        Return the spherical part of the identity tensor
+
+        Parameters
+        ----------
+        shape : tuple of int, optional
+            Shape of the tensor to create
+        return_full_tensor : bool, optional
+            if true, the full tensor is returned as a (3,3,3,3) or a (...,3,3,3,3) array
+        mapping : str, optional
+            Mapping convention to use. Must be either Kelvin or Voigt.
+
+        Returns
+        -------
+        FourthOrderTensor or SymmetricTensor
+        """
         eye = np.eye(3)
         if isinstance(shape, int):
             shape = (shape,)
@@ -470,15 +486,47 @@ class FourthOrderTensor:
 
     @classmethod
     def identity_deviatoric_part(cls, shape=(), return_full_tensor=False, mapping='Kelvin'):
+        """
+        Return the deviatoric part of the identity tensor
+
+        Parameters
+        ----------
+        shape : tuple of int, optional
+            Shape of the tensor to create
+        return_full_tensor : bool, optional
+            if true, the full tensor is returned as a (3,3,3,3) or a (...,3,3,3,3) array
+        mapping : str, optional
+            Mapping convention to use. Must be either Kelvin or Voigt.
+
+        Returns
+        -------
+        FourthOrderTensor or SymmetricTensor
+        """
         I = FourthOrderTensor.identity(shape, return_full_tensor, mapping)
         J = FourthOrderTensor.identity_spherical_part(shape, return_full_tensor, mapping)
         return I-J
 
     def spherical_part(self):
+        """
+        Return the spherical part of the tensor
+
+        Returns
+        -------
+        FourthOrderTensor
+            Spherical part of the tensor
+        """
         I = self.identity_spherical_part(shape=self.shape)
         return I.ddot(self)
 
     def deviatoric_part(self):
+        """
+        Return the deviatoric part of the tensor
+
+        Returns
+        -------
+        FourthOrderTensor
+            Deviatoric part of the tensor
+        """
         K = self.identity_deviatoric_part(shape=self.shape)
         return K.ddot(self)
 
