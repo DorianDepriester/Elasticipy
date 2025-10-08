@@ -3,15 +3,7 @@ from Elasticipy.tensors.second_order import SymmetricSecondOrderTensor, rotation
     SecondOrderTensor, ALPHABET
 from scipy.spatial.transform import Rotation
 from copy import deepcopy
-
-a = np.sqrt(2)
-KELVIN_MAPPING_MATRIX = np.array([[1, 1, 1, a, a, a],
-                                  [1, 1, 1, a, a, a],
-                                  [1, 1, 1, a, a, a],
-                                  [a, a, a, 2, 2, 2],
-                                  [a, a, a, 2, 2, 2],
-                                  [a, a, a, 2, 2, 2], ])
-
+from Elasticipy.tensors.mapping import KelvinMapping
 
 def voigt_indices(i, j):
     """
@@ -82,7 +74,7 @@ class FourthOrderTensor:
     """
     tensor_name = '4th-order'
 
-    def __init__(self, M, mapping='Kelvin', check_minor_symmetry=True, force_minor_symmetry=False):
+    def __init__(self, M, mapping=KelvinMapping(), check_minor_symmetry=True, force_minor_symmetry=False):
         """
         Construct of Fourth-order tensor with minor symmetry.
 
@@ -91,7 +83,7 @@ class FourthOrderTensor:
         M : np.ndarray
             (6,6) matrix corresponding to the stiffness tensor, written using the Voigt notation, or array of shape
             (3,3,3,3).
-        mapping : str or list of list, or numpy/ndarray, optional
+        mapping : KelvinMapping, optional
             Mapping convention to translate the (3,3,3,3) array to (6,6) matrix
         check_minor_symmetry : bool, optional
             If true (default), check that the input array have minor symmetries (see Notes). Only used if an array of
@@ -108,19 +100,7 @@ class FourthOrderTensor:
             M_{ijkl}=M_{jikl}=M_{jilk}=M_{ijlk}
 
         """
-        if isinstance(mapping, (list, tuple, np.ndarray)):
-            self.mapping_matrix = mapping
-            self.mapping_name = 'custom'
-        else:
-            mapping = mapping.capitalize()
-            self.mapping_name = mapping
-            if mapping == 'Kelvin':
-                self.mapping_matrix = KELVIN_MAPPING_MATRIX
-            elif mapping == 'Voigt':
-                self.mapping_matrix = np.ones((6,6))
-            else:
-                raise ValueError('The mapping to use can be either "Kelvin", "Voigt", or a (6,6) matrix.')
-
+        self.mapping=mapping
         M = np.asarray(M)
         if M.shape[-2:] == (6, 6):
             matrix = M
@@ -149,7 +129,7 @@ class FourthOrderTensor:
 
     def __repr__(self):
         if (self.ndim == 0) or ((self.ndim==1) and self.shape[0]<5):
-            msg = '{} tensor (in {} mapping):\n'.format(self.tensor_name, self.mapping_name)
+            msg = '{} tensor (in {} mapping):\n'.format(self.tensor_name, self.mapping.name)
             msg += self.matrix.__str__()
         else:
             msg = '{} tensor array of shape {}'.format(self.tensor_name, self.shape)
@@ -179,7 +159,7 @@ class FourthOrderTensor:
         i, j, k, ell = np.indices((3, 3, 3, 3))
         ij = voigt_indices(i, j)
         kl = voigt_indices(k, ell)
-        m = self.matrix[..., ij, kl] / self.mapping_matrix[ij, kl]
+        m = self.matrix[..., ij, kl] / self.mapping.matrix[ij, kl]
         return m
 
     def flatten(self):
@@ -206,7 +186,7 @@ class FourthOrderTensor:
         kl, ij = np.indices((6, 6))
         i, j = unvoigt_index(ij).T
         k, ell = unvoigt_index(kl).T
-        return full_tensor[..., i, j, k, ell] * self.mapping_matrix[ij, kl]
+        return full_tensor[..., i, j, k, ell] * self.mapping.matrix[ij, kl]
 
     def rotate(self, rotation):
         """
@@ -279,7 +259,7 @@ class FourthOrderTensor:
                 raise ValueError('The two tensors to add must be of the same class.')
         else:
             raise ValueError('I don''t know how to add {} with {}.'.format(type(self), type(other)))
-        return self.__class__(mat, mapping=self.mapping_matrix)
+        return self.__class__(mat, mapping=self.mapping)
 
     def __sub__(self, other):
         if isinstance(other, FourthOrderTensor):
@@ -416,12 +396,12 @@ class FourthOrderTensor:
             else:
                 return ValueError('The R.h.s must be either of shape (...,6,6) or (...,3,3,3,3)')
         elif isinstance(value, FourthOrderTensor):
-            self.matrix[index] = value.matrix / value.mapping_matrix * self.mapping_matrix
+            self.matrix[index] = value.matrix / value.mapping.matrix * self.mapping.matrix
         else:
             raise NotImplementedError('The r.h.s must be either an ndarray or an object of class {}'.format(self.__class__))
 
     @classmethod
-    def identity(cls, shape=(), return_full_tensor=False, mapping='Kelvin'):
+    def identity(cls, shape=(), return_full_tensor=False, mapping=KelvinMapping()):
         """
         Create a 4th-order identity tensor
 
@@ -455,7 +435,7 @@ class FourthOrderTensor:
             return cls(full, mapping=mapping)
 
     @classmethod
-    def identity_spherical_part(cls, shape=(), return_full_tensor=False, mapping='Kelvin'):
+    def identity_spherical_part(cls, shape=(), return_full_tensor=False, mapping=KelvinMapping()):
         """
         Return the spherical part of the identity tensor
 
@@ -485,7 +465,7 @@ class FourthOrderTensor:
             return FourthOrderTensor(J, mapping=mapping)
 
     @classmethod
-    def identity_deviatoric_part(cls, shape=(), return_full_tensor=False, mapping='Kelvin'):
+    def identity_deviatoric_part(cls, shape=(), return_full_tensor=False, mapping=KelvinMapping()):
         """
         Return the deviatoric part of the identity tensor
 
@@ -539,10 +519,8 @@ class FourthOrderTensor:
         FourthOrderTensor
             Inverse tensor
         """
-        t2 = deepcopy(self)
-        new_matrix = np.linalg.inv(self.matrix)
-        t2.matrix = new_matrix
-        return t2
+        matrix_inv = np.linalg.inv(self.matrix)
+        return self.__class__(matrix_inv, mapping=self.mapping.mapping_inverse)
 
     @classmethod
     def zeros(cls, shape=()):
@@ -563,7 +541,6 @@ class FourthOrderTensor:
             shape = shape + (6,6)
         zeros = np.zeros(shape)
         return cls(zeros)
-
 
 class SymmetricFourthOrderTensor(FourthOrderTensor):
     tensor_name = 'Symmetric 4th-order'

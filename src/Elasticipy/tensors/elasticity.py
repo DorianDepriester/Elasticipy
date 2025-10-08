@@ -1,16 +1,10 @@
-from Elasticipy.tensors.fourth_order import SymmetricFourthOrderTensor, KELVIN_MAPPING_MATRIX
+from Elasticipy.tensors.fourth_order import SymmetricFourthOrderTensor
 from Elasticipy.spherical_function import SphericalFunction, HyperSphericalFunction
 from Elasticipy.crystal_symmetries import SYMMETRIES
 from Elasticipy.tensors.stress_strain import StrainTensor, StressTensor
+from Elasticipy.tensors.mapping import VoigtMapping, KelvinMapping
 import numpy as np
 import re
-
-_compliance_mapping_voigt = np.array([[1., 1., 1., 2., 2., 2.],
-                                      [1., 1., 1., 2., 2., 2.],
-                                      [1., 1., 1., 2., 2., 2.],
-                                      [2., 2., 2., 4., 4., 4.],
-                                      [2., 2., 2., 4., 4., 4.],
-                                      [2., 2., 2., 4., 4., 4.]])
 
 def _parse_tensor_components(prefix, **kwargs):
     pattern = r'^{}(\d{{2}})$'.format(prefix)
@@ -57,7 +51,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
     C46_C56_factor = 1.0
     component_prefix = 'C'
 
-    def __init__(self, M, symmetry='Triclinic', check_positive_definite=True, phase_name= None, mapping='Voigt', **kwargs):
+    def __init__(self, M, symmetry='Triclinic', check_positive_definite=True, phase_name= None, mapping=VoigtMapping(), **kwargs):
         """
         Construct of stiffness tensor from a (6,6) matrix.
 
@@ -1315,7 +1309,8 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         .. [4] Helbig, K. (2013). What Kelvin might have written about Elasticity. Geophysical Prospecting, 61(1), 1-20.
             doi: 10.1111/j.1365-2478.2011.01049.x
         """
-        return self.matrix /self.mapping_matrix * KELVIN_MAPPING_MATRIX
+        kelvin_mapping = KelvinMapping()
+        return self.matrix /self.mapping.matrix * kelvin_mapping.matrix
 
     def eig(self):
         """
@@ -1412,8 +1407,9 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         --------
         to_Kelvin : return the components as a (6,6) matrix following the Kelvin convention
         """
-        t = cls(matrix / KELVIN_MAPPING_MATRIX, **kwargs)
-        t.matrix *= t.mapping_matrix
+        kelvin_mapping = KelvinMapping()
+        t = cls(matrix / kelvin_mapping.matrix, **kwargs)
+        t.matrix *= t.mapping.matrix
         return t
 
     def eig_stiffnesses_multiplicity(self, tol=1e-4):
@@ -1579,7 +1575,7 @@ class ComplianceTensor(StiffnessTensor):
     component_prefix = 'S'
     C46_C56_factor = 2.0
 
-    def __init__(self, C, check_positive_definite=True, mapping=_compliance_mapping_voigt, **kwargs):
+    def __init__(self, C, check_positive_definite=True, mapping=VoigtMapping(tensor='Compliance'), **kwargs):
         super().__init__(C, check_positive_definite=check_positive_definite, mapping=mapping, **kwargs)
         self.mapping_name = 'Voigt'
 

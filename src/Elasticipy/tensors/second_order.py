@@ -1508,7 +1508,7 @@ class SymmetricSecondOrderTensor(SecondOrderTensor):
         array : np.ndarray or list
             array to build the SymmetricSecondOrderTensor from. We must have array.ndim>0 and array.shape[-1]==6.
 
-        Voigt_map : list or tuple, optional
+        voigt_map : list or tuple, optional
             6-lenght list of factors to use for mapping. If None (default), the default Voigt map of the constructor is
             used.
 
