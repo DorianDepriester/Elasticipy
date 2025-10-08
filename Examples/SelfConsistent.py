@@ -27,7 +27,7 @@ def polarization_tensor(C_macro_local, a1, a2, a3, n_phi, n_theta):
 
 def localization_tensor(C_macro_local, C_incl, n_phi, n_theta, a1, a2, a3):
     E = polarization_tensor(C_macro_local, a1, a2, a3, n_phi, n_theta)
-    delta = FourthOrderTensor(C_incl.matrix - C_macro_local.matrix)
+    delta = FourthOrderTensor(C_incl._matrix - C_macro_local._matrix)
     Ainv = E.ddot(delta) + I
     return Ainv.inv()
 
@@ -53,13 +53,13 @@ def Kroner_Eshelby(Ci, g, method='strain', max_iter=5, atol=1e-3, rtol=1e-3, dis
         Q = Ci_rotated.ddot(A)
         if method=='stress':
             CiAi_mean = Q.mean()
-            C_macro = StiffnessTensor.from_Kelvin(CiAi_mean.matrix, force_symmetries=True)
+            C_macro = StiffnessTensor.from_Kelvin(CiAi_mean._matrix, force_symmetries=True)
             err = A.mean() - FourthOrderTensor.identity()
         else:
             B = Q.ddot(C_macro.inv())
             R = Ci_rotated.inv().ddot(B)
             R_mean = R.mean()
-            C_macro = StiffnessTensor.from_Kelvin(R_mean.inv().matrix, force_symmetries=True)
+            C_macro = StiffnessTensor.from_Kelvin(R_mean.inv()._matrix, force_symmetries=True)
             err = B.mean() - FourthOrderTensor.identity()
 
         # Stopping criteria
@@ -77,7 +77,7 @@ def Kroner_Eshelby(Ci, g, method='strain', max_iter=5, atol=1e-3, rtol=1e-3, dis
         if k == max_iter:
             keep_on = False
         if display:
-            err = np.max(np.abs(err.matrix))
+            err = np.max(np.abs(err._matrix))
             print('Iter #{}: abs. change={:0.5f}; rel. change={:0.5f}; error={:0.5f}'.format(k, max_abs_change, rel_change,err))
     return C_macro, message
 

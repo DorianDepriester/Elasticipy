@@ -69,7 +69,7 @@ class FourthOrderTensor:
 
     Attributes
     ----------
-    matrix : np.ndarray
+    _matrix : np.ndarray
         (6,6) matrix gathering all the components of the tensor, using the Voigt notation.
     """
     tensor_name = '4th-order'
@@ -117,11 +117,11 @@ class FourthOrderTensor:
             matrix = self._full_to_matrix(M)
         else:
             raise ValueError('The input matrix must of shape (...,6,6) or (...,3,3,3,3)')
-        self.matrix = matrix
+        self._matrix = matrix
         for i in range(0, 6):
             for j in range(0, 6):
                 def getter(obj, I=i, J=j):
-                    return obj.matrix[...,I, J]
+                    return obj._matrix[...,I, J]
 
                 getter.__doc__ = f"Returns the ({i + 1},{j + 1}) component of the {self.tensor_name} matrix."
                 component_name = 'C{}{}'.format(i + 1, j + 1)
@@ -130,7 +130,7 @@ class FourthOrderTensor:
     def __repr__(self):
         if (self.ndim == 0) or ((self.ndim==1) and self.shape[0]<5):
             msg = '{} tensor (in {} mapping):\n'.format(self.tensor_name, self.mapping.name)
-            msg += self.matrix.__str__()
+            msg += self._matrix.__str__()
         else:
             msg = '{} tensor array of shape {}'.format(self.tensor_name, self.shape)
         return msg
@@ -144,7 +144,7 @@ class FourthOrderTensor:
         tuple
             Shape of the tensor array
         """
-        *shape, _, _ = self.matrix.shape
+        *shape, _, _ = self._matrix.shape
         return tuple(shape)
 
     def full_tensor(self):
@@ -159,7 +159,7 @@ class FourthOrderTensor:
         i, j, k, ell = np.indices((3, 3, 3, 3))
         ij = voigt_indices(i, j)
         kl = voigt_indices(k, ell)
-        m = self.matrix[..., ij, kl] / self.mapping.matrix[ij, kl]
+        m = self._matrix[..., ij, kl] / self.mapping.matrix[ij, kl]
         return m
 
     def flatten(self):
@@ -177,7 +177,7 @@ class FourthOrderTensor:
         if shape:
             t2 = deepcopy(self)
             p = (np.prod(self.shape), 6, 6)
-            t2.matrix = self.matrix.reshape(p)
+            t2._matrix = self._matrix.reshape(p)
             return t2
         else:
             return self
@@ -204,7 +204,7 @@ class FourthOrderTensor:
         """
         t2 = deepcopy(self)
         rotated_tensor = rotate_tensor(self.full_tensor(), rotation)
-        t2.matrix = self._full_to_matrix(rotated_tensor)
+        t2._matrix = self._full_to_matrix(rotated_tensor)
         return t2
 
     @property
@@ -241,13 +241,13 @@ class FourthOrderTensor:
         t2 = deepcopy(self)
         if axis is None:
             axis = tuple([i for i in range(0,self.ndim)])
-        t2.matrix = np.mean(self.matrix, axis=axis)
+        t2._matrix = np.mean(self._matrix, axis=axis)
         return t2
 
     def __add__(self, other):
         if isinstance(other, np.ndarray):
             if other.shape == (6, 6):
-                mat = self.matrix + other
+                mat = self._matrix + other
             elif other.shape == (3, 3, 3, 3):
                 mat = self._full_to_matrix(self.full_tensor() + other)
             else:
@@ -263,13 +263,13 @@ class FourthOrderTensor:
 
     def __sub__(self, other):
         if isinstance(other, FourthOrderTensor):
-            return self.__add__(-other.matrix)
+            return self.__add__(-other._matrix)
         else:
             return self.__add__(-other)
 
     def __neg__(self):
         t = deepcopy(self)
-        t.matrix = -t.matrix
+        t._matrix = -t._matrix
         return t
 
     def ddot(self, other, mode='pair'):
@@ -328,14 +328,14 @@ class FourthOrderTensor:
         elif isinstance(other, np.ndarray):
             shape = other.shape
             if other.shape == self.shape[-len(shape):]:
-                matrix = self.matrix * other[...,np.newaxis, np.newaxis]
+                matrix = self._matrix * other[...,np.newaxis, np.newaxis]
                 return self.__class__(matrix)
             else:
                 raise ValueError('The arrays to multiply could not be broadcasted with shapes {} and {}'.format(self.shape, other.shape[:-2]))
         elif isinstance(other, Rotation) or is_orix_rotation(other):
             return self.rotate(other)
         else:
-            return self.__class__(self.matrix * other)
+            return self.__class__(self._matrix * other)
 
     def __truediv__(self, other):
         if isinstance(other, (SecondOrderTensor, FourthOrderTensor)):
@@ -358,7 +358,7 @@ class FourthOrderTensor:
             return self
         else:
             new_axes = tuple(range(ndim))[::-1] + (ndim, ndim + 1)
-            transposed_matrix = self.matrix.transpose(new_axes)
+            transposed_matrix = self._matrix.transpose(new_axes)
             return self.__class__(transposed_matrix)
 
     def __rmul__(self, other):
@@ -369,16 +369,16 @@ class FourthOrderTensor:
 
     def __eq__(self, other):
         if isinstance(other, FourthOrderTensor):
-            return np.all(self.matrix == other.matrix, axis=(-1,-2))
+            return np.all(self._matrix == other._matrix, axis=(-1, -2))
         elif isinstance(other, (float, int)) or (isinstance(other, np.ndarray) and other.shape[-2:] == (6, 6)):
-            return np.all(self.matrix == other, axis=(-1,-2))
+            return np.all(self._matrix == other, axis=(-1, -2))
         else:
             raise NotImplementedError('The element to compare with must be a fourth-order tensor '
                                       'or an array of shape (6,6).')
 
     def __getitem__(self, item):
         if self.ndim:
-            sub_mat= self.matrix[item]
+            sub_mat= self._matrix[item]
             if sub_mat.shape[-2:] != (6,6):
                 raise IndexError('Too many indices for tensor array: array is {}-dimensional, but {} were provided'.format(self.ndim, len(item)))
             else:
@@ -389,14 +389,14 @@ class FourthOrderTensor:
     def __setitem__(self, index, value):
         if isinstance(value, np.ndarray):
             if value.shape[-2:] == (6,6):
-                self.matrix[index] = value
+                self._matrix[index] = value
             elif value.shape[-4:] == (3,3,3,3):
                 submatrix = self._full_to_matrix(value)
-                self.matrix[index] = submatrix
+                self._matrix[index] = submatrix
             else:
                 return ValueError('The R.h.s must be either of shape (...,6,6) or (...,3,3,3,3)')
         elif isinstance(value, FourthOrderTensor):
-            self.matrix[index] = value.matrix / value.mapping.matrix * self.mapping.matrix
+            self._matrix[index] = value._matrix / value.mapping.matrix * self.mapping.matrix
         else:
             raise NotImplementedError('The r.h.s must be either an ndarray or an object of class {}'.format(self.__class__))
 
@@ -519,7 +519,7 @@ class FourthOrderTensor:
         FourthOrderTensor
             Inverse tensor
         """
-        matrix_inv = np.linalg.inv(self.matrix)
+        matrix_inv = np.linalg.inv(self._matrix)
         return self.__class__(matrix_inv, mapping=self.mapping.mapping_inverse)
 
     @classmethod
@@ -577,7 +577,7 @@ class SymmetricFourthOrderTensor(FourthOrderTensor):
         """
         super().__init__(M, check_minor_symmetry=check_symmetries, force_minor_symmetry=force_symmetries, **kwargs)
         if force_symmetries:
-            self.matrix = 0.5*(self.matrix + self.matrix.swapaxes(-1,-2))
+            self.matrix = 0.5*(self._matrix + self._matrix.swapaxes(-1, -2))
         elif check_symmetries and not np.all(np.isclose(self.matrix, self.matrix.swapaxes(-1, -2))):
             raise ValueError('The input matrix must be symmetric')
 

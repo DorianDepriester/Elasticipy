@@ -303,7 +303,7 @@ class VonMisesPlasticity(PlasticityCriterion):
         eq_stress = stress.vonMises()
         dev_stress = stress.deviatoric_part()
         gradient_tensor = dev_stress / eq_stress
-        return StrainTensor(3 / 2 * gradient_tensor.matrix)
+        return StrainTensor(3 / 2 * gradient_tensor._matrix)
 
 class TrescaPlasticity(PlasticityCriterion):
     """

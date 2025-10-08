@@ -10,9 +10,9 @@ class TestFourthOrderTensor(unittest.TestCase):
         m = 5
         a = np.random.random((m, 6, 6))
         T = FourthOrderTensor(a)
-        np.testing.assert_array_almost_equal(a, T.matrix)
+        np.testing.assert_array_almost_equal(a, T._matrix)
         T2 = FourthOrderTensor(T.full_tensor())
-        np.testing.assert_array_almost_equal(a, T2.matrix)
+        np.testing.assert_array_almost_equal(a, T2._matrix)
 
     def test_nonsymmetry(self):
         a = np.random.random((3,3,3,3))
@@ -47,14 +47,14 @@ class TestFourthOrderTensor(unittest.TestCase):
         for i in range(m):
             for j in range(n):
                 for k in range(o):
-                    np.testing.assert_array_equal(ab[i,j,k].matrix, a[i,j,k].matrix * b)
+                    np.testing.assert_array_equal(ab[i,j,k]._matrix, a[i,j,k]._matrix * b)
 
         b = np.random.random((n,o))
         ab = a * b
         for i in range(m):
             for j in range(n):
                 for k in range(o):
-                    np.testing.assert_array_equal(ab[i,j,k].matrix, a[i,j,k].matrix * b[j,k])
+                    np.testing.assert_array_equal(ab[i,j,k]._matrix, a[i,j,k]._matrix * b[j,k])
 
     def test_zeros_setitem(self):
         m, n = 4, 5
@@ -93,7 +93,7 @@ class TestFourthOrderTensor(unittest.TestCase):
 
         b = SecondOrderTensor.rand(shape=(4,3))
         a_div_b = a / b
-        np.testing.assert_array_almost_equal(a_div_b.matrix, (a * b.inv()).matrix)
+        np.testing.assert_array_almost_equal(a_div_b._matrix, (a * b.inv())._matrix)
 
 
 

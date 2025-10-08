@@ -13,7 +13,7 @@ C = StiffnessTensor.monoclinic(phase_name='TiNi',
                                C22=240, C23=131, C33=175,
                                C44=81, C55=11, C66=85,
                                C15=-18, C25=1, C35=-3, C46=3)
-Celate = Elastic(list(C.matrix))
+Celate = Elastic(list(C._matrix))
 
 # Plotting with Elate
 start_time=time.perf_counter()
