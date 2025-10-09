@@ -54,7 +54,7 @@ class TestStressStrainTensors(unittest.TestCase):
         for i in range(n_oris):
             rot_mat = random_oris[i].as_matrix()
             eps_matrix_th = np.matmul(np.matmul(rot_mat.T, random_tensor.matrix), rot_mat)
-            np.testing.assert_almost_equal(eps_matrix_th, eps_rotated[i]._matrix)
+            np.testing.assert_almost_equal(eps_matrix_th, eps_rotated[i].matrix)
 
     def test_transpose_array(self):
         """
@@ -67,7 +67,7 @@ class TestStressStrainTensors(unittest.TestCase):
         for i in range(shape[0]):
             for j in range(shape[1]):
                 for k in range(shape[2]):
-                    np.testing.assert_array_equal(random_matrix[i, j, k], transposed_tensor[k, j, i]._matrix)
+                    np.testing.assert_array_equal(random_matrix[i, j, k], transposed_tensor[k, j, i].matrix)
 
         # Check that transposing a single tensor has no effect
         a = SecondOrderTensor.rand()
@@ -83,7 +83,7 @@ class TestStressStrainTensors(unittest.TestCase):
         for i in range(shape[0]):
             for j in range(shape[1]):
                 for k in range(shape[2]):
-                    np.testing.assert_array_equal(tensor_transposed[i, j, k]._matrix, tensor[i, j, k]._matrix.T)
+                    np.testing.assert_array_equal(tensor_transposed[i, j, k].matrix, tensor[i, j, k].matrix.T)
 
 
     def test_mul(self):
@@ -100,7 +100,7 @@ class TestStressStrainTensors(unittest.TestCase):
         for i in range(shape[0]):
             for j in range(shape[1]):
                 mat_prod = np.matmul(matrix1[i, j], matrix2[i, j])
-                np.testing.assert_array_almost_equal(tensor_prod[i, j]._matrix, mat_prod)
+                np.testing.assert_array_almost_equal(tensor_prod[i, j].matrix, mat_prod)
 
         # Now, multiply a SymmetricSecondOrderTensor with an array of the same shape, and expect an element-wise
         # multiplication between the sliced matrix of the tensor and the values of the array
@@ -109,13 +109,13 @@ class TestStressStrainTensors(unittest.TestCase):
         tensor_prod = t * random_array
         for i in range(shape[0]):
             for j in range(shape[1]):
-                matrix = tensor_prod[i, j]._matrix
+                matrix = tensor_prod[i, j].matrix
                 np.testing.assert_array_equal(matrix, t.matrix[i,j,:] * random_array[i,j])
 
     def test_truediv(self):
         a = Tensors.StressTensor.rand((5,6))
         adiv = a/2
-        np.testing.assert_array_equal(adiv.matrix, a._matrix / 2)
+        np.testing.assert_array_equal(adiv.matrix, a.matrix / 2)
         with self.assertRaises(NotImplementedError) as context:
             _ = a / a
         self.assertEqual(str(context.exception), 'Tensors can only be divided by scalar values or by arrays '
@@ -145,7 +145,7 @@ class TestStressStrainTensors(unittest.TestCase):
         for i in range(0, length1):
             for j in range(0, length2):
                 mat_prod = np.matmul(matrix1[i], matrix2[j])
-                np.testing.assert_array_almost_equal(cross_prod_tensor[i, j]._matrix, mat_prod)
+                np.testing.assert_array_almost_equal(cross_prod_tensor[i, j].matrix, mat_prod)
 
     def test_matmul_rotation(self):
         m, n = 5, 100
@@ -156,8 +156,8 @@ class TestStressStrainTensors(unittest.TestCase):
         for i in range(m):
             for j in range(n):
                 rot_mat = random_oris[j].as_matrix()
-                matrix = np.matmul(np.matmul(rot_mat.T, random_tensor[i]._matrix), rot_mat)
-                np.testing.assert_almost_equal(matrix, array[i,j]._matrix)
+                matrix = np.matmul(np.matmul(rot_mat.T, random_tensor[i].matrix), rot_mat)
+                np.testing.assert_almost_equal(matrix, array[i,j].matrix)
 
     def test_statistics(self):
         """
@@ -184,9 +184,9 @@ class TestStressStrainTensors(unittest.TestCase):
 
         # Now, check for single value tensors
         tensor = tensor[0,0,0,0]
-        np.testing.assert_array_equal(tensor.min()._matrix, tensor._matrix)
-        np.testing.assert_array_equal(tensor.max()._matrix, tensor._matrix)
-        np.testing.assert_array_equal(tensor.std()._matrix, np.zeros((3, 3)))
+        np.testing.assert_array_equal(tensor.min().matrix, tensor.matrix)
+        np.testing.assert_array_equal(tensor.max().matrix, tensor.matrix)
+        np.testing.assert_array_equal(tensor.std().matrix, np.zeros((3, 3)))
 
     def test_ddot(self):
         """
@@ -199,7 +199,7 @@ class TestStressStrainTensors(unittest.TestCase):
         for i in range(0, shape[0]):
             for j in range(0, shape[1]):
                 for k in range(0, shape[2]):
-                    ddot_th = np.trace(np.matmul(tens1._matrix[i,j,k].T, tens2._matrix[j,k]))
+                    ddot_th = np.trace(np.matmul(tens1.matrix[i,j,k].T, tens2.matrix[j,k]))
                     assert ddot_th == approx(ddot[i, j, k])
 
     def test_vonMises_Tresca(self):
@@ -237,7 +237,7 @@ class TestStressStrainTensors(unittest.TestCase):
         eps_rot = eps.rotate(ori, mode='cross')
         sigma_rot2 = C * eps_rot
         sigma2 = sigma_rot2 * ori.inv()
-        np.testing.assert_almost_equal(sigma._matrix, sigma2.transpose_array()._matrix)
+        np.testing.assert_almost_equal(sigma.matrix, sigma2.transpose_array().matrix)
 
     def test_multidimensional_tensors(self, ):
         """
@@ -300,7 +300,7 @@ class TestStressStrainTensors(unittest.TestCase):
         stress = Tensors.StressTensor.tensile([1,0,0], sigma_11)
         for i in range(0, n):
             stress_i = np.diag([sigma_11[i], 0, 0])
-            np.testing.assert_array_equal(stress[i]._matrix, stress_i)
+            np.testing.assert_array_equal(stress[i].matrix, stress_i)
 
     def test_shear_stress(self):
         """Check that a stress tensor can be defined for shear state"""
@@ -310,7 +310,7 @@ class TestStressStrainTensors(unittest.TestCase):
         for i in range(0, n):
             stress_i = np.zeros((3,3))
             stress_i[0,1] = stress_i[1,0] = sigma_12[i]
-            np.testing.assert_array_equal(stress[i]._matrix, stress_i)
+            np.testing.assert_array_equal(stress[i].matrix, stress_i)
 
         # Now check if error is thrown if the two vectors are not orthogonal
         with self.assertRaises(ValueError) as context:
@@ -323,7 +323,7 @@ class TestStressStrainTensors(unittest.TestCase):
         stress[0,0] = np.ones(3)
         matrix = np.zeros((3, 3, 3, 3))
         matrix[0, 0, :, :] = 1
-        np.testing.assert_array_equal(stress._matrix, matrix)
+        np.testing.assert_array_equal(stress.matrix, matrix)
 
     def test_add_sub_mult_strain(self):
         """Check addition, subtraction and float multiplication of tensors"""
@@ -347,7 +347,7 @@ class TestStressStrainTensors(unittest.TestCase):
         # Then, check out each element
         for p in range(0, np.prod(shape)):
             i, j, k = np.unravel_index(p, shape)
-            np.testing.assert_array_equal(a_flat[p]._matrix, a[i,j,k]._matrix)
+            np.testing.assert_array_equal(a_flat[p].matrix, a[i,j,k].matrix)
 
     def test_symmetric_skew_parts(self):
         """Check the values returned by the symmetric and skew parts of a tensor"""
@@ -358,9 +358,9 @@ class TestStressStrainTensors(unittest.TestCase):
         for i in range(0, shape[0]):
             for j in range(0, shape[1]):
                 for k in range(0, shape[2]):
-                    matrix = a[i,j,k]._matrix
-                    np.testing.assert_array_equal(2 * a_symm[i, j, k]._matrix, matrix + matrix.T)
-                    np.testing.assert_array_equal(2 * a_skew[i, j, k]._matrix, matrix - matrix.T)
+                    matrix = a[i,j,k].matrix
+                    np.testing.assert_array_equal(2 * a_symm[i, j, k].matrix, matrix + matrix.T)
+                    np.testing.assert_array_equal(2 * a_skew[i, j, k].matrix, matrix - matrix.T)
 
     def test_equality(self):
         """Test the == operator"""
@@ -374,7 +374,7 @@ class TestStressStrainTensors(unittest.TestCase):
         for i in range(0, shape[0]):
             for j in range(0, shape[1]):
                 for k in range(0, shape[2]):
-                    assert is_equal[i ,j, k] == np.all(a[i, j, k,:,:]._matrix == b[i, j, k, :, :]._matrix, axis=(-2, -1))
+                    assert is_equal[i ,j, k] == np.all(a[i, j, k,:,:].matrix == b[i, j, k, :, :].matrix, axis=(-2, -1))
 
         # Test equality for an array of tensors, and a single tensor
         c = a[2, 1, 0]
@@ -383,7 +383,7 @@ class TestStressStrainTensors(unittest.TestCase):
         for i in range(0, shape[0]):
             for j in range(0, shape[1]):
                 for k in range(0, shape[2]):
-                    assert is_equal[i ,j, k] == np.all(a[i, j, k,:,:]._matrix == c._matrix, axis=(-2, -1))
+                    assert is_equal[i ,j, k] == np.all(a[i, j, k,:,:].matrix == c.matrix, axis=(-2, -1))
 
         # Now test inconsistent shapes
         shape2 = (3,4,5,6)
@@ -439,7 +439,7 @@ class TestStressStrainTensors(unittest.TestCase):
             for j in range(0, init_shape[1]):
                 for k in range(0, init_shape[2]):
                     old_mat = a[i,j,k]
-                    new_mat = t_reshaped_back[i,j,k]._matrix
+                    new_mat = t_reshaped_back[i,j,k].matrix
                     np.testing.assert_array_equal(old_mat, new_mat)
 
     def test_save_load_tensor(self):
@@ -620,8 +620,8 @@ class TestStressStrainTensors(unittest.TestCase):
         tmean = t.mean()
         tstd = t.std()
         tol = 1e-5
-        np.testing.assert_array_almost_equal(tmean._matrix, mean, decimal=tol)
-        np.testing.assert_array_almost_equal(tstd._matrix, std, decimal=tol)
+        np.testing.assert_array_almost_equal(tmean.matrix, mean, decimal=tol)
+        np.testing.assert_array_almost_equal(tstd.matrix, std, decimal=tol)
 
     def test_inv(self):
         """Test inverse method"""
@@ -631,7 +631,7 @@ class TestStressStrainTensors(unittest.TestCase):
         tinv = t.inv()
         for i in range(shape[0]):
             for j in range(shape[1]):
-                np.testing.assert_array_almost_equal(tinv[i,j]._matrix, np.linalg.inv(matrix[i,j]))
+                np.testing.assert_array_almost_equal(tinv[i,j].matrix, np.linalg.inv(matrix[i,j]))
 
     def test_tensile_shear(self):
         # Start with single tensile
@@ -640,7 +640,7 @@ class TestStressStrainTensors(unittest.TestCase):
         assert t.shape == ()
         mat = np.zeros((3, 3))
         mat[0, 0] = mag
-        np.testing.assert_almost_equal(t._matrix, mat)
+        np.testing.assert_almost_equal(t.matrix, mat)
 
         # Now with arrays
         n = 5
@@ -648,7 +648,7 @@ class TestStressStrainTensors(unittest.TestCase):
         assert t.shape == (n,)
         mat = np.zeros((n,3,3))
         mat[:,0,0] = range(n)
-        np.testing.assert_almost_equal(t._matrix, mat)
+        np.testing.assert_almost_equal(t.matrix, mat)
 
         # Try with a 2d directions
         with self.assertRaises(ValueError) as context:
@@ -660,7 +660,7 @@ class TestStressStrainTensors(unittest.TestCase):
         assert t.shape == (n,)
         mat = np.zeros((n,3,3))
         mat[:,0,1] = mat[:,1,0] = range(n)
-        np.testing.assert_almost_equal(t._matrix, mat)
+        np.testing.assert_almost_equal(t.matrix, mat)
 
     def test_repr(self):
         a=Tensors.StrainTensor.ones()
@@ -679,28 +679,28 @@ class TestStressStrainTensors(unittest.TestCase):
         b_1d = StrainTensor.rand((m,))
         b_2d = StressTensor.rand((m, n))
         ab = a_0d.dot(b_0d)
-        np.testing.assert_array_almost_equal(ab._matrix, np.matmul(a_0d._matrix, b_0d._matrix))
+        np.testing.assert_array_almost_equal(ab.matrix, np.matmul(a_0d.matrix, b_0d.matrix))
         ab = a_0d.dot(b_1d)
         for i in range(m):
-            np.testing.assert_array_almost_equal(ab[i]._matrix, np.matmul(a_0d._matrix, b_1d[i]._matrix))
+            np.testing.assert_array_almost_equal(ab[i].matrix, np.matmul(a_0d.matrix, b_1d[i].matrix))
         ab = a_1d.dot(b_1d)
         for i in range(m):
-            np.testing.assert_array_almost_equal(ab[i]._matrix, np.matmul(a_1d[i]._matrix, b_1d[i]._matrix))
+            np.testing.assert_array_almost_equal(ab[i].matrix, np.matmul(a_1d[i].matrix, b_1d[i].matrix))
         ab = a_2d.dot(b_2d)
         for i in range(m):
             for j in range(n):
-                np.testing.assert_array_almost_equal(ab[i,j]._matrix, np.matmul(a_2d[i,j]._matrix, b_2d[i,j]._matrix))
+                np.testing.assert_array_almost_equal(ab[i,j].matrix, np.matmul(a_2d[i,j].matrix, b_2d[i,j].matrix))
 
         ab = a_1d.dot(b_1d, mode='cross')
         for i in range(m):
             for j in range(m):
-                np.testing.assert_array_almost_equal(ab[i,j]._matrix, np.matmul(a_1d[i]._matrix, b_1d[j]._matrix))
+                np.testing.assert_array_almost_equal(ab[i,j].matrix, np.matmul(a_1d[i].matrix, b_1d[j].matrix))
         ab = a_2d.dot(b_2d, mode='cross')
         for i in range(m):
             for j in range(n):
                 for k in range(m):
                     for l in range(n):
-                        np.testing.assert_array_almost_equal(ab[i,j,k,l]._matrix, np.matmul(a_2d[i,j]._matrix, b_2d[k,l]._matrix))
+                        np.testing.assert_array_almost_equal(ab[i,j,k,l].matrix, np.matmul(a_2d[i,j].matrix, b_2d[k,l].matrix))
 
 
     def test_rotate_orix(self):
@@ -714,28 +714,28 @@ class TestStressStrainTensors(unittest.TestCase):
 
         a_rot = t_0d.rotate(g_0d)
         g_mat = g_0d.to_matrix()[0]
-        np.testing.assert_array_almost_equal(a_rot._matrix, np.matmul(np.matmul(g_mat, t_0d._matrix), g_mat.T), )
+        np.testing.assert_array_almost_equal(a_rot.matrix, np.matmul(np.matmul(g_mat, t_0d.matrix), g_mat.T), )
 
         a_rot = t_1d.rotate(g_0d)
         for i in range(m):
             g_mat = g_0d.to_matrix()[0]
-            np.testing.assert_array_almost_equal(a_rot[i]._matrix, np.matmul(np.matmul(g_mat, t_1d[i]._matrix), g_mat.T), )
+            np.testing.assert_array_almost_equal(a_rot[i].matrix, np.matmul(np.matmul(g_mat, t_1d[i].matrix), g_mat.T), )
 
         a_rot = t_1d.rotate(g_1d)
         for i in range(m):
             g_mat = g_1d.to_matrix()[i]
-            np.testing.assert_array_almost_equal(a_rot[i]._matrix, np.matmul(np.matmul(g_mat, t_1d[i]._matrix), g_mat.T), )
+            np.testing.assert_array_almost_equal(a_rot[i].matrix, np.matmul(np.matmul(g_mat, t_1d[i].matrix), g_mat.T), )
 
         a_rot = t_0d.rotate(g_1d)
         for i in range(m):
             g_mat = g_1d.to_matrix()[i]
-            np.testing.assert_array_almost_equal(a_rot[i]._matrix, np.matmul(np.matmul(g_mat, t_0d._matrix), g_mat.T), )
+            np.testing.assert_array_almost_equal(a_rot[i].matrix, np.matmul(np.matmul(g_mat, t_0d.matrix), g_mat.T), )
 
         a_rot = t_2d.rotate(g_2d)
         for i in range(m):
             for j in range(n):
                 g_mat = g_2d.to_matrix()[i,j]
-                np.testing.assert_array_almost_equal(a_rot[i,j]._matrix, np.matmul(np.matmul(g_mat, t_2d[i,j]._matrix), g_mat.T), )
+                np.testing.assert_array_almost_equal(a_rot[i,j].matrix, np.matmul(np.matmul(g_mat, t_2d[i,j].matrix), g_mat.T), )
 
         # Try with 'cross' option
         a_rot = t_1d.rotate(g_1d, mode='cross')
@@ -743,7 +743,7 @@ class TestStressStrainTensors(unittest.TestCase):
         for i in range(m):
             for j in range(m):
                 g_mat = g_1d.to_matrix()[j]
-                np.testing.assert_array_almost_equal(a_rot[i,j]._matrix, np.matmul(np.matmul(g_mat, t_1d[i]._matrix), g_mat.T), )
+                np.testing.assert_array_almost_equal(a_rot[i,j].matrix, np.matmul(np.matmul(g_mat, t_1d[i].matrix), g_mat.T), )
 
         a_rot = t_1d.rotate(g_2d, mode='cross')
         assert a_rot.shape == (m,m,n)
@@ -751,7 +751,7 @@ class TestStressStrainTensors(unittest.TestCase):
             for j in range(m):
                 for k in range(m):
                     g_mat = g_2d.to_matrix()[j,k]
-                    np.testing.assert_array_almost_equal(a_rot[i,j,k]._matrix, np.matmul(np.matmul(g_mat, t_1d[i]._matrix), g_mat.T), )
+                    np.testing.assert_array_almost_equal(a_rot[i,j,k].matrix, np.matmul(np.matmul(g_mat, t_1d[i].matrix), g_mat.T), )
 
     def test_stress_Voigt(self):
         m, n = 3, 2
@@ -761,12 +761,12 @@ class TestStressStrainTensors(unittest.TestCase):
         assert stress_voigt.shape == shape + (6,)
         for i in range(m):
             for j in range(n):
-                assert stress_voigt[i, j, 0] == stress._matrix[i, j, 0, 0]
-                assert stress_voigt[i, j, 1] == stress._matrix[i, j, 1, 1]
-                assert stress_voigt[i, j, 2] == stress._matrix[i, j, 2, 2]
-                assert stress_voigt[i, j, 3] == stress._matrix[i, j, 2, 1]
-                assert stress_voigt[i, j, 4] == stress._matrix[i, j, 2, 0]
-                assert stress_voigt[i, j, 5] == stress._matrix[i, j, 1, 0]
+                assert stress_voigt[i, j, 0] == stress.matrix[i, j, 0, 0]
+                assert stress_voigt[i, j, 1] == stress.matrix[i, j, 1, 1]
+                assert stress_voigt[i, j, 2] == stress.matrix[i, j, 2, 2]
+                assert stress_voigt[i, j, 3] == stress.matrix[i, j, 2, 1]
+                assert stress_voigt[i, j, 4] == stress.matrix[i, j, 2, 0]
+                assert stress_voigt[i, j, 5] == stress.matrix[i, j, 1, 0]
         assert np.all(stress == StressTensor.from_Voigt(stress_voigt))
 
     def test_strain_Voigt(self):
@@ -777,12 +777,12 @@ class TestStressStrainTensors(unittest.TestCase):
         assert strain_voigt.shape == shape + (6,)
         for i in range(m):
             for j in range(n):
-                assert strain_voigt[i, j, 0] == strain._matrix[i, j, 0, 0]
-                assert strain_voigt[i, j, 1] == strain._matrix[i, j, 1, 1]
-                assert strain_voigt[i, j, 2] == strain._matrix[i, j, 2, 2]
-                assert strain_voigt[i, j, 3] == 2 * strain._matrix[i, j, 2, 1]
-                assert strain_voigt[i, j, 4] == 2 * strain._matrix[i, j, 2, 0]
-                assert strain_voigt[i, j, 5] == 2 * strain._matrix[i, j, 1, 0]
+                assert strain_voigt[i, j, 0] == strain.matrix[i, j, 0, 0]
+                assert strain_voigt[i, j, 1] == strain.matrix[i, j, 1, 1]
+                assert strain_voigt[i, j, 2] == strain.matrix[i, j, 2, 2]
+                assert strain_voigt[i, j, 3] == 2 * strain.matrix[i, j, 2, 1]
+                assert strain_voigt[i, j, 4] == 2 * strain.matrix[i, j, 2, 0]
+                assert strain_voigt[i, j, 5] == 2 * strain.matrix[i, j, 1, 0]
         assert np.all(strain == StrainTensor.from_Voigt(strain_voigt))
 
     def test_stress_Kelvin(self):
@@ -794,13 +794,13 @@ class TestStressStrainTensors(unittest.TestCase):
         s = np.sqrt(2)
         for i in range(m):
             for j in range(n):
-                assert stress_kelvin[i, j, 0] == stress._matrix[i, j, 0, 0]
-                assert stress_kelvin[i, j, 1] == stress._matrix[i, j, 1, 1]
-                assert stress_kelvin[i, j, 2] == stress._matrix[i, j, 2, 2]
-                assert stress_kelvin[i, j, 3] == s * stress._matrix[i, j, 2, 1]
-                assert stress_kelvin[i, j, 4] == s * stress._matrix[i, j, 2, 0]
-                assert stress_kelvin[i, j, 5] == s * stress._matrix[i, j, 1, 0]
-        np.testing.assert_array_almost_equal(stress._matrix, StressTensor.from_Kelvin(stress_kelvin).matrix)
+                assert stress_kelvin[i, j, 0] == stress.matrix[i, j, 0, 0]
+                assert stress_kelvin[i, j, 1] == stress.matrix[i, j, 1, 1]
+                assert stress_kelvin[i, j, 2] == stress.matrix[i, j, 2, 2]
+                assert stress_kelvin[i, j, 3] == s * stress.matrix[i, j, 2, 1]
+                assert stress_kelvin[i, j, 4] == s * stress.matrix[i, j, 2, 0]
+                assert stress_kelvin[i, j, 5] == s * stress.matrix[i, j, 1, 0]
+        np.testing.assert_array_almost_equal(stress.matrix, StressTensor.from_Kelvin(stress_kelvin).matrix)
 
     def test_strain_Kelvin(self):
         m, n = 3, 2
@@ -811,13 +811,13 @@ class TestStressStrainTensors(unittest.TestCase):
         s = np.sqrt(2)
         for i in range(m):
             for j in range(n):
-                assert strain_kelvin[i, j, 0] == strain._matrix[i, j, 0, 0]
-                assert strain_kelvin[i, j, 1] == strain._matrix[i, j, 1, 1]
-                assert strain_kelvin[i, j, 2] == strain._matrix[i, j, 2, 2]
-                assert strain_kelvin[i, j, 3] == s * strain._matrix[i, j, 2, 1]
-                assert strain_kelvin[i, j, 4] == s * strain._matrix[i, j, 2, 0]
-                assert strain_kelvin[i, j, 5] == s * strain._matrix[i, j, 1, 0]
-        np.testing.assert_array_almost_equal(strain._matrix, StrainTensor.from_Kelvin(strain_kelvin).matrix)
+                assert strain_kelvin[i, j, 0] == strain.matrix[i, j, 0, 0]
+                assert strain_kelvin[i, j, 1] == strain.matrix[i, j, 1, 1]
+                assert strain_kelvin[i, j, 2] == strain.matrix[i, j, 2, 2]
+                assert strain_kelvin[i, j, 3] == s * strain.matrix[i, j, 2, 1]
+                assert strain_kelvin[i, j, 4] == s * strain.matrix[i, j, 2, 0]
+                assert strain_kelvin[i, j, 5] == s * strain.matrix[i, j, 1, 0]
+        np.testing.assert_array_almost_equal(strain.matrix, StrainTensor.from_Kelvin(strain_kelvin).matrix)
 
     def test_deprecated_path(self):
         expected_warn = ("The module 'Elasticipy.StressStrainTensors' is deprecated and will be removed in a future "

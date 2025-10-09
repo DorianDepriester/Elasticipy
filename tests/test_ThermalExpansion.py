@@ -54,7 +54,7 @@ class TestThermalExpansion(unittest.TestCase):
         alphas = alpha.matmul(rotations)
         for i in range(m):
             rot_mat = np.matmul(rotations[i].as_matrix().T, np.matmul(alpha.matrix, rotations[i].as_matrix()))
-            np.testing.assert_almost_equal(rot_mat, alphas[i]._matrix)
+            np.testing.assert_almost_equal(rot_mat, alphas[i].matrix)
 
     def test_mul(self):
         n=50
@@ -79,14 +79,14 @@ class TestThermalExpansion(unittest.TestCase):
             rot_mat = rotations[i].as_matrix()
             rotated_tensor_matrix = np.matmul(rot_mat.T, np.matmul(coeff, rot_mat))
             for j in range(n):
-                np.testing.assert_almost_equal(eps[i,j]._matrix, rotated_tensor_matrix * temp[j])
+                np.testing.assert_almost_equal(eps[i,j].matrix, rotated_tensor_matrix * temp[j])
 
     def test_constructor_isotropic(self):
         coeff = 23e-6
         alpha = ThEx.isotropic(coeff)
         temp = 25
         eps = alpha * temp
-        np.testing.assert_almost_equal(eps._matrix, np.eye(3) * coeff * temp)
+        np.testing.assert_almost_equal(eps.matrix, np.eye(3) * coeff * temp)
 
     def test_apply_temperature(self):
         m, n = 50, 100
@@ -95,12 +95,12 @@ class TestThermalExpansion(unittest.TestCase):
         T = np.arange(0, m)
         strain = alphas.apply_temperature(T)
         for i in range(m):
-            np.testing.assert_array_equal(strain[i]._matrix, alphas[i]._matrix * T[i])
+            np.testing.assert_array_equal(strain[i].matrix, alphas[i].matrix * T[i])
         T = np.arange(0, n)
         strain = alphas.apply_temperature(T, mode='cross')
         for i in range(m):
             for j in range(n):
-                np.testing.assert_array_equal(strain[i,j]._matrix, alphas[i]._matrix * T[j])
+                np.testing.assert_array_equal(strain[i,j].matrix, alphas[i].matrix * T[j])
 
     def test_deprecated_path(self):
         expected_warn = ("The module 'Elasticipy.ThermalExpansion' is deprecated and will be removed in a future "

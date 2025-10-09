@@ -74,7 +74,7 @@ class TestJohnsonCook(unittest.TestCase):
         stress = StressTensor.tensile([1,0,0], A+10)
         strain = JC.compute_strain_increment(stress)
         normalized_strain = strain / strain.eq_strain()
-        np.testing.assert_array_almost_equal(normalized_strain._matrix, np.diag([1, -0.5, -0.5]))
+        np.testing.assert_array_almost_equal(normalized_strain.matrix, np.diag([1, -0.5, -0.5]))
 
         # Test temperature-dependent model
         stress = JC_td.flow_stress(strain0, T=500)
@@ -103,7 +103,7 @@ class TestJohnsonCook(unittest.TestCase):
         normal_th = K * np.array([[0, 1, 0],
                                   [1, 0, 0],
                                   [0, 0, 0]])
-        np.testing.assert_array_almost_equal(normal._matrix, normal_th)
+        np.testing.assert_array_almost_equal(normal.matrix, normal_th)
 
     def test_normality_Tresca(self):
         biaxial = (StressTensor.tensile([1,0,0],[0, 1, 1, 1, 1, 1, 0]) +
