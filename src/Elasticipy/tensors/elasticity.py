@@ -70,6 +70,8 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
             Whether to check or not that the input matrix is symmetric.
         force_symmetry : bool, optional
             If true, the major symmetry of the tensor is forces
+        mapping : str or MappingConvention
+            mapping convention to use. Default is VoigtMapping.
 
         Notes
         -----
@@ -80,14 +82,14 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         """
         super().__init__(M, mapping=mapping, **kwargs)
         if check_positive_definite:
-            _check_definite_positive(self.matrix)
+            _check_definite_positive(self._matrix)
         self.symmetry = symmetry
         self.phase_name = phase_name
 
     def __mul__(self, other):
         if isinstance(other, StrainTensor):
             new_tensor = self.ddot(other)
-            return StressTensor(new_tensor._matrix)
+            return StressTensor(new_tensor.matrix)
         elif isinstance(other, StressTensor):
             raise ValueError('You cannot multiply a stiffness tensor with a Stress tensor.')
         else:
@@ -109,7 +111,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         ComplianceTensor
             Reciprocal tensor
         """
-        C = np.linalg.inv(self.matrix)
+        C = np.linalg.inv(self._matrix)
         return ComplianceTensor(C, symmetry=self.symmetry, phase_name=self.phase_name)
 
     @classmethod
@@ -179,7 +181,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
                 if self.phase_name is not None:
                     f.write(f"Phase Name: {self.phase_name}\n")
                 f.write(f"Symmetry: {self.symmetry}\n")
-            for row in self.matrix:
+            for row in self._matrix:
                 f.write("  " + "  ".join(f"{value:8.2f}" for value in row) + "\n")
 
     @classmethod
@@ -677,7 +679,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         if self.ndim:
             return self.mean(axis=axis)
         else:
-            c = self.matrix
+            c = self._matrix
             A = c[0, 0] + c[1, 1] + c[2, 2]
             B = c[0, 1] + c[0, 2] + c[1, 2]
             C = c[3, 3] + c[4, 4] + c[5, 5]
@@ -1128,7 +1130,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         if np.all([isinstance(a, ComplianceTensor) for a in Cs]):
             Cs = [C.inv() for C in Cs]
         if np.all([isinstance(a, StiffnessTensor) for a in Cs]):
-            C_stack = np.array([C.matrix for C in Cs])
+            C_stack = np.array([C._matrix for C in Cs])
             method = method.capitalize()
             if method == 'Voigt':
                 C_avg = np.average(C_stack, weights=volume_fractions, axis=0)
@@ -1175,8 +1177,8 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         self._single_tensor_only('universal_anisotropy')
         Cvoigt = self.Voigt_average()
         Creuss = self.Reuss_average()
-        Gv = Cvoigt.matrix[3, 3]
-        Gr = Creuss.matrix[3, 3]
+        Gv = Cvoigt._matrix[3, 3]
+        Gr = Creuss._matrix[3, 3]
         Kv = Cvoigt.bulk_modulus
         Kr = Creuss.bulk_modulus
         return 5 * Gv / Gr + Kv / Kr - 6
@@ -1310,7 +1312,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
             doi: 10.1111/j.1365-2478.2011.01049.x
         """
         kelvin_mapping = KelvinMapping()
-        return self.matrix /self.mapping.matrix * kelvin_mapping.matrix
+        return self._matrix /self.mapping.matrix * kelvin_mapping.matrix
 
     def eig(self):
         """
@@ -1409,7 +1411,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         """
         kelvin_mapping = KelvinMapping()
         t = cls(matrix / kelvin_mapping.matrix, **kwargs)
-        t.matrix *= t.mapping.matrix
+        t._matrix *= t.mapping.matrix
         return t
 
     def eig_stiffnesses_multiplicity(self, tol=1e-4):
@@ -1582,7 +1584,7 @@ class ComplianceTensor(StiffnessTensor):
     def __mul__(self, other):
         if isinstance(other, StressTensor):
             new_tensor = self.ddot(other)
-            return StrainTensor(new_tensor._matrix)
+            return StrainTensor(new_tensor.matrix)
         elif isinstance(other, StrainTensor):
             raise ValueError('You cannot multiply a compliance tensor with Strain tensor.')
         else:
@@ -1597,14 +1599,14 @@ class ComplianceTensor(StiffnessTensor):
         StiffnessTensor
             Reciprocal tensor
         """
-        S = np.linalg.inv(self.matrix)
+        S = np.linalg.inv(self._matrix)
         return StiffnessTensor(S, symmetry=self.symmetry, phase_name=self.phase_name)
 
     def Reuss_average(self, axis=None):
         if self.ndim:
             return self.mean(axis=axis)
         else:
-            s = self.matrix
+            s = self._matrix
             A = s[0, 0] + s[1, 1] + s[2, 2]
             B = s[0, 1] + s[0, 2] + s[1, 2]
             C = s[3, 3] + s[4, 4] + s[5, 5]
@@ -1638,7 +1640,7 @@ class ComplianceTensor(StiffnessTensor):
 
     @property
     def bulk_modulus(self):
-        matrix_t = self.matrix.T
+        matrix_t = self._matrix.T
         sub_matrix = matrix_t[0:3, 0:3]
         return 1 / np.sum(sub_matrix, axis=(0,1))
 

@@ -3,7 +3,8 @@ from Elasticipy.tensors.second_order import SymmetricSecondOrderTensor, rotation
     SecondOrderTensor, ALPHABET
 from scipy.spatial.transform import Rotation
 from copy import deepcopy
-from Elasticipy.tensors.mapping import KelvinMapping
+from Elasticipy.tensors.mapping import KelvinMapping, VoigtMapping
+
 
 def voigt_indices(i, j):
     """
@@ -83,7 +84,7 @@ class FourthOrderTensor:
         M : np.ndarray
             (6,6) matrix corresponding to the stiffness tensor, written using the Voigt notation, or array of shape
             (3,3,3,3).
-        mapping : KelvinMapping, optional
+        mapping : MappingConvention, optional
             Mapping convention to translate the (3,3,3,3) array to (6,6) matrix
         check_minor_symmetry : bool, optional
             If true (default), check that the input array have minor symmetries (see Notes). Only used if an array of
@@ -396,7 +397,7 @@ class FourthOrderTensor:
             else:
                 return ValueError('The R.h.s must be either of shape (...,6,6) or (...,3,3,3,3)')
         elif isinstance(value, FourthOrderTensor):
-            self._matrix[index] = value._matrix / value.mapping.matrix * self.mapping.matrix
+            self._matrix[index] = value._matrix / value.mapping._matrix * self.mapping._matrix
         else:
             raise NotImplementedError('The r.h.s must be either an ndarray or an object of class {}'.format(self.__class__))
 
@@ -542,6 +543,20 @@ class FourthOrderTensor:
         zeros = np.zeros(shape)
         return cls(zeros)
 
+    def matrix(self, mapping_convention=None):
+        matrix = self._matrix
+        if mapping_convention is None:
+            return matrix
+        else:
+            if isinstance(mapping_convention, str):
+                if mapping_convention.lower() == 'voigt':
+                    mapping_convention = VoigtMapping()
+                elif mapping_convention.lower() == 'kelvin':
+                    mapping_convention = KelvinMapping()
+                else:
+                    raise ValueError('Mapping convention must be either Kelvin or Voigt')
+            return matrix / self.mapping._matrix * mapping_convention.matrix
+
 class SymmetricFourthOrderTensor(FourthOrderTensor):
     tensor_name = 'Symmetric 4th-order'
 
@@ -577,8 +592,8 @@ class SymmetricFourthOrderTensor(FourthOrderTensor):
         """
         super().__init__(M, check_minor_symmetry=check_symmetries, force_minor_symmetry=force_symmetries, **kwargs)
         if force_symmetries:
-            self.matrix = 0.5*(self._matrix + self._matrix.swapaxes(-1, -2))
-        elif check_symmetries and not np.all(np.isclose(self.matrix, self.matrix.swapaxes(-1, -2))):
+            self._matrix = 0.5 * (self._matrix + self._matrix.swapaxes(-1, -2))
+        elif check_symmetries and not np.all(np.isclose(self._matrix, self._matrix.swapaxes(-1, -2))):
             raise ValueError('The input matrix must be symmetric')
 
     def invariants(self, order='all'):

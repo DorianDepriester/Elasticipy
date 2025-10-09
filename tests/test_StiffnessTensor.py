@@ -157,7 +157,7 @@ class TestComplianceTensor(unittest.TestCase):
     def test_full_tensor_as_input(self):
         a = ComplianceTensor.isotropic(E=210, nu=0.3)
         b = ComplianceTensor(a.full_tensor())
-        np.testing.assert_array_almost_equal(a._matrix, b.matrix)
+        np.testing.assert_array_almost_equal(a._matrix, b._matrix)
 
 
     def test_component(self):
@@ -208,7 +208,7 @@ class TestComplianceTensor(unittest.TestCase):
     def test_to_from_Kelvin(self):
         matrix = S.to_Kelvin()
         S2 = ComplianceTensor.from_Kelvin(matrix, symmetry=S.symmetry)
-        np.testing.assert_array_almost_equal(S.matrix, S2.matrix)
+        np.testing.assert_array_almost_equal(S._matrix, S2._matrix)
 
     def test_full_tensor(self):
         S_full = S.full_tensor()
@@ -515,13 +515,13 @@ class TestStiffnessConstructor(unittest.TestCase):
         C = StiffnessTensor.isotropic(E=210, nu=0.3)
         C.save_to_txt(filename)
         C2 = StiffnessTensor.from_txt_file(filename)
-        np.testing.assert_allclose(C2.matrix, C._matrix, atol=1e-2)
+        np.testing.assert_allclose(C2._matrix, C._matrix, atol=1e-2)
 
         # Now the same with phase name
         C = StiffnessTensor.isotropic(E=210, nu=0.3, phase_name='Steel')
         C.save_to_txt(filename)
         C2 = StiffnessTensor.from_txt_file(filename)
-        np.testing.assert_allclose(C2.matrix, C._matrix, atol=1e-2)
+        np.testing.assert_allclose(C2._matrix, C._matrix, atol=1e-2)
         assert C2.phase_name == 'Steel'
 
 
@@ -558,7 +558,7 @@ class TestStiffnessConstructor(unittest.TestCase):
     def test_div(self):
         C = StiffnessTensor.isotropic(E=200, nu=0.3)
         Cdiv = C/2
-        np.testing.assert_array_equal(Cdiv.matrix, C._matrix / 2)
+        np.testing.assert_array_almost_equal(Cdiv._matrix, C._matrix / 2)
 
     def test_weighted_average(self):
         """Test averaging two phases"""
@@ -601,7 +601,7 @@ class TestStiffnessConstructor(unittest.TestCase):
         nu_yz = nu.eval([0, 1, 0], [0, 0, 1])
         C2 = StiffnessTensor.orthotropic(Ex=Ex, Ey=Ey, Ez=Ez, nu_xy=nu_xy, nu_xz=nu_xz, nu_yz=nu_yz,
                                         Gxy=G_xy, Gxz=G_xz, Gyz=G_yz)
-        np.testing.assert_array_almost_equal(C.matrix, C2.matrix)
+        np.testing.assert_array_almost_equal(C._matrix, C2._matrix)
 
         # Now try passing both nu_yz and nu_zy
         with self.assertRaises(ValueError) as context:
@@ -640,7 +640,7 @@ class TestStiffnessConstructor(unittest.TestCase):
         nu_xy = nu.eval([1, 0, 0], [0, 1, 0])
         nu_xz = nu.eval([1, 0, 0], [0, 0, 1])
         C2 = StiffnessTensor.transverse_isotropic(Ex=Ex, Ez=Ez, nu_xy=nu_xy, nu_xz=nu_xz, Gxz=Gxz)
-        np.testing.assert_array_almost_equal(C.matrix, C2.matrix)
+        np.testing.assert_array_almost_equal(C._matrix, C2._matrix)
 
         # Now try passing both nu_xy and nu_yx
         with self.assertRaises(ValueError) as context:
@@ -674,12 +674,12 @@ class TestStiffnessConstructor(unittest.TestCase):
         # Try with cubic Cu
         C = StiffnessTensor.from_MP("mp-30")
         C_Cu = StiffnessTensor.cubic(C11=186, C12=134, C44=77)
-        np.testing.assert_array_almost_equal(C._matrix, C_Cu.matrix)
+        np.testing.assert_array_almost_equal(C._matrix, C_Cu._matrix)
 
         # Now try with a list of entries
         Cs = StiffnessTensor.from_MP(("mp-30", "mp-1048"))
         assert len(Cs) == 2
-        np.testing.assert_array_almost_equal(Cs[0]._matrix, C_Cu.matrix)
+        np.testing.assert_array_almost_equal(Cs[0]._matrix, C_Cu._matrix)
 
 
     def test_getitem(self):
@@ -769,7 +769,7 @@ class TestStiffnessConstructor(unittest.TestCase):
 
     def test_component(self):
         C = S.inv()
-        Cmat = C.matrix
+        Cmat = C._matrix
         assert C.C11 == Cmat[0, 0]
         assert C.C12 == Cmat[0, 1]
         assert C.C13 == Cmat[0, 2]
@@ -828,45 +828,45 @@ class TestStiffnessConstructor(unittest.TestCase):
             assert stress[i] == C_rotated_0d * strain_1d[i]
         stress = C_rotated_1d * strain_0d
         for i in range(o):
-            np.testing.assert_array_almost_equal(stress[i]._matrix, (C_rotated_1d[i] * strain_0d)._matrix)
+            np.testing.assert_array_almost_equal(stress[i].matrix, (C_rotated_1d[i] * strain_0d).matrix)
         stress = C_rotated_1d * strain_1d
         for i in range(o):
-            np.testing.assert_array_almost_equal(stress[i]._matrix, (C_rotated_1d[i] * strain_1d[i])._matrix)
+            np.testing.assert_array_almost_equal(stress[i].matrix, (C_rotated_1d[i] * strain_1d[i]).matrix)
         stress = C_rotated_2d * strain_0d
         for i in range(n):
             for j in range(o):
-                np.testing.assert_array_almost_equal(stress[i, j]._matrix, (C_rotated_2d[i, j] * strain_0d)._matrix)
+                np.testing.assert_array_almost_equal(stress[i, j].matrix, (C_rotated_2d[i, j] * strain_0d).matrix)
         stress = C_rotated_2d * strain_1d
         for i in range(n):
             for j in range(o):
-                np.testing.assert_array_almost_equal(stress[i,j]._matrix, (C_rotated_2d[i,j] * strain_1d[j])._matrix)
+                np.testing.assert_array_almost_equal(stress[i,j].matrix, (C_rotated_2d[i,j] * strain_1d[j]).matrix)
         stress = C_rotated_2d * strain_2d
         for i in range(n):
             for j in range(o):
-                np.testing.assert_array_almost_equal(stress[i,j]._matrix, (C_rotated_2d[i,j] * strain_2d[i,j])._matrix)
+                np.testing.assert_array_almost_equal(stress[i,j].matrix, (C_rotated_2d[i,j] * strain_2d[i,j]).matrix)
         stress = C_rotated_3d * strain_0d
         for i in range(m):
             for j in range(n):
                 for k in range(o):
-                    np.testing.assert_array_almost_equal(stress[i,j,k]._matrix, (C_rotated_3d[i,j,k] * strain_0d)._matrix)
+                    np.testing.assert_array_almost_equal(stress[i,j,k].matrix, (C_rotated_3d[i,j,k] * strain_0d).matrix)
         stress = C_rotated_3d * strain_1d
         for i in range(m):
             for j in range(n):
                 for k in range(o):
-                    np.testing.assert_array_almost_equal(stress[i, j, k]._matrix,
-                                                         (C_rotated_3d[i, j, k] * strain_1d[k])._matrix)
+                    np.testing.assert_array_almost_equal(stress[i, j, k].matrix,
+                                                         (C_rotated_3d[i, j, k] * strain_1d[k]).matrix)
         stress = C_rotated_3d * strain_2d
         for i in range(m):
             for j in range(n):
                 for k in range(o):
-                    np.testing.assert_array_almost_equal(stress[i, j, k]._matrix,
-                                                         (C_rotated_3d[i, j, k] * strain_2d[j,k])._matrix)
+                    np.testing.assert_array_almost_equal(stress[i, j, k].matrix,
+                                                         (C_rotated_3d[i, j, k] * strain_2d[j,k]).matrix)
         stress = C_rotated_3d * strain_3d
         for i in range(m):
             for j in range(n):
                 for k in range(o):
-                    np.testing.assert_array_almost_equal(stress[i, j, k]._matrix,
-                                                         (C_rotated_3d[i, j, k] * strain_3d[i,j,k])._matrix)
+                    np.testing.assert_array_almost_equal(stress[i, j, k].matrix,
+                                                         (C_rotated_3d[i, j, k] * strain_3d[i,j,k]).matrix)
 
     def test_transpose_array(self):
         m, n, o = 5, 6, 7
@@ -893,7 +893,7 @@ class TestStiffnessConstructor(unittest.TestCase):
         for i, e in enumerate(eigen_strains.T):
             strain = StrainTensor.from_Kelvin(e)
             stress = C * strain
-            np.testing.assert_array_almost_equal(stress._matrix, strain.matrix * eigen_stiffnesses[i])
+            np.testing.assert_array_almost_equal(stress.matrix, strain.matrix * eigen_stiffnesses[i])
 
         S = C.inv()
         eigen_compliances = S.eig_compliances
@@ -904,7 +904,7 @@ class TestStiffnessConstructor(unittest.TestCase):
         for i, e in enumerate(eigen_stresses.T):
             stress = StressTensor.from_Kelvin(e)
             strain = S * stress
-            np.testing.assert_array_almost_equal(strain._matrix, stress.matrix * eigen_compliances[i])
+            np.testing.assert_array_almost_equal(strain.matrix, stress.matrix * eigen_compliances[i])
 
         np.testing.assert_array_almost_equal(eigen_stiffnesses, np.sort(S.eig_stiffnesses))
         np.testing.assert_array_almost_equal(eigen_compliances, np.sort(C.eig_compliances))
@@ -913,7 +913,7 @@ class TestStiffnessConstructor(unittest.TestCase):
         C = S.inv()
         matrix = C.to_Kelvin()
         C2 = StiffnessTensor.from_Kelvin(matrix, symmetry=C.symmetry)
-        np.testing.assert_array_almost_equal(C.matrix, C2.matrix)
+        np.testing.assert_array_almost_equal(C._matrix, C2._matrix)
 
     def test_ddot(self):
         # Check inverse
@@ -949,7 +949,7 @@ class TestStiffnessConstructor(unittest.TestCase):
         C=S.inv()
         C_full = C.full_tensor()
         C2 = StiffnessTensor(C_full)
-        np.testing.assert_array_almost_equal(C.matrix, C2.matrix)
+        np.testing.assert_array_almost_equal(C._matrix, C2._matrix)
         np.testing.assert_array_almost_equal(C.full_tensor(), C2.full_tensor())
 
     def test_voigt_reuss_axis(self):

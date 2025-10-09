@@ -93,7 +93,7 @@ class TestFourthOrderTensor(unittest.TestCase):
 
         b = SecondOrderTensor.rand(shape=(4,3))
         a_div_b = a / b
-        np.testing.assert_array_almost_equal(a_div_b._matrix, (a * b.inv())._matrix)
+        np.testing.assert_array_almost_equal(a_div_b.matrix, (a * b.inv()).matrix)
 
 
 
