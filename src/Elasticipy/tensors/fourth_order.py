@@ -606,7 +606,7 @@ class SymmetricFourthOrderTensor(FourthOrderTensor):
         ----------
         order : str, optional
             If 'linear', only A1 and A2 are returned
-            If 'quadratic', A1², A2², B1, B2, B3, B4 and B5 are returned
+            If 'quadratic', A1², A2², A1*A2, B1, B2, B3, B4 and B5 are returned
             If 'all' (default), A1, A2, A1², A2², B1, B2, B3, B4 and B5 are returned
 
         Returns
