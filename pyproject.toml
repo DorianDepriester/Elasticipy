@@ -26,12 +26,12 @@ dependencies = [
     "qtpy",
     "pandas"
 ]
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 
 dynamic = ["version"]
 
 [project.optional-dependencies]
-dev = ["pytest", "pytest-cov", "pymatgen==2024.11.13", "orix", "mp_api==0.45.9", "typing_extensions"]
+dev = ["pytest", "pytest-cov", "pymatgen", "orix"]
 
 [project.urls]
 Homepage = "https://pypi.org/project/Elasticipy/"
