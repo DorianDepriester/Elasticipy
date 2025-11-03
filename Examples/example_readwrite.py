@@ -6,5 +6,6 @@ C.save_to_txt("TiNi.txt", matrix_only=True)
 
 C2 = StiffnessTensor.from_txt_file("TiNi.txt")
 Cu2= StiffnessTensor.from_txt_file("TiNi.txt")
+print(C2==Cu2)
 
 
