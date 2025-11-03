@@ -1,10 +1,9 @@
-# ======================================================
-# Imports and simple example of stress
-# ======================================================
 import numpy as np
 from Elasticipy.tensors.stress_strain import StressTensor, StrainTensor
 
-
+# ======================================================
+# Simple example of stress
+# ======================================================
 stress = StressTensor([[0, 1, 0],
                        [1, 0, 0],
                        [0, 0, 0]])
@@ -75,4 +74,7 @@ C_rotated = C * rotations
 C_Voigt = C_rotated.Voigt_average() # Now check that the previous result is consistent with Voigt average
 sigma_Voigt = C_Voigt * eps
 print(sigma_Voigt[-1])
+
+fig, ax = sigma_Voigt[-1].draw_Mohr_circles()
+fig.show()
 
