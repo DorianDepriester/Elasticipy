@@ -397,7 +397,7 @@ class FourthOrderTensor:
             else:
                 return ValueError('The R.h.s must be either of shape (...,6,6) or (...,3,3,3,3)')
         elif isinstance(value, FourthOrderTensor):
-            self._matrix[index] = value._matrix / value.mapping._matrix * self.mapping._matrix
+            self._matrix[index] = value._matrix / value.mapping.matrix * self.mapping.matrix
         else:
             raise NotImplementedError('The r.h.s must be either an ndarray or an object of class {}'.format(self.__class__))
 
