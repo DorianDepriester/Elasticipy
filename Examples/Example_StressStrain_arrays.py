@@ -61,7 +61,7 @@ from scipy.spatial.transform import Rotation
 n_ori = 1000
 rotations = Rotation.random(n_ori)
 
-eps_rotated = eps.matmul(rotations)
+eps_rotated = eps.rotate(rotations, mode='cross')
 print(eps_rotated.shape)    # Just to check how it looks like
 
 sigma_rotated = C * eps_rotated
@@ -72,7 +72,7 @@ sigma_mean = sigma.mean(axis=1)     # Compute the mean over all orientations
 print(sigma_mean[-1])
 
 C_rotated = C * rotations
-C_Voigt = C_rotated.Voigt_average()
+C_Voigt = C_rotated.Voigt_average() # Now check that the previous result is consistent with Voigt average
 sigma_Voigt = C_Voigt * eps
 print(sigma_Voigt[-1])
 
