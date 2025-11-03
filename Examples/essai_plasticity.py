@@ -3,8 +3,6 @@ from Elasticipy.tensors.stress_strain import StressTensor, StrainTensor
 from Elasticipy.tensors.elasticity import StiffnessTensor
 import numpy as np
 from matplotlib import pyplot as plt
-import matplotlib as mpl
-mpl.use('Qt5Agg')   # Ensure interactive plot
 
 
 JC = JohnsonCook(A=363, B=792.7122, n=0.5756) # https://doi.org/10.1016/j.matpr.2020.05.213
@@ -71,3 +69,4 @@ for j, model in enumerate(models):
 ax.set_xlabel(r'$\varepsilon_{xy}$')
 ax.set_ylabel('Shear stress (MPa)')
 ax.legend()
+fig.show()
