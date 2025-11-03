@@ -83,4 +83,4 @@ def Kroner_Eshelby(Ci, g, method='strain', max_iter=5, atol=1e-3, rtol=1e-3, dis
 
 C=StiffnessTensor.cubic(C11=108, C44=28.3, C12=62)
 orientations = Rotation.random(1000)
-Cmacro, msg = Kroner_Eshelby(C, orientations, method='stress')
+Cmacro, msg = Kroner_Eshelby(C, orientations, method='stress', display=True)
