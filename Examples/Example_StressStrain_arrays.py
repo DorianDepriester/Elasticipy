@@ -1,29 +1,25 @@
 import numpy as np
 from Elasticipy.tensors.stress_strain import StressTensor, StrainTensor
+from Elasticipy.tensors.elasticity import StiffnessTensor
+from scipy.spatial.transform import Rotation
 
 # ======================================================
 # Simple example of stress
 # ======================================================
-stress = StressTensor([[0, 1, 0],
-                       [1, 0, 0],
-                       [0, 0, 0]])
+stress = StressTensor.shear([1,0,0],[0,1,0],1)
 print(stress.vonMises())
 print(stress.Tresca())
 
 # ======================================================
 # Simple example of strain
 # ======================================================
-strain = StrainTensor([[0, 1e-3, 0],
-                       [1e-3, 0, 0],
-                       [0, 0, 0]])
+strain = StrainTensor.shear([1,0,0],[0,1,0],1e-3)
 print(strain.principal_strains())
 print(strain.volumetric_strain())
 
 # ======================================================
 # Linear elasticity
 # ======================================================
-from Elasticipy.tensors.elasticity import StiffnessTensor
-
 C = StiffnessTensor.fromCrystalSymmetry(symmetry='cubic', phase_name='ferrite',
                                         C11=274, C12=175, C44=89)
 print(C)
@@ -33,15 +29,14 @@ print(sigma)
 
 S = C.inv()
 print(S)
-
 print(S * sigma)
 
 # ======================================================
 # Multidimensional tensor arrays
 # ======================================================
 n_array = 10
-sigma = StressTensor.zeros(n_array)  # Initialize the array to zero-stresses
-sigma.C[0, 1] = sigma.C[1, 0] = np.linspace(0, 100, n_array)    # The shear stress is linearly increasing
+sigma_xy = np.linspace(0, 100, n_array)
+sigma = StressTensor.shear([1,0,0], [0,1,0],sigma_xy)
 print(sigma[0])     # Check the initial value of the stress...
 print(sigma[-1])    # ...and the final value.
 
@@ -55,8 +50,6 @@ print(energy)     # print the elastic energy
 # ======================================================
 # Apply random rotations
 # ======================================================
-from scipy.spatial.transform import Rotation
-
 n_ori = 1000
 rotations = Rotation.random(n_ori)
 
