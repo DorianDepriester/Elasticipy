@@ -2,7 +2,7 @@ from Elasticipy.tensors.elasticity import StiffnessTensor
 import matplotlib as mpl
 mpl.use('Qt5Agg')   # Ensure interactive plot
 
-C = StiffnessTensor.fromCrystalSymmetry(symmetry='orthorombic', phase_name='forsterite',
+C = StiffnessTensor.fromCrystalSymmetry(symmetry='orthorhombic', phase_name='forsterite',
                                         C11=320, C12=68.2, C13=71.6,
                                         C22=196.5, C23=76.8, C33=233.5, C44=64, C55=77, C66=78.7)
 rho = 3.355
