@@ -1,7 +1,14 @@
 from Elasticipy.tensors.elasticity import StiffnessTensor
 from scipy.spatial.transform import Rotation
+
+################################################
+# The lines below are only required in PyCharm
+################################################
 import matplotlib as mpl
-mpl.use('Qt5Agg')   # Ensure interactive plot
+mpl.use('Qt5Agg')
+from qtpy import QtWidgets
+app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
+################################################
 
 # First, let consider the NiTi material:
 C = StiffnessTensor.fromCrystalSymmetry(symmetry='monoclinic', diad='y', phase_name='TiNi',
@@ -15,29 +22,43 @@ print(C)
 E = C.Young_modulus
 # See min/max values
 print(E)
+
 # Now illustrate the spatial dependence
-E.plot_xyz_sections()   # As 2D sections...
-E.plot3D()                # ...or in 3D
-E.plot_as_pole_figure()     # or even with PF
+fig,_ = E.plot_xyz_sections()   # As 2D sections...
+fig.show()
+fig,_ = E.plot3D()              # ...or in 3D
+fig.show()
+fig,_ =E.plot_as_pole_figure()  # or even with PF
+fig.show()
+
+# Print out the maximum value for the Young modulus
 print(E.max())
 
 # Apply a random rotation on stiffness tensor
 rotation = Rotation.from_euler('ZXZ', [90, 45, 0], degrees=True)
 Crot = C*rotation
 # Check that the Young modulus has changed as well
-Crot.Young_modulus.plot3D()
+fig, _ = Crot.Young_modulus.plot3D()
+fig.show()
 
 # Now let's consider the shear modulus
 G = C.shear_modulus
-G.plot_xyz_sections()   # Plot sections with min, max and mean
-G.plot3D()     # And plot it in 3D
+fig,_ = G.plot_xyz_sections()   # Plot sections with min, max and mean
+fig.show()
+
+fig,_ = G.plot3D()              # And plot it in 3D
+fig.show()
 print(G.min())
 print(G.max())
 
 # Finally, let's have a look on the Poisson ratio
 nu = C.Poisson_ratio
-nu.plot_xyz_sections()
-nu.plot3D(which='max')
+fig,_ = nu.plot_xyz_sections()
+fig.show()
+fig,_ = nu.plot3D(which='max')
+fig.show()
+
+# Check out the maximum and minimum values
 print(nu.min())
 print(nu.max())
 
@@ -45,7 +66,8 @@ print(nu.max())
 oris = Rotation.random(1000)
 Crotated = C*oris  # Compute the Voigt average
 Cvoigt = Crotated.Voigt_average()
-print(Cvoigt.Young_modulus) # Look at the corresponding Young modulis
+print(Cvoigt.Young_modulus) # Look at the corresponding Young moduli
 print(C.Voigt_average().Young_modulus) # Compare with infinite number of orientations
 
 
+app.exec() # Only required in PyCharm (see lines 7-10)
