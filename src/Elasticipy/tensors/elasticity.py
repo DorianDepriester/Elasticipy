@@ -810,32 +810,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         Hyperspherical function
         Min=82031.24999999997, Max=82031.25000000006
         """
-        argument_vector = np.array([E, nu, lame1, lame2])
-        if np.count_nonzero(argument_vector) != 2:
-            raise ValueError("Exactly two values are required among E, nu, lame1 and lame2.")
-        if E is not None:
-            if nu is not None:
-                lame1 = E * nu / ((1 + nu) * (1 - 2 * nu))
-                lame2 = E / (1 + nu) / 2
-            elif lame1 is not None:
-                R = np.sqrt(E ** 2 + 9 * lame1 ** 2 + 2 * E * lame1)
-                lame2 = (E - 3 * lame1 + R) / 4
-            elif lame2 is not None:
-                lame1 = lame2 * (E - 2 * lame2) / (3 * lame2 - E)
-            else:
-                raise ValueError('Either nu, lame1 or lame2 must be provided.')
-        elif nu is not None:
-            if lame1 is not None:
-                lame2 = lame1 * (1 - 2 * nu) / (2 * nu)
-            elif lame2 is not None:
-                lame1 = 2 * lame2 * nu / (1 - 2 * nu)
-            else:
-                raise ValueError('Either lame1 or lame2 must be provided.')
-        C11 = lame1 + 2 * lame2
-        C12 = lame1
-        C44 = lame2
-        matrix = _isotropic_matrix(C11, C12, C44)
-        return StiffnessTensor(np.array(matrix), symmetry='isotropic', phase_name=phase_name)
+        return ComplianceTensor.isotropic(E=E, nu=nu, lame1=lame1, lame2=lame2, phase_name=phase_name).inv()
 
     @classmethod
     def orthotropic(cls, *, Ex, Ey, Ez, Gxy, Gxz, Gyz,
@@ -1623,8 +1598,45 @@ class ComplianceTensor(StiffnessTensor):
         return self.inv().Hill_average(axis=axis).inv()
 
     @classmethod
-    def isotropic(cls, E=None, nu=None, lame1=None, lame2=None, phase_name=None):
-        return super().isotropic(E=E, nu=nu, lame1=lame1, lame2=lame2, phase_name=None).inv()
+    def isotropic(cls, E=None, nu=None, lame1=None, lame2=None, K=None, phase_name=None):
+        n_specified = sum(v is not None for v in [E, nu, lame1, lame2])
+        if n_specified != 2:
+            raise ValueError("Exactly two values are required among E, nu, lame1 and lame2.")
+        if K is not None:
+            if E is not None:
+                lame2 = 3 * K * E / (9 * K - E)
+                nu = (3 * K - E) / 6 / K
+            elif lame1 is not None:
+                E = 9 * K * (K - lame1) / (3 * K -lame1)
+                lame2= 3 * (K - lame1) / 2
+                nu = lame1 / (3*K-lame1)
+            elif lame2 is not None:
+                E = 9 * K * lame2 / (3 * K + lame2)
+                nu = (3 * K - 2 * lame2) / 2 / (3 * K + lame2)
+            elif nu is not None:
+                E = 3 * K * (1 - 2 * nu)
+                lame2 = E / 2 / (1 + nu)
+        elif E is not None:
+            if lame1 is not None:
+                R = np.sqrt(E**2 + 9*lame1**2+2*E*lame1)
+                lame2 = (E - 3 * lame1 + R) / 4
+                nu = 2 * lame1 / (E + lame1 + R)
+            elif lame2 is not None:
+                nu = E / 2 / lame2 - 1
+            elif nu is not None:
+                lame2 = E / 2 / (1 + nu)
+        elif lame1 is not None:
+            if lame2 is not None:
+                E = lame2 *  (3 * lame1 + 2 * lame2) / (lame1 + lame2)
+            elif nu is not None:
+                E = lame1 * ( 1 + nu) * (1 - 2 * nu) / nu
+        elif (nu is not None) and (lame2 is not None):
+            E = 2 * lame2 * (1 + nu)
+        S11 = 1/E
+        S12 = -nu/E
+        S44 = 1/lame2
+        S_mat = _isotropic_matrix(S11, S12, S44)
+        return ComplianceTensor(S_mat, symmetry='isotropic', phase_name=phase_name)
 
     @classmethod
     def orthotropic(cls, *args, **kwargs):
