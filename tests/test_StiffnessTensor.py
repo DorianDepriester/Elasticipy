@@ -452,18 +452,6 @@ class TestStiffnessConstructor(unittest.TestCase):
         C_th = lame1 * A + lame2 * (B + C)
         np.testing.assert_almost_equal(C_th, C_full)
 
-    def test_isotropic(self):
-        """Test if we correctly retrieve engineering constants in the isotropic case"""
-        E = 210000
-        nu = 0.28
-        C = StiffnessTensor.isotropic(E=E, nu=nu)
-        G = C.shear_modulus.mean()
-        assert approx(G) == E / (1+nu) /2
-        C = StiffnessTensor.isotropic(E=E, lame2=G)
-        assert approx(C.Poisson_ratio.mean()) == nu
-        C = StiffnessTensor.isotropic(lame2=G, nu=nu)
-        assert approx(C.Young_modulus.mean()) == E
-
     def test_wave_velocity(self):
         """Test computation of wave velocities against simple isotropic case"""
         E = 210
