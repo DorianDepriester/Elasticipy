@@ -319,6 +319,11 @@ class TestStiffnessConstructor(unittest.TestCase):
         C = StiffnessTensor.isotropic(E=E, lame2=G)
         assert approx(C.Poisson_ratio.mean()) == nu
         C = StiffnessTensor.isotropic(lame2=G, nu=nu)
+        K = C.shear_modulus
+        C2 = StiffnessTensor.isotropic(E=E, K=K)
+        C3 = StiffnessTensor.isotropic(nu=nu, K=K)
+        C4 = StiffnessTensor.isotropic(nu=nu, G=G)
+        assert C == C2 == C3 == C4
         assert approx(C.Young_modulus.mean()) == E
         assert C.is_isotropic()
         assert C.is_cubic()
