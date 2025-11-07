@@ -330,7 +330,7 @@ class TestStiffnessConstructor(unittest.TestCase):
 
         with self.assertRaises(ValueError) as context:
             _ = StiffnessTensor.isotropic(E=E, nu=nu, G=G)
-        self.assertEqual(str(context.exception), "Exactly two values are required among E, nu, K, lame1 and lame2.")
+        self.assertEqual(str(context.exception), "Exactly two values are required among E, nu, G, K, lame1 and lame2.")
         with self.assertRaises(ValueError) as context:
             _ = StiffnessTensor.isotropic(G=G, lame2=G)
         self.assertEqual(str(context.exception), "G and lame2 cannot be provided together.")
