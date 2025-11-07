@@ -655,6 +655,20 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
     @property
     def lame1(self):
+        """"
+        Compute the first Lamé's parameter (only for isotropic materials).
+
+        If the stiffness/compliance tensor is not isotropic, NaN is returned.
+
+        Returns
+        -------
+        float
+            First Lamé's parameter
+
+        See Also
+        --------
+        lame2 : second Lamé's parameter
+        """
         self._single_tensor_only('lame1')
         if self.is_isotropic():
             C11 = (self.C11 + self.C22 + self.C33) / 3
@@ -664,6 +678,20 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
     @property
     def lame2(self):
+        """"
+        Compute the second Lamé's parameter (only for isotropic materials).
+
+        If the stiffness/compliance tensor is not isotropic, NaN is returned.
+
+        Returns
+        -------
+        float
+            Second Lamé's parameter
+
+        See Also
+        --------
+        lame1 : first Lamé's parameter
+        """
         self._single_tensor_only('lame2')
         if self.is_isotropic():
             return (self.C44 + self.C55 + self.C66) / 3
@@ -1785,3 +1813,11 @@ class ComplianceTensor(StiffnessTensor):
         eig_compliances : compute the eigencompliances from the Kelvin's matrix of compliance
         """
         return 1/self.eig_compliances
+
+    @property
+    def lame1(self):
+        return self.inv().lame1
+
+    @property
+    def lame2(self):
+        return self.inv().lame2
