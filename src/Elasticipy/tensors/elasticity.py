@@ -1682,6 +1682,7 @@ class ComplianceTensor(StiffnessTensor):
         elif lame1 is not None:
             if G is not None:
                 E = G * (3 * lame1 + 2 * G) / (lame1 + G)
+                nu = lame1 / 2 / (lame1 + G)
             elif nu is not None:
                 E = lame1 * ( 1 + nu) * (1 - 2 * nu) / nu
                 G = lame1 * (1 - 2 * nu) / 2 / nu
