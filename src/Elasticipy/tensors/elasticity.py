@@ -1604,7 +1604,7 @@ class ComplianceTensor(StiffnessTensor):
     @classmethod
     def isotropic(cls, E=None, nu=None, G=None, lame1=None, lame2=None, K=None, phase_name=None):
         if lame2 is not None:
-            if G is not None:
+            if G is None:
                 G = lame2
             else:
                 raise AttributeError('G and lame2 cannot be provided together')
