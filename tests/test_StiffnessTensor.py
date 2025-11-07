@@ -323,7 +323,15 @@ class TestStiffnessConstructor(unittest.TestCase):
         C2 = StiffnessTensor.isotropic(E=E, K=K)
         C3 = StiffnessTensor.isotropic(nu=nu, K=K)
         C4 = StiffnessTensor.isotropic(nu=nu, G=G)
-        assert C == C2 == C3 == C4
+        np.testing.assert_array_almost_equal(C.matrix(), C2.matrix())
+        np.testing.assert_array_almost_equal(C.matrix(), C3.matrix())
+        np.testing.assert_array_almost_equal(C.matrix(), C4.matrix())
+        with self.assertRaises(ValueError) as context:
+            _ = StiffnessTensor.isotropic(E=E, nu=nu, G=G)
+        self.assertEqual(str(context.exception), "Exactly two values are required among E, nu, K, lame1 and lame2.")
+        with self.assertRaises(ValueError) as context:
+            _ = StiffnessTensor.isotropic(G=G, lame2=G)
+        self.assertEqual(str(context.exception), "G and lame2 cannot be provided together.")
         assert approx(C.Young_modulus.mean()) == E
         assert C.is_isotropic()
         assert C.is_cubic()
