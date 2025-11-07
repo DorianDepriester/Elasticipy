@@ -1610,7 +1610,7 @@ class ComplianceTensor(StiffnessTensor):
                 raise AttributeError('G and lame2 cannot be provided together')
         n_specified = sum(v is not None for v in [E, nu, lame1, G, K])
         if n_specified != 2:
-            raise ValueError("Exactly two values are required among E, nu, lame1 and lame2.")
+            raise ValueError("Exactly two values are required among E, nu, K, lame1 and lame2.")
         if K is not None:
             if E is not None:
                 G = 3 * K * E / (9 * K - E)
