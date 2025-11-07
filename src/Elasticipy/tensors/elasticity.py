@@ -768,10 +768,10 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
             raise NotImplementedError('Only Voigt, Reus, and Hill are implemented.')
 
     @classmethod
-    def isotropic(cls, E=None, nu=None, lame1=None, lame2=None, phase_name=None):
+    def isotropic(cls, E=None, nu=None, G=None, lame1=None, lame2=None, K=None, phase_name=None):
         """
-        Create an isotropic stiffness tensor from two elasticity coefficients, namely: E, nu, lame1, or lame2. Exactly
-        two of these coefficients must be provided.
+        Create an isotropic stiffness tensor from two elasticity coefficients, namely: E, nu, G, lame1, or lame2.
+        Exactly two of these coefficients must be provided. Note that lame2 is just an alias for G.
 
         Parameters
         ----------
@@ -779,10 +779,14 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
             Young modulus
         nu : float, None
             Poisson ratio
+        G : float, None
+            Shear modulus
         lame1 : float, None
             First Lamé coefficient
         lame2 : float, None
-            Second Lamé coefficient
+            Second Lamé coefficient (alias for G)
+        K : float, None
+            Bulk modulus
         phase_name : str, None
             Name to print
 
@@ -810,7 +814,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         Hyperspherical function
         Min=82031.24999999997, Max=82031.25000000006
         """
-        return ComplianceTensor.isotropic(E=E, nu=nu, lame1=lame1, lame2=lame2, phase_name=phase_name).inv()
+        return ComplianceTensor.isotropic(E=E, nu=nu, G=G, lame1=lame1, lame2=lame2, K=K, phase_name=phase_name).inv()
 
     @classmethod
     def orthotropic(cls, *, Ex, Ey, Ez, Gxy, Gxz, Gyz,
@@ -1598,43 +1602,48 @@ class ComplianceTensor(StiffnessTensor):
         return self.inv().Hill_average(axis=axis).inv()
 
     @classmethod
-    def isotropic(cls, E=None, nu=None, lame1=None, lame2=None, K=None, phase_name=None):
-        n_specified = sum(v is not None for v in [E, nu, lame1, lame2])
+    def isotropic(cls, E=None, nu=None, G=None, lame1=None, lame2=None, K=None, phase_name=None):
+        if lame2 is not None:
+            if G is not None:
+                G = lame2
+            else:
+                raise AttributeError('G and lame2 cannot be provided together')
+        n_specified = sum(v is not None for v in [E, nu, lame1, G])
         if n_specified != 2:
             raise ValueError("Exactly two values are required among E, nu, lame1 and lame2.")
         if K is not None:
             if E is not None:
-                lame2 = 3 * K * E / (9 * K - E)
+                G = 3 * K * E / (9 * K - E)
                 nu = (3 * K - E) / 6 / K
             elif lame1 is not None:
                 E = 9 * K * (K - lame1) / (3 * K -lame1)
-                lame2= 3 * (K - lame1) / 2
+                G= 3 * (K - lame1) / 2
                 nu = lame1 / (3*K-lame1)
-            elif lame2 is not None:
-                E = 9 * K * lame2 / (3 * K + lame2)
-                nu = (3 * K - 2 * lame2) / 2 / (3 * K + lame2)
+            elif G is not None:
+                E = 9 * K * G / (3 * K + G)
+                nu = (3 * K - 2 * G) / 2 / (3 * K + G)
             elif nu is not None:
                 E = 3 * K * (1 - 2 * nu)
-                lame2 = E / 2 / (1 + nu)
+                G = E / 2 / (1 + nu)
         elif E is not None:
             if lame1 is not None:
                 R = np.sqrt(E**2 + 9*lame1**2+2*E*lame1)
-                lame2 = (E - 3 * lame1 + R) / 4
+                G = (E - 3 * lame1 + R) / 4
                 nu = 2 * lame1 / (E + lame1 + R)
-            elif lame2 is not None:
-                nu = E / 2 / lame2 - 1
+            elif G is not None:
+                nu = E / 2 / G - 1
             elif nu is not None:
-                lame2 = E / 2 / (1 + nu)
+                G = E / 2 / (1 + nu)
         elif lame1 is not None:
-            if lame2 is not None:
-                E = lame2 *  (3 * lame1 + 2 * lame2) / (lame1 + lame2)
+            if G is not None:
+                E = G * (3 * lame1 + 2 * G) / (lame1 + G)
             elif nu is not None:
                 E = lame1 * ( 1 + nu) * (1 - 2 * nu) / nu
-        elif (nu is not None) and (lame2 is not None):
-            E = 2 * lame2 * (1 + nu)
+        elif (nu is not None) and (G is not None):
+            E = 2 * G * (1 + nu)
         S11 = 1/E
         S12 = -nu/E
-        S44 = 1/lame2
+        S44 = 1 / G
         S_mat = _isotropic_matrix(S11, S12, S44)
         return ComplianceTensor(S_mat, symmetry='isotropic', phase_name=phase_name)
 
