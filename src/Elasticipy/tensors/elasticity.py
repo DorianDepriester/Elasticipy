@@ -653,6 +653,23 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         """
         return self.inv().bulk_modulus
 
+    @property
+    def lame1(self):
+        self._single_tensor_only('lame1')
+        if self.is_isotropic():
+            C11 = (self.C11 + self.C22 + self.C33) / 3
+            return C11 - 2 * self.lame2
+        else:
+            return np.nan
+
+    @property
+    def lame2(self):
+        self._single_tensor_only('lame2')
+        if self.is_isotropic():
+            return (self.C44 + self.C55 + self.C66) / 3
+        else:
+            return np.nan
+
     def Voigt_average(self, axis=None):
         """
         Compute the Voigt average of the stiffness tensor.
