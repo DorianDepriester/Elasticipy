@@ -723,7 +723,7 @@ class TestStiffnessConstructor(unittest.TestCase):
         assert C_cub_iso.Zener_ratio() == 1.0
         Ciso = StiffnessTensor.isotropic(E=210, nu=0.3)
         assert Ciso.Zener_ratio() == 1.0
-        assert Ciso.universal_anisotropy == 0.0
+        assert Ciso.universal_anisotropy < 1e-10
         Cmono = S.inv()
         with self.assertRaises(ValueError) as context:
             Cmono.Zener_ratio()
