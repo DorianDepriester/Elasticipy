@@ -319,26 +319,15 @@ class TestStiffnessConstructor(unittest.TestCase):
         lame1 = C.lame1
         lame2 = C.lame2
         assert approx(G) == E / (1+nu) /2
-        C = StiffnessTensor.isotropic(E=E, lame2=G)
-        assert approx(C.Poisson_ratio.mean()) == nu
-        C_EK = StiffnessTensor.isotropic(E=E, K=K)
-        E_nuK = StiffnessTensor.isotropic(nu=nu, K=K)
-        C_nuG = StiffnessTensor.isotropic(nu=nu, G=G)
-        C_lam1E = StiffnessTensor.isotropic(lame1=lame1, E=E)
-        C_lam1K = StiffnessTensor.isotropic(lame1=lame1, K=K)
-        C_lam1nu = StiffnessTensor.isotropic(lame1=lame1, nu=nu)
-        C_lam2E = StiffnessTensor.isotropic(lame2=lame2, E=E)
-        C_lam2K = StiffnessTensor.isotropic(lame2=lame2, K=K)
-        C_lam2nu = StiffnessTensor.isotropic(lame2=lame2, nu=nu)
-        np.testing.assert_array_almost_equal(C.matrix(), C_EK.matrix())
-        np.testing.assert_array_almost_equal(C.matrix(), E_nuK.matrix())
-        np.testing.assert_array_almost_equal(C.matrix(), C_nuG.matrix())
-        np.testing.assert_array_almost_equal(C.matrix(), C_lam1E.matrix())
-        np.testing.assert_array_almost_equal(C.matrix(), C_lam1K.matrix())
-        np.testing.assert_array_almost_equal(C.matrix(), C_lam1nu.matrix())
-        np.testing.assert_array_almost_equal(C.matrix(), C_lam2E.matrix())
-        np.testing.assert_array_almost_equal(C.matrix(), C_lam2K.matrix())
-        np.testing.assert_array_almost_equal(C.matrix(), C_lam2nu.matrix())
+        input_args1 = {'E': E, 'nu': nu, 'K':K, 'lame1':lame1, 'lame2':lame2}
+        input_args2 = {'E': E, 'nu': nu, 'K':K, 'lame1':lame1, 'lame2':lame2}
+        for k1 in input_args1.keys():
+            del input_args2[k1]
+            for k2 in input_args2.keys():
+                kwargs = {k1: input_args1[k1], k2: input_args2[k2]}
+                C_combo = StiffnessTensor.isotropic(**kwargs)
+                np.testing.assert_array_almost_equal(C.matrix(), C_combo.matrix())
+
         with self.assertRaises(ValueError) as context:
             _ = StiffnessTensor.isotropic(E=E, nu=nu, G=G)
         self.assertEqual(str(context.exception), "Exactly two values are required among E, nu, K, lame1 and lame2.")
