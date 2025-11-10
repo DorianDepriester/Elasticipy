@@ -918,17 +918,9 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
             \\frac{\\nu_{xy}}{E_x} = \\frac{\\nu_{yx}}{E_y}
 
         """
-        nu_yx = _switch_poisson_ratios(nu_xy, nu_yx, Ex, Ey,'xy')
-        nu_zx = _switch_poisson_ratios(nu_xz, nu_zx, Ex, Ez,'xz')
-        nu_zy = _switch_poisson_ratios(nu_yz, nu_zy, Ey, Ez,'yz')
-        tri_sup = np.array([[1 / Ex, -nu_yx / Ey, -nu_zx / Ez, 0, 0, 0],
-                            [0, 1 / Ey, -nu_zy / Ez, 0, 0, 0],
-                            [0, 0, 1 / Ez, 0, 0, 0],
-                            [0, 0, 0, 1 / Gyz, 0, 0],
-                            [0, 0, 0, 0, 1 / Gxz, 0],
-                            [0, 0, 0, 0, 0, 1 / Gxy]])
-        S = tri_sup + np.tril(tri_sup.T, -1)
-        return StiffnessTensor(np.linalg.inv(S), symmetry='orthotropic', **kwargs)
+        return ComplianceTensor.orthotropic(Ex=Ex, Ey=Ey, Ez=Ez, Gxy=Gxy, Gxz=Gxz, Gyz=Gyz,
+                                            nu_yx=nu_yx, nu_zx=nu_zx, nu_zy=nu_zy,
+                                            nu_xy=nu_xy, nu_xz=nu_xz, nu_yz=nu_yz).inv()
 
     @classmethod
     def transverse_isotropic(cls, *, Ex, Ez, Gxz, nu_yx=None, nu_xy=None, nu_zx=None, nu_xz=None, **kwargs):
@@ -1690,8 +1682,20 @@ class ComplianceTensor(StiffnessTensor):
         return ComplianceTensor(S_mat, symmetry='isotropic', phase_name=phase_name)
 
     @classmethod
-    def orthotropic(cls, *args, **kwargs):
-        return super().orthotropic(*args, **kwargs).inv()
+    def orthotropic(cls, *, Ex, Ey, Ez, Gxy, Gxz, Gyz,
+                    nu_yx=None, nu_zx=None, nu_zy=None,
+                    nu_xy=None, nu_xz=None, nu_yz=None, **kwargs):
+        nu_yx = _switch_poisson_ratios(nu_xy, nu_yx, Ex, Ey,'xy')
+        nu_zx = _switch_poisson_ratios(nu_xz, nu_zx, Ex, Ez,'xz')
+        nu_zy = _switch_poisson_ratios(nu_yz, nu_zy, Ey, Ez,'yz')
+        tri_sup = np.array([[1 / Ex, -nu_yx / Ey, -nu_zx / Ez, 0, 0, 0],
+                            [0, 1 / Ey, -nu_zy / Ez, 0, 0, 0],
+                            [0, 0, 1 / Ez, 0, 0, 0],
+                            [0, 0, 0, 1 / Gyz, 0, 0],
+                            [0, 0, 0, 0, 1 / Gxz, 0],
+                            [0, 0, 0, 0, 0, 1 / Gxy]])
+        S = tri_sup + np.tril(tri_sup.T, -1)
+        return ComplianceTensor(S, symmetry='orthotropic', **kwargs)
 
     @classmethod
     def transverse_isotropic(cls, *args, **kwargs):
