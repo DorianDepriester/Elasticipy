@@ -50,3 +50,10 @@ addopts = "--cov=src/Elasticipy --cov-report=xml"
 omit = [
     "src/Elasticipy/gui.py",
 ]
+
+[tool.poetry]
+name = "jupyter-notebook-tutorial"
+version = "0.1.0"
+description = "Short tutorial for Elasticipy"
+author = ["Dorian DEPRIESTER <dorian.dep@gmail.com>"]
+readme = "README.md"
