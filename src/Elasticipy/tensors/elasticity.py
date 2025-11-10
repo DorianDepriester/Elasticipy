@@ -47,8 +47,8 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
     Class for manipulating fourth-order stiffness tensors.
     """
     tensor_name = 'Stiffness'
-    C11_C12_factor = 0.5
-    C46_C56_factor = 1.0
+    _C11_C12_factor = 0.5
+    _C46_C56_factor = 1.0
     component_prefix = 'C'
 
     def __init__(self, M, symmetry='Triclinic', check_positive_definite=True, phase_name= None, mapping=VoigtMapping(), **kwargs):
@@ -228,11 +228,11 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         C11_C12 = symmetry_description.C11_C12
         if C11_C12:
             for index in C11_C12:
-                C[index] = (C[0, 0] - C[0, 1]) * cls.C11_C12_factor
+                C[index] = (C[0, 0] - C[0, 1]) * cls._C11_C12_factor
 
         if symmetry == 'Trigonal':
-            C[3, 5] = cls.C46_C56_factor * C[3, 5]
-            C[4, 5] = cls.C46_C56_factor * C[4, 5]
+            C[3, 5] = cls._C46_C56_factor * C[3, 5]
+            C[4, 5] = cls._C46_C56_factor * C[4, 5]
 
         return C + np.tril(C.T, -1)
 
@@ -1584,9 +1584,9 @@ class ComplianceTensor(StiffnessTensor):
     Class for manipulating compliance tensors
     """
     tensor_name = 'Compliance'
-    C11_C12_factor = 2.0
+    _C11_C12_factor = 2.0
     component_prefix = 'S'
-    C46_C56_factor = 2.0
+    _C46_C56_factor = 2.0
 
     def __init__(self, C, check_positive_definite=True, mapping=VoigtMapping(tensor='Compliance'), **kwargs):
         super().__init__(C, check_positive_definite=check_positive_definite, mapping=mapping, **kwargs)
