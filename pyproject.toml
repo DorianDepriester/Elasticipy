@@ -55,5 +55,5 @@ omit = [
 name = "jupyter-notebook-tutorial"
 version = "0.1.0"
 description = "Short tutorial for Elasticipy"
-author = ["Dorian DEPRIESTER <dorian.dep@gmail.com>"]
+authors = ["Dorian DEPRIESTER <dorian.dep@gmail.com>"]
 readme = "README.md"
