@@ -1825,3 +1825,221 @@ class ComplianceTensor(StiffnessTensor):
     @property
     def lame2(self):
         return self.inv().lame2
+
+
+    @classmethod
+    def hexagonal(cls, *, S11=0., S12=0., S13=0., S33=0., S44=0., phase_name=None):
+        """
+        Create a fourth-order tensor from hexagonal symmetry.
+
+        Parameters
+        ----------
+        S11, S12 , S13, S33, S44 : float
+            Components of the tensor, using the Voigt notation
+        phase_name : str, optional
+            Phase name to display
+        Returns
+        -------
+        FourthOrderTensor
+
+        See Also
+        --------
+        transverse_isotropic : creates a transverse-isotropic tensor from engineering parameters
+        cubic : create a tensor from cubic symmetry
+        tetragonal : create a tensor from tetragonal symmetry
+        """
+        return cls.fromCrystalSymmetry(symmetry='hexagonal', S11=S11, S12=S12, S13=S13, S33=S33, S44=S44,
+                                       phase_name=phase_name, prefix='S')
+
+    @classmethod
+    def trigonal(cls, *, S11=0., S12=0., S13=0., S14=0., S33=0., S44=0., S15=0., phase_name=None):
+        """
+        Create a fourth-order tensor from trigonal symmetry.
+
+        Parameters
+        ----------
+        S11, S12, S13, S14, S33, S44 : float
+            Components of the tensor, using the Voigt notation
+        S15 : float, optional
+            S15 component of the tensor, only used for point groups 3 and -3.
+        phase_name : str, optional
+            Phase name to display
+        Returns
+        -------
+        FourthOrderTensor
+
+        See Also
+        --------
+        tetragonal : create a tensor from tetragonal symmetry
+        orthorhombic : create a tensor from orthorhombic symmetry
+        """
+        return cls.fromCrystalSymmetry(point_group='3', S11=S11, S12=S12, S13=S13, S14=S14, S15=S15,
+                                       S33=S33, S44=S44, phase_name=phase_name, prefix='S')
+
+    @classmethod
+    def tetragonal(cls, *, S11=0., S12=0., S13=0., S33=0., S44=0., S16=0., S66=0., phase_name=None):
+        """
+        Create a fourth-order tensor from tetragonal symmetry.
+
+        Parameters
+        ----------
+        S11,  S12, S13, S33, S44, S66 : float
+            Components of the tensor, using the Voigt notation
+        S16 : float, optional
+            S16 component in Voigt notation (for point groups 4, -4 and 4/m only)
+        phase_name : str, optional
+            Phase name to display
+
+        Returns
+        -------
+        FourthOrderTensor
+
+        See Also
+        --------
+        trigonal : create a tensor from trigonal symmetry
+        orthorhombic : create a tensor from orthorhombic symmetry
+        """
+        return cls.fromCrystalSymmetry(point_group='4', S11=S11, S12=S12, S13=S13, S16=S16,
+                                       S33=S33, S44=S44, S66=S66, phase_name=phase_name, prefix='S')
+
+    @classmethod
+    def cubic(cls, *, S11=0., S12=0., S44=0., phase_name=None):
+        """
+        Create a fourth-order tensor from cubic symmetry.
+
+        Parameters
+        ----------
+        S11 , S12, S44 : float
+        phase_name : str, optional
+            Phase name to display
+
+        Returns
+        -------
+        StiffnessTensor
+
+        See Also
+        --------
+        hexagonal : create a tensor from hexagonal symmetry
+        orthorhombic : create a tensor from orthorhombic symmetry
+        """
+        return cls.fromCrystalSymmetry(symmetry='cubic', S11=S11, S12=S12, S44=S44, phase_name=phase_name, prefix='S')
+
+    @classmethod
+    def orthorhombic(cls, *, S11=0., S12=0., S13=0., S22=0., S23=0., S33=0., S44=0., S55=0., S66=0., phase_name=None):
+        """
+        Create a fourth-order tensor from orthorhombic symmetry.
+
+        Parameters
+        ----------
+        S11, S12, S13, S22, S23, S33, S44, S55, S66 : float
+            Components of the tensor, using the Voigt notation
+        phase_name : str, optional
+            Phase name to display
+
+        Returns
+        -------
+        FourthOrderTensor
+
+        See Also
+        --------
+        monoclinic : create a tensor from monoclinic symmetry
+        orthorhombic : create a tensor from orthorhombic symmetry
+        """
+        return cls.fromCrystalSymmetry(symmetry='orthorhombic',
+                                       S11=S11, S12=S12, S13=S13, S22=S22, S23=S23, S33=S33, S44=S44, S55=S55, S66=S66,
+                                       phase_name=phase_name, prefix='S')
+
+    @classmethod
+    def monoclinic(cls, *, S11=0., S12=0., S13=0., S22=0., S23=0., S33=0., S44=0., S55=0., S66=0.,
+                   S15=None, S25=None, S35=None, S46=None,
+                   S16=None, S26=None, S36=None, S45=None,
+                   phase_name=None):
+        """
+        Create a fourth-order tensor from monoclinic symmetry. It automatically detects whether the components are given
+        according to the Y or Z diad, depending on the input arguments.
+
+        For Diad || y, S15, S25, S35 and S46 must be provided.
+        For Diad || z, S16, S26, S36 and S45 must be provided.
+
+        Parameters
+        ----------
+        S11, S12 , S13, S22, S23, S33, S44, S55, S66 : float
+            Components of the tensor, using the Voigt notation
+        S15 : float, optional
+            S15 component of the tensor (if Diad || y)
+        S25 : float, optional
+            S25 component of the tensor (if Diad || y)
+        S35 : float, optional
+            S35 component of the tensor (if Diad || y)
+        S46 : float, optional
+            S46 component of the tensor (if Diad || y)
+        S16 : float, optional
+            S16 component of the tensor (if Diad || z)
+        S26 : float, optional
+            S26 component of the tensor (if Diad || z)
+        S36 : float, optional
+            S36 component of the tensor (if Diad || z)
+        S45 : float, optional
+            S45 component of the tensor (if Diad || z)
+        phase_name : str, optional
+            Name to display
+
+        Returns
+        -------
+        FourthOrderTensor
+
+        See Also
+        --------
+        triclinic : create a tensor from triclinic symmetry
+        orthorhombic : create a tensor from orthorhombic symmetry
+        """
+        diad_y = not (None in (S15, S25, S35, S46))
+        diad_z = not (None in (S16, S26, S36, S45))
+        if diad_y and diad_z:
+            raise KeyError('Ambiguous diad. Provide either S15, S25, S35 and S46; or S16, S26, S36 and S45')
+        elif diad_y:
+            return cls.fromCrystalSymmetry(symmetry='monoclinic', diad='y',
+                                           S11=S11, S12=S12, S13=S13, S22=S22, S23=S23, S33=S33, S44=S44, S55=S55,
+                                           S66=S66,
+                                           S15=S15, S25=S25, S35=S35, S46=S46, phase_name=phase_name, prefix='S')
+        elif diad_z:
+            return cls.fromCrystalSymmetry(symmetry='monoclinic', diad='z',
+                                           S11=S11, S12=S12, S13=S13, S22=S22, S23=S23, S33=S33, S44=S44, S55=S55,
+                                           S66=S66,
+                                           S16=S16, S26=S26, S36=S36, S45=S45, phase_name=phase_name, prefix='S')
+        else:
+            raise KeyError('For monoclinic symmetry, one should provide either S15, S25, S35 and S46, '
+                           'or S16, S26, S36 and S45.')
+
+    @classmethod
+    def triclinic(cls, S11=0., S12=0., S13=0., S14=0., S15=0., S16=0.,
+                  S22=0., S23=0., C24=0., S25=0., S26=0.,
+                  S33=0., C34=0., S35=0., S36=0.,
+                  S44=0., S45=0., S46=0.,
+                  S55=0., C56=0.,
+                  S66=0., phase_name=None):
+        """
+
+        Parameters
+        ----------
+        S11 , S12 , S13 , S14 , S15 , S16 , S22 , S23 , C24 , S25 , S26 , S33 , C34 , S35 , S36 , S44 , S45 , S46 , S55 , C56 , S66 : float
+            Components of the tensor
+        phase_name : str, optional
+            Name to display
+
+        Returns
+        -------
+        FourthOrderTensor
+
+        See Also
+        --------
+        monoclinic : create a tensor from monoclinic symmetry
+        orthorhombic : create a tensor from orthorhombic symmetry
+        """
+        matrix = np.array([[S11, S12, S13, S14, S15, S16],
+                           [S12, S22, S23, C24, S25, S26],
+                           [S13, S23, S33, C34, S35, S36],
+                           [S14, C24, C34, S44, S45, S46],
+                           [S15, S25, S35, S45, S55, C56],
+                           [S16, S26, S36, S46, C56, S66]])
+        return cls(matrix, phase_name=phase_name)
