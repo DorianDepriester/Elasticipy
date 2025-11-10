@@ -20,8 +20,7 @@ print(strain.volumetric_strain())
 # ======================================================
 # Linear elasticity
 # ======================================================
-C = StiffnessTensor.fromCrystalSymmetry(symmetry='cubic', phase_name='ferrite',
-                                        C11=274, C12=175, C44=89)
+C = StiffnessTensor.cubic(phase_name='ferrite',C11=274, C12=175, C44=89)
 print(C)
 
 sigma = C * strain
