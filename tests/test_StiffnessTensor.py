@@ -1,4 +1,5 @@
 import unittest
+
 import numpy as np
 from pytest import approx
 import os
@@ -46,12 +47,14 @@ def crystal_symmetry_tester(symmetry_name, cls='stiffness', variant=None):
         matrix = np.array(row['C'])
         if cls=='stiffness':
             class_constructor = StiffnessTensor
+            prefix = 'C'
         else:
             class_constructor = ComplianceTensor
+            prefix = 'S'
             matrix = np.linalg.inv(matrix)*1000
         kwargs = dict()
         for indices in required_fields:
-            component_name = 'C' + _indices2str(indices)
+            component_name = prefix + _indices2str(indices)
             kwargs[component_name] = matrix[tuple(indices)]
         constructor = getattr(class_constructor, symmetry_name.lower())
         C = constructor(**kwargs)
