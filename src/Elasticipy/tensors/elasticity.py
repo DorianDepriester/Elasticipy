@@ -238,7 +238,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
     @classmethod
     def fromCrystalSymmetry(cls, symmetry='Triclinic', point_group=None, diad='y', phase_name=None, prefix=None,
-                            **kwargs):
+                             **kwargs):
         """
         Create a fourth-order tensor from limited number of components, taking advantage of crystallographic symmetries
 
@@ -311,8 +311,12 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         Phase: TiNi
         Symmetry: monoclinic
         """
-        matrix = cls._matrixFromCrystalSymmetry(point_group=point_group, diad=diad, symmetry=symmetry, prefix=prefix,
-                                                **kwargs)
+        return cls._fromCrystalSymmetry(symmetry=symmetry, point_group=point_group, diad=diad, phase_name=phase_name,
+                                       prefix=prefix, **kwargs)
+
+    @classmethod
+    def _fromCrystalSymmetry(cls, symmetry, phase_name, **kwargs):
+        matrix = cls._matrixFromCrystalSymmetry(symmetry=symmetry, **kwargs)
         return cls(matrix, phase_name=phase_name, symmetry=symmetry)
 
 
