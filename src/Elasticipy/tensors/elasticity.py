@@ -861,7 +861,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         >>> C=StiffnessTensor.isotropic(E=210e3, nu=0.28)
         >>> C.shear_modulus
         Hyperspherical function
-        Min=82031.24999999997, Max=82031.25000000006
+        Min=82031.24999999991, Max=82031.25000000006
         """
         return ComplianceTensor.isotropic(E=E, nu=nu, G=G, lame1=lame1, lame2=lame2, K=K, phase_name=phase_name).inv()
 

@@ -47,7 +47,7 @@ To quickly see the min/max value of a ``SphericalFunction``, just print it:
 
     >>> print(E)
     Spherical function
-    Min=26.283577707639264, Max=191.396591469876
+    Min=26.283577707639264, Max=191.39659146987603
 
 It is clear that this material is highly anisotropic. This can be evidenced by comparing the mean and the standard
 deviation of the Young modulus:
@@ -69,7 +69,7 @@ The shear modulus can be computed from the stiffness tensor as well:
     >>> G = C.shear_modulus
     >>> print(G)
     Hyperspherical function
-    Min=8.748742560860673, Max=86.60555127546397
+    Min=8.748742560860697, Max=86.60555127546397
 
 Here, the shear modulus is a ``HyperSphericalFunction`` object because its value depends on two orthogonal directions
 (in other words, its arguments must lie on an unit hypersphere S3).
@@ -83,7 +83,7 @@ The previous consideration also apply for the Poisson ratio:
 
     >>> print(C.Poisson_ratio)
     Hyperspherical function
-    Min=-0.5501886056193359, Max=1.4394343811865082
+    Min=-0.550188605619323, Max=1.439434381186514
 
 Plotting
 --------
