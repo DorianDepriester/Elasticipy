@@ -1069,13 +1069,8 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         def make_fun(index):
             def fun(n):
                 Gamma = self.Christoffel_tensor(n)
-                eig, _ = np.linalg.eig(Gamma)
-                if index == 0:
-                    eig_of_interest = np.max(eig, axis=-1)
-                elif index == 1:
-                    eig_of_interest = np.median(eig, axis=-1)
-                else:
-                    eig_of_interest = np.min(eig, axis=-1)
+                eig, _ = np.linalg.eigh(Gamma)
+                eig_of_interest = eig[...,2-index]  # Switch ordering (descending order)
                 return np.sqrt(eig_of_interest / rho)
 
             return fun
