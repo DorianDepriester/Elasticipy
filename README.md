@@ -6,6 +6,7 @@
 [![codecov](https://codecov.io/gh/DorianDepriester/Elasticipy/graph/badge.svg?token=VUZPEUPBH1)](https://codecov.io/gh/DorianDepriester/Elasticipy)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/Elasticipy)
 [![status](https://joss.theoj.org/papers/8cce91b782f17f52e9ee30916cd86ad5/status.svg)](https://joss.theoj.org/papers/8cce91b782f17f52e9ee30916cd86ad5)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/DorianDepriester/Elasticipy/HEAD?urlpath=%2Fdoc%2Ftree%2FElasticipy_for_the_Impatient.ipynb)
 
 # ![Elasticipy](docs/source/logo/logo_text.svg)
 
