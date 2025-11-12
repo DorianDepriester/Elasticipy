@@ -49,7 +49,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
     tensor_name = 'Stiffness'
     _C11_C12_factor = 0.5
     _C46_C56_factor = 1.0
-    component_prefix = 'C'
+    _component_prefix = 'C'
 
     def __init__(self, M, symmetry='Triclinic', check_positive_definite=True, phase_name= None, mapping=VoigtMapping(), **kwargs):
         """
@@ -187,7 +187,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
     @classmethod
     def _matrixFromCrystalSymmetry(cls, symmetry='Triclinic', point_group=None, diad='y', prefix=None, **kwargs):
         if prefix is None:
-            prefix = cls.component_prefix
+            prefix = cls._component_prefix
         values = _parse_tensor_components(prefix, **kwargs)
         C = np.zeros((6, 6))
         symmetry = symmetry.capitalize()
@@ -1589,7 +1589,7 @@ class ComplianceTensor(StiffnessTensor):
     """
     tensor_name = 'Compliance'
     _C11_C12_factor = 2.0
-    component_prefix = 'S'
+    _component_prefix = 'S'
     _C46_C56_factor = 2.0
 
     def __init__(self, C, check_positive_definite=True, mapping=VoigtMapping(tensor='Compliance'), **kwargs):
