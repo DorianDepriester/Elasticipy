@@ -5,6 +5,7 @@ from Elasticipy.tensors.stress_strain import StrainTensor, StressTensor
 from Elasticipy.tensors.mapping import VoigtMapping, KelvinMapping
 import numpy as np
 import re
+from warnings import warn
 
 def _parse_tensor_components(prefix, **kwargs):
     pattern = r'^{}(\d{{2}})$'.format(prefix)
@@ -311,6 +312,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         Phase: TiNi
         Symmetry: monoclinic
         """
+        warn('This function will be removed in a future release. Use {}.{}() instead'.format(cls.__name__,symmetry), DeprecationWarning, stacklevel=2)
         return cls._fromCrystalSymmetry(symmetry=symmetry, point_group=point_group, diad=diad, phase_name=phase_name,
                                        prefix=prefix, **kwargs)
 
