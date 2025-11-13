@@ -341,7 +341,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         cubic : create a tensor from cubic symmetry
         tetragonal : create a tensor from tetragonal symmetry
         """
-        return cls.fromCrystalSymmetry(symmetry='hexagonal', C11=C11, C12=C12, C13=C13, C33=C33, C44=C44,
+        return cls._fromCrystalSymmetry(symmetry='hexagonal', C11=C11, C12=C12, C13=C13, C33=C33, C44=C44,
                                        phase_name=phase_name, prefix='C')
 
     @classmethod
@@ -366,8 +366,9 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         tetragonal : create a tensor from tetragonal symmetry
         orthorhombic : create a tensor from orthorhombic symmetry
         """
-        return cls.fromCrystalSymmetry(point_group='3', C11=C11, C12=C12, C13=C13, C14=C14, C15=C15,
-                                       C33=C33, C44=C44, phase_name=phase_name, prefix='C')
+        return cls._fromCrystalSymmetry(symmetry='trigonal', point_group='3',
+                                        C11=C11, C12=C12, C13=C13, C14=C14, C15=C15,
+                                        C33=C33, C44=C44, phase_name=phase_name, prefix='C')
 
     @classmethod
     def tetragonal(cls, *, C11=0., C12=0., C13=0., C33=0., C44=0., C16=0., C66=0., phase_name=None):
@@ -392,8 +393,9 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         trigonal : create a tensor from trigonal symmetry
         orthorhombic : create a tensor from orthorhombic symmetry
         """
-        return cls.fromCrystalSymmetry(point_group='4', C11=C11, C12=C12, C13=C13, C16=C16,
-                                       C33=C33, C44=C44, C66=C66, phase_name=phase_name, prefix='C')
+        return cls._fromCrystalSymmetry(symmetry='tetragonal', point_group='4',
+                                        C11=C11, C12=C12, C13=C13, C16=C16,
+                                        C33=C33, C44=C44, C66=C66, phase_name=phase_name, prefix='C')
 
     @classmethod
     def cubic(cls, *, C11=0., C12=0., C44=0., phase_name=None):
@@ -415,7 +417,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         hexagonal : create a tensor from hexagonal symmetry
         orthorhombic : create a tensor from orthorhombic symmetry
         """
-        return cls.fromCrystalSymmetry(symmetry='cubic', C11=C11, C12=C12, C44=C44, phase_name=phase_name, prefix='C')
+        return cls._fromCrystalSymmetry(symmetry='cubic', C11=C11, C12=C12, C44=C44, phase_name=phase_name, prefix='C')
 
     @classmethod
     def orthorhombic(cls, *, C11=0., C12=0., C13=0., C22=0., C23=0., C33=0., C44=0., C55=0., C66=0., phase_name=None):
@@ -438,7 +440,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         monoclinic : create a tensor from monoclinic symmetry
         orthorhombic : create a tensor from orthorhombic symmetry
         """
-        return cls.fromCrystalSymmetry(symmetry='orthorhombic',
+        return cls._fromCrystalSymmetry(symmetry='orthorhombic',
                                        C11=C11, C12=C12, C13=C13, C22=C22, C23=C23, C33=C33, C44=C44, C55=C55, C66=C66,
                                        phase_name=phase_name, prefix='C')
 
@@ -491,12 +493,12 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         if diad_y and diad_z:
             raise KeyError('Ambiguous diad. Provide either C15, C25, C35 and C46; or C16, C26, C36 and C45')
         elif diad_y:
-            return cls.fromCrystalSymmetry(symmetry='monoclinic', diad='y',
+            return cls._fromCrystalSymmetry(symmetry='monoclinic', diad='y',
                                            C11=C11, C12=C12, C13=C13, C22=C22, C23=C23, C33=C33, C44=C44, C55=C55,
                                            C66=C66,
                                            C15=C15, C25=C25, C35=C35, C46=C46, phase_name=phase_name, prefix='C')
         elif diad_z:
-            return cls.fromCrystalSymmetry(symmetry='monoclinic', diad='z',
+            return cls._fromCrystalSymmetry(symmetry='monoclinic', diad='z',
                                            C11=C11, C12=C12, C13=C13, C22=C22, C23=C23, C33=C33, C44=C44, C55=C55,
                                            C66=C66,
                                            C16=C16, C26=C26, C36=C36, C45=C45, phase_name=phase_name, prefix='C')
@@ -1848,7 +1850,7 @@ class ComplianceTensor(StiffnessTensor):
         cubic : create a tensor from cubic symmetry
         tetragonal : create a tensor from tetragonal symmetry
         """
-        return cls.fromCrystalSymmetry(symmetry='hexagonal', S11=S11, S12=S12, S13=S13, S33=S33, S44=S44,
+        return cls._fromCrystalSymmetry(symmetry='hexagonal', S11=S11, S12=S12, S13=S13, S33=S33, S44=S44,
                                        phase_name=phase_name, prefix='S')
 
     @classmethod
@@ -1873,8 +1875,9 @@ class ComplianceTensor(StiffnessTensor):
         tetragonal : create a tensor from tetragonal symmetry
         orthorhombic : create a tensor from orthorhombic symmetry
         """
-        return cls.fromCrystalSymmetry(point_group='3', S11=S11, S12=S12, S13=S13, S14=S14, S15=S15,
-                                       S33=S33, S44=S44, phase_name=phase_name, prefix='S')
+        return cls._fromCrystalSymmetry(symmetry='trigonal', point_group='3',
+                                        S11=S11, S12=S12, S13=S13, S14=S14, S15=S15,
+                                        S33=S33, S44=S44, phase_name=phase_name, prefix='S')
 
     @classmethod
     def tetragonal(cls, *, S11=0., S12=0., S13=0., S33=0., S44=0., S16=0., S66=0., phase_name=None):
@@ -1899,8 +1902,9 @@ class ComplianceTensor(StiffnessTensor):
         trigonal : create a tensor from trigonal symmetry
         orthorhombic : create a tensor from orthorhombic symmetry
         """
-        return cls.fromCrystalSymmetry(point_group='4', S11=S11, S12=S12, S13=S13, S16=S16,
-                                       S33=S33, S44=S44, S66=S66, phase_name=phase_name, prefix='S')
+        return cls._fromCrystalSymmetry(symmetry='tetragonal', point_group='4',
+                                        S11=S11, S12=S12, S13=S13, S16=S16,
+                                        S33=S33, S44=S44, S66=S66, phase_name=phase_name, prefix='S')
 
     @classmethod
     def cubic(cls, *, S11=0., S12=0., S44=0., phase_name=None):
@@ -1922,7 +1926,7 @@ class ComplianceTensor(StiffnessTensor):
         hexagonal : create a tensor from hexagonal symmetry
         orthorhombic : create a tensor from orthorhombic symmetry
         """
-        return cls.fromCrystalSymmetry(symmetry='cubic', S11=S11, S12=S12, S44=S44, phase_name=phase_name, prefix='S')
+        return cls._fromCrystalSymmetry(symmetry='cubic', S11=S11, S12=S12, S44=S44, phase_name=phase_name, prefix='S')
 
     @classmethod
     def orthorhombic(cls, *, S11=0., S12=0., S13=0., S22=0., S23=0., S33=0., S44=0., S55=0., S66=0., phase_name=None):
@@ -1945,7 +1949,7 @@ class ComplianceTensor(StiffnessTensor):
         monoclinic : create a tensor from monoclinic symmetry
         orthorhombic : create a tensor from orthorhombic symmetry
         """
-        return cls.fromCrystalSymmetry(symmetry='orthorhombic',
+        return cls._fromCrystalSymmetry(symmetry='orthorhombic',
                                        S11=S11, S12=S12, S13=S13, S22=S22, S23=S23, S33=S33, S44=S44, S55=S55, S66=S66,
                                        phase_name=phase_name, prefix='S')
 
@@ -1998,12 +2002,12 @@ class ComplianceTensor(StiffnessTensor):
         if diad_y and diad_z:
             raise KeyError('Ambiguous diad. Provide either S15, S25, S35 and S46; or S16, S26, S36 and S45')
         elif diad_y:
-            return cls.fromCrystalSymmetry(symmetry='monoclinic', diad='y',
+            return cls._fromCrystalSymmetry(symmetry='monoclinic', diad='y',
                                            S11=S11, S12=S12, S13=S13, S22=S22, S23=S23, S33=S33, S44=S44, S55=S55,
                                            S66=S66,
                                            S15=S15, S25=S25, S35=S35, S46=S46, phase_name=phase_name, prefix='S')
         elif diad_z:
-            return cls.fromCrystalSymmetry(symmetry='monoclinic', diad='z',
+            return cls._fromCrystalSymmetry(symmetry='monoclinic', diad='z',
                                            S11=S11, S12=S12, S13=S13, S22=S22, S23=S23, S33=S33, S44=S44, S55=S55,
                                            S66=S66,
                                            S16=S16, S26=S26, S36=S36, S45=S45, phase_name=phase_name, prefix='S')
