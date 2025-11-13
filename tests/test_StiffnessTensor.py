@@ -101,8 +101,7 @@ class TestComplianceTensor(unittest.TestCase):
 
     def test_unvoigt(self):
         lame1, lame2 = 1, 2
-        C = StiffnessTensor.fromCrystalSymmetry(C11=lame1 + 2 * lame2,
-                                                C12=lame1, symmetry='isotropic')
+        C = StiffnessTensor.isotropic(lame1=lame1, lame2=lame2)
         C_full = C.full_tensor()
         eye = np.eye(3)
         A = np.einsum('ij,kl->ijkl', eye, eye)
@@ -455,8 +454,7 @@ class TestStiffnessConstructor(unittest.TestCase):
     def test_unvoigt(self):
         """Test if the isotropic second-order tensor is well reconstructed"""
         lame1, lame2 = 1, 2
-        C = StiffnessTensor.fromCrystalSymmetry(C11=lame1 + 2 * lame2,
-                                                C12=lame1, symmetry='isotropic')
+        C = StiffnessTensor.isotropic(lame1=lame1, lame2=lame2)
         C_full = C.full_tensor()
         eye = np.eye(3)
         A = np.einsum('ij,kl->ijkl', eye, eye)
