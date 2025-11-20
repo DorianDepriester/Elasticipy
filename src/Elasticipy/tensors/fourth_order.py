@@ -81,7 +81,7 @@ class FourthOrderTensor:
 
         Parameters
         ----------
-        M : np.ndarray
+        M : np.ndarray or FourthOrderTensor
             (6,6) matrix corresponding to the stiffness tensor, written using the Voigt notation, or array of shape
             (3,3,3,3).
         mapping : MappingConvention, optional
@@ -663,3 +663,20 @@ class SymmetricFourthOrderTensor(FourthOrderTensor):
             return quad_inv
         else:
             return lin_inv + quad_inv
+
+    def infinite_random_average(self):
+        matrix = self._matrix / KelvinMapping().matrix
+        A = matrix[..., 0, 0] + matrix[..., 1, 1] + matrix[..., 2, 2]
+        B = matrix[..., 0, 1] + matrix[..., 0, 2] + matrix[..., 1, 2]
+        C = matrix[..., 3, 3] + matrix[..., 4, 4] + matrix[..., 5, 5]
+        C11 = 1/5  * A + 2/15 * B + 4/15 * C
+        C12 = 1/15 * A + 4/15 * B - 2/15 * C
+        C44 = 1/15 * A - 1/15 * B + 1/5 * C
+        new_matrix = np.array([[C11, C12, C12, 0, 0, 0],
+                               [C12, C11, C12, 0, 0, 0],
+                               [C12, C12, C11, 0, 0, 0],
+                               [0, 0, 0, C44, 0,   0  ],
+                               [0, 0, 0, 0,   C44, 0  ],
+                               [0, 0, 0, 0, 0,     C44],])
+        return self.__class__(new_matrix * self.mapping.matrix)
+
