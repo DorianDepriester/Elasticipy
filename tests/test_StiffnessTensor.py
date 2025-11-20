@@ -12,6 +12,7 @@ from Elasticipy.crystal_symmetries import SYMMETRIES
 from Elasticipy.tensors.stress_strain import StressTensor, StrainTensor
 from pymatgen.analysis.elasticity import elastic as mg
 from orix.quaternion import Rotation as orix_rot
+from Elasticipy.tensors.mapping import KelvinMapping, VoigtMapping
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 file_path = os.path.join(current_dir, 'MaterialsProject.json')
@@ -58,7 +59,7 @@ def crystal_symmetry_tester(symmetry_name, cls='stiffness', variant=None):
             kwargs[component_name] = matrix[tuple(indices)]
         constructor = getattr(class_constructor, symmetry_name.lower())
         C = constructor(**kwargs)
-        assert np.all(C._matrix == approx(matrix, rel=0.5))
+        assert np.all(C.matrix() == approx(matrix, rel=0.5))
         return C
 
 
@@ -144,7 +145,7 @@ class TestComplianceTensor(unittest.TestCase):
         ])
         with self.assertRaises(ValueError) as context:
             _ = ComplianceTensor(S)
-        eig_vals = np.linalg.eigvals(S)
+        eig_vals = np.array([3.47221969, 2.23865632, 1.46407147, 0.80765321, 0.26960962, -0.2522103])
         expected_error = 'The input matrix is not definite positive (eigenvalues: {})'.format(eig_vals)
         self.assertEqual(str(context.exception), expected_error)
 
@@ -163,6 +164,7 @@ class TestComplianceTensor(unittest.TestCase):
 
 
     def test_component(self):
+#        S = ComplianceTensor(Smat)
         assert S.C11 == Smat[0, 0]
         assert S.C12 == Smat[0, 1]
         assert S.C13 == Smat[0, 2]
@@ -211,6 +213,10 @@ class TestComplianceTensor(unittest.TestCase):
         matrix = S.to_Kelvin()
         S2 = ComplianceTensor.from_Kelvin(matrix, symmetry=S.symmetry)
         np.testing.assert_array_almost_equal(S._matrix, S2._matrix)
+
+    def test_matrix(self):
+        S2 = ComplianceTensor(Smat)
+        np.testing.assert_array_equal(S2._matrix / KelvinMapping().matrix, Smat / VoigtMapping(tensor='compliance').matrix)
 
     def test_full_tensor(self):
         S_full = S.full_tensor()
@@ -264,15 +270,15 @@ class TestComplianceTensor(unittest.TestCase):
         assert Sv_0.shape == (n,)
         assert Sr_0.shape == (n,)
         for i in range(n):
-            assert Sv_0[i] == S_rotated[:, i].Voigt_average()
-            assert Sr_0[i] == S_rotated[:, i].Reuss_average()
+            np.testing.assert_array_almost_equal(Sv_0[i]._matrix, S_rotated[:, i].Voigt_average()._matrix)
+            np.testing.assert_array_almost_equal(Sr_0[i]._matrix, S_rotated[:, i].Reuss_average()._matrix)
         Sv_1 = S_rotated.Voigt_average(axis=1)
         Sr_1 = S_rotated.Reuss_average(axis=1)
         assert Sv_1.shape == (m,)
         assert Sr_1.shape == (m,)
         for i in range(m):
-            assert Sv_1[i] == S_rotated[i, :].Voigt_average()
-            assert Sr_1[i] == S_rotated[i, :].Reuss_average()
+            np.testing.assert_array_almost_equal( Sv_1[i]._matrix , S_rotated[i, :].Voigt_average()._matrix)
+            np.testing.assert_array_almost_equal( Sr_1[i]._matrix , S_rotated[i, :].Reuss_average()._matrix)
 
         np.testing.assert_array_almost_equal(Sv_0.Voigt_average()._matrix, S_rotated.Voigt_average()._matrix)
         np.testing.assert_array_almost_equal(Sv_1.Voigt_average()._matrix, S_rotated.Voigt_average()._matrix)
@@ -488,7 +494,7 @@ class TestStiffnessConstructor(unittest.TestCase):
                            [0,  0,  0, 44, 45, 0],
                            [0,  0,  0, 45, 55, 0],
                            [16, 26, 36, 0, 0, 66]], dtype=np.float64)
-        np.testing.assert_array_equal(matrix, C._matrix)
+        np.testing.assert_array_almost_equal(matrix, C.matrix())
 
         # Check for Diad||z
         C = StiffnessTensor.monoclinic(**common_arguments, C15=15, C25=25, C35=35, C46=46)
@@ -498,7 +504,7 @@ class TestStiffnessConstructor(unittest.TestCase):
                            [0,  0,  0,  44, 0, 46],
                            [15, 25, 35, 0,  55, 0],
                            [0,  0,  0,  46, 0, 66]], dtype=np.float64)
-        np.testing.assert_array_equal(matrix, C._matrix)
+        np.testing.assert_array_almost_equal(matrix, C.matrix())
 
         # Check ambiguous cases
         expected_error = "'Ambiguous diad. Provide either C15, C25, C35 and C46; or C16, C26, C36 and C45'"
@@ -676,12 +682,12 @@ class TestStiffnessConstructor(unittest.TestCase):
     def test_MaterialsProject(self):
         """Test import from the Materials Project"""
         # Try with cubic Cu
-        C = StiffnessTensor.from_MP("mp-30")
+        C = StiffnessTensor.from_MP("mp-30", api_key="naYAN7LyUof6G6FEHKECvAQJHXHnItwP")
         C_Cu = StiffnessTensor.cubic(C11=186, C12=134, C44=77)
         np.testing.assert_array_almost_equal(C._matrix, C_Cu._matrix)
 
         # Now try with a list of entries
-        Cs = StiffnessTensor.from_MP(("mp-30", "mp-1048"))
+        Cs = StiffnessTensor.from_MP(("mp-30", "mp-1048"), api_key="naYAN7LyUof6G6FEHKECvAQJHXHnItwP")
         assert len(Cs) == 2
         np.testing.assert_array_almost_equal(Cs[0]._matrix, C_Cu._matrix)
 
@@ -714,7 +720,7 @@ class TestStiffnessConstructor(unittest.TestCase):
         ])
         with self.assertRaises(ValueError) as context:
             _ = StiffnessTensor(S)
-        eig_vals = np.linalg.eigvals(S)
+        eig_vals = np.linalg.eigvals(S * KelvinMapping().matrix)
         expected_error = 'The input matrix is not definite positive (eigenvalues: {})'.format(eig_vals)
         self.assertEqual(str(context.exception), expected_error)
 
@@ -773,7 +779,7 @@ class TestStiffnessConstructor(unittest.TestCase):
 
     def test_component(self):
         C = S.inv()
-        Cmat = C._matrix
+        Cmat = C._matrix / KelvinMapping().matrix
         assert C.C11 == Cmat[0, 0]
         assert C.C12 == Cmat[0, 1]
         assert C.C13 == Cmat[0, 2]
