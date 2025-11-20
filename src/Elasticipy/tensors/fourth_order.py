@@ -104,7 +104,7 @@ class FourthOrderTensor:
         self.mapping=mapping
         M = np.asarray(M)
         if M.shape[-2:] == (6, 6):
-            matrix = M
+            matrix = M / mapping.matrix * KelvinMapping().matrix
         elif M.shape[-4:] == (3, 3, 3, 3):
             Mijlk = np.swapaxes(M, -1, -2)
             Mjikl = np.swapaxes(M, -3, -4)
@@ -122,7 +122,8 @@ class FourthOrderTensor:
         for i in range(0, 6):
             for j in range(0, 6):
                 def getter(obj, I=i, J=j):
-                    return obj._matrix[...,I, J]
+                    new_matrix = obj._matrix / KelvinMapping().matrix * self.mapping.matrix
+                    return new_matrix[...,I, J]
 
                 getter.__doc__ = f"Returns the ({i + 1},{j + 1}) component of the {self.tensor_name} matrix."
                 component_name = 'C{}{}'.format(i + 1, j + 1)
@@ -131,7 +132,8 @@ class FourthOrderTensor:
     def __repr__(self):
         if (self.ndim == 0) or ((self.ndim==1) and self.shape[0]<5):
             msg = '{} tensor (in {} mapping):\n'.format(self.tensor_name, self.mapping.name)
-            msg += self._matrix.__str__()
+            matrix = self.matrix(self.mapping)
+            msg += matrix.__str__()
         else:
             msg = '{} tensor array of shape {}'.format(self.tensor_name, self.shape)
         return msg
@@ -160,7 +162,8 @@ class FourthOrderTensor:
         i, j, k, ell = np.indices((3, 3, 3, 3))
         ij = voigt_indices(i, j)
         kl = voigt_indices(k, ell)
-        m = self._matrix[..., ij, kl] / self.mapping.matrix[ij, kl]
+        matrix = self._matrix / KelvinMapping().matrix
+        m = matrix[..., ij, kl]
         return m
 
     def flatten(self):
@@ -187,7 +190,7 @@ class FourthOrderTensor:
         kl, ij = np.indices((6, 6))
         i, j = unvoigt_index(ij).T
         k, ell = unvoigt_index(kl).T
-        return full_tensor[..., i, j, k, ell] * self.mapping.matrix[ij, kl]
+        return full_tensor[..., i, j, k, ell] * KelvinMapping.matrix[ij, kl]
 
     def rotate(self, rotation):
         """
@@ -255,12 +258,12 @@ class FourthOrderTensor:
                 raise ValueError('The input argument must be either a 6x6 matrix or a (3,3,3,3) array.')
         elif isinstance(other, FourthOrderTensor):
             if type(other) == type(self):
-                mat = self.full_tensor() + other.full_tensor()
+                mat = self._matrix + other._matrix
             else:
                 raise ValueError('The two tensors to add must be of the same class.')
         else:
             raise ValueError('I don''t know how to add {} with {}.'.format(type(self), type(other)))
-        return self.__class__(mat, mapping=self.mapping)
+        return self.__class__(mat * self.mapping.matrix / KelvinMapping().matrix, mapping=self.mapping)
 
     def __sub__(self, other):
         if isinstance(other, FourthOrderTensor):
@@ -336,7 +339,9 @@ class FourthOrderTensor:
         elif isinstance(other, Rotation) or is_orix_rotation(other):
             return self.rotate(other)
         else:
-            return self.__class__(self._matrix * other)
+            new_tensor = deepcopy(self)
+            new_tensor._matrix = self._matrix * other
+            return new_tensor
 
     def __truediv__(self, other):
         if isinstance(other, (SecondOrderTensor, FourthOrderTensor)):
@@ -358,9 +363,10 @@ class FourthOrderTensor:
         if ndim==0 or ndim==1:
             return self
         else:
+            new_array = deepcopy(self)
             new_axes = tuple(range(ndim))[::-1] + (ndim, ndim + 1)
-            transposed_matrix = self._matrix.transpose(new_axes)
-            return self.__class__(transposed_matrix)
+            new_array._matrix = self._matrix.transpose(new_axes)
+            return new_array
 
     def __rmul__(self, other):
         if isinstance(other, (Rotation, float, int, np.number)) or is_orix_rotation(other):
@@ -379,11 +385,9 @@ class FourthOrderTensor:
 
     def __getitem__(self, item):
         if self.ndim:
-            sub_mat= self._matrix[item]
-            if sub_mat.shape[-2:] != (6,6):
-                raise IndexError('Too many indices for tensor array: array is {}-dimensional, but {} were provided'.format(self.ndim, len(item)))
-            else:
-                return self.__class__(sub_mat)
+            sub_tensor = deepcopy(self)
+            sub_tensor._matrix = self._matrix[item]
+            return sub_tensor
         else:
             raise IndexError('A single tensor cannot be subindexed')
 
@@ -546,16 +550,15 @@ class FourthOrderTensor:
     def matrix(self, mapping_convention=None):
         matrix = self._matrix
         if mapping_convention is None:
-            return matrix
-        else:
-            if isinstance(mapping_convention, str):
-                if mapping_convention.lower() == 'voigt':
-                    mapping_convention = VoigtMapping()
-                elif mapping_convention.lower() == 'kelvin':
-                    mapping_convention = KelvinMapping()
-                else:
-                    raise ValueError('Mapping convention must be either Kelvin or Voigt')
-            return matrix / self.mapping._matrix * mapping_convention.matrix
+            mapping_convention = self.mapping
+        elif isinstance(mapping_convention, str):
+            if mapping_convention.lower() == 'voigt':
+                mapping_convention = VoigtMapping()
+            elif mapping_convention.lower() == 'kelvin':
+                mapping_convention = KelvinMapping()
+            else:
+                raise ValueError('Mapping convention must be either Kelvin or Voigt')
+        return matrix / KelvinMapping().matrix * mapping_convention.matrix
 
 class SymmetricFourthOrderTensor(FourthOrderTensor):
     tensor_name = 'Symmetric 4th-order'
