@@ -102,6 +102,8 @@ class FourthOrderTensor:
 
         """
         self.mapping=mapping
+        if isinstance(M, self.__class__):
+            M = M._matrix / M.mapping.matrix
         M = np.asarray(M)
         if M.shape[-2:] == (6, 6):
             matrix = M / mapping.matrix * KelvinMapping().matrix
