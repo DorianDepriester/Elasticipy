@@ -732,15 +732,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         if self.ndim:
             return self.mean(axis=axis)
         else:
-            c = self._matrix
-            A = c[0, 0] + c[1, 1] + c[2, 2]
-            B = c[0, 1] + c[0, 2] + c[1, 2]
-            C = c[3, 3] + c[4, 4] + c[5, 5]
-            C11 = 1 / 5 *  A  + 2 / 15 * B + 4 / 15 * C
-            C12 = 1 / 15 * A  + 4 / 15 * B - 2 / 15 * C
-            C44 = (A - B) / 15 + C / 5
-            mat = _isotropic_matrix(C11, C12, C44)
-            return StiffnessTensor(mat, symmetry='isotropic', phase_name=self.phase_name)
+            return self.infinite_random_average()
 
     def Reuss_average(self, axis=None):
         """
@@ -1621,15 +1613,7 @@ class ComplianceTensor(StiffnessTensor):
         if self.ndim:
             return self.mean(axis=axis)
         else:
-            s = self._matrix
-            A = s[0, 0] + s[1, 1] + s[2, 2]
-            B = s[0, 1] + s[0, 2] + s[1, 2]
-            C = s[3, 3] + s[4, 4] + s[5, 5]
-            S11 = 1 / 5 *  A + 2 / 15 * B + 1 / 15 * C
-            S12 = 1 / 15 * A + 4 / 15 * B - 1 / 30 * C
-            S44 = 4 / 15 * (A - B) + 1 / 5 * C
-            mat = _isotropic_matrix(S11, S12, S44)
-            return ComplianceTensor(mat, symmetry='isotropic', phase_name=self.phase_name)
+            return self.infinite_random_average()
 
     def Voigt_average(self, axis=None):
         return self.inv().Voigt_average(axis=axis).inv()
