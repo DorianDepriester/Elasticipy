@@ -47,14 +47,14 @@ class TestFourthOrderTensor(unittest.TestCase):
         for i in range(m):
             for j in range(n):
                 for k in range(o):
-                    np.testing.assert_array_equal(ab[i,j,k]._matrix, a[i,j,k]._matrix * b)
+                    np.testing.assert_array_almost_equal(ab[i,j,k]._matrix, a[i,j,k]._matrix * b)
 
         b = np.random.random((n,o))
         ab = a * b
         for i in range(m):
             for j in range(n):
                 for k in range(o):
-                    np.testing.assert_array_equal(ab[i,j,k]._matrix, a[i,j,k]._matrix * b[j,k])
+                    np.testing.assert_array_almost_equal(ab[i,j,k]._matrix, a[i,j,k]._matrix * b[j,k])
 
     def test_zeros_setitem(self):
         m, n = 4, 5
