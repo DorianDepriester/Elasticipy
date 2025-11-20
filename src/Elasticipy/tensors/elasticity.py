@@ -103,7 +103,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         string += '\nSymmetry: {}'.format(self.symmetry)
         return string
 
-    def inv(self):
+    def inv(self, mapping=VoigtMapping(tensor='compliance')):
         """
         Compute the reciprocal compliance tensor
 
@@ -112,8 +112,8 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         ComplianceTensor
             Reciprocal tensor
         """
-        C = np.linalg.inv(self._matrix)
-        return ComplianceTensor(C, symmetry=self.symmetry, phase_name=self.phase_name)
+        C = np.linalg.inv(self._matrix) / KelvinMapping().matrix * mapping.matrix
+        return ComplianceTensor(C, mapping=mapping, symmetry=self.symmetry, phase_name=self.phase_name)
 
     @classmethod
     def from_txt_file(cls, filename):
@@ -182,7 +182,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
                 if self.phase_name is not None:
                     f.write(f"Phase Name: {self.phase_name}\n")
                 f.write(f"Symmetry: {self.symmetry}\n")
-            for row in self._matrix:
+            for row in self.matrix():
                 f.write("  " + "  ".join(f"{value:8.2f}" for value in row) + "\n")
 
     @classmethod
@@ -1149,7 +1149,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         if np.all([isinstance(a, ComplianceTensor) for a in Cs]):
             Cs = [C.inv() for C in Cs]
         if np.all([isinstance(a, StiffnessTensor) for a in Cs]):
-            C_stack = np.array([C._matrix for C in Cs])
+            C_stack = np.array([C.matrix() for C in Cs])
             method = method.capitalize()
             if method == 'Voigt':
                 C_avg = np.average(C_stack, weights=volume_fractions, axis=0)
@@ -1330,8 +1330,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         .. [4] Helbig, K. (2013). What Kelvin might have written about Elasticity. Geophysical Prospecting, 61(1), 1-20.
             doi: 10.1111/j.1365-2478.2011.01049.x
         """
-        kelvin_mapping = KelvinMapping()
-        return self._matrix /self.mapping.matrix * kelvin_mapping.matrix
+        return self._matrix
 
     def eig(self):
         """
@@ -1428,10 +1427,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         --------
         to_Kelvin : return the components as a (6,6) matrix following the Kelvin convention
         """
-        kelvin_mapping = KelvinMapping()
-        t = cls(matrix / kelvin_mapping.matrix, **kwargs)
-        t._matrix *= t.mapping.matrix
-        return t
+        return cls(matrix, mapping=KelvinMapping(), **kwargs)
 
     def eig_stiffnesses_multiplicity(self, tol=1e-4):
         """
@@ -1609,7 +1605,7 @@ class ComplianceTensor(StiffnessTensor):
         else:
             return super().__mul__(other)
 
-    def inv(self):
+    def inv(self, mapping=VoigtMapping()):
         """
         Compute the reciprocal stiffness tensor
 
@@ -1618,8 +1614,8 @@ class ComplianceTensor(StiffnessTensor):
         StiffnessTensor
             Reciprocal tensor
         """
-        S = np.linalg.inv(self._matrix)
-        return StiffnessTensor(S, symmetry=self.symmetry, phase_name=self.phase_name)
+        S = np.linalg.inv(self._matrix) / KelvinMapping().matrix * mapping.matrix
+        return StiffnessTensor(S, mapping=mapping, symmetry=self.symmetry, phase_name=self.phase_name)
 
     def Reuss_average(self, axis=None):
         if self.ndim:
