@@ -96,6 +96,18 @@ class TestFourthOrderTensor(unittest.TestCase):
         a_div_b = a / b
         np.testing.assert_array_almost_equal(a_div_b.matrix, (a * b.inv()).matrix)
 
+    def test_inconsistent_mapping(self):
+        a = np.random.random((6,6))
+        t1 = FourthOrderTensor(a)
+        b = np.random.random((6,6))
+        t2 = FourthOrderTensor(b, mapping=VoigtMapping())
+        t3 = t1 + t2
+        assert t3.mapping.name == t1.mapping.name
+        np.testing.assert_array_equal(t3._matrix, t1._matrix + t2._matrix)
+        t4 = t1.ddot(t2)
+        assert t4.mapping.name == t1.mapping.name
+        np.testing.assert_array_almost_equal(t4._matrix, np.matmul(t1._matrix, t2._matrix))
+
 
 class TestSymmetricFourthOrderTensor(unittest.TestCase):
     def test_inversion(self):
@@ -107,20 +119,6 @@ class TestSymmetricFourthOrderTensor(unittest.TestCase):
         eye = SymmetricFourthOrderTensor.identity(m)
         for i in range(m):
             np.testing.assert_array_almost_equal(TTinv[i].full_tensor(), eye[i].full_tensor())
-
-    def test_inconsistent_mapping(self):
-        a = np.random.random((6,6))
-        a_sym = a + a.T
-        t1 = SymmetricFourthOrderTensor(a_sym)
-        b = np.random.random((6,6))
-        b_sym = b + b.T
-        t2 = SymmetricFourthOrderTensor(b_sym, mapping=VoigtMapping())
-        t3 = t1 + t2
-        assert t3.mapping.name == t1.mapping.name
-        np.testing.assert_array_equal(t3._matrix, t1._matrix + t2._matrix)
-        t4 = t1.ddot(t2)
-        assert t4.mapping.name == t1.mapping.name
-        np.testing.assert_array_almost_equal(t4._matrix, np.matmul(t1._matrix, t2._matrix))
 
 
 
