@@ -48,7 +48,6 @@ As an example, create a stiffness tensor corresponding to steel:
        82031.25            0.        ]
      [     0.              0.              0.              0.
            0.          82031.25      ]]
-    Symmetry: isotropic
 
 
 Considering the previous strain, evaluate the corresponding stress:
@@ -81,7 +80,6 @@ Conversely, one can compute the compliance tensor:
        1.21904762e-05  0.00000000e+00]
      [ 0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00
        0.00000000e+00  1.21904762e-05]]
-    Symmetry: isotropic
 
 and check that we retrieve the correct (initial) strain:
 
@@ -142,7 +140,6 @@ As an illustration, we consider the anisotropic behaviour of ferrite:
      [  0.   0.   0.   0.  89.   0.]
      [  0.   0.   0.   0.   0.  89.]]
     Phase: ferrite
-    Symmetry: cubic
 
 Let's start by creating an array of 10 stresses:
 
