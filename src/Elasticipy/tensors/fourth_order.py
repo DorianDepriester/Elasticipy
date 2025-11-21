@@ -568,6 +568,11 @@ class FourthOrderTensor:
                 raise ValueError('Mapping convention must be either Kelvin or Voigt')
         return matrix / KelvinMapping().matrix * mapping_convention.matrix
 
+    def copy(self):
+        """Create a copy of the tensor"""
+        a = deepcopy(self)
+        return a
+
 class SymmetricFourthOrderTensor(FourthOrderTensor):
     tensor_name = 'Symmetric 4th-order'
 
