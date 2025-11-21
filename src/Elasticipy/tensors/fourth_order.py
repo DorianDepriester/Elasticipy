@@ -110,7 +110,7 @@ class FourthOrderTensor:
         else:
             M = np.asarray(M)
             if M.shape[-2:] == (6, 6):
-                matrix = M / mapping.matrix * KelvinMapping().matrix
+                matrix = self._array_to_Kelvin(M)
             elif M.shape[-4:] == (3, 3, 3, 3):
                 Mijlk = np.swapaxes(M, -1, -2)
                 Mjikl = np.swapaxes(M, -3, -4)
@@ -255,6 +255,7 @@ class FourthOrderTensor:
         return t2
 
     def __add__(self, other):
+        new_tensor = deepcopy(self)
         if isinstance(other, np.ndarray):
             if other.shape == (6, 6):
                 mat = self._matrix + other
@@ -269,7 +270,8 @@ class FourthOrderTensor:
                 raise ValueError('The two tensors to add must be of the same class.')
         else:
             raise ValueError('I don''t know how to add {} with {}.'.format(type(self), type(other)))
-        return self.__class__(mat * self.mapping.matrix / KelvinMapping().matrix, mapping=self.mapping)
+        new_tensor._matrix = mat
+        return new_tensor
 
     def __sub__(self, other):
         if isinstance(other, FourthOrderTensor):
@@ -671,6 +673,7 @@ class SymmetricFourthOrderTensor(FourthOrderTensor):
             return lin_inv + quad_inv
 
     def infinite_random_average(self):
+        new_tensor = deepcopy(self)
         matrix = self._matrix / KelvinMapping().matrix
         A = matrix[..., 0, 0] + matrix[..., 1, 1] + matrix[..., 2, 2]
         B = matrix[..., 0, 1] + matrix[..., 0, 2] + matrix[..., 1, 2]
@@ -684,5 +687,6 @@ class SymmetricFourthOrderTensor(FourthOrderTensor):
                                [0, 0, 0, C44, 0,   0  ],
                                [0, 0, 0, 0,   C44, 0  ],
                                [0, 0, 0, 0, 0,     C44],])
-        return self.__class__(new_matrix * self.mapping.matrix)
+        new_tensor._matrix = new_matrix * KelvinMapping().matrix
+        return new_tensor
 
