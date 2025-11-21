@@ -108,7 +108,7 @@ class TestSymmetricFourthOrderTensor(unittest.TestCase):
         for i in range(m):
             np.testing.assert_array_almost_equal(TTinv[i].full_tensor(), eye[i].full_tensor())
 
-    def test_add(self):
+    def test_inconsistent_mapping(self):
         a = np.random.random((6,6))
         a_sym = a + a.T
         t1 = SymmetricFourthOrderTensor(a_sym)
@@ -116,8 +116,12 @@ class TestSymmetricFourthOrderTensor(unittest.TestCase):
         b_sym = b + b.T
         t2 = SymmetricFourthOrderTensor(b_sym, mapping=VoigtMapping())
         t3 = t1 + t2
-        np.testing.assert_array_equal(t3._matrix, t1._matrix + t2._matrix)
         assert t3.mapping.name == t1.mapping.name
+        np.testing.assert_array_equal(t3._matrix, t1._matrix + t2._matrix)
+        t4 = t1.ddot(t2)
+        assert t4.mapping.name == t1.mapping.name
+        np.testing.assert_array_almost_equal(t4._matrix, np.matmul(t1._matrix, t2._matrix))
+
 
 
 if __name__ == '__main__':
