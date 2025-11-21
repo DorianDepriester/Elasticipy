@@ -1,8 +1,8 @@
-from Elasticipy.tensors.fourth_order import SymmetricFourthOrderTensor, kelvin_mapping
+from Elasticipy.tensors.fourth_order import SymmetricFourthOrderTensor
 from Elasticipy.spherical_function import SphericalFunction, HyperSphericalFunction
 from Elasticipy.crystal_symmetries import SYMMETRIES
 from Elasticipy.tensors.stress_strain import StrainTensor, StressTensor
-from Elasticipy.tensors.mapping import VoigtMapping
+from Elasticipy.tensors.mapping import VoigtMapping, KelvinMapping
 import numpy as np
 import re
 from warnings import warn
@@ -1413,7 +1413,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         --------
         to_Kelvin : return the components as a (6,6) matrix following the Kelvin convention
         """
-        return cls(matrix, mapping=kelvin_mapping, **kwargs)
+        return cls(matrix, mapping=KelvinMapping(), **kwargs)
 
     def eig_stiffnesses_multiplicity(self, tol=1e-4):
         """
@@ -1599,7 +1599,7 @@ class ComplianceTensor(StiffnessTensor):
         StiffnessTensor
             Reciprocal tensor
         """
-        S = np.linalg.inv(self._matrix) / kelvin_mapping.matrix * mapping.matrix
+        S = np.linalg.inv(self._matrix) / KelvinMapping().matrix * mapping.matrix
         return StiffnessTensor(S, mapping=mapping, phase_name=self.phase_name)
 
     def Reuss_average(self, axis=None):
