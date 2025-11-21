@@ -106,7 +106,7 @@ class FourthOrderTensor:
 
         """
         self.mapping=mapping
-        if isinstance(M, self.__class__):
+        if isinstance(M, FourthOrderTensor):
             self._matrix = M._matrix
         else:
             M = np.asarray(M)
