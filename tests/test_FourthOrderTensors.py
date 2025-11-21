@@ -2,6 +2,7 @@ import unittest
 from Elasticipy.tensors.fourth_order import FourthOrderTensor, SymmetricFourthOrderTensor
 import numpy as np
 
+from Elasticipy.tensors.mapping import VoigtMapping
 from Elasticipy.tensors.second_order import SecondOrderTensor
 
 
@@ -96,7 +97,6 @@ class TestFourthOrderTensor(unittest.TestCase):
         np.testing.assert_array_almost_equal(a_div_b.matrix, (a * b.inv()).matrix)
 
 
-
 class TestSymmetricFourthOrderTensor(unittest.TestCase):
     def test_inversion(self):
         m = 5
@@ -107,6 +107,18 @@ class TestSymmetricFourthOrderTensor(unittest.TestCase):
         eye = SymmetricFourthOrderTensor.identity(m)
         for i in range(m):
             np.testing.assert_array_almost_equal(TTinv[i].full_tensor(), eye[i].full_tensor())
+
+    def test_add(self):
+        a = np.random.random((6,6))
+        a_sym = a + a.T
+        t1 = SymmetricFourthOrderTensor(a_sym)
+        b = np.random.random((6,6))
+        b_sym = b + b.T
+        t2 = SymmetricFourthOrderTensor(b_sym, mapping=VoigtMapping())
+        t3 = t1 + t2
+        np.testing.assert_array_equal(t3._matrix, t1._matrix + t2._matrix)
+        assert t3.mapping.name == t1.mapping.name
+
 
 if __name__ == '__main__':
     unittest.main()
