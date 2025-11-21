@@ -402,7 +402,7 @@ class FourthOrderTensor:
     def __setitem__(self, index, value):
         if isinstance(value, np.ndarray):
             if value.shape[-2:] == (6,6):
-                self._matrix[index] = value
+                self._matrix[index] = value / self.mapping.matrix * KelvinMapping().matrix
             elif value.shape[-4:] == (3,3,3,3):
                 submatrix = self._full_to_matrix(value)
                 self._matrix[index] = submatrix
