@@ -211,7 +211,7 @@ class TestComplianceTensor(unittest.TestCase):
 
     def test_to_from_Kelvin(self):
         matrix = S.to_Kelvin()
-        S2 = ComplianceTensor.from_Kelvin(matrix, symmetry=S.symmetry)
+        S2 = ComplianceTensor.from_Kelvin(matrix)
         np.testing.assert_array_almost_equal(S._matrix, S2._matrix)
 
     def test_matrix(self):
@@ -233,11 +233,10 @@ class TestComplianceTensor(unittest.TestCase):
                        ' [-0.002 -0.005  0.01   0.     0.     0.   ]\n'
                        ' [ 0.     0.     0.     0.012  0.     0.   ]\n'
                        ' [ 0.014 -0.008  0.     0.     0.116  0.   ]\n'
-                       ' [ 0.     0.     0.     0.     0.     0.012]]'
-                       '\nSymmetry: Triclinic')
+                       ' [ 0.     0.     0.     0.     0.     0.012]]')
 
         S_rotated = S * rotations
-        assert S_rotated.__repr__() ==  'Compliance tensor array of shape ({},)\nSymmetry: Triclinic'.format(len(rotations))
+        assert S_rotated.__repr__() ==  'Compliance tensor array of shape ({},)'.format(len(rotations))
 
     def test_multidimensional_attributes(self):
         S_rotated = S * rotations
@@ -305,8 +304,7 @@ class TestStiffnessConstructor(unittest.TestCase):
         rel = 5e-2
         for index, row in data_base.iterrows():
             matrix = row['C']
-            symmetry = row['symmetry']
-            C = StiffnessTensor(matrix, symmetry=symmetry)
+            C = StiffnessTensor(matrix)
             C_rotated = C * rotations
             for method in ('voigt', 'reuss', 'hill', 'dummy'):
                 if method == 'dummy':
@@ -922,7 +920,7 @@ class TestStiffnessConstructor(unittest.TestCase):
     def test_to_from_Kelvin(self):
         C = S.inv()
         matrix = C.to_Kelvin()
-        C2 = StiffnessTensor.from_Kelvin(matrix, symmetry=C.symmetry)
+        C2 = StiffnessTensor.from_Kelvin(matrix)
         np.testing.assert_array_almost_equal(C._matrix, C2._matrix)
 
     def test_ddot(self):
