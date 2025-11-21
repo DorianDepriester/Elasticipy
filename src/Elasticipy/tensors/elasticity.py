@@ -170,7 +170,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         filename : str
             Filename to save the tensor to.
         matrix_only : bool, False
-            If true, only the components of tje stiffness tensor is saved (no data about phase nor symmetry)
+            If true, only the components of the stiffness tensor is saved (no data about phase nor symmetry)
 
         See Also
         --------
