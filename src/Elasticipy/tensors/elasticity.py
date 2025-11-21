@@ -286,7 +286,6 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
          [-18.   1.  -3.   0.  11.   0.]
          [  0.   0.   0.   3.   0.  85.]]
         Phase: TiNi
-        Symmetry: monoclinic
 
         >>> from Elasticipy.tensors.elasticity import ComplianceTensor\n
         >>> ComplianceTensor.fromCrystalSymmetry(symmetry='monoclinic', diad='y', phase_name='TiNi',
@@ -302,7 +301,6 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
          [ 14.  -8.   0.   0. 116.   0.]
          [  0.   0.   0.   0.   0.  12.]]
         Phase: TiNi
-        Symmetry: monoclinic
         """
         warn('This function will be removed in a future release. Use {}.{}() instead'.format(cls.__name__,symmetry), DeprecationWarning, stacklevel=2)
         return cls._fromCrystalSymmetry(symmetry=symmetry, point_group=point_group, diad=diad, phase_name=phase_name,
@@ -1248,7 +1246,6 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
             0.        ]
          [ 25.98076211 -25.98076211   0.           0.           0.
            65.        ]]
-        Symmetry: cubic
 
         Still, we have
         >>> C_rot.Zener_ratio()
@@ -1533,7 +1530,6 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
             8.1901353 ]
          [-20.34233446   0.99714278  19.34519167  -6.52548033   8.1901353
            39.41409344]]
-        Symmetry: cubic
 
         Once rotated, it is not clear if the stiffness tensors has cubic symmetry. Yet:
         >>> C_rotated.is_cubic()
