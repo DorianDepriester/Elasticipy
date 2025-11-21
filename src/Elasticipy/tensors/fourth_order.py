@@ -282,10 +282,7 @@ class FourthOrderTensor:
         return new_tensor
 
     def __sub__(self, other):
-        if isinstance(other, FourthOrderTensor):
-            return self.__add__(-other._matrix)
-        else:
-            return self.__add__(-other)
+        return self.__add__(-other)
 
     def __neg__(self):
         t = deepcopy(self)
