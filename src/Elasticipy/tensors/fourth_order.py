@@ -76,7 +76,7 @@ class FourthOrderTensor:
     tensor_name = '4th-order'
 
     def _array_to_Kelvin(self, matrix):
-        return self.mapping.matrix * KelvinMapping().matrix
+        return matrix / self.mapping.matrix * KelvinMapping().matrix
 
     def __init__(self, M, mapping=KelvinMapping(), check_minor_symmetry=True, force_minor_symmetry=False):
         """
