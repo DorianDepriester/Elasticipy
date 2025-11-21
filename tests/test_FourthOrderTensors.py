@@ -116,6 +116,27 @@ class TestFourthOrderTensor(unittest.TestCase):
         assert t2 == t1
         assert not np.all(t1.matrix() == t2.matrix())
 
+    def test_identity(self):
+        I = FourthOrderTensor.identity()
+        A = FourthOrderTensor(np.random.random((6,6)))
+        IA = I.ddot(A)
+        AI = A.ddot(I)
+        np.testing.assert_array_almost_equal(A.matrix(), IA.matrix())
+        np.testing.assert_array_almost_equal(A.matrix(), AI.matrix())
+
+    def test_spherical_deviatoric_parts(self):
+        A = FourthOrderTensor(np.random.random((6, 6)))
+        AJ = A.spherical_part()
+        AJJ = AJ.spherical_part()
+        np.testing.assert_array_almost_equal(AJ.matrix(), AJJ.matrix())
+        AK = A.deviatoric_part()
+        AKK = AK.deviatoric_part()
+        np.testing.assert_array_almost_equal(AK.matrix(), AKK.matrix())
+        AKJ = AK.spherical_part()
+        AJK = AJ.deviatoric_part()
+        np.testing.assert_array_almost_equal(AKJ.matrix(), np.zeros((6,6)))
+        np.testing.assert_array_almost_equal(AJK.matrix(), np.zeros((6, 6)))
+
 class TestSymmetricFourthOrderTensor(unittest.TestCase):
     def test_inversion(self):
         m = 5
