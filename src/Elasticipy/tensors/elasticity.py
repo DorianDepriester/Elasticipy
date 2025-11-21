@@ -52,7 +52,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
     _C46_C56_factor = 1.0
     _component_prefix = 'C'
 
-    def __init__(self, M, symmetry='Triclinic', check_positive_definite=True, phase_name= None, mapping=VoigtMapping(), **kwargs):
+    def __init__(self, M, check_positive_definite=True, phase_name= None, mapping=VoigtMapping(), **kwargs):
         """
         Construct of stiffness tensor from a (6,6) matrix.
 
@@ -84,7 +84,6 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         super().__init__(M, mapping=mapping, **kwargs)
         if check_positive_definite:
             _check_definite_positive(self._matrix)
-        self.symmetry = symmetry
         self.phase_name = phase_name
 
     def __mul__(self, other):
@@ -100,7 +99,6 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         string = super().__repr__()
         if self.phase_name is not None:
             string += '\nPhase: {}'.format(self.phase_name)
-        string += '\nSymmetry: {}'.format(self.symmetry)
         return string
 
     def inv(self, mapping=VoigtMapping(tensor='compliance')):
@@ -113,7 +111,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
             Reciprocal tensor
         """
         C = np.linalg.inv(self._matrix) / KelvinMapping().matrix * mapping.matrix
-        return ComplianceTensor(C, mapping=mapping, symmetry=self.symmetry, phase_name=self.phase_name)
+        return ComplianceTensor(C, mapping=mapping, phase_name=self.phase_name)
 
     @classmethod
     def from_txt_file(cls, filename):
@@ -150,16 +148,11 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
             phase_name = lines[0].split(": ", 1)[1].strip()
             matrix_start_index += 1
 
-        # Parse symmetry if available
-        if len(lines) > matrix_start_index and lines[matrix_start_index].startswith("Symmetry:"):
-            symmetry = lines[matrix_start_index].split(": ", 1)[1].strip()
-            matrix_start_index += 1
-
         # Parse matrix
         matrix = np.loadtxt(lines[matrix_start_index:])
 
         # Return the reconstructed object
-        return cls(matrix, phase_name=phase_name, symmetry=symmetry)
+        return cls(matrix, phase_name=phase_name)
 
     def save_to_txt(self, filename, matrix_only=False):
         """
@@ -181,7 +174,6 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
             if not matrix_only:
                 if self.phase_name is not None:
                     f.write(f"Phase Name: {self.phase_name}\n")
-                f.write(f"Symmetry: {self.symmetry}\n")
             for row in self.matrix():
                 f.write("  " + "  ".join(f"{value:8.2f}" for value in row) + "\n")
 
@@ -319,7 +311,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
     @classmethod
     def _fromCrystalSymmetry(cls, symmetry, phase_name, **kwargs):
         matrix = cls._matrixFromCrystalSymmetry(symmetry=symmetry, **kwargs)
-        return cls(matrix, phase_name=phase_name, symmetry=symmetry)
+        return cls(matrix, phase_name=phase_name)
 
 
     @classmethod
@@ -1607,7 +1599,7 @@ class ComplianceTensor(StiffnessTensor):
             Reciprocal tensor
         """
         S = np.linalg.inv(self._matrix) / KelvinMapping().matrix * mapping.matrix
-        return StiffnessTensor(S, mapping=mapping, symmetry=self.symmetry, phase_name=self.phase_name)
+        return StiffnessTensor(S, mapping=mapping, phase_name=self.phase_name)
 
     def Reuss_average(self, axis=None):
         if self.ndim:
@@ -1667,7 +1659,7 @@ class ComplianceTensor(StiffnessTensor):
         S12 = -nu/E
         S44 = 1 / G
         S_mat = _isotropic_matrix(S11, S12, S44)
-        return ComplianceTensor(S_mat, symmetry='isotropic', phase_name=phase_name)
+        return ComplianceTensor(S_mat, phase_name=phase_name)
 
     @classmethod
     def orthotropic(cls, *, Ex, Ey, Ez, Gxy, Gxz, Gyz,
@@ -1683,7 +1675,7 @@ class ComplianceTensor(StiffnessTensor):
                             [0, 0, 0, 0, 1 / Gxz, 0],
                             [0, 0, 0, 0, 0, 1 / Gxy]])
         S = tri_sup + np.tril(tri_sup.T, -1)
-        return ComplianceTensor(S, symmetry='orthotropic', **kwargs)
+        return ComplianceTensor(S, **kwargs)
 
     @classmethod
     def transverse_isotropic(cls, *args, **kwargs):
