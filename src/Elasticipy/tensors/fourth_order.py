@@ -105,6 +105,13 @@ class FourthOrderTensor:
             M_{ijkl}=M_{jikl}=M_{jilk}=M_{ijlk}
 
         """
+        if isinstance(mapping, str):
+            if mapping.lower() == 'voigt':
+                mapping = VoigtMapping()
+            elif mapping.lower() == 'kelvin':
+                mapping = kelvin_mapping
+            else:
+                raise ValueError('Mapping must be either "voigt" or "kelvin"')
         self.mapping=mapping
         if isinstance(M, FourthOrderTensor):
             self._matrix = M._matrix
