@@ -75,6 +75,9 @@ class FourthOrderTensor:
     """
     tensor_name = '4th-order'
 
+    def _array_to_Kelvin(self, matrix):
+        return self.mapping.matrix * KelvinMapping().matrix
+
     def __init__(self, M, mapping=KelvinMapping(), check_minor_symmetry=True, force_minor_symmetry=False):
         """
         Construct of Fourth-order tensor with minor symmetry.
@@ -103,24 +106,25 @@ class FourthOrderTensor:
         """
         self.mapping=mapping
         if isinstance(M, self.__class__):
-            M = M._matrix / M.mapping.matrix
-        M = np.asarray(M)
-        if M.shape[-2:] == (6, 6):
-            matrix = M / mapping.matrix * KelvinMapping().matrix
-        elif M.shape[-4:] == (3, 3, 3, 3):
-            Mijlk = np.swapaxes(M, -1, -2)
-            Mjikl = np.swapaxes(M, -3, -4)
-            Mjilk = np.swapaxes(Mjikl, -1, -2)
-            if force_minor_symmetry:
-                M = 0.25 * (M + Mijlk + Mjikl + Mjilk)
-            elif check_minor_symmetry:
-                symmetry = np.all(M == Mijlk) and np.all(M == Mjikl) and np.all(M == Mjilk)
-                if not symmetry:
-                    raise ValueError('The input array does not have minor symmetry')
-            matrix = self._full_to_matrix(M)
+            self._matrix = M._matrix
         else:
-            raise ValueError('The input matrix must of shape (...,6,6) or (...,3,3,3,3)')
-        self._matrix = matrix
+            M = np.asarray(M)
+            if M.shape[-2:] == (6, 6):
+                matrix = M / mapping.matrix * KelvinMapping().matrix
+            elif M.shape[-4:] == (3, 3, 3, 3):
+                Mijlk = np.swapaxes(M, -1, -2)
+                Mjikl = np.swapaxes(M, -3, -4)
+                Mjilk = np.swapaxes(Mjikl, -1, -2)
+                if force_minor_symmetry:
+                    M = 0.25 * (M + Mijlk + Mjikl + Mjilk)
+                elif check_minor_symmetry:
+                    symmetry = np.all(M == Mijlk) and np.all(M == Mjikl) and np.all(M == Mjilk)
+                    if not symmetry:
+                        raise ValueError('The input array does not have minor symmetry')
+                matrix = self._full_to_matrix(M)
+            else:
+                raise ValueError('The input matrix must of shape (...,6,6) or (...,3,3,3,3)')
+            self._matrix = matrix
         for i in range(0, 6):
             for j in range(0, 6):
                 def getter(obj, I=i, J=j):
