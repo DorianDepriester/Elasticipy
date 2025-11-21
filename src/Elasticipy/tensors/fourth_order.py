@@ -534,7 +534,9 @@ class FourthOrderTensor:
             Inverse tensor
         """
         matrix_inv = np.linalg.inv(self._matrix)
-        return self.__class__(matrix_inv, mapping=self.mapping.mapping_inverse)
+        t = self.__class__(matrix_inv)
+        t.mapping = self.mapping.mapping_inverse
+        return t
 
     @classmethod
     def zeros(cls, shape=()):
