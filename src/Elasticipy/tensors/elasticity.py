@@ -101,7 +101,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
             string += '\nPhase: {}'.format(self.phase_name)
         return string
 
-    def inv(self):
+    def inv(self, mapping=VoigtMapping(tensor='compliance')):
         """
         Compute the reciprocal compliance tensor
 
@@ -110,7 +110,8 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         ComplianceTensor
             Reciprocal tensor
         """
-        return ComplianceTensor(super().inv(), phase_name=self.phase_name)
+        C = np.linalg.inv(self._matrix) / KelvinMapping().matrix * mapping.matrix
+        return ComplianceTensor(C, mapping=mapping, phase_name=self.phase_name)
 
     @classmethod
     def from_txt_file(cls, filename):
