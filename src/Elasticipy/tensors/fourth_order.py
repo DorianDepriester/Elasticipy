@@ -265,8 +265,8 @@ class FourthOrderTensor:
     def __add__(self, other):
         new_tensor = deepcopy(self)
         if isinstance(other, np.ndarray):
-            if other.shape[2:] == (6, 6):
-                mat = self._matrix + other
+            if other.shape[-2:] == (6, 6):
+                mat = self._matrix + self._array_to_Kelvin(other)
             elif other.shape == (3, 3, 3, 3):
                 mat = self._full_to_matrix(self.full_tensor() + other)
             else:
