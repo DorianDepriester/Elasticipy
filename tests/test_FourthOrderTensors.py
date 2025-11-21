@@ -108,6 +108,13 @@ class TestFourthOrderTensor(unittest.TestCase):
         assert t4.mapping.name == t1.mapping.name
         np.testing.assert_array_almost_equal(t4._matrix, np.matmul(t1._matrix, t2._matrix))
 
+    def test_copy(self):
+        t1 = FourthOrderTensor(np.random.random((6,6)))
+        t2 = t1.copy()
+        assert t2 == t1
+        t2.mapping = VoigtMapping()
+        assert t2 == t1
+        assert not np.all(t1.matrix() == t2.matrix())
 
 class TestSymmetricFourthOrderTensor(unittest.TestCase):
     def test_inversion(self):
