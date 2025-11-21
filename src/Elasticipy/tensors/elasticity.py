@@ -101,7 +101,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
             string += '\nPhase: {}'.format(self.phase_name)
         return string
 
-    def inv(self, mapping=VoigtMapping(tensor='compliance')):
+    def inv(self):
         """
         Compute the reciprocal compliance tensor
 
@@ -110,8 +110,10 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         ComplianceTensor
             Reciprocal tensor
         """
-        C = np.linalg.inv(self._matrix) / kelvin_mapping.matrix * mapping.matrix
-        return ComplianceTensor(C, mapping=mapping, phase_name=self.phase_name)
+        C = np.linalg.inv(self._matrix)
+        t2 = ComplianceTensor(C, mapping=kelvin_mapping, phase_name=self.phase_name)
+        t2.mapping = self.mapping.mapping_inverse
+        return t2
 
     @classmethod
     def from_txt_file(cls, filename):
@@ -1590,7 +1592,7 @@ class ComplianceTensor(StiffnessTensor):
         else:
             return super().__mul__(other)
 
-    def inv(self, mapping=VoigtMapping()):
+    def inv(self):
         """
         Compute the reciprocal stiffness tensor
 
@@ -1599,8 +1601,10 @@ class ComplianceTensor(StiffnessTensor):
         StiffnessTensor
             Reciprocal tensor
         """
-        S = np.linalg.inv(self._matrix) / kelvin_mapping.matrix * mapping.matrix
-        return StiffnessTensor(S, mapping=mapping, phase_name=self.phase_name)
+        S = np.linalg.inv(self._matrix)
+        t = StiffnessTensor(S, mapping=kelvin_mapping, phase_name=self.phase_name)
+        t.mapping = self.mapping.mapping_inverse
+        return t
 
     def Reuss_average(self, axis=None):
         if self.ndim:
