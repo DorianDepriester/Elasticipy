@@ -5,6 +5,7 @@ from scipy.spatial.transform import Rotation
 from copy import deepcopy
 from Elasticipy.tensors.mapping import KelvinMapping, VoigtMapping
 
+kelvin_mapping = KelvinMapping()
 
 def voigt_indices(i, j):
     """
@@ -76,9 +77,9 @@ class FourthOrderTensor:
     tensor_name = '4th-order'
 
     def _array_to_Kelvin(self, matrix):
-        return matrix / self.mapping.matrix * KelvinMapping().matrix
+        return matrix / self.mapping.matrix * kelvin_mapping.matrix
 
-    def __init__(self, M, mapping=KelvinMapping(), check_minor_symmetry=True, force_minor_symmetry=False):
+    def __init__(self, M, mapping=kelvin_mapping, check_minor_symmetry=True, force_minor_symmetry=False):
         """
         Construct of Fourth-order tensor with minor symmetry.
 
@@ -128,7 +129,7 @@ class FourthOrderTensor:
         for i in range(0, 6):
             for j in range(0, 6):
                 def getter(obj, I=i, J=j):
-                    new_matrix = obj._matrix / KelvinMapping().matrix * self.mapping.matrix
+                    new_matrix = obj._matrix / kelvin_mapping.matrix * self.mapping.matrix
                     return new_matrix[...,I, J]
 
                 getter.__doc__ = f"Returns the ({i + 1},{j + 1}) component of the {self.tensor_name} matrix."
@@ -168,7 +169,7 @@ class FourthOrderTensor:
         i, j, k, ell = np.indices((3, 3, 3, 3))
         ij = voigt_indices(i, j)
         kl = voigt_indices(k, ell)
-        matrix = self._matrix / KelvinMapping().matrix
+        matrix = self._matrix / kelvin_mapping.matrix
         m = matrix[..., ij, kl]
         return m
 
@@ -196,7 +197,7 @@ class FourthOrderTensor:
         kl, ij = np.indices((6, 6))
         i, j = unvoigt_index(ij).T
         k, ell = unvoigt_index(kl).T
-        return full_tensor[..., i, j, k, ell] * KelvinMapping.matrix[ij, kl]
+        return full_tensor[..., i, j, k, ell] * kelvin_mapping.matrix[ij, kl]
 
     def rotate(self, rotation):
         """
@@ -402,7 +403,7 @@ class FourthOrderTensor:
     def __setitem__(self, index, value):
         if isinstance(value, np.ndarray):
             if value.shape[-2:] == (6,6):
-                self._matrix[index] = value / self.mapping.matrix * KelvinMapping().matrix
+                self._matrix[index] = value / self.mapping.matrix * kelvin_mapping.matrix
             elif value.shape[-4:] == (3,3,3,3):
                 submatrix = self._full_to_matrix(value)
                 self._matrix[index] = submatrix
@@ -414,7 +415,7 @@ class FourthOrderTensor:
             raise NotImplementedError('The r.h.s must be either an ndarray or an object of class {}'.format(self.__class__))
 
     @classmethod
-    def identity(cls, shape=(), return_full_tensor=False, mapping=KelvinMapping()):
+    def identity(cls, shape=(), return_full_tensor=False, mapping=kelvin_mapping):
         """
         Create a 4th-order identity tensor
 
@@ -448,7 +449,7 @@ class FourthOrderTensor:
             return cls(full, mapping=mapping)
 
     @classmethod
-    def identity_spherical_part(cls, shape=(), return_full_tensor=False, mapping=KelvinMapping()):
+    def identity_spherical_part(cls, shape=(), return_full_tensor=False, mapping=kelvin_mapping):
         """
         Return the spherical part of the identity tensor
 
@@ -478,7 +479,7 @@ class FourthOrderTensor:
             return FourthOrderTensor(J, mapping=mapping)
 
     @classmethod
-    def identity_deviatoric_part(cls, shape=(), return_full_tensor=False, mapping=KelvinMapping()):
+    def identity_deviatoric_part(cls, shape=(), return_full_tensor=False, mapping=kelvin_mapping):
         """
         Return the deviatoric part of the identity tensor
 
@@ -563,10 +564,10 @@ class FourthOrderTensor:
             if mapping_convention.lower() == 'voigt':
                 mapping_convention = VoigtMapping()
             elif mapping_convention.lower() == 'kelvin':
-                mapping_convention = KelvinMapping()
+                mapping_convention = kelvin_mapping
             else:
                 raise ValueError('Mapping convention must be either Kelvin or Voigt')
-        return matrix / KelvinMapping().matrix * mapping_convention.matrix
+        return matrix / kelvin_mapping.matrix * mapping_convention.matrix
 
     def copy(self):
         """Create a copy of the tensor"""
@@ -679,7 +680,7 @@ class SymmetricFourthOrderTensor(FourthOrderTensor):
 
     def infinite_random_average(self):
         new_tensor = deepcopy(self)
-        matrix = self._matrix / KelvinMapping().matrix
+        matrix = self._matrix / kelvin_mapping.matrix
         A = matrix[..., 0, 0] + matrix[..., 1, 1] + matrix[..., 2, 2]
         B = matrix[..., 0, 1] + matrix[..., 0, 2] + matrix[..., 1, 2]
         C = matrix[..., 3, 3] + matrix[..., 4, 4] + matrix[..., 5, 5]
@@ -692,6 +693,6 @@ class SymmetricFourthOrderTensor(FourthOrderTensor):
                                [0, 0, 0, C44, 0,   0  ],
                                [0, 0, 0, 0,   C44, 0  ],
                                [0, 0, 0, 0, 0,     C44],])
-        new_tensor._matrix = new_matrix * KelvinMapping().matrix
+        new_tensor._matrix = new_matrix * kelvin_mapping.matrix
         return new_tensor
 
