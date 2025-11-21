@@ -548,7 +548,7 @@ class TestStiffnessConstructor(unittest.TestCase):
         assert C_plus.Young_modulus.mean() == approx(300)
         C_minus = C1 - C2
         assert C_minus.Young_modulus.mean() == approx(100)
-        C_minus = C1 - C2._matrix
+        C_minus = C1 - C2.matrix()
         assert C_minus.Young_modulus.mean() == approx(100)
         C_plus_full = C1 + C2.full_tensor()
         assert C_plus_full == C_plus
