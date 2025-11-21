@@ -49,7 +49,7 @@ behaviour. In this case, the aforementioned averages can be estimated as follows
         0.        ]
      [  0.           0.           0.           0.           0.
        40.66513606]]
-    Symmetry: Triclinic
+    Phase: TiNi
 
     As a comparison, let's see how the underlying assumption impair the Young moduli:
 

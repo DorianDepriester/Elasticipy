@@ -24,7 +24,6 @@ We thus start by defining the stiffness tensor for forsterite:
      [  0.    0.    0.    0.   77.    0. ]
      [  0.    0.    0.    0.    0.   78.7]]
     Phase: forsterite
-    Symmetry: orthorhombic
 
 And define the mass density:
 

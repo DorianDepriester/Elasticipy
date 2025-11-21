@@ -33,7 +33,6 @@ Using the example above:
      [  0.   0.   0.   0.  77.   0.]
      [  0.   0.   0.   0.   0.  77.]]
     Phase: Cu
-    Symmetry: cubic
 
 
 Download data from the Materials Project
