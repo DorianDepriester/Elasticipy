@@ -534,7 +534,7 @@ class FourthOrderTensor:
             Inverse tensor
         """
         matrix_inv = np.linalg.inv(self._matrix)
-        t = self.__class__(matrix_inv)
+        t = self.__class__(matrix_inv, mapping=kelvin_mapping)
         t.mapping = self.mapping.mapping_inverse
         return t
 
