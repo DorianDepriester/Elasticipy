@@ -848,6 +848,12 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         >>> C.shear_modulus
         Hyperspherical function
         Min=82031.24999999991, Max=82031.25000000006
+
+        Similarly, the same tensor can be defined from another pair of parameters, e.g. Young and shear moduli:
+        >>> C=StiffnessTensor.isotropic(E=210e3, G=82031)
+        >>> C.Young_modulus
+        Spherical function
+        Min=210000.0000000001, Max=210000.00000000032
         """
         return ComplianceTensor.isotropic(E=E, nu=nu, G=G, lame1=lame1, lame2=lame2, K=K, phase_name=phase_name).inv()
 
