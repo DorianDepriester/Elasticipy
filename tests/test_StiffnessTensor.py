@@ -682,12 +682,12 @@ class TestStiffnessConstructor(unittest.TestCase):
     def test_MaterialsProject(self):
         """Test import from the Materials Project"""
         # Try with cubic Cu
-        C = StiffnessTensor.from_MP("mp-30", api_key="naYAN7LyUof6G6FEHKECvAQJHXHnItwP")
+        C = StiffnessTensor.from_MP("mp-30")
         C_Cu = StiffnessTensor.cubic(C11=186, C12=134, C44=77)
         np.testing.assert_array_almost_equal(C._matrix, C_Cu._matrix)
 
         # Now try with a list of entries
-        Cs = StiffnessTensor.from_MP(("mp-30", "mp-1048"), api_key="naYAN7LyUof6G6FEHKECvAQJHXHnItwP")
+        Cs = StiffnessTensor.from_MP(("mp-30", "mp-1048"))
         assert len(Cs) == 2
         np.testing.assert_array_almost_equal(Cs[0]._matrix, C_Cu._matrix)
 
