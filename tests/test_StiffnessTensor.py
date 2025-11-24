@@ -13,6 +13,7 @@ from Elasticipy.tensors.stress_strain import StressTensor, StrainTensor
 from pymatgen.analysis.elasticity import elastic as mg
 from orix.quaternion import Rotation as orix_rot
 from Elasticipy.tensors.mapping import KelvinMapping, VoigtMapping
+import sys
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 file_path = os.path.join(current_dir, 'MaterialsProject.json')
@@ -677,6 +678,7 @@ class TestStiffnessConstructor(unittest.TestCase):
         S_pymatgen = S.to_pymatgen()
         np.testing.assert_array_almost_equal(S_pymatgen.voigt, np.linalg.inv(C_pymatgen.voigt))
 
+    @unittest.skipIf(sys.version_info < (3, 11), "Python < 3.11")
     def test_MaterialsProject(self):
         """Test import from the Materials Project"""
         # Try with cubic Cu
