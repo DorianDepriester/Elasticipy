@@ -792,6 +792,56 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         Voigt_average : compute the Voigt average
         Hill_average : compute the Voigt-Reuss-Hill average
         average : generic function for calling either the Voigt, Reuss or Hill average
+
+        Examples
+        --------
+        Let us consider the stiffness of pure copper:
+        >>> from Elasticipy.tensors.elasticity import StiffnessTensor
+        >>> C = StiffnessTensor.cubic(C11=186, C12=134, C44=77)
+
+        If we assume that an aggregate is composed of an infinite set grains whose orientations are uniformly
+        distributed, the Voigt average is:
+        >>> C.Reuss_average()
+        Stiffness tensor (in Voigt mapping):
+        [[208.86206897 122.56896552 122.56896552   0.           0.
+            0.        ]
+         [122.56896552 208.86206897 122.56896552   0.           0.
+            0.        ]
+         [122.56896552 122.56896552 208.86206897   0.           0.
+            0.        ]
+         [  0.           0.           0.          43.14655172   0.
+            0.        ]
+         [  0.           0.           0.           0.          43.14655172
+            0.        ]
+         [  0.           0.           0.           0.           0.
+           43.14655172]]
+
+        Now, we consider an aggregate of grains whose orientations follow a pure fibre texture along the X axis. First,
+        generate a (large) random set of rotation corresponding to this texture:
+        >>> from scipy.spatial.transform import Rotation
+        >>> import numpy as np
+        >>> g = Rotation.from_euler('X', np.linspace(0, 90, 1000), degrees=True)    # 1000 rotations around X
+
+        Now apply rotations to compute the array of stiffness tensors:
+        >>> C_rotated = C * g
+        >>> C_rotated
+        Stiffness tensor array of shape (1000,)
+
+        Finally, one can check that the Voigt average, compouted from the rotated stiffness tensors is:
+        >>> C_rotated.Reuss_average()
+        Stiffness tensor (in Voigt mapping):
+        [[ 1.86000000e+02  1.34000000e+02  1.34000000e+02 -1.68008952e-15
+           0.00000000e+00  0.00000000e+00]
+         [ 1.34000000e+02  1.98854548e+02  1.21145452e+02 -1.09777845e-15
+           0.00000000e+00  0.00000000e+00]
+         [ 1.34000000e+02  1.21145452e+02  1.98854548e+02 -2.89552069e-15
+           0.00000000e+00  0.00000000e+00]
+         [-1.61936693e-16  1.69241946e-16 -7.96730255e-16  3.88930441e+01
+           0.00000000e+00  0.00000000e+00]
+         [ 0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00
+           7.70000000e+01 -7.54674101e-17]
+         [ 0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00
+           7.54674101e-17  7.70000000e+01]]
         """
         return self.inv().Reuss_average(axis=axis).inv()
 
