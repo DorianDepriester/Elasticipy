@@ -65,7 +65,11 @@ def rotate_tensor(full_tensor, r):
     str_ein = '...im,...jn,...ko,...lp,...mnop->...ijkl'
     return np.einsum(str_ein, rot_mat, rot_mat, rot_mat, rot_mat, full_tensor)
 
-def _isotropic_matrix(C11, C12, C44, shape=()):
+def _isotropic_matrix(C11, C12, C44):
+    C11 = np.asarray(C11)
+    C12 = np.asarray(C12)
+    C44 = np.asarray(C44)
+    shape = np.broadcast_shapes(C11.shape, C12.shape, C44.shape)
     matrix = np.zeros(shape=shape + (6, 6))
     matrix[..., 0, 0] = C11
     matrix[..., 1, 1] = C11
@@ -719,7 +723,7 @@ class SymmetricFourthOrderTensor(FourthOrderTensor):
         C11 = 1/5  * A + 2/15 * B + 4/15 * C
         C12 = 1/15 * A + 4/15 * B - 2/15 * C
         C44 = 1/15 * A - 1/15 * B + 1/5 * C
-        new_matrix = _isotropic_matrix(C11, C12, C44, shape=self.shape)
+        new_matrix = _isotropic_matrix(C11, C12, C44)
         new_tensor._matrix = new_matrix * kelvin_mapping.matrix
         return new_tensor
 
