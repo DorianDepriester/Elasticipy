@@ -35,6 +35,11 @@ Elasticipy can be installed with PIP:
 pip install Elasticipy
 ````
 
+On anaconda, one can also use:
+````
+conda install conda-forge::elasticipy
+````
+
 ## Documentation
 Tutorials and full documentation are available on [ReadTheDoc](https://elasticipy.readthedocs.io/).
 
