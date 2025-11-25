@@ -1,4 +1,4 @@
-from Elasticipy.tensors.fourth_order import SymmetricFourthOrderTensor, kelvin_mapping
+from Elasticipy.tensors.fourth_order import SymmetricFourthOrderTensor, kelvin_mapping, _isotropic_matrix
 from Elasticipy.spherical_function import SphericalFunction, HyperSphericalFunction
 from Elasticipy.crystal_symmetries import SYMMETRIES
 from Elasticipy.tensors.stress_strain import StrainTensor, StressTensor
@@ -18,15 +18,6 @@ def _parse_tensor_components(prefix, **kwargs):
 
 def _indices2str(ij):
     return f'{ij[0] + 1}{ij[1] + 1}'
-
-def _isotropic_matrix(C11, C12, C44):
-    return np.array([[C11, C12, C12, 0, 0, 0],
-                     [C12, C11, C12, 0, 0, 0],
-                     [C12, C12, C11, 0, 0, 0],
-                     [0, 0, 0, C44, 0, 0],
-                     [0, 0, 0, 0, C44, 0],
-                     [0, 0, 0, 0, 0, C44]])
-
 
 def _check_definite_positive(mat):
     try:
@@ -1330,13 +1321,17 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         .. [3] S. I. Ranganathan and M. Ostoja-Starzewski, Universal Elastic Anisotropy Index,
            *Phys. Rev. Lett.*, 101(5), 055504, 2008. https://doi.org/10.1103/PhysRevLett.101.055504
         """
-        self._single_tensor_only('universal_anisotropy')
-        Cvoigt = self.Voigt_average()
-        Creuss = self.Reuss_average()
-        Gv = Cvoigt._matrix[3, 3]
-        Gr = Creuss._matrix[3, 3]
-        Kv = Cvoigt.bulk_modulus
-        Kr = Creuss.bulk_modulus
+        #self._single_tensor_only('universal_anisotropy')
+        if isinstance(self, StiffnessTensor):
+            C_voigt = self.infinite_random_average()
+            S_reuss = self.inv().infinite_random_average()
+        else:
+            S_reuss = self.infinite_random_average()
+            C_voigt = self.inv().infinite_random_average()
+        Kv = C_voigt.bulk_modulus
+        Kr = S_reuss.bulk_modulus
+        Gv = C_voigt._matrix[..., 3, 3] / 2
+        Gr = 1 / S_reuss._matrix[..., 3, 3] / 2
         return 5 * Gv / Gr + Kv / Kr - 6
 
     def Zener_ratio(self, tol=1e-4):
