@@ -9,6 +9,13 @@ Welcome to Elasticipy's Documentation!
    :alt: PyPI - Downloads
    :target: https://pypistats.org/packages/elasticipy
 
+.. image:: https://img.shields.io/conda/v/conda-forge/Elasticipy
+   :alt: Conda Version
+   :target: https://anaconda.org/channels/conda-forge/packages/elasticipy/overview
+
+.. image:: https://img.shields.io/conda/d/conda-forge/Elasticipy
+   :alt: Conda Downloads
+
 .. image:: https://img.shields.io/badge/Hosted%20on%20-%20GitHub%20-%20blue
    :alt: Static Badge
    :target: https://github.com/DorianDepriester/Elasticipy
