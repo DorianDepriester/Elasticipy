@@ -43,6 +43,11 @@ conda install conda-forge::elasticipy
 ## Documentation
 Tutorials and full documentation are available on [ReadTheDoc](https://elasticipy.readthedocs.io/).
 
+## Elasticipy in a nutshell
+Take a 5-minute tour through Elasticipy's main features by running the online Jupyter Notebook, hosted on 
+[Binder](https://mybinder.org/v2/gh/DorianDepriester/Elasticipy/HEAD?urlpath=%2Fdoc%2Ftree%2FElasticipy_for_the_Impatient.ipynb).
+ 
+
 ## Sources
 The source code is available on [GitHub](https://github.com/DorianDepriester/Elasticipy) under the [MIT licence](https://github.com/DorianDepriester/Elasticipy/blob/c6c3d441a2d290ab8f4939992d5d753a1ad3bdb0/LICENSE).
 
