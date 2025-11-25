@@ -166,6 +166,10 @@ To install this package, simply run::
     pip install Elasticipy
 
 
+On Anaconda, you can use::
+
+    conda install conda-forge::elasticipy
+
 .. toctree::
    :maxdepth: 2
    :caption: Table of Contents
