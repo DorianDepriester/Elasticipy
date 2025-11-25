@@ -77,6 +77,7 @@ def _isotropic_matrix(C11, C12, C44, shape=()):
     matrix[..., 4, 4] = C44
     matrix[..., 5, 5] = C44
     return matrix
+
 class FourthOrderTensor:
     """
     Template class for manipulating symmetric fourth-order tensors.
