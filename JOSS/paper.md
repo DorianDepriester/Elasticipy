@@ -29,8 +29,8 @@ bibliography: paper.bib
 # Summary
 
 Elasticipy is a Python library designed to streamline computation and manipulation of elasticity tensors for materials and 
-crystalline materials, taking their specific symmetries into account. It provides tools to manipulate, visualize, and 
-analyze tensors --such as stress, strain and stiffness tensors-- simplifying workflows for materials scientists and 
+crystalline materials, taking their specific symmetries into account. It provides tools to manipulate, visualise, and 
+analyse tensors --such as stress, strain and stiffness tensors-- simplifying workflows for materials scientists and 
 engineers.
 
 # Statement of Need
@@ -38,7 +38,7 @@ engineers.
 In continuum mechanics, the deformation of a material is described by the second-order strain tensor (usually denoted 
 $\boldsymbol{\varepsilon}$) whereas the stress is described by the second-order Cauchy's stress tensor 
 ($\boldsymbol{\sigma}$). Under the linear elasticity assumption, the relationship between the elastic strain $\boldsymbol{\varepsilon}$
-and $\boldsymbol{\sigma}$, known as the generalized Hooke's law, is given through the fourth-order stiffness tensor $\boldsymbol{C}$ with:
+and $\boldsymbol{\sigma}$, known as the generalised Hooke's law, is given through the fourth-order stiffness tensor $\boldsymbol{C}$ with:
 
 $$\boldsymbol{\sigma}=\boldsymbol{C}:\boldsymbol{\varepsilon}$$
 
@@ -96,7 +96,7 @@ and stiffness;
 
   - support for standard crystal symmetry groups [@nye] to facilitate the definition of stiffness/compliance components; 
 
-  - visualization tools for understanding directional elastic behavior (Young modulus, shear modulus and Poisson ratio);
+  - visualisation tools for understanding directional elastic behaviour (Young modulus, shear modulus and Poisson ratio);
 
   - a collection of built-in methods to easily and efficiently perform fundamental operations on tensors (rotations 
 [@meanElastic], products, invariants, statistical analysis etc.);
@@ -117,7 +117,7 @@ averaging method (c). \label{fig:Young}](YoungModulus.png)
 Elasticipy also introduces the concept of *tensor arrays*, in a similar way as in MTEX [@MTEX], allowing to 
 process several tensors at once with simple and highly efficient commands. In order to highlight the performances 
 of Elasticipy, \autoref{fig:pymatgen} shows the wall-time required to perform two basic operations on tensors (namely, 
-apply the generalized Hooke's law and compute the von Mises equivalent stress) as 
+apply the generalised Hooke's law and compute the von Mises equivalent stress) as 
 functions of the number of considered tensors. This demonstrates that, when processing large datasets of tensors 
 ($n>10^3$), basic tensor operations are 1 to 2 orders of magnitude faster in Elasticipy compared to Pymatgen. 
 These performance gains are achieved by leveraging NumPy's array broadcasting capabilities [@NumPy].
