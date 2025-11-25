@@ -136,7 +136,7 @@ to other averaging methods (e.g. self-consistent models), possibly beyond linear
 with ease. It already implements thermal expansion.
 
 # Usage
-This section presents the syntaxes of few basic operations performed with Elasticipy v4.0.0.
+This section presents the syntaxes of few basic operations performed with Elasticipy v4.2.0.
 
 ## Plot directional engineering constants
 
