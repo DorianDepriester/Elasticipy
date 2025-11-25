@@ -720,6 +720,50 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         Reuss_average : compute the Reuss average
         Hill_average : compute the Voigt-Reuss-Hill average
         average : generic function for calling either the Voigt, Reuss or Hill average
+
+        Examples
+        --------
+        Let us consider the stiffness of pure copper:
+        >>> from Elasticipy.tensors.elasticity import StiffnessTensor
+        >>> C = StiffnessTensor.cubic(C11=186, C12=134, C44=77)
+
+        If we assume that an aggregate is composed of an infinite set grains whose orientations are uniformly
+        distributed, the Voigt average is:
+        >>> C.Voigt_average()
+        Stiffness tensor (in Voigt mapping):
+        [[226.8 113.6 113.6   0.    0.    0. ]
+         [113.6 226.8 113.6   0.    0.    0. ]
+         [113.6 113.6 226.8   0.    0.    0. ]
+         [  0.    0.    0.   56.6   0.    0. ]
+         [  0.    0.    0.    0.   56.6   0. ]
+         [  0.    0.    0.    0.    0.   56.6]]
+
+        Now, we consider an aggregate of grains whose orientations follow a pure fibre texture along the X axis. First,
+        generate a (large) random set of rotation corresponding to this texture:
+        >>> from scipy.spatial.transform import Rotation
+        >>> import numpy as np
+        >>> g = Rotation.from_euler('X', np.linspace(0, 90, 1000), degrees=True)    # 1000 rotations around X
+
+        Now apply rotations to compute the array of stiffness tensors:
+        >>> C_rotated = C * g
+        >>> C_rotated
+        Stiffness tensor array of shape (1000,)
+
+        Finally, one can check that the Voigt average, compouted from the rotated stiffness tensors is:
+        >>> C_rotated.Voigt_average()
+        Stiffness tensor (in Voigt mapping):
+        [[ 1.86000000e+02  1.34000000e+02  1.34000000e+02 -4.39648318e-17
+           0.00000000e+00  0.00000000e+00]
+         [ 1.34000000e+02  2.11474500e+02  1.08525500e+02  0.00000000e+00
+           0.00000000e+00  0.00000000e+00]
+         [ 1.34000000e+02  1.08525500e+02  2.11474500e+02  0.00000000e+00
+           0.00000000e+00  0.00000000e+00]
+         [ 0.00000000e+00  0.00000000e+00  0.00000000e+00  5.15255000e+01
+           0.00000000e+00  0.00000000e+00]
+         [ 0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00
+           7.70000000e+01 -7.54674101e-17]
+         [ 0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00
+           7.54674101e-17  7.70000000e+01]]
         """
         if self.ndim:
             return self.mean(axis=axis)
