@@ -106,12 +106,12 @@ multiphased aggregates.
 
 In order to evidence some of these features, \autoref{fig:Young}.a) illustrates the directional Young modulus of 
 copper (Cu) single crystal as a 3D surface, whereas \autoref{fig:Young}.b) shows the same values as a pole figure (Lambert 
-projection). In \autoref{fig:Young}.c), the Young modulus of a polycrystalline Cu displaying a perfect $[001]$ fiber 
+projection). In \autoref{fig:Young}.c), the Young modulus of a polycrystalline Cu displaying a perfect $[001]$ fibre 
 texture has been estimated with different averaging methods (namely Voigt, Reuss and Hill [@hill]), then plotted as 
 orthogonal sections.
 
 ![Young modulus (GPa) of Cu single crystal as a 3D surface (a) or a pole figure (b); 
-Young modulus of Cu polycrystal with $[001]$ fiber texture, plotted in three orthogonal sections, depending on the
+Young modulus of Cu polycrystal with $[001]$ fibre texture, plotted in three orthogonal sections, depending on the
 averaging method (c). \label{fig:Young}](YoungModulus.png)
 
 Elasticipy also introduces the concept of *tensor arrays*, in a similar way as in MTEX [@MTEX], allowing to 
