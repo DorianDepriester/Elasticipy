@@ -619,27 +619,27 @@ class SymmetricFourthOrderTensor(FourthOrderTensor):
         elif check_symmetries and not np.all(np.isclose(self._matrix, self._matrix.swapaxes(-1, -2))):
             raise ValueError('The input matrix must be symmetric')
 
-    def invariants(self, order='all'):
+    def linear_invariants(self):
         """
-        Compute the invariants of the tensor.
+        Compute the linear invariants of the tensor, or tensor array.
 
-        Compute the linear or/and quadratic invariant of the fourth-order tensor (see notes)
-
-        Parameters
-        ----------
-        order : str, optional
-            If 'linear', only A1 and A2 are returned
-            If 'quadratic', A1², A2², A1*A2, B1, B2, B3, B4 and B5 are returned
-            If 'all' (default), A1, A2, A1², A2², B1, B2, B3, B4 and B5 are returned
+        If the object is a tensor array, the linear invariants are returned as arrays of each invariant. See notes for
+        the actual definitions.
 
         Returns
         -------
-        tuple
-            invariants of the given order (see above)
+        A1 : float or np.ndarray
+            First linear invariant
+        A2 : float or np.ndarray
+            Second linear invariant
+
+        See Also
+        --------
+        quadratic_invariants : compute the quadratic invariants of a fourth-order tensor
 
         Notes
         -----
-        The nomenclature of the invariants follows that of [4]_. The linear invariants are:
+        The linear invariants are:
 
         .. math::
 
@@ -647,7 +647,29 @@ class SymmetricFourthOrderTensor(FourthOrderTensor):
 
             A_2=C_{iijj}
 
-        whereas the quadratic invariants are:
+        """
+        t = self.full_tensor()
+        A1 = np.einsum('...ijij->...',t)
+        A2 = np.einsum('...iijj->...',t)
+        return A1, A2
+
+    def quadratic_invariants(self):
+        """
+        Compute the quadratic invariants of the tensor, or tensor array.
+
+        If the object is a tensor array, the returned values are arrays of each invariant. See notes for definitions.
+
+        Returns
+        -------
+        B1, B2, B3, B4, B5 : float or np.ndarray
+
+        See Also
+        --------
+        linear_invariants : compute the linear invariants of a Fourth-order tensor
+
+        Notes
+        -----
+        The quadratic invariants are defined as [4]_:
 
         .. math::
 
@@ -665,24 +687,15 @@ class SymmetricFourthOrderTensor(FourthOrderTensor):
         ----------
         .. [4] Norris, A. N. (22 May 2007). "Quadratic invariants of elastic moduli". The Quarterly Journal of Mechanics
          and Applied Mathematics. 60 (3): 367–389. doi:10.1093/qjmam/hbm007
+
         """
         t = self.full_tensor()
-        order = order.lower()
-        A1 = np.einsum('...ijij->...',t)
-        A2 = np.einsum('...iijj->...',t)
-        lin_inv = (A1, A2)
-        if order == 'linear':
-            return lin_inv
-        B1 = np.einsum('...ijkl,...ijkl->...',t, t)
+        B1 = np.einsum('...ijkl,...ijkl->...', t, t)
         B2 = np.einsum('...iikl,...jjkl->...', t, t)
         B3 = np.einsum('...iikl,...jkjl->...', t, t)
         B4 = np.einsum('...kiil,...kjjl->...', t, t)
         B5 = np.einsum('...ijkl,...ikjl->...', t, t)
-        quad_inv = (A1**2, A2**2, A1*A2, B1, B2, B3, B4, B5)
-        if order == 'quadratic':
-            return quad_inv
-        else:
-            return lin_inv + quad_inv
+        return B1, B2, B3, B4, B5
 
     def infinite_random_average(self):
         new_tensor = deepcopy(self)
