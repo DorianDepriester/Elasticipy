@@ -285,11 +285,17 @@ class TestComplianceTensor(unittest.TestCase):
         np.testing.assert_array_almost_equal(Sr_0.Reuss_average()._matrix, S_rotated.Reuss_average()._matrix)
         np.testing.assert_array_almost_equal(Sr_1.Reuss_average()._matrix, S_rotated.Reuss_average()._matrix)
 
-    def test_invariants(self):
-        inv = S.invariants()
+    def test_linear_invariants(self):
+        lin_inv = S.linear_invariants()
         S_rotated = S * rotations
-        for i, inv_rotated_i in enumerate(S_rotated.invariants()):
-            np.testing.assert_array_almost_equal(inv_rotated_i, inv[i])
+        for i, inv_rotated_i in enumerate(S_rotated.linear_invariants()):
+            np.testing.assert_array_almost_equal(inv_rotated_i, lin_inv[i])
+
+    def test_quadratic_invariants(self):
+        lin_inv = S.quadratic_invariants()
+        S_rotated = S * rotations
+        for i, inv_rotated_i in enumerate(S_rotated.quadratic_invariants()):
+            np.testing.assert_array_almost_equal(inv_rotated_i, lin_inv[i])
 
     def test_deprecated_path(self):
         expected_warn = ("The module 'Elasticipy.FourthOrderTensor' is deprecated and will be removed in a future "
