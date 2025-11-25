@@ -700,10 +700,10 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
     def Voigt_average(self, axis=None):
         """
-        Compute the Voigt average of the stiffness tensor.
+        Compute the Voigt average (from the mean of stiffness tensors).
 
-        If the tensor is a tensor array, all its values are considered. Otherwise (i.e. if single), the corresponding
-        isotropic tensor is returned.
+        If the object is a single tensor, the returned tensor corresponds to the average over an infinite set of random
+        rotations, resulting in an isotropic behavior. Otherwise, the mean is computed over the given axis.
 
         Parameters
         ----------
@@ -728,8 +728,10 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
     def Reuss_average(self, axis=None):
         """
-        Compute the Reuss average of the stiffness tensor. If the tensor contains no orientation, we assume isotropic
-        behaviour. Otherwise, the mean is computed over all orientations.
+        Compute the Reuss average (from the mean of compliance tensors).
+
+        If the object is a single tensor, the returned tensor corresponds to the average over an infinite set of random
+        rotations, resulting in an isotropic behavior. Otherwise, the mean is computed over the given axis.
 
         Parameters
         ----------
@@ -751,8 +753,10 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
     def Hill_average(self, axis=None):
         """
-        Compute the (Voigt-Reuss-)Hill average of the stiffness tensor. If the tensor contains no orientation, we assume
-        isotropic behaviour. Otherwise, the mean is computed over all orientations.
+        Compute the Voigt-Reuss-Hill average (mean of Voigt and Reuss averages for stiffness tensors).
+
+        If the object is a single tensor, the returned tensor corresponds to the average over an infinite set of random
+        rotations, resulting in an isotropic behavior. Otherwise, the mean is computed over the given axis.
 
         Parameters
         ----------
