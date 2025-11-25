@@ -993,12 +993,19 @@ class TestStiffnessConstructor(unittest.TestCase):
         np.testing.assert_array_almost_equal(Cr_0.Reuss_average()._matrix, C_rotated.Reuss_average()._matrix)
         np.testing.assert_array_almost_equal(Cr_1.Reuss_average()._matrix, C_rotated.Reuss_average()._matrix)
 
-    def test_invariants(self):
+    def test_linear_invariants(self):
         C = S.inv()
-        inv = C.invariants()
+        lin_inv = C.linear_invariants()
         C_rotated = C * rotations
-        for i, inv_rotated_i in enumerate(C_rotated.invariants()):
-            np.testing.assert_array_almost_equal(inv_rotated_i, inv[i])
+        for i, inv_rotated_i in enumerate(C_rotated.linear_invariants()):
+            np.testing.assert_array_almost_equal(inv_rotated_i, lin_inv[i])
+
+    def test_quadratic_invariants(self):
+        C = S.inv()
+        quad_inv = C.quadratic_invariants()
+        C_rotated = C * rotations
+        for i, inv_rotated_i in enumerate(C_rotated.quadratic_invariants()):
+            np.testing.assert_array_almost_equal(inv_rotated_i, quad_inv[i])
 
 if __name__ == '__main__':
     unittest.main()
