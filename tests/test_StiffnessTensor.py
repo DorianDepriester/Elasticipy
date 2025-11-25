@@ -734,7 +734,8 @@ class TestStiffnessConstructor(unittest.TestCase):
         C11, C12, C44 = 173, 33, 18
         C = StiffnessTensor.cubic(C11=C11, C12=C12, C44=C44)
         Z = C.Zener_ratio()
-        assert 6/5 * (Z**0.5 - Z**(-0.5))**2 == approx(C.universal_anisotropy)
+        A = C.universal_anisotropy
+        assert 6/5 * (Z**0.5 - Z**(-0.5))**2 == approx(A)
         C_cub_iso = StiffnessTensor.cubic(C11=C11, C12=C12, C44=(C11-C12)/2)
         assert C_cub_iso.Zener_ratio() == 1.0
         Ciso = StiffnessTensor.isotropic(E=210, nu=0.3)
@@ -747,6 +748,10 @@ class TestStiffnessConstructor(unittest.TestCase):
         C_rot = C*rotations[0]
         Zrot = C_rot.Zener_ratio()
         assert Zrot == approx(Z)
+
+        C_rot = C * rotations
+        assert C_rot.universal_anisotropy.shape == (len(rotations),)
+        np.testing.assert_array_almost_equal(C_rot.universal_anisotropy, A)
 
     def test_orix(self):
         # Orix allows multidimensional arrays of rotations
