@@ -867,6 +867,56 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         Voigt_average : compute the Voigt average
         Reuss_average : compute the Reuss average
         average : generic function for calling either the Voigt, Reuss or Hill average
+
+        Examples
+        --------
+        Let us consider the stiffness of pure copper:
+        >>> from Elasticipy.tensors.elasticity import StiffnessTensor
+        >>> C = StiffnessTensor.cubic(C11=186, C12=134, C44=77)
+
+        If we assume that an aggregate is composed of an infinite set grains whose orientations are uniformly
+        distributed, the Voigt average is:
+        >>> C.Hill_average()
+        Stiffness tensor (in Voigt mapping):
+        [[217.83103448 118.08448276 118.08448276   0.           0.
+            0.        ]
+         [118.08448276 217.83103448 118.08448276   0.           0.
+            0.        ]
+         [118.08448276 118.08448276 217.83103448   0.           0.
+            0.        ]
+         [  0.           0.           0.          49.87327586   0.
+            0.        ]
+         [  0.           0.           0.           0.          49.87327586
+            0.        ]
+         [  0.           0.           0.           0.           0.
+           49.87327586]]
+
+        Now, we consider an aggregate of grains whose orientations follow a pure fibre texture along the X axis. First,
+        generate a (large) random set of rotation corresponding to this texture:
+        >>> from scipy.spatial.transform import Rotation
+        >>> import numpy as np
+        >>> g = Rotation.from_euler('X', np.linspace(0, 90, 1000), degrees=True)    # 1000 rotations around X
+
+        Now apply rotations to compute the array of stiffness tensors:
+        >>> C_rotated = C * g
+        >>> C_rotated
+        Stiffness tensor array of shape (1000,)
+
+        Finally, one can check that the Voigt average, compouted from the rotated stiffness tensors is:
+        >>> C_rotated.Hill_average()
+        Stiffness tensor (in Voigt mapping):
+        [[ 1.86000000e+02  1.34000000e+02  1.34000000e+02 -8.62027175e-16
+           0.00000000e+00  0.00000000e+00]
+         [ 1.34000000e+02  2.05164524e+02  1.14835476e+02 -5.48889226e-16
+           0.00000000e+00  0.00000000e+00]
+         [ 1.34000000e+02  1.14835476e+02  2.05164524e+02 -1.44776034e-15
+           0.00000000e+00  0.00000000e+00]
+         [-8.09683464e-17  8.46209730e-17 -3.98365128e-16  4.52092721e+01
+           0.00000000e+00  0.00000000e+00]
+         [ 0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00
+           7.70000000e+01 -7.54674101e-17]
+         [ 0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00
+           7.54674101e-17  7.70000000e+01]]
         """
         Reuss = self.Reuss_average(axis=axis)
         Voigt = self.Voigt_average(axis=axis)
