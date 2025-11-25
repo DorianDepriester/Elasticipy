@@ -946,22 +946,25 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
     @classmethod
     def isotropic(cls, E=None, nu=None, G=None, lame1=None, lame2=None, K=None, phase_name=None):
         """
-        Create an isotropic stiffness tensor from two elasticity coefficients, namely: E, nu, G, lame1, or lame2.
-        Exactly two of these coefficients must be provided. Note that lame2 is just an alias for G.
+        Create an isotropic stiffness tensor.
+
+        The stiffness tensor must be constructed from exactly two elasticity coefficients, namely: E, nu, G, lame1, or
+        lame2. Note that lame2 is just an alias for G. Each of these coefficient can be a list; in this case, the
+        returned object is a tensor array (see examples).
 
         Parameters
         ----------
-        E : float, None
+        E : float or list, None
             Young modulus
-        nu : float, None
+        nu : float or list, None
             Poisson ratio
-        G : float, None
+        G : float or list, None
             Shear modulus
-        lame1 : float, None
+        lame1 : float or list, None
             First Lamé coefficient
-        lame2 : float, None
+        lame2 : float or list, None
             Second Lamé coefficient (alias for G)
-        K : float, None
+        K : float or list, None
             Bulk modulus
         phase_name : str, None
             Name to print
@@ -995,6 +998,21 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         >>> C.Young_modulus
         Spherical function
         Min=210000.0000000001, Max=210000.00000000032
+
+        One can build a tensor array by providing a list of value for the input argument, instead of floats. For
+        instance:
+        >>> C = StiffnessTensor.isotropic(E=(210, 70), nu=(0.28, 0.35)) # Elastic moduli for steel and aluminium
+        >>> C.shape
+        (2,)
+
+        We can easily check that the shear moduli for steel and aluminium are:
+        >>> C[0].shear_modulus
+        Hyperspherical function
+        Min=82.0312499999999, Max=82.03125000000006
+
+        >>> C[1].shear_modulus
+        Hyperspherical function
+        Min=25.925925925925895, Max=25.925925925925952
         """
         return ComplianceTensor.isotropic(E=E, nu=nu, G=G, lame1=lame1, lame2=lame2, K=K, phase_name=phase_name).inv()
 
@@ -1772,36 +1790,50 @@ class ComplianceTensor(StiffnessTensor):
         if n_specified != 2:
             raise ValueError("Exactly two values are required among E, nu, G, K, lame1 and lame2.")
         if K is not None:
+            K = np.asarray(K)
             if E is not None:
+                E = np.asarray(E)
                 G = 3 * K * E / (9 * K - E)
                 nu = (3 * K - E) / 6 / K
             elif lame1 is not None:
+                lame1 = np.asarray(lame1)
                 E = 9 * K * (K - lame1) / (3 * K -lame1)
                 G= 3 * (K - lame1) / 2
                 nu = lame1 / (3*K-lame1)
             elif G is not None:
+                G = np.asarray(G)
                 E = 9 * K * G / (3 * K + G)
                 nu = (3 * K - 2 * G) / 2 / (3 * K + G)
             elif nu is not None:
+                nu = np.asarray(nu)
                 E = 3 * K * (1 - 2 * nu)
                 G = E / 2 / (1 + nu)
         elif E is not None:
+            E = np.asarray(E)
             if lame1 is not None:
+                lame1 = np.asarray(lame1)
                 R = np.sqrt(E**2 + 9*lame1**2+2*E*lame1)
                 G = (E - 3 * lame1 + R) / 4
                 nu = 2 * lame1 / (E + lame1 + R)
             elif G is not None:
+                G = np.asarray(G)
                 nu = E / 2 / G - 1
             elif nu is not None:
+                nu = np.asarray(nu)
                 G = E / 2 / (1 + nu)
         elif lame1 is not None:
+            lame1 = np.asarray(lame1)
             if G is not None:
+                G = np.asarray(G)
                 E = G * (3 * lame1 + 2 * G) / (lame1 + G)
                 nu = lame1 / 2 / (lame1 + G)
             elif nu is not None:
+                nu = np.asarray(nu)
                 E = lame1 * ( 1 + nu) * (1 - 2 * nu) / nu
                 G = lame1 * (1 - 2 * nu) / 2 / nu
         elif (nu is not None) and (G is not None):
+            nu = np.asarray(nu)
+            G = np.asarray(G)
             E = 2 * G * (1 + nu)
         S11 = 1/E
         S12 = -nu/E
