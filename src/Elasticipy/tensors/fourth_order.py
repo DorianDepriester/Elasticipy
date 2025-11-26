@@ -154,7 +154,7 @@ class FourthOrderTensor:
 
         If one wants to evaluate the tensor as a (full) (3,3,3,3) array:
 
-        >>> T_array = T.full_tensor()
+        >>> T_array = T.full_tensor
 
         For instance:
 
@@ -183,12 +183,12 @@ class FourthOrderTensor:
         Although T and T_voigt appear to be the same, note that they are not expressed using the same mapping
         convention. Indeed:
 
-        >>> T_voigt.full_tensor()[0,0,0,0]
+        >>> T_voigt.full_tensor[0,0,0,0]
         100.0
 
         whereas
 
-        >>> T_voigt.full_tensor()[0,1,0,1]
+        >>> T_voigt.full_tensor[0,1,0,1]
         150.0
 
         Alternatively, the differences can be checked with:
