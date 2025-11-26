@@ -742,7 +742,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
         >>> C_rotated = C * g
         >>> C_rotated
-        Stiffness tensor array shape (1000,)
+        Stiffness tensor array of shape (1000,)
 
         Finally, one can check that the Voigt average, computed from the rotated stiffness tensors is:
 
