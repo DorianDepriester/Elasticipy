@@ -196,6 +196,35 @@ class FourthOrderTensor:
         >>> T == T_voigt
         False
 
+        Conversely, let consider the following Voigt matrix:
+
+        >>> mat = np.array([[100, 200, 300, 0, 0, 0],
+        ...                 [-200, 100, 50, 0, 0, 0],
+        ...                 [-300, -50, 100, 0, 0, 0],
+        ...                 [0, 0, 0, 75, 0, 0],
+        ...                 [0, 0, 0, 0, 75, 0],
+        ...                 [0, 0, 0, 0, 0, 75]])
+        >>> T_voigt2 = FourthOrderTensor(mat, mapping=VoigtMapping())
+        >>> print(T_voigt2)
+        4th-order tensor (in Voigt mapping):
+        [[ 100.  200.  300.    0.    0.    0.]
+         [-200.  100.   50.    0.    0.    0.]
+         [-300.  -50.  100.    0.    0.    0.]
+         [   0.    0.    0.   75.    0.    0.]
+         [   0.    0.    0.    0.   75.    0.]
+         [   0.    0.    0.    0.    0.   75.]]
+
+        Although T and T_voigt2 are not written using the same mapping, we can compare them:
+
+        >>> T == T_voigt2 # Same tensors, but different mapping
+        True
+
+        whereas
+
+        >>> T == T_voigt  # Different tensors, but same mapping
+        False
+
+        This property comes from the fact that the comparison is made independently of the underlying mapping convention.
         """
         if isinstance(mapping, str):
             if mapping.lower() == 'voigt':
