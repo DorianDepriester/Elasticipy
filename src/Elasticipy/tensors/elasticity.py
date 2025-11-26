@@ -1792,47 +1792,47 @@ class ComplianceTensor(StiffnessTensor):
         if K is not None:
             K = np.asarray(K)
             if E is not None:
-                E = np.asarray(E)
+                E = np.asarray(E, dtype=float)
                 G = 3 * K * E / (9 * K - E)
                 nu = (3 * K - E) / 6 / K
             elif lame1 is not None:
-                lame1 = np.asarray(lame1)
+                lame1 = np.asarray(lame1, dtype=float)
                 E = 9 * K * (K - lame1) / (3 * K -lame1)
                 G= 3 * (K - lame1) / 2
                 nu = lame1 / (3*K-lame1)
             elif G is not None:
-                G = np.asarray(G)
+                G = np.asarray(G, dtype=float)
                 E = 9 * K * G / (3 * K + G)
                 nu = (3 * K - 2 * G) / 2 / (3 * K + G)
             elif nu is not None:
-                nu = np.asarray(nu)
+                nu = np.asarray(nu, dtype=float)
                 E = 3 * K * (1 - 2 * nu)
                 G = E / 2 / (1 + nu)
         elif E is not None:
-            E = np.asarray(E)
+            E = np.asarray(E, dtype=float)
             if lame1 is not None:
-                lame1 = np.asarray(lame1)
-                R = np.sqrt(E**2 + 9*lame1**2+2*E*lame1)
+                lame1 = np.asarray(lame1, dtype=float)
+                R = np.sqrt(E**2 + 9*lame1**2 + 2*E*lame1)
                 G = (E - 3 * lame1 + R) / 4
                 nu = 2 * lame1 / (E + lame1 + R)
             elif G is not None:
-                G = np.asarray(G)
+                G = np.asarray(G, dtype=float)
                 nu = E / 2 / G - 1
             elif nu is not None:
-                nu = np.asarray(nu)
+                nu = np.asarray(nu, dtype=float)
                 G = E / 2 / (1 + nu)
         elif lame1 is not None:
-            lame1 = np.asarray(lame1)
+            lame1 = np.asarray(lame1, dtype=float)
             if G is not None:
-                G = np.asarray(G)
+                G = np.asarray(G, dtype=float)
                 E = G * (3 * lame1 + 2 * G) / (lame1 + G)
                 nu = lame1 / 2 / (lame1 + G)
             elif nu is not None:
-                nu = np.asarray(nu)
+                nu = np.asarray(nu, dtype=float)
                 E = lame1 * ( 1 + nu) * (1 - 2 * nu) / nu
                 G = lame1 * (1 - 2 * nu) / 2 / nu
         elif (nu is not None) and (G is not None):
-            nu = np.asarray(nu)
+            nu = np.asarray(nu, dtype=float)
             G = np.asarray(G)
             E = 2 * G * (1 + nu)
         S11 = 1/E
