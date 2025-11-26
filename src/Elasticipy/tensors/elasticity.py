@@ -545,7 +545,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         else:
             S = self.inv()
         def compute_young_modulus(u):
-            a = np.einsum('ijkl,...i,...j,...k,...l->...', S.full_tensor(), u, u, u, u)
+            a = np.einsum('ijkl,...i,...j,...k,...l->...', S.full_tensor, u, u, u, u)
             return 1 / a
 
         return SphericalFunction(compute_young_modulus)
@@ -566,7 +566,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         else:
             S = self.inv()
         def compute_shear_modulus(u, v):
-            G =  0.25/np.einsum('ijkl,...i,...j,...k,...l->...',S.full_tensor(),u,v,u,v)
+            G =  0.25/np.einsum('ijkl,...i,...j,...k,...l->...',S.full_tensor,u,v,u,v)
             return G
 
         return HyperSphericalFunction(compute_shear_modulus)
@@ -594,9 +594,9 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         """
         self._single_tensor_only('Poisson_ratio')
         if isinstance(self, ComplianceTensor):
-            Sfull = self.full_tensor()
+            Sfull = self.full_tensor
         else:
-            Sfull = self.inv().full_tensor()
+            Sfull = self.inv().full_tensor
         def compute_PoissonRatio(u, v):
             numer = np.einsum('ijkl,...i,...j,...k,...l->...',Sfull,v,v,u,u)
             denom = np.einsum('ijkl,...i,...j,...k,...l->...',Sfull,u,u,u,u)
@@ -624,7 +624,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         else:
             S = self.inv()
         def compute_linear_compressibility(u):
-            return np.einsum('ijkk,...i,...j->...',S.full_tensor(),u,u)
+            return np.einsum('ijkk,...i,...j->...',S.full_tensor,u,u)
 
         return SphericalFunction(compute_linear_compressibility)
 
@@ -1176,7 +1176,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         """
         u_vec = np.atleast_2d(u)
         u_vec = (u_vec.T / np.linalg.norm(u_vec, axis=1)).T
-        return np.einsum('inmj,pn,pm->pij', self.full_tensor(), u_vec, u_vec)
+        return np.einsum('inmj,pn,pm->pij', self.full_tensor, u_vec, u_vec)
 
     def wave_velocity(self, rho):
         """
@@ -1457,7 +1457,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
             from pymatgen.analysis.elasticity import elastic as matgenElast
         except ImportError:
             raise ModuleNotFoundError('pymatgen module is required for this function.')
-        return matgenElast.ElasticTensor(self.full_tensor())
+        return matgenElast.ElasticTensor(self.full_tensor)
 
     def to_Kelvin(self):
         """
@@ -1913,7 +1913,7 @@ class ComplianceTensor(StiffnessTensor):
             from pymatgen.analysis.elasticity import elastic as matgenElast
         except ImportError:
             raise ModuleNotFoundError('pymatgen module is required for this function.')
-        return matgenElast.ComplianceTensor(self.full_tensor())
+        return matgenElast.ComplianceTensor(self.full_tensor)
 
     def eig(self):
         """

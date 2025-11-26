@@ -256,6 +256,7 @@ class FourthOrderTensor:
         *shape, _, _ = self._matrix.shape
         return tuple(shape)
 
+    @property
     def full_tensor(self):
         """
         Returns the full (unvoigted) tensor, as a [3, 3, 3, 3] array
@@ -313,7 +314,7 @@ class FourthOrderTensor:
             Rotated tensor
         """
         t2 = deepcopy(self)
-        rotated_tensor = rotate_tensor(self.full_tensor(), rotation)
+        rotated_tensor = rotate_tensor(self.full_tensor, rotation)
         t2._matrix = self._full_to_matrix(rotated_tensor)
         return t2
 
@@ -360,7 +361,7 @@ class FourthOrderTensor:
             if other.shape[-2:] == (6, 6):
                 mat = self._matrix + self._array_to_Kelvin(other)
             elif other.shape == (3, 3, 3, 3):
-                mat = self._full_to_matrix(self.full_tensor() + other)
+                mat = self._full_to_matrix(self.full_tensor + other)
             else:
                 raise ValueError('The input argument must be either a 6x6 matrix or a (3,3,3,3) array.')
         elif isinstance(other, FourthOrderTensor):
@@ -401,7 +402,7 @@ class FourthOrderTensor:
         """
         if isinstance(other, FourthOrderTensor):
             if self.ndim == 0 and other.ndim == 0:
-                return FourthOrderTensor(np.einsum('ijmn,nmkl->ijkl', self.full_tensor(), other.full_tensor()))
+                return FourthOrderTensor(np.einsum('ijmn,nmkl->ijkl', self.full_tensor, other.full_tensor))
             else:
                 if mode == 'pair':
                     ein_str = '...ijmn,...nmkl->...ijkl'
@@ -412,11 +413,11 @@ class FourthOrderTensor:
                     indices_1 = ALPHABET[:ndim_1].upper()
                     indices_2 = indices_0 + indices_1
                     ein_str = indices_0 + 'wxXY,' + indices_1 + 'YXyz->' + indices_2 + 'wxyz'
-                matrix = np.einsum(ein_str, self.full_tensor(), other.full_tensor())
+                matrix = np.einsum(ein_str, self.full_tensor, other.full_tensor)
                 return FourthOrderTensor(matrix)
         elif isinstance(other, SecondOrderTensor):
             if self.ndim == 0 and other.ndim == 0:
-                return SymmetricSecondOrderTensor(np.einsum('ijkl,kl->ij', self.full_tensor(), other.matrix))
+                return SymmetricSecondOrderTensor(np.einsum('ijkl,kl->ij', self.full_tensor, other.matrix))
             else:
                 if mode == 'pair':
                     ein_str = '...ijkl,...kl->...ij'
@@ -427,7 +428,7 @@ class FourthOrderTensor:
                     indices_1 = ALPHABET[:ndim_1].upper()
                     indices_2 = indices_0 + indices_1
                     ein_str = indices_0 + 'wxXY,' + indices_1 + 'XY->' + indices_2 + 'wx'
-                matrix = np.einsum(ein_str, self.full_tensor(), other.matrix)
+                matrix = np.einsum(ein_str, self.full_tensor, other.matrix)
                 return SecondOrderTensor(matrix)
 
 
@@ -740,7 +741,7 @@ class SymmetricFourthOrderTensor(FourthOrderTensor):
             A_2=C_{iijj}
 
         """
-        t = self.full_tensor()
+        t = self.full_tensor
         A1 = np.einsum('...ijij->...',t)
         A2 = np.einsum('...iijj->...',t)
         return A1, A2
@@ -781,7 +782,7 @@ class SymmetricFourthOrderTensor(FourthOrderTensor):
          and Applied Mathematics. 60 (3): 367–389. doi:10.1093/qjmam/hbm007
 
         """
-        t = self.full_tensor()
+        t = self.full_tensor
         B1 = np.einsum('...ijkl,...ijkl->...', t, t)
         B2 = np.einsum('...iikl,...jjkl->...', t, t)
         B3 = np.einsum('...iikl,...jkjl->...', t, t)

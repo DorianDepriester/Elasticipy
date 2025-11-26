@@ -12,7 +12,7 @@ class TestFourthOrderTensor(unittest.TestCase):
         a = np.random.random((m, 6, 6))
         T = FourthOrderTensor(a)
         np.testing.assert_array_almost_equal(a, T._matrix)
-        T2 = FourthOrderTensor(T.full_tensor())
+        T2 = FourthOrderTensor(T.full_tensor)
         np.testing.assert_array_almost_equal(a, T2._matrix)
 
     def test_nonsymmetry(self):
@@ -21,7 +21,7 @@ class TestFourthOrderTensor(unittest.TestCase):
             _ = FourthOrderTensor(a)
         self.assertEqual(str(context.exception), 'The input array does not have minor symmetry')
         T = FourthOrderTensor(a, force_minor_symmetry=True)
-        Tfull = T.full_tensor()
+        Tfull = T.full_tensor
         for i in range(3):
             for j in range(3):
                 for k in range(3):
@@ -37,7 +37,7 @@ class TestFourthOrderTensor(unittest.TestCase):
         TTinv = Tinv.ddot(T)
         eye = FourthOrderTensor.identity(m)
         for i in range(m):
-            np.testing.assert_array_almost_equal(TTinv[i].full_tensor(), eye[i].full_tensor())
+            np.testing.assert_array_almost_equal(TTinv[i].full_tensor, eye[i].full_tensor)
 
     def test_mult(self):
         m, n, o = 5, 4, 3
@@ -61,7 +61,7 @@ class TestFourthOrderTensor(unittest.TestCase):
         m, n = 4, 5
         t = FourthOrderTensor.zeros()
         assert t.shape == ()
-        assert np.all(t.full_tensor()==0.)
+        assert np.all(t.full_tensor==0.)
 
         t = FourthOrderTensor.zeros(n)
         assert t.shape == (n,)
@@ -87,10 +87,10 @@ class TestFourthOrderTensor(unittest.TestCase):
         a = np.random.random((m, n, o, 6, 6))
         a = FourthOrderTensor(a)
         a_div_a = a / a
-        np.testing.assert_array_almost_equal(a_div_a.full_tensor(), FourthOrderTensor.identity(return_full_tensor=True, shape=(m,n,o)))
+        np.testing.assert_array_almost_equal(a_div_a.full_tensor, FourthOrderTensor.identity(return_full_tensor=True, shape=(m,n,o)))
 
         half_a = a / 2
-        np.testing.assert_array_almost_equal(half_a.full_tensor(), a.full_tensor()/2)
+        np.testing.assert_array_almost_equal(half_a.full_tensor, a.full_tensor/2)
 
         b = SecondOrderTensor.rand(shape=(4,3))
         a_div_b = a / b
@@ -146,7 +146,7 @@ class TestSymmetricFourthOrderTensor(unittest.TestCase):
         TTinv = Tinv.ddot(T)
         eye = SymmetricFourthOrderTensor.identity(m)
         for i in range(m):
-            np.testing.assert_array_almost_equal(TTinv[i].full_tensor(), eye[i].full_tensor())
+            np.testing.assert_array_almost_equal(TTinv[i].full_tensor, eye[i].full_tensor)
 
 
 

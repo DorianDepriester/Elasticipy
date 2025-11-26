@@ -104,7 +104,7 @@ class TestComplianceTensor(unittest.TestCase):
     def test_unvoigt(self):
         lame1, lame2 = 1, 2
         C = StiffnessTensor.isotropic(lame1=lame1, lame2=lame2)
-        C_full = C.full_tensor()
+        C_full = C.full_tensor
         eye = np.eye(3)
         A = np.einsum('ij,kl->ijkl', eye, eye)
         C_th = lame1 * A + 2 * lame2 * StiffnessTensor.identity(return_full_tensor=True)
@@ -160,7 +160,7 @@ class TestComplianceTensor(unittest.TestCase):
 
     def test_full_tensor_as_input(self):
         a = ComplianceTensor.isotropic(E=210, nu=0.3)
-        b = ComplianceTensor(a.full_tensor())
+        b = ComplianceTensor(a.full_tensor)
         np.testing.assert_array_almost_equal(a._matrix, b._matrix)
 
 
@@ -220,10 +220,10 @@ class TestComplianceTensor(unittest.TestCase):
         np.testing.assert_array_equal(S2._matrix / KelvinMapping().matrix, Smat / VoigtMapping(tensor='compliance').matrix)
 
     def test_full_tensor(self):
-        S_full = S.full_tensor()
+        S_full = S.full_tensor
         S2 = ComplianceTensor(S_full)
         assert S == S2
-        np.testing.assert_array_equal(S.full_tensor(), S2.full_tensor())
+        np.testing.assert_array_equal(S.full_tensor, S2.full_tensor)
 
     def test_repr(self):
         """Test printing out the tensor"""
@@ -466,7 +466,7 @@ class TestStiffnessConstructor(unittest.TestCase):
         """Test if the isotropic second-order tensor is well reconstructed"""
         lame1, lame2 = 1, 2
         C = StiffnessTensor.isotropic(lame1=lame1, lame2=lame2)
-        C_full = C.full_tensor()
+        C_full = C.full_tensor
         eye = np.eye(3)
         A = np.einsum('ij,kl->ijkl', eye, eye)
         B = np.einsum('ik,jl->ijkl', eye, eye)
@@ -557,7 +557,7 @@ class TestStiffnessConstructor(unittest.TestCase):
         assert C_minus.Young_modulus.mean() == approx(100)
         C_minus = C1 - C2.matrix()
         assert C_minus.Young_modulus.mean() == approx(100)
-        C_plus_full = C1 + C2.full_tensor()
+        C_plus_full = C1 + C2.full_tensor
         assert C_plus_full == C_plus
 
         with self.assertRaises(ValueError) as context:
@@ -676,8 +676,8 @@ class TestStiffnessConstructor(unittest.TestCase):
         """Test exporting stiffness and compliance to pymatgen format"""
         C = S.inv()
         Cvrh = C.Hill_average()
-        Cvrh_pymatgen = mg.ElasticTensor(Cvrh.full_tensor())
-        C_pymatgen = mg.ElasticTensor(C.full_tensor())
+        Cvrh_pymatgen = mg.ElasticTensor(Cvrh.full_tensor)
+        C_pymatgen = mg.ElasticTensor(C.full_tensor)
         assert Cvrh_pymatgen.y_mod == approx(Cvrh.Young_modulus.mean()*1e9)
         assert C_pymatgen.g_vrh == approx(Cvrh.shear_modulus.mean())
 
@@ -759,12 +759,12 @@ class TestStiffnessConstructor(unittest.TestCase):
         orix_rotations = orix_rot.random((m,n))
         C = S.inv()
         C_rotated = C * orix_rotations
-        C_rotated_full = C_rotated.full_tensor()
+        C_rotated_full = C_rotated.full_tensor
         for i in range(m):
             for j in range(n):
                 inv_rotation = ~orix_rotations
                 rot_mat = inv_rotation.to_matrix()[i,j]
-                tensor_i = np.einsum('im,jn,ko,lp,mnop -> ijkl', rot_mat, rot_mat, rot_mat, rot_mat, C.full_tensor())
+                tensor_i = np.einsum('im,jn,ko,lp,mnop -> ijkl', rot_mat, rot_mat, rot_mat, rot_mat, C.full_tensor)
                 np.testing.assert_array_almost_equal(C_rotated_full[i,j], tensor_i)
 
         # Check that the result is consistent with scipy.Rotation
@@ -773,8 +773,8 @@ class TestStiffnessConstructor(unittest.TestCase):
         euler = orix_rotations.to_euler()
         scipy_rotations = Rotation.from_euler('ZXZ', euler)
         C_rotated_scipy = C * scipy_rotations
-        C_rotated_full_scipy = C_rotated_scipy.full_tensor()
-        np.testing.assert_array_almost_equal(C_rotated_full_scipy, C_rotated_flat.full_tensor())
+        C_rotated_full_scipy = C_rotated_scipy.full_tensor
+        np.testing.assert_array_almost_equal(C_rotated_full_scipy, C_rotated_flat.full_tensor)
 
 
     def test_linear_compressibility(self):
@@ -785,7 +785,7 @@ class TestStiffnessConstructor(unittest.TestCase):
 
     def test_full_tensor_as_input(self):
         a = StiffnessTensor.isotropic(E=210, nu=0.3)
-        b = StiffnessTensor(a.full_tensor())
+        b = StiffnessTensor(a.full_tensor)
         assert a == b
 
     def test_component(self):
@@ -900,7 +900,7 @@ class TestStiffnessConstructor(unittest.TestCase):
         for i in range(m):
             for j in range(n):
                 for k in range(o):
-                    np.testing.assert_array_almost_equal(C_rotated_T[k,j,i].full_tensor(), C_rotated[i,j,k].full_tensor())
+                    np.testing.assert_array_almost_equal(C_rotated_T[k,j,i].full_tensor, C_rotated[i,j,k].full_tensor)
 
 
     def test_eigenstiffness_eigencompliance(self):
@@ -940,7 +940,7 @@ class TestStiffnessConstructor(unittest.TestCase):
         # Check inverse
         C1 = StiffnessTensor.cubic(C11=22, C12=12, C44=44)
         C2 = StiffnessTensor.isotropic(E=210000, nu=0.3)
-        np.testing.assert_almost_equal(C1.ddot(C1.inv()).full_tensor(), StiffnessTensor.identity().full_tensor())
+        np.testing.assert_almost_equal(C1.ddot(C1.inv()).full_tensor, StiffnessTensor.identity().full_tensor)
 
         # Check product between tensor arrays
         m = 5
@@ -951,27 +951,27 @@ class TestStiffnessConstructor(unittest.TestCase):
         C1C2_rot = C1_rot * C2
         assert C1C2_rot.shape == (m,)
         for i in range(m):
-            np.testing.assert_array_almost_equal(C1C2_rot[i].full_tensor(), np.einsum('ijmn,nmkl->ijkl', C1_rot[i].full_tensor(), C2.full_tensor()))
+            np.testing.assert_array_almost_equal(C1C2_rot[i].full_tensor, np.einsum('ijmn,nmkl->ijkl', C1_rot[i].full_tensor, C2.full_tensor))
 
         C1C2_rotrot = C1_rot * C2_rot
         assert C1C2_rot.shape == (m,)
         for i in range(m):
-            np.testing.assert_array_almost_equal(C1C2_rotrot[i].full_tensor(), np.einsum('ijmn,nmkl->ijkl', C1_rot[i].full_tensor(),
-                                                                        C2_rot[i].full_tensor()))
+            np.testing.assert_array_almost_equal(C1C2_rotrot[i].full_tensor, np.einsum('ijmn,nmkl->ijkl', C1_rot[i].full_tensor,
+                                                                        C2_rot[i].full_tensor))
 
         C1C2_rotrot_cross = C1_rot.ddot(C2_rot, mode='cross')
         assert C1C2_rotrot_cross.shape == (m, m)
         for i in range(m):
             for j in range(m):
-                np.testing.assert_array_almost_equal(C1C2_rotrot_cross[i,j].full_tensor(), np.einsum('ijmn,nmkl->ijkl', C1_rot[i].full_tensor(),
-                                                                           C2_rot[j].full_tensor()))
+                np.testing.assert_array_almost_equal(C1C2_rotrot_cross[i,j].full_tensor, np.einsum('ijmn,nmkl->ijkl', C1_rot[i].full_tensor,
+                                                                           C2_rot[j].full_tensor))
 
     def test_full_tensor(self):
         C=S.inv()
-        C_full = C.full_tensor()
+        C_full = C.full_tensor
         C2 = StiffnessTensor(C_full)
         np.testing.assert_array_almost_equal(C._matrix, C2._matrix)
-        np.testing.assert_array_almost_equal(C.full_tensor(), C2.full_tensor())
+        np.testing.assert_array_almost_equal(C.full_tensor, C2.full_tensor)
 
     def test_voigt_reuss_axis(self):
         m,n = 5,6
