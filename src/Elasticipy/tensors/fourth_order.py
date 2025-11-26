@@ -98,8 +98,8 @@ class FourthOrderTensor:
         Parameters
         ----------
         M : np.ndarray or FourthOrderTensor
-            (6,6) matrix corresponding to the stiffness tensor, written using the Voigt notation, or array of shape
-            (3,3,3,3).
+            (...,6,6) matrix corresponding to the stiffness tensor, written using the Voigt notation, or array of shape
+            (...,3,3,3,3).
         mapping : MappingConvention, optional
             Mapping convention to translate the (3,3,3,3) array to (6,6) matrix
         check_minor_symmetry : bool, optional
