@@ -158,7 +158,7 @@ class FourthOrderTensor:
 
         For instance:
 
-        T_array[0,0,0,0]
+        >>> T_array[0,0,0,0]
         100.
 
         whereas
