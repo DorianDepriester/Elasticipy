@@ -475,8 +475,8 @@ class FourthOrderTensor:
         ----------
         shape : tuple or int, optional
             Set the shape of the tensor array. If None, the returned tensor will be single.
-        mapping : callable, optional
-            Mapping convention to use.
+        kwargs : dict
+            Keyword arguments passed to the Fourth-order tensor constructor.
 
         Returns
         -------
@@ -746,7 +746,7 @@ class SymmetricFourthOrderTensor(FourthOrderTensor):
 
         Parameters
         ----------
-        M : np.ndarray
+        M : np.ndarray or FourthOrderTensor
             (6,6) matrix corresponding to the stiffness tensor, written using the Voigt notation, or array of shape
             (3,3,3,3).
         check_symmetries : bool, optional
@@ -864,4 +864,9 @@ class SymmetricFourthOrderTensor(FourthOrderTensor):
         new_matrix = _isotropic_matrix(C11, C12, C44)
         new_tensor._matrix = new_matrix * kelvin_mapping.matrix
         return new_tensor
+
+    @classmethod
+    def rand(cls, shape=None, **kwargs):
+        t1 = super().rand(shape)
+        return cls(t1, force_symmetries=True, **kwargs)
 
