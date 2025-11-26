@@ -1,6 +1,10 @@
 Welcome to Elasticipy's Documentation!
 ======================================
 
+.. |JOSS| image:: https://joss.theoj.org/papers/10.21105/joss.07940/status.svg
+  :alt: doi:10.21105/joss.07940
+  :target: https://doi.org/10.21105/joss.07940
+
 .. image:: https://img.shields.io/pypi/v/Elasticipy
    :alt: PyPI - Version
    :target: https://pypi.org/project/elasticipy/
@@ -166,6 +170,23 @@ To install this package, simply run::
 On Anaconda, you can use::
 
     conda install conda-forge::elasticipy
+
+Cite this work
+--------------
+If you use Elasticipy, please cite |JOSS|, or use the following BibTeX entry::
+
+    @article{Elasticipy,
+        doi = {10.21105/joss.07940},
+        url = {https://doi.org/10.21105/joss.07940},
+        year = {2025},
+        publisher = {The Open Journal},
+        volume = {10},
+        number = {115},
+        pages = {7940},
+        author = {Depriester, Dorian and Kubler, Régis},
+        title = {Elasticipy: A Python package for linear elasticity and tensor analysis},
+        journal = {Journal of Open Source Software}
+    }
 
 .. toctree::
    :maxdepth: 2
