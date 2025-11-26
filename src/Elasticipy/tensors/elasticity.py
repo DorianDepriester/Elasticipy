@@ -715,11 +715,13 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         Examples
         --------
         Let us consider the stiffness of pure copper:
+
         >>> from Elasticipy.tensors.elasticity import StiffnessTensor
         >>> C = StiffnessTensor.cubic(C11=186, C12=134, C44=77)
 
         If we assume that an aggregate is composed of an infinite set grains whose orientations are uniformly
         distributed, the Voigt average is:
+
         >>> C.Voigt_average()
         Stiffness tensor (in Voigt mapping):
         [[226.8 113.6 113.6   0.    0.    0. ]
@@ -731,16 +733,19 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
         Now, we consider an aggregate of grains whose orientations follow a pure fibre texture along the X axis. First,
         generate a (large) random set of rotation corresponding to this texture:
+
         >>> from scipy.spatial.transform import Rotation
         >>> import numpy as np
         >>> g = Rotation.from_euler('X', np.linspace(0, 90, 1000), degrees=True)    # 1000 rotations around X
 
         Now apply rotations to compute the array of stiffness tensors:
+
         >>> C_rotated = C * g
         >>> C_rotated
-        Stiffness tensor array of shape (1000,)
+        Stiffness tensor array shape (1000,)
 
-        Finally, one can check that the Voigt average, compouted from the rotated stiffness tensors is:
+        Finally, one can check that the Voigt average, computed from the rotated stiffness tensors is:
+
         >>> C_rotated.Voigt_average()
         Stiffness tensor (in Voigt mapping):
         [[ 1.86000000e+02  1.34000000e+02  1.34000000e+02 -4.39648318e-17
@@ -787,11 +792,13 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         Examples
         --------
         Let us consider the stiffness of pure copper:
+
         >>> from Elasticipy.tensors.elasticity import StiffnessTensor
         >>> C = StiffnessTensor.cubic(C11=186, C12=134, C44=77)
 
         If we assume that an aggregate is composed of an infinite set grains whose orientations are uniformly
         distributed, the Voigt average is:
+
         >>> C.Reuss_average()
         Stiffness tensor (in Voigt mapping):
         [[208.86206897 122.56896552 122.56896552   0.           0.
@@ -809,16 +816,19 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
         Now, we consider an aggregate of grains whose orientations follow a pure fibre texture along the X axis. First,
         generate a (large) random set of rotation corresponding to this texture:
+
         >>> from scipy.spatial.transform import Rotation
         >>> import numpy as np
         >>> g = Rotation.from_euler('X', np.linspace(0, 90, 1000), degrees=True)    # 1000 rotations around X
 
         Now apply rotations to compute the array of stiffness tensors:
+
         >>> C_rotated = C * g
         >>> C_rotated
         Stiffness tensor array of shape (1000,)
 
-        Finally, one can check that the Voigt average, compouted from the rotated stiffness tensors is:
+        Finally, one can check that the Voigt average, computed from the rotated stiffness tensors is:
+
         >>> C_rotated.Reuss_average()
         Stiffness tensor (in Voigt mapping):
         [[ 1.86000000e+02  1.34000000e+02  1.34000000e+02 -1.68008952e-15
@@ -862,11 +872,13 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         Examples
         --------
         Let us consider the stiffness of pure copper:
+
         >>> from Elasticipy.tensors.elasticity import StiffnessTensor
         >>> C = StiffnessTensor.cubic(C11=186, C12=134, C44=77)
 
         If we assume that an aggregate is composed of an infinite set grains whose orientations are uniformly
         distributed, the Voigt average is:
+
         >>> C.Hill_average()
         Stiffness tensor (in Voigt mapping):
         [[217.83103448 118.08448276 118.08448276   0.           0.
@@ -884,16 +896,19 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
         Now, we consider an aggregate of grains whose orientations follow a pure fibre texture along the X axis. First,
         generate a (large) random set of rotation corresponding to this texture:
+
         >>> from scipy.spatial.transform import Rotation
         >>> import numpy as np
         >>> g = Rotation.from_euler('X', np.linspace(0, 90, 1000), degrees=True)    # 1000 rotations around X
 
         Now apply rotations to compute the array of stiffness tensors:
+
         >>> C_rotated = C * g
         >>> C_rotated
         Stiffness tensor array of shape (1000,)
 
-        Finally, one can check that the Voigt average, compouted from the rotated stiffness tensors is:
+        Finally, one can check that the Voigt average, computed from the rotated stiffness tensors is:
+
         >>> C_rotated.Hill_average()
         Stiffness tensor (in Voigt mapping):
         [[ 1.86000000e+02  1.34000000e+02  1.34000000e+02 -8.62027175e-16
