@@ -4,7 +4,6 @@
 ![Conda Downloads](https://img.shields.io/conda/d/conda-forge/Elasticipy)
 [![PyPI - License](https://img.shields.io/pypi/l/Elasticipy)](https://github.com/DorianDepriester/Elasticipy/blob/main/LICENSE)
 [![ReadTheDoc](https://readthedocs.org/projects/elasticipy/badge/?version=latest)](https://elasticipy.readthedocs.io/)
-[![DOI](https://zenodo.org/badge/876162900.svg)](https://doi.org/10.5281/zenodo.14501849)
 [![codecov](https://codecov.io/gh/DorianDepriester/Elasticipy/graph/badge.svg?token=VUZPEUPBH1)](https://codecov.io/gh/DorianDepriester/Elasticipy)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/Elasticipy)
 [![DOI](https://joss.theoj.org/papers/10.21105/joss.07940/status.svg)](https://doi.org/10.21105/joss.07940)[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/DorianDepriester/Elasticipy/HEAD?urlpath=%2Fdoc%2Ftree%2FElasticipy_for_the_Impatient.ipynb)
