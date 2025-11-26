@@ -1,8 +1,8 @@
 Elasticipy package
 ==================
 
-Submodules
-----------
+API documentation
+-----------------
 
 .. toctree::
    :maxdepth: 4
