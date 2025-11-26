@@ -85,11 +85,6 @@ def _isotropic_matrix(C11, C12, C44):
 class FourthOrderTensor:
     """
     Template class for manipulating symmetric fourth-order tensors.
-
-    Attributes
-    ----------
-    _matrix : np.ndarray
-        (6,6) matrix gathering all the components of the tensor, using the Voigt notation.
     """
     tensor_name = '4th-order'
 
