@@ -61,7 +61,7 @@ Certain parts of the code, particularly those related to graphical user interfac
 
 - **`src/Elasticipy/gui.py`**
 
-## :hearts: Cite this package
+## :mortar_board: Cite this package
 If you use Elasticipy, please cite [![DOI](https://zenodo.org/badge/876162900.svg)](https://doi.org/10.5281/zenodo.14501849)
 
 You can use the following BibTeX entry:
