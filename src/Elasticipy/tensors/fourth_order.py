@@ -425,9 +425,15 @@ class FourthOrderTensor:
 
         Returns
         -------
-        FourthOrderTensor or numpy.ndarray
-         If both the tensors are 0D (no orientation), the return value will be of type SymmetricTensor
-         Otherwise, the return value will be the full tensor, of shape (...,3,3,3,3).
+        FourthOrderTensor
+            Result from double-contraction
+
+        Examples
+        --------
+        First, let consider two random Fourth-order tensors
+
+        >>> from Elasticipy.tensors.fourth_order import FourthOrderTensor
+        >>> T1 = FourthOrderTensor.random((3,3,3,3))
         """
         if isinstance(other, FourthOrderTensor):
             if self.ndim == 0 and other.ndim == 0:
@@ -460,6 +466,31 @@ class FourthOrderTensor:
                 matrix = np.einsum(ein_str, self.full_tensor, other.matrix)
                 return SecondOrderTensor(matrix)
 
+    @classmethod
+    def rand(cls, shape=None, mapping=kelvin_mapping):
+        """
+        Populate a Fourth-order tensor with random values in half-open interval [0.0, 1.0).
+
+        Parameters
+        ----------
+        shape : tuple or int, optional
+            Set the shape of the tensor array. If None, the returned tensor will be single.
+        mapping : callable, optional
+            Mapping convention to use.
+
+        Returns
+        -------
+        FourthOrderTensor
+            Fourth-order tensor
+        """
+        if shape is None:
+            shape = (6,6)
+        elif isinstance(shape, int):
+            shape = (shape, 6, 6)
+        else:
+            shape = tuple(shape) + (6,6)
+        mat = np.random.random_sample(shape)
+        return cls(mat, mapping=mapping)
 
     def __mul__(self, other):
         if isinstance(other, (FourthOrderTensor, SecondOrderTensor)):
