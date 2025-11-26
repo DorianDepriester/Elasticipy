@@ -467,7 +467,7 @@ class FourthOrderTensor:
                 return SecondOrderTensor(matrix)
 
     @classmethod
-    def rand(cls, shape=None, mapping=kelvin_mapping):
+    def rand(cls, shape=None, **kwargs):
         """
         Populate a Fourth-order tensor with random values in half-open interval [0.0, 1.0).
 
