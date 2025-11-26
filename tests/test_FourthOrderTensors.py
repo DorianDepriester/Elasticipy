@@ -31,8 +31,8 @@ class TestFourthOrderTensor(unittest.TestCase):
 
     def test_inversion(self):
         m = 5
-        a = np.random.random((m, 6, 6))
-        T = FourthOrderTensor(a)
+        T = FourthOrderTensor.rand(shape=m)
+        assert T._matrix.shape == (m, 6,6)
         Tinv = T.inv()
         TTinv = Tinv.ddot(T)
         eye = FourthOrderTensor.identity(m)
@@ -41,8 +41,7 @@ class TestFourthOrderTensor(unittest.TestCase):
 
     def test_mult(self):
         m, n, o = 5, 4, 3
-        a = np.random.random((m,n,o,6,6))
-        a = FourthOrderTensor(a)
+        a = FourthOrderTensor.rand(shape=(m,n,o))
         b = 5
         ab = a * b
         for i in range(m):
@@ -84,8 +83,7 @@ class TestFourthOrderTensor(unittest.TestCase):
 
     def test_div(self):
         m, n, o = 5, 4, 3
-        a = np.random.random((m, n, o, 6, 6))
-        a = FourthOrderTensor(a)
+        a = FourthOrderTensor.rand(shape=(m,n,o))
         a_div_a = a / a
         np.testing.assert_array_almost_equal(a_div_a.full_tensor, FourthOrderTensor.identity(return_full_tensor=True, shape=(m,n,o)))
 
@@ -97,10 +95,8 @@ class TestFourthOrderTensor(unittest.TestCase):
         np.testing.assert_array_almost_equal(a_div_b.matrix, (a * b.inv()).matrix)
 
     def test_inconsistent_mapping(self):
-        a = np.random.random((6,6))
-        t1 = FourthOrderTensor(a)
-        b = np.random.random((6,6))
-        t2 = FourthOrderTensor(b, mapping=VoigtMapping())
+        t1 = FourthOrderTensor.rand()
+        t2 = FourthOrderTensor.rand(mapping=VoigtMapping())
         t3 = t1 + t2
         assert t3.mapping.name == t1.mapping.name
         np.testing.assert_array_equal(t3._matrix, t1._matrix + t2._matrix)
@@ -109,7 +105,7 @@ class TestFourthOrderTensor(unittest.TestCase):
         np.testing.assert_array_almost_equal(t4._matrix, np.matmul(t1._matrix, t2._matrix))
 
     def test_copy(self):
-        t1 = FourthOrderTensor(np.random.random((6,6)))
+        t1 = FourthOrderTensor.rand()
         t2 = t1.copy()
         assert t2 == t1
         t2.mapping = VoigtMapping()
@@ -118,14 +114,14 @@ class TestFourthOrderTensor(unittest.TestCase):
 
     def test_identity(self):
         I = FourthOrderTensor.identity()
-        A = FourthOrderTensor(np.random.random((6,6)))
+        A = FourthOrderTensor.rand()
         IA = I.ddot(A)
         AI = A.ddot(I)
         np.testing.assert_array_almost_equal(A.matrix(), IA.matrix())
         np.testing.assert_array_almost_equal(A.matrix(), AI.matrix())
 
     def test_spherical_deviatoric_parts(self):
-        A = FourthOrderTensor(np.random.random((6, 6)))
+        A = FourthOrderTensor.rand()
         AJ = A.spherical_part()
         AJJ = AJ.spherical_part()
         np.testing.assert_array_almost_equal(AJ.matrix(), AJJ.matrix())
@@ -136,6 +132,7 @@ class TestFourthOrderTensor(unittest.TestCase):
         AJK = AJ.deviatoric_part()
         np.testing.assert_array_almost_equal(AKJ.matrix(), np.zeros((6,6)))
         np.testing.assert_array_almost_equal(AJK.matrix(), np.zeros((6, 6)))
+
 
 class TestSymmetricFourthOrderTensor(unittest.TestCase):
     def test_inversion(self):
