@@ -133,6 +133,14 @@ class TestFourthOrderTensor(unittest.TestCase):
         np.testing.assert_array_almost_equal(AKJ.matrix(), np.zeros((6,6)))
         np.testing.assert_array_almost_equal(AJK.matrix(), np.zeros((6, 6)))
 
+    def test_rand(self):
+        shapes = [(), (3,2)]
+        for shape in shapes:
+            t = FourthOrderTensor.rand(shape=shape)
+            assert t.shape == shape
+            assert np.all(t.full_tensor >=0.)
+            assert np.all(t.full_tensor < 1.)
+
 
 class TestSymmetricFourthOrderTensor(unittest.TestCase):
     def test_inversion(self):
