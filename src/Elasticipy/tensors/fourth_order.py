@@ -490,7 +490,9 @@ class FourthOrderTensor:
         else:
             shape = tuple(shape) + (6,6)
         mat = np.random.random_sample(shape)
-        return cls(mat, mapping=mapping)
+        t = FourthOrderTensor(mat, **kwargs)
+        t._matrix = t._matrix * t.mapping.matrix
+        return t
 
     def __mul__(self, other):
         if isinstance(other, (FourthOrderTensor, SecondOrderTensor)):
