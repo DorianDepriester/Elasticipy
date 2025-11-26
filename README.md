@@ -67,13 +67,16 @@ If you use Elasticipy, please cite [![DOI](https://zenodo.org/badge/876162900.sv
 
 You can use the following BibTeX entry:
 ````bibtex
-@software{Elasticipy,
-author = {Depriester, Dorian},
-doi = {10.5281/zenodo.15188346},
-month = apr,
-title = {{Elasticipy}},
-url = {https://github.com/DorianDepriester/Elasticipy},
-version = {4.0.0},
-year = {2025}
+@article{Elasticipy, 
+    doi = {10.21105/joss.07940}, 
+    url = {https://doi.org/10.21105/joss.07940}, 
+    year = {2025}, 
+    publisher = {The Open Journal}, 
+    volume = {10}, 
+    number = {115}, 
+    pages = {7940}, 
+    author = {Depriester, Dorian and Kubler, Régis}, 
+    title = {Elasticipy: A Python package for linear elasticity and tensor analysis}, 
+    journal = {Journal of Open Source Software}
 }
 ````
