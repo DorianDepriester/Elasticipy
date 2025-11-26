@@ -28,9 +28,9 @@ Welcome to Elasticipy's Documentation!
    :alt: ReadTheDoc
    :target: https://elasticipy.readthedocs.io/
 
-.. image:: https://zenodo.org/badge/876162900.svg
-  :alt: doi:10.5281/zenodo.14501849
-  :target: https://doi.org/10.5281/zenodo.14501849
+.. image:: https://joss.theoj.org/papers/10.21105/joss.07940/status.svg
+  :alt: doi:10.21105/joss.07940
+  :target: https://doi.org/10.21105/joss.07940
 
 .. image:: https://codecov.io/gh/DorianDepriester/Elasticipy/graph/badge.svg?token=VUZPEUPBH1
    :alt: coverage
