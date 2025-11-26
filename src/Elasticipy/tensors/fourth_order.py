@@ -101,7 +101,7 @@ class FourthOrderTensor:
             (...,6,6) matrix corresponding to the stiffness tensor, written using the Voigt notation, or array of shape
             (...,3,3,3,3).
         mapping : MappingConvention, optional
-            Mapping convention to translate the (3,3,3,3) array to (6,6) matrix
+            Mapping convention to translate the (3,3,3,3) array to (6,6) matrix.
         check_minor_symmetry : bool, optional
             If true (default), check that the input array have minor symmetries (see Notes). Only used if an array of
             shape (...,3,3,3,3) is passed.
@@ -115,6 +115,86 @@ class FourthOrderTensor:
         .. math::
 
             M_{ijkl}=M_{jikl}=M_{jilk}=M_{ijlk}
+
+        Given a generic 4th-order tensor T, the corresponding matrix with respect to Kelvin convention is:
+
+        .. math::
+
+            T =
+            \\begin{bmatrix}
+                T_{1111}          & C_{1122}          & C_{1133}            & \\sqrt{2}C_{1123} & \\sqrt{2}C_{1113} & \\sqrt{2}C_{1112}\\\\
+                C_{2211}          & C_{2222}          & C_{2233}            & \\sqrt{2}C_{2223} & \\sqrt{2}C_{2213} & \\sqrt{2}C_{2212}\\\\
+                C_{3311}          & C_{3322}          & C_{3333}            & \\sqrt{2}C_{3323} & \\sqrt{2}C_{3313} & \\sqrt{2}C_{3312}\\\\
+                \\sqrt{2}C_{2311} & \\sqrt{2}C_{2322}   & \\sqrt{2}C_{2333} & 2C_{2323}         & 2C_{2313}         & 2C_{2312}\\\\
+                \\sqrt{2}C_{1311} & \\sqrt{2}C_{1322}   & \\sqrt{2}C_{1333} & 2C_{423}          & 2C_{1313}         & 2C_{1312}\\\\
+                \\sqrt{2}C_{1211} & \\sqrt{2}C_{1222}   & \\sqrt{2}C_{1233} & 2C_{1223}         & 2C_{1223}         & 2C_{1212}\\\\
+            \\end{bmatrix}
+
+        Examples
+        --------
+        Consider a Fourth-order tensor, whose Kelvin matrix is:
+
+        >>> from Elasticipy.tensors.fourth_order import FourthOrderTensor
+        >>> import numpy as np
+        >>> mat = np.array([[100, 200, 300, 0, 0, 0],
+        ...                 [-200, 100, 50, 0, 0, 0],
+        ...                 [-300, -50, 100, 0, 0, 0],
+        ...                 [0, 0, 0, 150, 0, 0],
+        ...                 [0, 0, 0, 0, 150, 0],
+        ...                 [0, 0, 0, 0, 0, 150]])
+        >>> T = FourthOrderTensor(mat)
+        >>> print(T)
+        4th-order tensor (in Kelvin mapping):
+        [[ 100.  200.  300.    0.    0.    0.]
+         [-200.  100.   50.    0.    0.    0.]
+         [-300.  -50.  100.    0.    0.    0.]
+         [   0.    0.    0.  150.    0.    0.]
+         [   0.    0.    0.    0.  150.    0.]
+         [   0.    0.    0.    0.    0.  150.]]
+
+        If one wants to evaluate the tensor as a (full) (3,3,3,3) array:
+
+        >>> T_array = T.full_tensor()
+
+        For instance:
+
+        T_array[0,0,0,0]
+        100.
+
+        whereas
+
+        >>> T_array[0,1,0,1] # Corresponds to T_{66}/2
+        75.0
+
+        The half factor comes from the Kelvin mapping convention (see Notes). One can also use the Voigt mapping to
+        avoid this:
+
+        >>> from Elasticipy.tensors.mapping import VoigtMapping
+        >>> T_voigt = FourthOrderTensor(mat, mapping=VoigtMapping())
+        >>> print(T_voigt)
+        4th-order tensor (in Voigt mapping):
+        [[ 100.  200.  300.    0.    0.    0.]
+         [-200.  100.   50.    0.    0.    0.]
+         [-300.  -50.  100.    0.    0.    0.]
+         [   0.    0.    0.  150.    0.    0.]
+         [   0.    0.    0.    0.  150.    0.]
+         [   0.    0.    0.    0.    0.  150.]]
+
+        Although T and T_voigt appear to be the same, note that they are not expressed using the same mapping
+        convention. Indeed:
+
+        >>> T_voigt.full_tensor()[0,0,0,0]
+        100.0
+
+        whereas
+
+        >>> T_voigt.full_tensor()[0,1,0,1]
+        150.0
+
+        Alternatively, the differences can be checked with:
+
+        >>> T == T_voigt
+        False
 
         """
         if isinstance(mapping, str):
