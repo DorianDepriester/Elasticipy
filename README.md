@@ -14,7 +14,7 @@
 A python toolkit to manipulate stress and strain tensors, and other linear elasticity-related tensors (e.g. stiffness). 
 This package also provides a collection of easy-to-use and very fast tools to work on stress and strain tensors.
 
-## Main features
+## :rocket: Main features
 Among other features, this package implements:
 
 - Computation of elasticity tensors,
@@ -28,7 +28,7 @@ Among other features, this package implements:
 - Compatibility with the [Materials Project](https://next-gen.materialsproject.org/) API, [pymatgen](https://pymatgen.org/) and 
 [orix](https://orix.readthedocs.io/).
 
-## Installation
+## :snake: Installation
 Elasticipy can be installed with PIP:
 ````
 pip install Elasticipy
@@ -39,18 +39,18 @@ On anaconda, one can also use:
 conda install conda-forge::elasticipy
 ````
 
-## Documentation
+## :books: Documentation
 Tutorials and full documentation are available on [ReadTheDoc](https://elasticipy.readthedocs.io/).
 
-## Elasticipy in a nutshell
+## :hourglass_flowing_sand: Elasticipy in a nutshell
 Take a 5-minute tour through Elasticipy's main features by running the online Jupyter Notebook, hosted on 
 [Binder](https://mybinder.org/v2/gh/DorianDepriester/Elasticipy/HEAD?urlpath=%2Fdoc%2Ftree%2FElasticipy_for_the_Impatient.ipynb).
  
 
-## Sources
+## :mag: Sources
 The source code is available on [GitHub](https://github.com/DorianDepriester/Elasticipy) under the [MIT licence](https://github.com/DorianDepriester/Elasticipy/blob/c6c3d441a2d290ab8f4939992d5d753a1ad3bdb0/LICENSE).
 
-## Tests and Code Coverage
+## :umbrella: Tests and Code Coverage
 
 The project uses unit tests with `pytest` and coverage reports generated using `coverage`. These reports are hosted on 
 [codecov](https://app.codecov.io/gh/DorianDepriester/Elasticipy).
@@ -61,7 +61,7 @@ Certain parts of the code, particularly those related to graphical user interfac
 
 - **`src/Elasticipy/gui.py`**
 
-## Cite this package
+## :hearts: Cite this package
 If you use Elasticipy, please cite [![DOI](https://zenodo.org/badge/876162900.svg)](https://doi.org/10.5281/zenodo.14501849)
 
 You can use the following BibTeX entry:
