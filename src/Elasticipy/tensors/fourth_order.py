@@ -1276,6 +1276,14 @@ class SymmetricFourthOrderTensor(FourthOrderTensor):
         return B1, B2, B3, B4, B5
 
     def infinite_random_average(self):
+        """
+        Compute the average of the tensor, assuming that an infinite number of random orientations is applied.
+
+        Returns
+        -------
+        FourthOrderTensor
+            Average tensor or tensor array. The returned array will be of the same shape as the input object.
+        """
         new_tensor = deepcopy(self)
         matrix = self._matrix / kelvin_mapping.matrix
         A = matrix[..., 0, 0] + matrix[..., 1, 1] + matrix[..., 2, 2]
