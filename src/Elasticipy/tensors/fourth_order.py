@@ -82,6 +82,15 @@ def _isotropic_matrix(C11, C12, C44):
     matrix[..., 5, 5] = C44
     return matrix
 
+def _broadcast_matrix(M, shape):
+    if shape is None:
+        new_shape = M.shape
+    elif isinstance(shape, int):
+        new_shape = (shape,) + M.shape
+    else:
+        new_shape = shape + M.shape
+    return np.broadcast_to(M, new_shape)
+
 class FourthOrderTensor:
     """
     Template class for manipulating symmetric fourth-order tensors.
@@ -627,7 +636,7 @@ class FourthOrderTensor:
         return cls.eye(**kwargs)
 
     @classmethod
-    def eye(cls, shape=(), return_full_tensor=False, mapping=kelvin_mapping):
+    def eye(cls, shape=(), mapping=kelvin_mapping):
         """
         Create a 4th-order identity tensor.
 
@@ -637,9 +646,6 @@ class FourthOrderTensor:
         ----------
         shape : int or tuple, optional
             Shape of the tensor to create
-        return_full_tensor : bool, optional
-            If True, return the full tensor as a (3,3,3,3) or a (...,3,3,3,3) array. Otherwise, the tensor is returned
-            as a SymmetricTensor object.
         mapping : Kelvin mapping, optional
             Mapping convention to use. Must be either Kelvin or Voigt.
 
@@ -697,19 +703,10 @@ class FourthOrderTensor:
          >>> np.array_equal(I.full_tensor, Iv.full_tensor)
          True
         """
-        eye = np.eye(3)
-        if isinstance(shape, int):
-            shape = (shape,)
-        if len(shape):
-            for n in np.flip(shape):
-                eye = np.repeat(eye[np.newaxis,...], n, axis=0)
-        a = np.einsum('...ik,...jl->...ijkl', eye, eye)
-        b = np.einsum('...il,...jk->...ijkl', eye, eye)
-        full = 0.5*(a + b)
-        if return_full_tensor:
-            return full
-        else:
-            return cls(full, mapping=mapping)
+        eye = _broadcast_matrix(np.eye(6), shape)
+        t = cls(eye, mapping=kelvin_mapping)
+        t.mapping = mapping
+        return t
 
     @classmethod
     def identity_spherical_part(cls, shape=(), return_full_tensor=False, mapping=kelvin_mapping):
