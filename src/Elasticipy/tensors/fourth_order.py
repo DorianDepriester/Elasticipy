@@ -277,6 +277,7 @@ class FourthOrderTensor:
     def shape(self):
         """
         Return the shape of the tensor array
+
         Returns
         -------
         tuple
