@@ -731,7 +731,7 @@ class FourthOrderTensor:
             return FourthOrderTensor(J, mapping=mapping)
 
     @classmethod
-    def identity_deviatoric_part(cls, shape=(), return_full_tensor=False, mapping=kelvin_mapping):
+    def identity_deviatoric_part(cls, **kwargs):
         """
         Return the deviatoric part of the identity tensor
 
@@ -748,8 +748,8 @@ class FourthOrderTensor:
         -------
         FourthOrderTensor or SymmetricTensor
         """
-        I = FourthOrderTensor.identity(shape, return_full_tensor, mapping)
-        J = FourthOrderTensor.identity_spherical_part(shape, return_full_tensor, mapping)
+        I = FourthOrderTensor.identity(**kwargs)
+        J = FourthOrderTensor.identity_spherical_part(**kwargs)
         return I-J
 
     def spherical_part(self):
