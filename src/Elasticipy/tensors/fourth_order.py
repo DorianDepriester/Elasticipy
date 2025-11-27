@@ -777,7 +777,9 @@ class FourthOrderTensor:
     @classmethod
     def identity_deviatoric_part(cls, **kwargs):
         """
-        Return the deviatoric part of the identity tensor
+        Return the deviatoric part of the identity tensor.
+
+        See notes for the mathematical definition.
 
         Parameters
         ----------
@@ -792,6 +794,16 @@ class FourthOrderTensor:
         --------
         identity_tensor : return the identity tensor
         identity_spherical_part : return the spherical part of the identity tensor
+
+        Notes
+        -----
+        The deviatoric part of the identity tensor is defined as:
+
+        .. math::
+
+            K = I - J
+
+        where $I$ and $J$ denote the identity and the deviatoric part of the identity tensor, respectively.
 
         Examples
         --------
