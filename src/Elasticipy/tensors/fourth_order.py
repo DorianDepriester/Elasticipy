@@ -375,6 +375,69 @@ class FourthOrderTensor:
         -------
         SymmetricFourthOrderTensor
             Rotated tensor
+
+        Examples
+        --------
+        Let start from a given tensor, (say ones):
+
+        >>> from Elasticipy.tensors.fourth_order import FourthOrderTensor
+        >>> T = FourthOrderTensor.ones()
+        >>> T
+        4th-order tensor (in Kelvin mapping):
+        [[1.         1.         1.         1.41421356 1.41421356 1.41421356]
+         [1.         1.         1.         1.41421356 1.41421356 1.41421356]
+         [1.         1.         1.         1.41421356 1.41421356 1.41421356]
+         [1.41421356 1.41421356 1.41421356 2.         2.         2.        ]
+         [1.41421356 1.41421356 1.41421356 2.         2.         2.        ]
+         [1.41421356 1.41421356 1.41421356 2.         2.         2.        ]]
+
+        Define a rotation. E.g.:
+
+        >>> from scipy.spatial.transform import Rotation
+        >>> g = Rotation.from_euler('X', 90, degrees=True)
+
+        Then , apply rotation:
+
+        >>> Trotated = T.rotate(g)
+        >>> Trotated
+        4th-order tensor (in Kelvin mapping):
+        [[ 1.          1.          1.         -1.41421356  1.41421356 -1.41421356]
+         [ 1.          1.          1.         -1.41421356  1.41421356 -1.41421356]
+         [ 1.          1.          1.         -1.41421356  1.41421356 -1.41421356]
+         [-1.41421356 -1.41421356 -1.41421356  2.         -2.          2.        ]
+         [ 1.41421356  1.41421356  1.41421356 -2.          2.         -2.        ]
+         [-1.41421356 -1.41421356 -1.41421356  2.         -2.          2.        ]]
+
+         Actually, a more simple syntax is:
+
+         >>> T * g
+         4th-order tensor (in Kelvin mapping):
+         [[ 1.          1.          1.         -1.41421356  1.41421356 -1.41421356]
+          [ 1.          1.          1.         -1.41421356  1.41421356 -1.41421356]
+          [ 1.          1.          1.         -1.41421356  1.41421356 -1.41421356]
+          [-1.41421356 -1.41421356 -1.41421356  2.         -2.          2.        ]
+          [ 1.41421356  1.41421356  1.41421356 -2.          2.         -2.        ]
+          [-1.41421356 -1.41421356 -1.41421356  2.         -2.          2.        ]]
+
+        Obviously, the original tensor can be retrieved by applying the reverse rotation:
+
+        >>> Trotated * g.inv()
+        4th-order tensor (in Kelvin mapping):
+        [[1.         1.         1.         1.41421356 1.41421356 1.41421356]
+         [1.         1.         1.         1.41421356 1.41421356 1.41421356]
+         [1.         1.         1.         1.41421356 1.41421356 1.41421356]
+         [1.41421356 1.41421356 1.41421356 2.         2.         2.        ]
+         [1.41421356 1.41421356 1.41421356 2.         2.         2.        ]
+         [1.41421356 1.41421356 1.41421356 2.         2.         2.        ]]
+
+        If ``g`` is composed of multiple rotations, this will result in a tensor array, corresponding to each rotation:
+
+        >>> import numpy as np
+        >>> theta = np.linspace(0, 90, 100)
+        >>> g = Rotation.from_euler('X', theta, degrees=True)
+        >>> Trotated = T * g
+        >>> Trotated
+        4th-order tensor array of shape (100,)
         """
         t2 = deepcopy(self)
         rotated_tensor = rotate_tensor(self.full_tensor, rotation)
