@@ -1120,6 +1120,19 @@ class FourthOrderTensor:
         return cls(zeros, **kwargs)
 
     def matrix(self, mapping_convention=None):
+        """
+        Returns the components of the tensor as a matrix.
+
+        Parameters
+        ----------
+        mapping_convention : VoigtMapping, optional
+            Mapping convention to use for the returned matrix. If not provided, that of the tensor is used.
+
+        Returns
+        -------
+        numpy.ndarray
+            Components of the tensor as a matrix
+        """
         matrix = self._matrix
         if mapping_convention is None:
             mapping_convention = self.mapping
