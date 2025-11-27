@@ -710,34 +710,26 @@ class FourthOrderTensor:
         return cls._broadcast_matrix(np.eye(6), shape=shape, **kwargs)
 
     @classmethod
-    def identity_spherical_part(cls, shape=(), return_full_tensor=False, mapping=kelvin_mapping):
+    def identity_spherical_part(cls, shape=(), **kwargs):
         """
-        Return the spherical part of the identity tensor
+        Return the spherical part of the identity tensor.
+
+        See Notes for mathematical definition.
 
         Parameters
         ----------
         shape : tuple of int, optional
             Shape of the tensor to create
-        return_full_tensor : bool, optional
-            if true, the full tensor is returned as a (3,3,3,3) or a (...,3,3,3,3) array
-        mapping : str, optional
-            Mapping convention to use. Must be either Kelvin or Voigt.
+        kwargs
+            Keyword arguments passed to the Fourth-order tensor constructor.
 
         Returns
         -------
-        FourthOrderTensor or SymmetricTensor
+        FourthOrderTensor
         """
-        eye = np.eye(3)
-        if isinstance(shape, int):
-            shape = (shape,)
-        if len(shape):
-            for n in np.flip(shape):
-                eye = np.repeat(eye[np.newaxis,...], n, axis=0)
-        J = np.einsum('...ij,...kl->...ijkl',eye, eye)/3
-        if return_full_tensor:
-            return J
-        else:
-            return FourthOrderTensor(J, mapping=mapping)
+        A = np.zeros((6, 6))
+        A[:3, :3] = 1 / 3
+        return cls._broadcast_matrix(A, shape=shape, **kwargs)
 
     @classmethod
     def identity_deviatoric_part(cls, **kwargs):
