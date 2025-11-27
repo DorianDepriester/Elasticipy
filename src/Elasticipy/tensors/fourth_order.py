@@ -653,6 +653,13 @@ class FourthOrderTensor:
         -------
         FourthOrderTensor
             The same tensor, but with transposed axes
+
+        Examples
+        --------
+        >>> from Elasticipy.tensors.fourth_order import FourthOrderTensor
+        >>> A = FourthOrderTensor.rand(shape=(3,4))
+        >>> A.transpose_array()
+        4th-order tensor array of shape (4, 3)
         """
         ndim = self.ndim
         if ndim==0 or ndim==1:
