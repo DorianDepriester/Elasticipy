@@ -82,15 +82,6 @@ def _isotropic_matrix(C11, C12, C44):
     matrix[..., 5, 5] = C44
     return matrix
 
-def _broadcast_matrix(M, shape):
-    if shape is None:
-        new_shape = M.shape
-    elif isinstance(shape, int):
-        new_shape = (shape,) + M.shape
-    else:
-        new_shape = shape + M.shape
-    return np.broadcast_to(M, new_shape)
-
 class FourthOrderTensor:
     """
     Template class for manipulating symmetric fourth-order tensors.
@@ -636,7 +627,20 @@ class FourthOrderTensor:
         return cls.eye(**kwargs)
 
     @classmethod
-    def eye(cls, shape=(), mapping=kelvin_mapping):
+    def _broadcast_matrix(cls, M, shape=None, **kwargs):
+        if shape is None:
+            new_shape = M.shape
+        elif isinstance(shape, int):
+            new_shape = (shape,) + M.shape
+        else:
+            new_shape = shape + M.shape
+        M_repeat = np.broadcast_to(M, new_shape)
+        t = cls(M_repeat, **kwargs)
+        t._matrix = t._matrix * t.mapping.matrix / kelvin_mapping.matrix
+        return t
+
+    @classmethod
+    def eye(cls, shape=(), **kwargs):
         """
         Create a 4th-order identity tensor.
 
@@ -651,7 +655,7 @@ class FourthOrderTensor:
 
         Returns
         -------
-        numpy.ndarray or SymmetricTensor
+        FourthOrderTensor or SymmetricFourthOrderTensor
             Identity tensor
 
         Notes
@@ -703,10 +707,7 @@ class FourthOrderTensor:
          >>> np.array_equal(I.full_tensor, Iv.full_tensor)
          True
         """
-        eye = _broadcast_matrix(np.eye(6), shape)
-        t = cls(eye, mapping=kelvin_mapping)
-        t.mapping = mapping
-        return t
+        return cls._broadcast_matrix(np.eye(6), shape=shape, **kwargs)
 
     @classmethod
     def identity_spherical_part(cls, shape=(), return_full_tensor=False, mapping=kelvin_mapping):
