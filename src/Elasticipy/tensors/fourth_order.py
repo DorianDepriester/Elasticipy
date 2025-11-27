@@ -430,10 +430,40 @@ class FourthOrderTensor:
 
         Examples
         --------
-        First, let consider two random Fourth-order tensors
+        First, let consider two random arrays of Fourth-order tensors:
 
         >>> from Elasticipy.tensors.fourth_order import FourthOrderTensor
-        >>> T1 = FourthOrderTensor.random((3,3,3,3))
+        >>> T1 = FourthOrderTensor.rand(shape=(2,3))
+        >>> T2 = FourthOrderTensor.rand(shape=3)
+        >>> T1T2_pair = T1.ddot(T2)
+        >>> T1T2_pair
+        4th-order tensor array of shape (2, 3)
+
+        whereas:
+
+        >>> T1T2_cross = T1.ddot(T2, mode='cross')
+        >>> T1T2_cross
+        4th-order tensor array of shape (2, 3, 3)
+
+        The command above is equivalent (but way faster) to:
+
+        >>> T1T2_cross_loop = FourthOrderTensor.zeros(shape=(2,3,3))
+        >>> for i in range(2):
+        ...     for j in range(3):
+        ...         for k in range(3):
+        ...             T1T2_cross_loop[i,j,k] = T1[i,j].ddot(T2[k])
+
+        One can check that the results are consistent with:
+
+        >>> T1T2_cross_loop == T1T2_cross
+        array([[[ True,  True,  True],
+                [ True,  True,  True],
+                [ True,  True,  True]],
+        <BLANKLINE>
+               [[ True,  True,  True],
+                [ True,  True,  True],
+                [ True,  True,  True]]])
+
         """
         if isinstance(other, FourthOrderTensor):
             if self.ndim == 0 and other.ndim == 0:
