@@ -727,6 +727,11 @@ class FourthOrderTensor:
         -------
         FourthOrderTensor
 
+        See Also
+        --------
+        identity_tensor : return the identity tensor
+        identity_deviatoric_part : return the deviatoric part of the identity tensor
+
         Examples
         --------
         >>> from Elasticipy.tensors.fourth_order import FourthOrderTensor
@@ -775,6 +780,11 @@ class FourthOrderTensor:
         -------
         FourthOrderTensor or SymmetricTensor
 
+        See Also
+        --------
+        identity_tensor : return the identity tensor
+        identity_spherical_part : return the spherical part of the identity tensor
+
         Examples
         --------
         >>> from Elasticipy.tensors.fourth_order import FourthOrderTensor
@@ -817,6 +827,11 @@ class FourthOrderTensor:
         -------
         FourthOrderTensor
             Spherical part of the tensor
+
+        See Also
+        --------
+        identity_tensor : return the identity tensor
+        deviatoric_part : return the deviatoric part of the tensor
         """
         I = self.identity_spherical_part(shape=self.shape)
         return I.ddot(self)
@@ -829,6 +844,11 @@ class FourthOrderTensor:
         -------
         FourthOrderTensor
             Deviatoric part of the tensor
+
+        See Also
+        --------
+        identity_tensor : return the identity tensor
+        spherical_part : return the spherical part of the tensor
         """
         K = self.identity_deviatoric_part(shape=self.shape)
         return K.ddot(self)
