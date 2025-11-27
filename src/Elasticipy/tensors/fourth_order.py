@@ -954,7 +954,7 @@ class FourthOrderTensor:
 
             K = I - J
 
-        where $I$ and $J$ denote the identity and the deviatoric part of the identity tensor, respectively.
+        where :math:`I` and :math:`J` denote the identity and the deviatoric part of the identity tensor, respectively.
 
         Examples
         --------
