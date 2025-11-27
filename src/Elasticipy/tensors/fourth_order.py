@@ -784,6 +784,50 @@ class FourthOrderTensor:
         -------
         FourthOrderTensor
             Inverse tensor
+
+        Examples
+        --------
+        Let consider a random Fourth-order tensor:
+
+        >>> from Elasticipy.tensors.fourth_order import FourthOrderTensor
+        >>> T = FourthOrderTensor.rand()
+        >>> print(T) # doctest: +SKIP
+
+        >>> Tinv = T.inv()
+        >>> print(Tinv) # doctest: +SKIP
+
+        One can check that ``T.ddot(Tinv)`` and ``Tinv.ddot(T)`` are really close to the identity tensor:
+
+        >>> (T.ddot(Tinv) - FourthOrderTensor.eye()) * 1e16 # doctest: +SKIP
+        4th-order tensor (in Kelvin mapping):
+        [[ 1.00000000e+00  0.00000000e+00  1.11022302e-16  0.00000000e+00
+           3.14018492e-16  0.00000000e+00]
+         [-2.22044605e-16  1.00000000e+00  2.77555756e-17 -1.25607397e-15
+           2.35513869e-16 -7.85046229e-17]
+         [ 1.55431223e-15  0.00000000e+00  1.00000000e+00 -3.14018492e-16
+           0.00000000e+00 -4.71027738e-16]
+         [-6.28036983e-16 -4.39625888e-15  0.00000000e+00  1.00000000e+00
+           0.00000000e+00  1.11022302e-16]
+         [-1.25607397e-15 -4.39625888e-15  0.00000000e+00  2.55351296e-15
+           1.00000000e+00 -1.66533454e-16]
+         [-5.88784672e-16 -1.17756934e-15 -2.62499833e-16  5.96744876e-16
+           1.24900090e-16  1.00000000e+00]]
+
+        >>> (Tinv.ddot(T) - FourthOrderTensor.eye()) * 1e16 # doctest: +SKIP
+        4th-order tensor (in Kelvin mapping):
+        [[ 1.00000000e+00 -1.33226763e-15 -3.99680289e-15 -6.90840682e-15
+          -7.53644380e-15 -2.51214793e-15]
+         [ 2.33146835e-15  1.00000000e+00  1.55431223e-15 -7.85046229e-16
+           1.41308321e-15  9.42055475e-16]
+         [ 3.88578059e-16  1.11022302e-16  1.00000000e+00 -3.92523115e-16
+          -1.57009246e-16  1.57009246e-16]
+         [-5.88784672e-17 -1.86448479e-16 -1.47196168e-16  1.00000000e+00
+          -2.49800181e-16 -2.08166817e-16]
+         [ 5.10280049e-16  7.85046229e-17 -7.85046229e-17  1.27675648e-15
+           1.00000000e+00  7.77156117e-16]
+         [-7.85046229e-16 -6.28036983e-16  6.28036983e-16  2.44249065e-15
+           3.55271368e-15  1.00000000e+00]]
+
         """
         matrix_inv = np.linalg.inv(self._matrix)
         t = self.__class__(matrix_inv, mapping=kelvin_mapping)
