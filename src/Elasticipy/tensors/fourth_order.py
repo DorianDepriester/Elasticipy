@@ -288,7 +288,7 @@ class FourthOrderTensor:
     @property
     def full_tensor(self):
         """
-        Returns the full (unvoigted) tensor, as a [3, 3, 3, 3] array
+        Returns the full (unvoigted) tensor as a (3, 3, 3, 3) or (..., 3, 3, 3, 3) array
 
         Returns
         -------
