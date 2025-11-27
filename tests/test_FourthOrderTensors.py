@@ -151,6 +151,14 @@ class TestFourthOrderTensor(unittest.TestCase):
             assert np.all(t.full_tensor >=0.)
             assert np.all(t.full_tensor < 1.)
 
+    def test_ones(self):
+        A = FourthOrderTensor.ones()
+        np.testing.assert_array_almost_equal(A.full_tensor, np.ones((3,3,3,3)))
+        Av = FourthOrderTensor.ones(mapping=VoigtMapping())
+        np.testing.assert_array_almost_equal(Av.full_tensor, np.ones((3, 3, 3, 3)))
+        A2d = FourthOrderTensor.ones(shape=(3,4))
+        np.testing.assert_array_almost_equal(A2d.full_tensor, np.ones((3,4,3, 3, 3, 3)))
+
 
 class TestSymmetricFourthOrderTensor(unittest.TestCase):
     def test_inversion(self):
