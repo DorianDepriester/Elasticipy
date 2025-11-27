@@ -613,7 +613,7 @@ class FourthOrderTensor:
 
         Parameters
         ----------
-        kwargs : dict
+        kwargs
             Keyword arguments passed to the Fourth-order tensor constructor.
 
         Returns
