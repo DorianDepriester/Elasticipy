@@ -514,7 +514,7 @@ class FourthOrderTensor:
         ----------
         shape : tuple or int, optional
             Set the shape of the tensor array. If None, the returned tensor will be single.
-        kwargs : dict
+        kwargs
             Keyword arguments passed to the Fourth-order tensor constructor.
 
         Returns
