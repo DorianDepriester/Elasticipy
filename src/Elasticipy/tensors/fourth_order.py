@@ -738,12 +738,8 @@ class FourthOrderTensor:
 
         Parameters
         ----------
-        shape : tuple of int, optional
-            Shape of the tensor to create
-        return_full_tensor : bool, optional
-            if true, the full tensor is returned as a (3,3,3,3) or a (...,3,3,3,3) array
-        mapping : str, optional
-            Mapping convention to use. Must be either Kelvin or Voigt.
+        kwargs
+            keyword arguments passed to eye constructor
 
         Returns
         -------
