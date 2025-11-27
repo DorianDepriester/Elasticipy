@@ -114,11 +114,21 @@ class TestFourthOrderTensor(unittest.TestCase):
 
     def test_identity(self):
         I = FourthOrderTensor.identity()
+        Ifull = I.full_tensor
+        eye = np.eye(3)
+        a = np.einsum('ik,jl->ijkl', eye, eye)
+        b = np.einsum('il,jk->ijkl', eye, eye)
+        np.testing.assert_array_equal(Ifull, (a + b) / 2)
         A = FourthOrderTensor.rand()
         IA = I.ddot(A)
         AI = A.ddot(I)
         np.testing.assert_array_almost_equal(A.matrix(), IA.matrix())
         np.testing.assert_array_almost_equal(A.matrix(), AI.matrix())
+
+    def test_identity_spherical_part(self):
+        Jfull = FourthOrderTensor.identity_spherical_part().full_tensor
+        eye = np.eye(3)
+        np.testing.assert_array_equal(Jfull, np.einsum('ij,kl->ijkl',eye, eye) / 3)
 
     def test_spherical_deviatoric_parts(self):
         A = FourthOrderTensor.rand()
