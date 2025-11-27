@@ -732,6 +732,14 @@ class FourthOrderTensor:
         identity_tensor : return the identity tensor
         identity_deviatoric_part : return the deviatoric part of the identity tensor
 
+        Notes
+        -----
+        The spherical part of the identity tensor is defined as:
+
+        .. math::
+
+            J_{ijkl} = \\frac13 \\delta_{ij}\\delta_{kl}
+
         Examples
         --------
         >>> from Elasticipy.tensors.fourth_order import FourthOrderTensor
