@@ -35,7 +35,7 @@ class TestFourthOrderTensor(unittest.TestCase):
         assert T._matrix.shape == (m, 6,6)
         Tinv = T.inv()
         TTinv = Tinv.ddot(T)
-        eye = FourthOrderTensor.identity(m)
+        eye = FourthOrderTensor.identity(shape=m)
         for i in range(m):
             np.testing.assert_array_almost_equal(TTinv[i].full_tensor, eye[i].full_tensor)
 
@@ -148,7 +148,7 @@ class TestSymmetricFourthOrderTensor(unittest.TestCase):
         T = SymmetricFourthOrderTensor.rand(shape=m)
         Tinv = T.inv()
         TTinv = Tinv.ddot(T)
-        eye = SymmetricFourthOrderTensor.identity(m)
+        eye = SymmetricFourthOrderTensor.identity(shape=m)
         for i in range(m):
             np.testing.assert_array_almost_equal(TTinv[i].full_tensor, eye[i].full_tensor)
 
