@@ -744,6 +744,35 @@ class FourthOrderTensor:
         Returns
         -------
         FourthOrderTensor or SymmetricTensor
+
+        Examples
+        --------
+        >>> from Elasticipy.tensors.fourth_order import FourthOrderTensor
+        >>> K = FourthOrderTensor.identity_deviatoric_part()
+        >>> print(K)
+        4th-order tensor (in Kelvin mapping):
+        [[ 0.66666667 -0.33333333 -0.33333333  0.          0.          0.        ]
+         [-0.33333333  0.66666667 -0.33333333  0.          0.          0.        ]
+         [-0.33333333 -0.33333333  0.66666667  0.          0.          0.        ]
+         [ 0.          0.          0.          1.          0.          0.        ]
+         [ 0.          0.          0.          0.          1.          0.        ]
+         [ 0.          0.          0.          0.          0.          1.        ]]
+
+        One can check that K has zero spherical part:
+        >>> print(K.spherical_part())
+        4th-order tensor (in Kelvin mapping):
+        [[2.77555756e-17 2.77555756e-17 2.77555756e-17 0.00000000e+00
+          0.00000000e+00 0.00000000e+00]
+         [2.77555756e-17 2.77555756e-17 2.77555756e-17 0.00000000e+00
+          0.00000000e+00 0.00000000e+00]
+         [2.77555756e-17 2.77555756e-17 2.77555756e-17 0.00000000e+00
+          0.00000000e+00 0.00000000e+00]
+         [0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00
+          0.00000000e+00 0.00000000e+00]
+         [0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00
+          0.00000000e+00 0.00000000e+00]
+         [0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00
+          0.00000000e+00 0.00000000e+00]]
         """
         I = FourthOrderTensor.identity(**kwargs)
         J = FourthOrderTensor.identity_spherical_part(**kwargs)
