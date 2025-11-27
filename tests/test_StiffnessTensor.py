@@ -107,7 +107,7 @@ class TestComplianceTensor(unittest.TestCase):
         C_full = C.full_tensor
         eye = np.eye(3)
         A = np.einsum('ij,kl->ijkl', eye, eye)
-        C_th = lame1 * A + 2 * lame2 * StiffnessTensor.identity(return_full_tensor=True)
+        C_th = lame1 * A + 2 * lame2 * StiffnessTensor.eye().full_tensor
         np.testing.assert_almost_equal(C_th, C_full)
 
     def test_averages(self):

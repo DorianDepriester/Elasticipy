@@ -85,7 +85,7 @@ class TestFourthOrderTensor(unittest.TestCase):
         m, n, o = 5, 4, 3
         a = FourthOrderTensor.rand(shape=(m,n,o))
         a_div_a = a / a
-        np.testing.assert_array_almost_equal(a_div_a.full_tensor, FourthOrderTensor.identity(return_full_tensor=True, shape=(m,n,o)))
+        np.testing.assert_array_almost_equal(a_div_a.full_tensor, FourthOrderTensor.identity(shape=(m,n,o)).full_tensor)
 
         half_a = a / 2
         np.testing.assert_array_almost_equal(half_a.full_tensor, a.full_tensor/2)
