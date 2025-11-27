@@ -726,6 +726,36 @@ class FourthOrderTensor:
         Returns
         -------
         FourthOrderTensor
+
+        Examples
+        --------
+        >>> from Elasticipy.tensors.fourth_order import FourthOrderTensor
+        >>> J = FourthOrderTensor.identity_spherical_part()
+        >>> print(J)
+        4th-order tensor (in Kelvin mapping):
+        [[0.33333333 0.33333333 0.33333333 0.         0.         0.        ]
+         [0.33333333 0.33333333 0.33333333 0.         0.         0.        ]
+         [0.33333333 0.33333333 0.33333333 0.         0.         0.        ]
+         [0.         0.         0.         0.         0.         0.        ]
+         [0.         0.         0.         0.         0.         0.        ]
+         [0.         0.         0.         0.         0.         0.        ]]
+
+        On can check that J has zero deviatoric part:
+
+        >>> J.deviatoric_part()
+        4th-order tensor (in Kelvin mapping):
+        [[2.77555756e-17 2.77555756e-17 2.77555756e-17 0.00000000e+00
+          0.00000000e+00 0.00000000e+00]
+         [2.77555756e-17 2.77555756e-17 2.77555756e-17 0.00000000e+00
+          0.00000000e+00 0.00000000e+00]
+         [2.77555756e-17 2.77555756e-17 2.77555756e-17 0.00000000e+00
+          0.00000000e+00 0.00000000e+00]
+         [0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00
+          0.00000000e+00 0.00000000e+00]
+         [0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00
+          0.00000000e+00 0.00000000e+00]
+         [0.00000000e+00 0.00000000e+00 0.00000000e+00 0.00000000e+00
+          0.00000000e+00 0.00000000e+00]]
         """
         A = np.zeros((6, 6))
         A[:3, :3] = 1 / 3
@@ -759,6 +789,7 @@ class FourthOrderTensor:
          [ 0.          0.          0.          0.          0.          1.        ]]
 
         One can check that K has zero spherical part:
+
         >>> print(K.spherical_part())
         4th-order tensor (in Kelvin mapping):
         [[2.77555756e-17 2.77555756e-17 2.77555756e-17 0.00000000e+00
