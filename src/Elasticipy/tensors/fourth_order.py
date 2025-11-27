@@ -744,6 +744,24 @@ class FourthOrderTensor:
         return cls._broadcast_matrix(np.eye(6), shape=shape, **kwargs)
 
     @classmethod
+    def ones(cls, shape=None, **kwargs):
+        """
+        Create a 4th-order tensor full of ones.
+
+        Parameters
+        ----------
+        shape : int or tuple, optional
+            Shape of the tensor to create
+        kwargs
+            keyword arguments passed to the constructor
+
+        Returns
+        -------
+        FourthOrderTensor
+        """
+        return cls._broadcast_matrix(kelvin_mapping.matrix, shape=shape, **kwargs)
+
+    @classmethod
     def identity_spherical_part(cls, shape=(), **kwargs):
         """
         Return the spherical part of the identity tensor.
