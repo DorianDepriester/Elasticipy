@@ -1016,11 +1016,13 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
         One can build a tensor array by providing a list of value for the input argument, instead of floats. For
         instance:
+
         >>> C = StiffnessTensor.isotropic(E=(210, 70), nu=(0.28, 0.35)) # Elastic moduli for steel and aluminium
         >>> C.shape
         (2,)
 
         We can easily check that the shear moduli for steel and aluminium are:
+
         >>> C[0].shear_modulus
         Hyperspherical function
         Min=82.0312499999999, Max=82.03125000000006
