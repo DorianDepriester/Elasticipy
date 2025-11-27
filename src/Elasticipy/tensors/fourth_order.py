@@ -603,8 +603,31 @@ class FourthOrderTensor:
         else:
             raise NotImplementedError('The r.h.s must be either an ndarray or an object of class {}'.format(self.__class__))
 
+
     @classmethod
-    def identity(cls, shape=(), return_full_tensor=False, mapping=kelvin_mapping):
+    def identity(cls, **kwargs):
+        """
+        Construct the Fourth-order identity tensor.
+
+        This is actually an alias for eye().
+
+        Parameters
+        ----------
+        kwargs : dict
+            Keyword arguments passed to the Fourth-order tensor constructor.
+
+        Returns
+        -------
+        FourthOrderTensor
+
+        See Also
+        --------
+        eye : Fourth-order identity tensor
+        """
+        return cls.eye(**kwargs)
+
+    @classmethod
+    def eye(cls, shape=(), return_full_tensor=False, mapping=kelvin_mapping):
         """
         Create a 4th-order identity tensor
 
