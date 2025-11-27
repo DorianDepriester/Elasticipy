@@ -615,13 +615,53 @@ class FourthOrderTensor:
         return_full_tensor : bool, optional
             If True, return the full tensor as a (3,3,3,3) or a (...,3,3,3,3) array. Otherwise, the tensor is returned
             as a SymmetricTensor object.
-        mapping : str, optional
+        mapping : Kelvin mapping, optional
             Mapping convention to use. Must be either Kelvin or Voigt.
 
         Returns
         -------
         numpy.ndarray or SymmetricTensor
             Identity tensor
+
+        Examples
+        --------
+        Create a (single) identity tensor:
+
+        >>> from Elasticipy.tensors.fourth_order import FourthOrderTensor
+        >>> I = FourthOrderTensor.identity()
+        >>> print(I)
+        4th-order tensor (in Kelvin mapping):
+        [[1. 0. 0. 0. 0. 0.]
+         [0. 1. 0. 0. 0. 0.]
+         [0. 0. 1. 0. 0. 0.]
+         [0. 0. 0. 1. 0. 0.]
+         [0. 0. 0. 0. 1. 0.]
+         [0. 0. 0. 0. 0. 1.]]
+
+         Alternatively, one can use another mapping convention, e.g. Voigt:
+
+         >>> from Elasticipy.tensors.mapping import VoigtMapping
+         >>> Iv = FourthOrderTensor.identity(mapping=VoigtMapping())
+         >>> print(Iv)
+         4th-order tensor (in Voigt mapping):
+         [[1.  0.  0.  0.  0.  0. ]
+          [0.  1.  0.  0.  0.  0. ]
+          [0.  0.  1.  0.  0.  0. ]
+          [0.  0.  0.  0.5 0.  0. ]
+          [0.  0.  0.  0.  0.5 0. ]
+          [0.  0.  0.  0.  0.  0.5]]
+
+         Still, we have:
+
+         >>> I == Iv
+         True
+
+         as they correspond to the same tensor, but expressed as a matrix with different mapping conventions. Indeed,
+         one can check that:
+
+         >>> import numpy as np
+         >>> np.array_equal(I.full_tensor, Iv.full_tensor)
+         True
         """
         eye = np.eye(3)
         if isinstance(shape, int):
