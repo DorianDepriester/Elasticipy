@@ -629,7 +629,9 @@ class FourthOrderTensor:
     @classmethod
     def eye(cls, shape=(), return_full_tensor=False, mapping=kelvin_mapping):
         """
-        Create a 4th-order identity tensor
+        Create a 4th-order identity tensor.
+
+        See notes for definition.
 
         Parameters
         ----------
@@ -645,6 +647,15 @@ class FourthOrderTensor:
         -------
         numpy.ndarray or SymmetricTensor
             Identity tensor
+
+        Notes
+        -----
+
+        The Fourth-order identity tensor is defined as:
+
+        .. math::
+
+            I_{ijkl} = \\frac12\\left( \\delta_{ik}\\delta_{jl} + \\delta_{il}\\delta_{jk}\\right)
 
         Examples
         --------
