@@ -758,6 +758,42 @@ class FourthOrderTensor:
         Returns
         -------
         FourthOrderTensor
+
+        Examples
+        --------
+        >>> tensor_of_ones = FourthOrderTensor.ones()
+        >>> tensor_of_ones
+        4th-order tensor (in Kelvin mapping):
+        [[1.         1.         1.         1.41421356 1.41421356 1.41421356]
+         [1.         1.         1.         1.41421356 1.41421356 1.41421356]
+         [1.         1.         1.         1.41421356 1.41421356 1.41421356]
+         [1.41421356 1.41421356 1.41421356 2.         2.         2.        ]
+         [1.41421356 1.41421356 1.41421356 2.         2.         2.        ]
+         [1.41421356 1.41421356 1.41421356 2.         2.         2.        ]]
+
+         At first sight, the tensor may appear not full of ones at all, but the representation above uses the Kelvin
+         mapping convention. Indeed, one can check that the full tensor is actually full of ones. E.g.:
+
+         >>> tensor_of_ones.full_tensor[0,1,0,2]
+         1.0
+
+         Alternatively, the Voigt mapping convention may help figuring it out:
+
+         >>> from Elasticipy.tensors.mapping import VoigtMapping
+         >>> tensor_of_ones_voigt = FourthOrderTensor.ones(mapping=VoigtMapping())
+         >>> tensor_of_ones_voigt
+         4th-order tensor (in Voigt mapping):
+         [[1. 1. 1. 1. 1. 1.]
+          [1. 1. 1. 1. 1. 1.]
+          [1. 1. 1. 1. 1. 1.]
+          [1. 1. 1. 1. 1. 1.]
+          [1. 1. 1. 1. 1. 1.]
+          [1. 1. 1. 1. 1. 1.]]
+
+         although both tensors are actually the same:
+
+         >>> tensor_of_ones == tensor_of_ones_voigt
+         True
         """
         return cls._broadcast_matrix(kelvin_mapping.matrix, shape=shape, **kwargs)
 
