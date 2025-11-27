@@ -798,7 +798,8 @@ class FourthOrderTensor:
 
         One can check that ``T.ddot(Tinv)`` and ``Tinv.ddot(T)`` are really close to the identity tensor:
 
-        >>> (T.ddot(Tinv) - FourthOrderTensor.eye()) * 1e16 # doctest: +SKIP
+        >>> I = FourthOrderTensor.eye()
+        >>> (T.ddot(Tinv) - I) * 1e16 # doctest: +SKIP
         4th-order tensor (in Kelvin mapping):
         [[ 1.00000000e+00  0.00000000e+00  1.11022302e-16  0.00000000e+00
            3.14018492e-16  0.00000000e+00]
@@ -813,7 +814,7 @@ class FourthOrderTensor:
          [-5.88784672e-16 -1.17756934e-15 -2.62499833e-16  5.96744876e-16
            1.24900090e-16  1.00000000e+00]]
 
-        >>> (Tinv.ddot(T) - FourthOrderTensor.eye()) * 1e16 # doctest: +SKIP
+        >>> (Tinv.ddot(T) - I) * 1e16 # doctest: +SKIP
         4th-order tensor (in Kelvin mapping):
         [[ 1.00000000e+00 -1.33226763e-15 -3.99680289e-15 -6.90840682e-15
           -7.53644380e-15 -2.51214793e-15]
@@ -828,6 +829,19 @@ class FourthOrderTensor:
          [-7.85046229e-16 -6.28036983e-16  6.28036983e-16  2.44249065e-15
            3.55271368e-15  1.00000000e+00]]
 
+        This function obvisouly also works for tensor arrays. E.g.:
+
+        >>> T = FourthOrderTensor.rand(shape=(5,3))
+        >>> Tinv = T.inv()
+        >>> Tinv.shape
+        (5, 3)
+
+        Again, one can check that ``T.ddot(Tinv)`` is close to the array of identity tensors:
+
+        >>> import numpy as np
+        >>> I = FourthOrderTensor.eye(shape=(5,3))
+        >>> np.max(T.ddot(Tinv).matrix() - I.matrix())  # doctest: +SKIP
+        5.906386491005833e-14
         """
         matrix_inv = np.linalg.inv(self._matrix)
         t = self.__class__(matrix_inv, mapping=kelvin_mapping)
