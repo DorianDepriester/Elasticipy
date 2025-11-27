@@ -337,6 +337,15 @@ class FourthOrderTensor:
         -------
         SymmetricFourthOrderTensor
             Flattened tensor
+
+        Examples
+        --------
+        >>> from Elasticipy.tensors.fourth_order import FourthOrderTensor
+        >>> T = FourthOrderTensor.rand(shape=(5,6))
+        >>> T
+        4th-order tensor array of shape (5, 6)
+        >>> T.flatten()
+        4th-order tensor array of shape (30,)
         """
         shape = self.shape
         if shape:
