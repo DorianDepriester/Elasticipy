@@ -846,7 +846,7 @@ class FourthOrderTensor:
         return t
 
     @classmethod
-    def zeros(cls, shape=()):
+    def zeros(cls, shape=(), **kwargs):
         """
         Create a fourth-order tensor populated with zeros
 
@@ -854,6 +854,9 @@ class FourthOrderTensor:
         ----------
         shape : int or tuple, optional
             Shape of the tensor to create
+        kwargs
+            Keyword arguments passed to the FourthOrderTensor constructor
+
         Returns
         -------
         FourthOrderTensor
@@ -863,7 +866,7 @@ class FourthOrderTensor:
         else:
             shape = shape + (6,6)
         zeros = np.zeros(shape)
-        return cls(zeros)
+        return cls(zeros, **kwargs)
 
     def matrix(self, mapping_convention=None):
         matrix = self._matrix
