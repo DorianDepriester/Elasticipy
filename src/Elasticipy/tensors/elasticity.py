@@ -1601,6 +1601,20 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         eig : returns the eigenstiffnesses and the eigenstrains
         eig_strains : returns the eigenstrains only
         eig_stiffnesses_multiplicity : returns the unique values of eigenstiffnesses with multiplicity
+
+        Notes
+        -----
+        The eigenstiffnesses are defined in [4]_.
+
+        Examples
+        --------
+        >>> from Elasticipy.tensors.elasticity import StiffnessTensor
+        >>> C = StiffnessTensor.cubic(C11=200, C12=40, C44=20)
+        >>> C.eig_stiffnesses
+        array([ 40.,  40.,  40., 160., 160., 280.])
+
+        These values actually correspond to 2*C44 (with multiplicity = 3), C11-C12 (with multiplicity = 2) and C11+2C12
+        (no multiplicity); see [4]_.
         """
         return np.linalg.eigvalsh(self._matrix)
 
