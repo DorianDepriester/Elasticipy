@@ -277,7 +277,9 @@ class SphericalFunction:
         phi, theta = angles.T
         u = sph2cart(phi, theta)
         values = self.eval(u)
-        if (np.array(args).shape == (2,) or np.array(args).shape == (1, 2)) and not isinstance(args, np.ndarray):
+        if ((np.array(args).shape == (2,) or np.array(args).shape == (1, 2))
+                and not isinstance(args, np.ndarray)
+                and isinstance(values, np.ndarray)):
             return values[0]
         else:
             return values
