@@ -1,6 +1,7 @@
 from Elasticipy.tensors.fourth_order import SymmetricFourthOrderTensor, kelvin_mapping, _isotropic_matrix
 from Elasticipy.spherical_function import SphericalFunction, HyperSphericalFunction
 from Elasticipy.crystal_symmetries import SYMMETRIES
+from Elasticipy.tensors.second_order import SymmetricSecondOrderTensor
 from Elasticipy.tensors.stress_strain import StrainTensor, StressTensor
 from Elasticipy.tensors.mapping import VoigtMapping
 import numpy as np
@@ -1161,8 +1162,8 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
         Returns
         -------
-        Gamma : np.ndarray
-            Array of Christoffel tensor(s). if u is a list of directions, Gamma[i] is the Christoffel tensor for
+        SymmetricSecondOrderTensor
+            Christoffel tensor(s). if u is a list of directions, Gamma[i] is the Christoffel tensor for
             direction  u[i].
 
         See Also
@@ -1178,7 +1179,8 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         """
         u_vec = np.atleast_2d(u)
         u_vec = (u_vec.T / np.linalg.norm(u_vec, axis=1)).T
-        return np.einsum('inmj,pn,pm->pij', self.full_tensor, u_vec, u_vec)
+        G = np.einsum('inmj,pn,pm->pij', self.full_tensor, u_vec, u_vec)
+        return SymmetricSecondOrderTensor(G)
 
     def wave_velocity(self, rho):
         """
@@ -1233,9 +1235,8 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         def make_fun(index):
             def fun(n):
                 Gamma = self.Christoffel_tensor(n)
-                eig, _ = np.linalg.eigh(Gamma)
-                eig_of_interest = eig[...,2-index]  # Switch ordering (descending order)
-                return np.sqrt(eig_of_interest / rho)
+                eig = Gamma.eigvals()
+                return np.sqrt(eig[...,index] / rho)
 
             return fun
 
