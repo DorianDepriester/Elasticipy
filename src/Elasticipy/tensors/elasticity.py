@@ -1239,6 +1239,40 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         .. [2] J. W. Jaeken, S. Cottenier, Solving the Christoffel equation: Phase and group velocities, Computer Physics
                Communications (207), 2016, https://doi.org/10.1016/j.cpc.2016.06.014.
 
+        Examples
+        --------
+        We will investigate the wave velocities in cubic Cu. First, define the stiffness tensor:
+
+        >>> C = StiffnessTensor.cubic(C11=186e3, C12=134e3, C44=77e3) # Stiffness in MPa
+        >>> rho = 8960 # mass density in kg/m³
+        >>> c_p, c_s1, c_s2 = C.wave_velocity(rho)
+
+        The range of velocities of the (fast) primary wave range can be printed with:
+
+        >>> print(c_p)
+        Spherical function
+        Min=4.556196722204669, Max=5.324304112812698
+
+        As the stiffness is given in MPa and the mass desity is given in kg/m³, the velocities are returned in km/s
+        (see Notes). If one wants to know the direction for min/max values:
+
+        >>> val_min, u_min = c_p.min()
+        >>> print(u_min)
+        [[0. 0. 1.]]
+
+        >>> val_max, u_max = c_p.max()
+        >>> print(u_max)
+        [[0.57735022 0.57735033 0.57735026]]
+
+        The secondary wave velocities are given by ``cs_1`` and ``cs_2``:
+
+        >>> c_s1
+        Spherical function
+        Min=2.1906864565414192, Max=2.9315098498896446
+
+        >>> c_s2
+        Spherical function
+        Min=1.7034628596749235, Max=2.9315098498896437
         """
         self._single_tensor_only('wave_velocity')
         def make_fun(index):
