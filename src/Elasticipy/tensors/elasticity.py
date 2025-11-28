@@ -1584,7 +1584,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         -----
         The definition for eigenstiffnesses and the eigenstrains are introduced in [4]_.
         """
-        return np.linalg.eigh(self.to_Kelvin())
+        return np.linalg.eigh(self._matrix)
 
     @property
     def eig_stiffnesses(self):
@@ -1602,7 +1602,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         eig_strains : returns the eigenstrains only
         eig_stiffnesses_multiplicity : returns the unique values of eigenstiffnesses with multiplicity
         """
-        return np.linalg.eigvalsh(self.to_Kelvin())
+        return np.linalg.eigvalsh(self._matrix)
 
     @property
     def eig_strains(self):
