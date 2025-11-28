@@ -1400,7 +1400,6 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         .. [3] S. I. Ranganathan and M. Ostoja-Starzewski, Universal Elastic Anisotropy Index,
            *Phys. Rev. Lett.*, 101(5), 055504, 2008. https://doi.org/10.1103/PhysRevLett.101.055504
         """
-        #self._single_tensor_only('universal_anisotropy')
         if isinstance(self, StiffnessTensor):
             C_voigt = self.infinite_random_average()
             S_reuss = self.inv().infinite_random_average()
