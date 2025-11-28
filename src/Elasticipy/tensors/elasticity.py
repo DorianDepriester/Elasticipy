@@ -1176,6 +1176,15 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
             .. math:: M_{ij} = C_{iklj}.u_k.u_l
 
+        Examples
+        --------
+        >>> from Elasticipy.tensors.elasticity import StiffnessTensor
+        >>> C = StiffnessTensor.cubic(C11=186, C12=134, C44=77) # Cubic Cu
+        >>> C.Christoffel_tensor([0, 0, 1])
+        Symmetric second-order tensor
+        [[ 77.   0.   0.]
+         [  0.  77.   0.]
+         [  0.   0. 186.]]
         """
         u_vec = np.atleast_2d(u)
         u_vec = (u_vec.T / np.linalg.norm(u_vec, axis=1)).T
