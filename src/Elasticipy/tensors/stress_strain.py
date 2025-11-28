@@ -176,6 +176,30 @@ class StressTensor(SymmetricSecondOrderTensor):
         See Also
         --------
         Tresca : Tresca equivalent stress
+
+        Examples
+        --------
+        For (single-valued) tensile stress:
+
+        >>> from Elasticipy.tensors.stress_strain import StressTensor
+        >>> sigma = StressTensor.tensile([1,0,0],1)
+        >>> sigma.vonMises()
+        1.0
+
+        For (single-valued) shear stress:
+
+        >>> sigma = StressTensor.shear([1,0,0],[0,1,0],1)
+        >>> sigma.vonMises()
+        1.7320508075688772
+
+        For arrays of stresses :
+
+        >>> import numpy as np
+        >>> sigma_xx = np.linspace(0,1,5)
+        >>> sigma_xy = np.linspace(0,1,5)
+        >>> sigma = StressTensor.tensile([1,0,0],sigma_xx) + StressTensor.shear([1,0,0],[0,1,0],sigma_xy)
+        >>> sigma.vonMises()
+        array([-0. ,  0.5,  1. ,  1.5,  2. ])
         """
         return np.sqrt(3 * self.J2)
 
