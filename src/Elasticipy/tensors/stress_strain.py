@@ -73,7 +73,29 @@ class StrainTensor(SymmetricSecondOrderTensor):
         return self.I1
 
     def eq_strain(self):
-        """von Mises equivalent strain"""
+        """von Mises equivalent strain
+
+        Returns
+        -------
+        numpy.ndarray or float
+            If the input tensor is single, the result will be float. Instead, an Numpy array will be returned.
+
+        Notes
+        -----
+        The von Mises equivalent strain is defined as:
+
+        .. math::
+
+            \\sqrt{\\frac23 \\varepsilon_{ij}\\varepsilon_{ij}}
+
+        Examples
+        --------
+        >>> from Elasticipy.tensors.stress_strain import StrainTensor
+        >>> StrainTensor.tensile([1,0,0], 1e-3).eq_strain()
+        0.000816496580927726
+        >>> StrainTensor.shear([1,0,0],[0,1,0], 1e-3).eq_strain()
+        0.0011547005383792514
+        """
         return np.sqrt(2/3 * self.ddot(self))
 
     def elastic_energy(self, stress, mode='pair'):
@@ -92,6 +114,27 @@ class StrainTensor(SymmetricSecondOrderTensor):
         -------
         float or numpy.ndarray
             Volumetric elastic energy
+
+        Examples
+        --------
+        Let consider an isotropic material (e.g. steel), undergoing tensile strain. In order to compute the volumetric
+        elastic energy, one can do the following:
+
+        >>> from Elasticipy.tensors.stress_strain import StrainTensor
+        >>> from Elasticipy.tensors.elasticity import StiffnessTensor
+        >>> C = StiffnessTensor.isotropic(E=210e3, nu=0.28)
+        >>> eps = StrainTensor.tensile([1,0,0],1e-3) # Define the strain
+        >>> sigma = C * eps # Compute the stress
+        >>> sigma
+        Stress tensor
+        [[268.46590909   0.           0.        ]
+         [  0.         104.40340909   0.        ]
+         [  0.           0.         104.40340909]]
+
+        Then, the volumetric elastic energy is:
+
+        >>> eps.elastic_energy(sigma)
+        0.13423295454545456
         """
         return 0.5 * self.ddot(stress, mode=mode)
 
