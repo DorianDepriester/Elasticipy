@@ -20,6 +20,23 @@ class StrainTensor(SymmetricSecondOrderTensor):
         -------
         np.ndarray
             Principal strain values
+
+        Examples
+        --------
+        For a single strain value, the principal strain values are composed of 3 float. E.g.:
+        >>> from Elasticipy.tensors.stress_strain import StrainTensor
+        >>> eps = StrainTensor.shear([1,0,0],[0,1,0],1e-3)
+        >>> eps.principal_strains()
+        array([ 0.001,  0.   , -0.001])
+
+        For strain tensor array, the shape of the returned array will depend on that of the strain array. E.g.:
+        >>> tau = [1,2,3,4] # increasing magnitude
+        >>> eps_2d = StrainTensor.shear([1,0,0],[0,1,0],tau)/1000
+        >>> eps_2d.principal_strains()
+        array([[ 0.001,  0.   , -0.001],
+               [ 0.002,  0.   , -0.002],
+               [ 0.003,  0.   , -0.003],
+               [ 0.004,  0.   , -0.004]])
         """
         return self.eigvals()
 
