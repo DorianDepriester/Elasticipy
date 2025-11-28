@@ -6,7 +6,8 @@
 [![ReadTheDoc](https://readthedocs.org/projects/elasticipy/badge/?version=latest)](https://elasticipy.readthedocs.io/)
 [![codecov](https://codecov.io/gh/DorianDepriester/Elasticipy/graph/badge.svg?token=VUZPEUPBH1)](https://codecov.io/gh/DorianDepriester/Elasticipy)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/Elasticipy)
-[![DOI](https://joss.theoj.org/papers/10.21105/joss.07940/status.svg)](https://doi.org/10.21105/joss.07940)[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/DorianDepriester/Elasticipy/HEAD?urlpath=%2Fdoc%2Ftree%2FElasticipy_for_the_Impatient.ipynb)
+[![DOI](https://joss.theoj.org/papers/10.21105/joss.07940/status.svg)](https://doi.org/10.21105/joss.07940)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/DorianDepriester/Elasticipy/HEAD?urlpath=%2Fdoc%2Ftree%2FElasticipy_for_the_Impatient.ipynb)
 
 
 # ![Elasticipy](docs/source/logo/logo_text.png)
@@ -62,7 +63,7 @@ Certain parts of the code, particularly those related to graphical user interfac
 - **`src/Elasticipy/gui.py`**
 
 ## :mortar_board: Cite this package
-If you use Elasticipy, please cite [![DOI](https://zenodo.org/badge/876162900.svg)](https://doi.org/10.5281/zenodo.14501849)
+If you use Elasticipy, please cite [![DOI](https://joss.theoj.org/papers/10.21105/joss.07940/status.svg)](https://doi.org/10.21105/joss.07940)
 
 You can use the following BibTeX entry:
 ````bibtex
