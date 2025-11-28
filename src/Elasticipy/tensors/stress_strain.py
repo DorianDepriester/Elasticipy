@@ -215,6 +215,30 @@ class StressTensor(SymmetricSecondOrderTensor):
         See Also
         --------
         vonMises : von Mises equivalent stress
+
+        Examples
+        --------
+        For (single-valued) tensile stress:
+
+        >>> from Elasticipy.tensors.stress_strain import StressTensor
+        >>> sigma = StressTensor.tensile([1,0,0],1)
+        >>> sigma.Tresca()
+        1.0
+
+        For (single-valued) shear stress:
+
+        >>> sigma = StressTensor.shear([1,0,0],[0,1,0],1)
+        >>> sigma.Tresca()
+        2.0
+
+        For arrays of stresses :
+
+        >>> import numpy as np
+        >>> sigma_xx = np.linspace(0,1,5)
+        >>> sigma_xy = np.linspace(0,1,5)
+        >>> sigma = StressTensor.tensile([1,0,0],sigma_xx) + StressTensor.shear([1,0,0],[0,1,0],sigma_xy)
+        >>> sigma.Tresca()
+        array([0.        , 0.55901699, 1.11803399, 1.67705098, 2.23606798])
         """
         ps = self.principal_stresses()
         return ps[...,0] - ps[...,-1]
