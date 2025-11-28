@@ -244,7 +244,7 @@ class SphericalFunction:
             raise ValueError('The input vector cannot be zeros')
         u_vec = (u_vec.T / norm).T
         values = self.fun(u_vec)
-        if isinstance(u, list) and np.array(u).shape == (3,):
+        if isinstance(u, list) and np.array(u).shape == (3,) and isinstance(values, np.ndarray):
             return values[0]
         else:
             return values
