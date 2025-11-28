@@ -48,6 +48,27 @@ class StrainTensor(SymmetricSecondOrderTensor):
         -------
         numpy.ndarray or float
             Volumetric change
+
+        Examples
+        --------
+        At first, try with pure shear:
+
+        >>> from Elasticipy.tensors.stress_strain import StrainTensor
+        >>> eps = StrainTensor.shear([1,0,0],[0,1,0],1e-3)
+        >>> eps.volumetric_strain()
+        0.0
+
+        Now try with hydrastatic straining:
+
+        >>> import numpy as np
+        >>> eps_hydro = StrainTensor(-np.eye(3)) / 1000
+        >>> eps_hydro
+        Strain tensor
+        [[-0.001 -0.    -0.   ]
+         [-0.    -0.001 -0.   ]
+         [-0.    -0.    -0.001]]
+        >>> eps_hydro.volumetric_strain()
+        -0.003
         """
         return self.I1
 
