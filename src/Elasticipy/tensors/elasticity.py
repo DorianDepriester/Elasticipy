@@ -1538,6 +1538,26 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         ----------
         .. [4] Helbig, K. (2013). What Kelvin might have written about Elasticity. Geophysical Prospecting, 61(1), 1-20.
             doi: 10.1111/j.1365-2478.2011.01049.x
+
+        Examples
+        --------
+        >>> from Elasticipy.tensors.elasticity import StiffnessTensor
+        >>> C = StiffnessTensor.cubic(C11=200, C12=40, C44=20)
+        >>> print(C)
+        Stiffness tensor (in Voigt mapping):
+        [[200.  40.  40.   0.   0.   0.]
+         [ 40. 200.  40.   0.   0.   0.]
+         [ 40.  40. 200.   0.   0.   0.]
+         [  0.   0.   0.  20.   0.   0.]
+         [  0.   0.   0.   0.  20.   0.]
+         [  0.   0.   0.   0.   0.  20.]]
+        >>> C.to_Kelvin()
+        array([[200.,  40.,  40.,   0.,   0.,   0.],
+               [ 40., 200.,  40.,   0.,   0.,   0.],
+               [ 40.,  40., 200.,   0.,   0.,   0.],
+               [  0.,   0.,   0.,  40.,   0.,   0.],
+               [  0.,   0.,   0.,   0.,  40.,   0.],
+               [  0.,   0.,   0.,   0.,   0.,  40.]])
         """
         return self._matrix
 
