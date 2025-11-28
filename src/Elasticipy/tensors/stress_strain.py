@@ -277,6 +277,35 @@ class StressTensor(SymmetricSecondOrderTensor):
         return 0.5 * self.ddot(strain, mode=mode)
 
     def draw_Mohr_circles(self):
+        """
+        Draw the Mohr circles of the stress tensor.
+
+        This function only works for single-valued tensors.
+
+        Returns
+        -------
+        fig : matplotlib.figure.Figure
+            handle to Matplotlib figure
+        ax : matplotlib.axes.Axes
+            handle to Matplotlib axes
+
+        Examples
+        --------
+        In order to illustrate this function, we consider a triaxial tensile stress:
+
+        >>> from Elasticipy.tensors.stress_strain import StressTensor
+        >>> sigma = StressTensor.tensile([1,0,0],1) + StressTensor.tensile([0,1,0],3)
+
+        The princiapl stresses are obviously 0, 1 and 2:
+
+        >>> sigma.principal_stresses()
+        array([3., 1., 0.])
+
+        These principal stresses can be directly plotted with:
+
+        >>> fig, ax = sigma.draw_Mohr_circles()
+        >>> fig.show()
+        """
         fig, ax = super().draw_Mohr_circles()
         ax.set_xlabel(ax.get_xlabel() + ' stress')
         ax.set_ylabel(ax.get_ylabel() + ' stress')
