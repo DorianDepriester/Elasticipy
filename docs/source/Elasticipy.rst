@@ -2,7 +2,7 @@ API documentation
 -----------------
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 5
 
    Elasticipy.tensors.fourth_order
    Elasticipy.tensors.elasticity
