@@ -8,6 +8,7 @@ API documentation
    Elasticipy.tensors.elasticity
    Elasticipy.tensors.second_order
    Elasticipy.tensors.stress_strain
+   Elasticipy.tensors.thermal_expansion
    Elasticipy.spherical_function
    Elasticipy.plasticity
    Elasticipy.interfaces.PRISMS
