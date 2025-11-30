@@ -647,7 +647,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
     @property
     def lame1(self):
-        """"
+        """
         Compute the first Lamé's parameter (only for isotropic materials).
 
         If the stiffness/compliance tensor is not isotropic, NaN is returned.
