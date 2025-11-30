@@ -550,10 +550,8 @@ class SecondOrderTensor:
             tensor or tensor array to compute the product from
         mode : str, optional
             If 'pair' (default), the contraction products of tensor arrays are applied element-wise. Broadcasting rule
-             applies.
-
-            If 'cross', all combinations of contraction product are considered. If ``C=A.dot(B,mode='cross')``, then
-            ``C.shape==A.shape + B.shape``
+            applies. If 'cross', all combinations of contraction product are considered. If ``C=A.dot(B,mode='cross')``,
+            then ``C.shape==A.shape + B.shape``.
 
         Returns
         -------
