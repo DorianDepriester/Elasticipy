@@ -5,3 +5,4 @@ Elasticipy.interfaces.FEPX module
    :members:
    :undoc-members:
    :show-inheritance:
+   :inherited-members:

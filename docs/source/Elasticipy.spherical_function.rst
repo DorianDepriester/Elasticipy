@@ -5,3 +5,4 @@ Elasticipy.spherical_function module
    :members:
    :undoc-members:
    :show-inheritance:
+   :inherited-members:

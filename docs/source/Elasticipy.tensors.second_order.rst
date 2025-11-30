@@ -5,3 +5,4 @@ Elasticipy.tensors.second_order module
    :members:
    :undoc-members:
    :show-inheritance:
+   :inherited-members:

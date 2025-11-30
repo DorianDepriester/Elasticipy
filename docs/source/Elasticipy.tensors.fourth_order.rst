@@ -5,3 +5,4 @@ Elasticipy.tensors.fourth_order module
    :members:
    :undoc-members:
    :show-inheritance:
+   :inherited-members:

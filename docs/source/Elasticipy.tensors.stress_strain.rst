@@ -5,3 +5,4 @@ Elasticipy.tensors.stress_strain module
    :members:
    :undoc-members:
    :show-inheritance:
+   :inherited-members:
