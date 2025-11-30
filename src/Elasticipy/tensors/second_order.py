@@ -1216,6 +1216,50 @@ class SecondOrderTensor:
         :math:`\\mathbf{b}` is the body force density and :math:`\\rho` is the mass density.
 
         In this function, the derivatives are computed with ``numpy.grad`` function.
+
+        Examples
+        --------
+        First, we build an array of tensile stress with evenly spaced magnitude:
+
+        >>> from Elasticipy.tensors.stress_strain import StressTensor
+        >>> magnitude = [0,1,2,3,4]
+        >>> s = StressTensor.tensile([1,0,0],magnitude)
+        >>> s.div()
+        array([[1., 0., 0.],
+               [1., 0., 0.],
+               [1., 0., 0.],
+               [1., 0., 0.],
+               [1., 0., 0.]])
+
+        We now create a stress tensor whose components follows this:
+
+        .. math:
+
+            \\sigma_{xx} = 2x+3y^2
+            \\sigma_{yy} = y^2+z
+            \\sigma_{xy} = xy
+
+
+        To do this, we consider a regular grid of 0.1 in a unit cube:
+
+        >>> import numpy as np
+        >>> spacing = 0.1
+        >>> x,y,z=np.meshgrid(np.arange(0,1,spacing),np.arange(0,1,spacing),np.arange(0,1,spacing), indexing='ij')
+        >>> s_xx = 2*x + 3*y**2
+        >>> s_yy = y**2+z
+        >>> s_xy = x*y
+        >>> s = StressTensor.tensile([1,0,0],s_xx) + StressTensor.tensile([0,1,0],s_yy) + StressTensor.shear([1,0,0],[0,1,0],s_xy)
+        >>> div = s.div(spacing = 0.1)
+
+        As we work here in 3D, the result is of shape (10,10,10,3):
+
+        >>> div.shape
+        (10, 10, 10, 3)
+
+        For instance, the divergence at x=y=z=0 is:
+
+        >>> div[0,0,0,:]
+        array([2. , 0.1, 0. ])
         """
         ndim = min(self.ndim, 3)    # Even if the array has more than 3Ds, we restrict to 3D
         if isinstance(spacing, (float, int)):
