@@ -8,7 +8,7 @@ class StrainTensor(SymmetricSecondOrderTensor):
 
     """
     name = 'Strain tensor'
-    voigt_map = [1, 1, 1, 2, 2, 2]
+    _voigt_map = [1, 1, 1, 2, 2, 2]
 
     def principal_strains(self):
         """

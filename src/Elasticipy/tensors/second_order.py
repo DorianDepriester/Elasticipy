@@ -1480,7 +1480,7 @@ class SecondOrderTensor:
 
 
 class SymmetricSecondOrderTensor(SecondOrderTensor):
-    voigt_map = [1, 1, 1, 1, 1, 1]
+    _voigt_map = [1, 1, 1, 1, 1, 1]
     "List of factors to use for building a tensor from Voigt vector(s)"
 
     name = 'Symmetric second-order tensor'
@@ -1572,7 +1572,7 @@ class SymmetricSecondOrderTensor(SecondOrderTensor):
          [13. 23. 33.]]
         """
         if voigt_map is None:
-            voigt_map = cls.voigt_map
+            voigt_map = cls._voigt_map
         matrix = _unmap(array, voigt_map)
         return cls(matrix)
 
@@ -1587,7 +1587,7 @@ class SymmetricSecondOrderTensor(SecondOrderTensor):
         numpy.ndarray
             Voigt vector summarizing the components
         """
-        return _map(self.matrix, self.voigt_map)
+        return _map(self.matrix, self._voigt_map)
     
     @classmethod
     def from_Kelvin(cls, array):
