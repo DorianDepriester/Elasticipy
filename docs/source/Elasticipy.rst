@@ -1,6 +1,3 @@
-Elasticipy package
-==================
-
 API documentation
 -----------------
 
