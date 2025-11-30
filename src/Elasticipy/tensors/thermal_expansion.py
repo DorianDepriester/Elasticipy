@@ -40,7 +40,7 @@ class ThermalExpansionTensor(SymmetricSecondOrderTensor):
         Examples
         --------
         Let consider a transverse isotropic case (e.g. carbon fibers):
-        >>> from Elasticipy.ThermalExpansion import ThermalExpansionTensor as ThEx
+        >>> from Elasticipy.tensors.thermal_expansion import ThermalExpansionTensor as ThEx
         >>> alpha = ThEx.transverse_isotropic(alpha_11=5.6e-6, alpha_33=-0.4e-6)
 
         Now apply temperature increases:
