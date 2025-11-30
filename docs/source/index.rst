@@ -193,4 +193,4 @@ If you use Elasticipy, please cite |JOSS|, or use the following BibTeX entry::
    :caption: Table of Contents
 
    ./Tutorials.rst
-   modules
+   Elasticipy
