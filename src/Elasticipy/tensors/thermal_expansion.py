@@ -40,14 +40,17 @@ class ThermalExpansionTensor(SymmetricSecondOrderTensor):
         Examples
         --------
         Let consider a transverse isotropic case (e.g. carbon fibers):
+
         >>> from Elasticipy.tensors.thermal_expansion import ThermalExpansionTensor as ThEx
         >>> alpha = ThEx.transverse_isotropic(alpha_11=5.6e-6, alpha_33=-0.4e-6)
 
         Now apply temperature increases:
+
         >>> T = [0, 1, 2]
         >>> eps = alpha.apply_temperature(T)
 
         We get a strain tensor of the same shape as the applied temperatures:
+
         >>> eps
         Strain tensor
         Shape=(3,)
@@ -58,11 +61,13 @@ class ThermalExpansionTensor(SymmetricSecondOrderTensor):
          [ 0.00e+00  0.00e+00 -8.00e-07]]
 
          Now let's rotate the thermal expansions:
+
          >>> from scipy.spatial.transform import Rotation
          >>> rot = Rotation.random(3) # Set of 3 random 3D rotations
          >>> alpha_rotated = alpha * rot
 
          If we want to combine each rotated thermal expansion with the corresponding temperature increase:
+
          >>> eps_rotated_pair = alpha_rotated * T # Equivalent to alpha_rotated.apply_temperature(T)
          >>> eps_rotated_pair
          Strain tensor
