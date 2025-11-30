@@ -45,22 +45,7 @@ def unvoigt_index(i):
                                   [0, 1]])
     return inverse_voigt_mat[i]
 
-def rotate_tensor(full_tensor, r):
-    """
-    Rotate a (full) fourth-order tensor.
-
-    Parameters
-    ----------
-    full_tensor : numpy.ndarray
-        array of shape (3,3,3,3) or (...,3,3,3,3) containing all the components
-    r : scipy.spatial.Rotation or orix.quaternion.Rotation
-        Rotation, or set of rotations, to apply
-
-    Returns
-    -------
-    numpy.ndarray
-        Rotated tensor. If r is an array, the corresponding axes will be added as first axes in the result array.
-    """
+def _rotate_tensor(full_tensor, r):
     rot_mat = rotation_to_matrix(r)
     str_ein = '...im,...jn,...ko,...lp,...mnop->...ijkl'
     return np.einsum(str_ein, rot_mat, rot_mat, rot_mat, rot_mat, full_tensor)
@@ -441,7 +426,7 @@ class FourthOrderTensor:
         4th-order tensor array of shape (100,)
         """
         t2 = deepcopy(self)
-        rotated_tensor = rotate_tensor(self.full_tensor, rotation)
+        rotated_tensor = _rotate_tensor(self.full_tensor, rotation)
         t2._matrix = self._full_to_matrix(rotated_tensor)
         return t2
 
