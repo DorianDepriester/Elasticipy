@@ -5,7 +5,7 @@ import numpy as np
 from Elasticipy.tensors.elasticity import StiffnessTensor
 from pytest import approx
 
-from Elasticipy.spherical_function import HyperSphericalFunction
+from Elasticipy.spherical_function import HyperSphericalFunction, SphericalFunction
 
 C = StiffnessTensor.cubic(C11=186, C12=134, C44=77)
 E = C.Young_modulus # SphericalFunction
@@ -99,6 +99,17 @@ class TestSphericalFunction(unittest.TestCase):
         assert E.eval_spherical([0, 90], degrees=True) == approx(E.eval([1, 0, 0]))
         assert E.eval_spherical([90, 90], degrees=True) == approx(E.eval([0, 1, 0]))
 
+    def test_equality(self):
+        C1 = StiffnessTensor.isotropic(E=210, nu=0.3)
+        K = C1.bulk_modulus
+        G = C1.lame2
+        C2 = StiffnessTensor.isotropic(K=K, G=G)
+        assert C1.Young_modulus == C2.Young_modulus
+        C3 = StiffnessTensor.isotropic(K=K, G=G*0.999)
+        assert C1.Young_modulus != C3.Young_modulus
+        assert C1.Young_modulus != C1.shear_modulus
+
+
 
 class TestHyperSphericalFunction(unittest.TestCase):
     def test_plot3D(self):
@@ -169,6 +180,16 @@ class TestHyperSphericalFunction(unittest.TestCase):
 
         a = HyperSphericalFunction(fun)
         assert a.mean(method='exact') == approx(1.0)
+
+    def test_equality(self):
+        C1 = StiffnessTensor.isotropic(E=210, nu=0.3)
+        K = C1.bulk_modulus
+        G = C1.lame2
+        C2 = StiffnessTensor.isotropic(K=K, G=G)
+        assert C1.shear_modulus == C2.shear_modulus
+        C3 = StiffnessTensor.isotropic(K=K, G=G*0.999)
+        assert C1.shear_modulus != C3.shear_modulus
+        assert C1.shear_modulus != C1.Young_modulus
 
 if __name__ == '__main__':
     unittest.main()
