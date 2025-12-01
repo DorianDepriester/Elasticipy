@@ -1231,7 +1231,7 @@ class SecondOrderTensor:
 
         We now create a stress tensor whose components follows this:
 
-        .. math:
+        .. math::
 
             \\sigma_{xx} = 2x+3y^2
             \\sigma_{yy} = y^2+z
