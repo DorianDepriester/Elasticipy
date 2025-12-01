@@ -90,8 +90,8 @@ def from_results_folder(folder, dtype=None):
           - SecondOrderTensor
           - SymmetricSecondOrderTensor
           - SkewSymmetricSecondOrderTensor
-          - stressTensor
-          - strainTensor
+          - StressTensor
+          - StrainTensor
 
     Returns
     -------
