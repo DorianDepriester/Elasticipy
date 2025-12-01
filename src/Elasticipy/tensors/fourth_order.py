@@ -294,17 +294,17 @@ class FourthOrderTensor:
          [0. 0. 0. 0. 1. 0.]
          [0. 0. 0. 0. 0. 1.]]
 
-         >>> I_full = I.full_tensor
-         >>> type(I_full)
-         <class 'numpy.ndarray'>
-         >>> I_full.shape
-         (3, 3, 3, 3)
+        >>> I_full = I.full_tensor
+        >>> type(I_full)
+        <class 'numpy.ndarray'>
+        >>> I_full.shape
+        (3, 3, 3, 3)
 
-         When working on tensor arrays, the shape of the resulting numpy array will change accordlingly. E.g.:
+        When working on tensor arrays, the shape of the resulting numpy array will change accordlingly. E.g.:
 
-         >>> I_array = FourthOrderTensor.eye(shape=(5,6)) # Array of 4th order identity tensor
-         >>> I_array.full_tensor.shape
-         (5, 6, 3, 3, 3, 3)
+        >>> I_array = FourthOrderTensor.eye(shape=(5,6)) # Array of 4th order identity tensor
+        >>> I_array.full_tensor.shape
+        (5, 6, 3, 3, 3, 3)
         """
         i, j, k, ell = np.indices((3, 3, 3, 3))
         ij = voigt_indices(i, j)
