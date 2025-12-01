@@ -49,18 +49,19 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         Construct a stiffness tensor or an array of stiffness tensors.
 
         The stiffness tensor can be constructed from a (6,6) matrix or slices of (6,6) matrices. These matrices must be
-        symmetric. An error is thrown if this matrix in not definite positive (except if ``check_symmetry==False``, see
-        below). The input argument can also be the full tensor (array of shape (...,3,3,3,3)).
+        symmetric. An error is thrown if this matrix in not definite positive (except if
+        ``check_positive_definite==False``, see below). The input argument can also be the full tensor (array of shape
+        (...,3,3,3,3)).
 
         Parameters
         ----------
         M : list or np.ndarray
             (...,6,6) matrix corresponding to the stiffness tensor, written using the Voigt notation, or array of shape
             (...,3,3,3,3).
-        phase_name : str, default None
-            Name to display
-        symmetry : str, default Triclinic
-            Name of the crystal's symmetry
+        phase_name : str, optional
+            Phase name to display
+        check_positive_definite : bool, optional
+            Whether to check if the input matrix is positive definite or not. True by default.
         check_symmetry : bool, optional
             Whether to check or not that the input matrix is symmetric.
         force_symmetry : bool, optional
