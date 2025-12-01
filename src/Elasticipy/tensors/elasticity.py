@@ -1952,7 +1952,8 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
          [-20.34233446   0.99714278  19.34519167  -6.52548033   8.1901353
            39.41409344]]
 
-        Once rotated, it is not clear if the stiffness tensors has cubic symmetry. Yet:
+        Once rotated, it is not clear if the stiffness tensors has cubic symmetry on sight. Yet:
+
         >>> C_rotated.is_cubic()
         True
 
