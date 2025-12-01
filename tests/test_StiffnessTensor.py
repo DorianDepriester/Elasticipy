@@ -984,10 +984,10 @@ class TestStiffnessConstructor(unittest.TestCase):
             assert Cv_1[i] == C_rotated[i, :].Voigt_average()
             assert Cr_1[i] == C_rotated[i, :].Reuss_average()
 
-        np.testing.assert_array_almost_equal(Cv_0.Voigt_average()._matrix, C_rotated.Voigt_average()._matrix)
-        np.testing.assert_array_almost_equal(Cv_1.Voigt_average()._matrix, C_rotated.Voigt_average()._matrix)
-        np.testing.assert_array_almost_equal(Cr_0.Reuss_average()._matrix, C_rotated.Reuss_average()._matrix)
-        np.testing.assert_array_almost_equal(Cr_1.Reuss_average()._matrix, C_rotated.Reuss_average()._matrix)
+        np.testing.assert_array_almost_equal(Cv_0.Voigt_average().matrix(), C_rotated.Voigt_average().matrix())
+        np.testing.assert_array_almost_equal(Cv_1.Voigt_average().matrix(), C_rotated.Voigt_average().matrix())
+        np.testing.assert_array_almost_equal(Cr_0.Reuss_average().matrix(), C_rotated.Reuss_average().matrix())
+        np.testing.assert_array_almost_equal(Cr_1.Reuss_average().matrix(), C_rotated.Reuss_average().matrix())
 
     def test_linear_invariants(self):
         C = S.inv()
