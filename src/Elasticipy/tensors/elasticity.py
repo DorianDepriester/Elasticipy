@@ -698,14 +698,20 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         SphericalFunction
             Young's modulus
         """
-        self._single_tensor_only('Young_modulus')
-        if isinstance(self, ComplianceTensor):
-            S = self
+        if self.ndim:
+            flat = self.flatten()
+            array = []
+            for i in range(flat.shape[0]):
+                array.append(flat[i].Young_modulus)
+            return np.array(array).reshape(self.shape)
         else:
-            S = self.inv()
-        def compute_young_modulus(u):
-            a = np.einsum('ijkl,...i,...j,...k,...l->...', S.full_tensor, u, u, u, u)
-            return 1 / a
+            if isinstance(self, ComplianceTensor):
+                S = self
+            else:
+                S = self.inv()
+            def compute_young_modulus(u):
+                a = np.einsum('ijkl,...i,...j,...k,...l->...', S.full_tensor, u, u, u, u)
+                return 1 / a
 
         return SphericalFunction(compute_young_modulus)
 
@@ -828,7 +834,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
     @property
     def lame2(self):
-        """"
+        """
         Compute the second Lamé's parameter (only for isotropic materials).
 
         If the stiffness/compliance tensor is not isotropic, NaN is returned.
