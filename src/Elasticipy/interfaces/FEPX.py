@@ -97,7 +97,7 @@ def from_results_folder(folder, dtype=None):
     -------
     SecondOrderTensor or numpy.ndarray
         Array of second-order tensors built from the read data. The array will be of shape (m, n), where m is the number
-         of time increment n is the number of elements in the mesh.
+        of time increment n is the number of elements in the mesh.
     """
     dir_path = Path(folder)
     folder_name = dir_path.name
