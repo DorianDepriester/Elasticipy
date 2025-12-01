@@ -46,15 +46,17 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
     def __init__(self, M, check_positive_definite=True, phase_name= None, mapping=VoigtMapping(), **kwargs):
         """
-        Construct of stiffness tensor from a (6,6) matrix.
+        Construct a stiffness tensor or an array of stiffness tensors.
 
-        The input matrix must be symmetric, otherwise an error is thrown (except if check_symmetry==False, see below)
+        The stiffness tensor can be constructed from a (6,6) matrix or slices of (6,6) matrices. These matrices must be
+        symmetric. An error is thrown if this matrix in not definite positive (except if ``check_symmetry==False``, see
+        below). The input argument can also be the full tensor (array of shape (...,3,3,3,3)).
 
         Parameters
         ----------
         M : np.ndarray
-            (6,6) matrix corresponding to the stiffness tensor, written using the Voigt notation, or array of shape
-            (3,3,3,3).
+            (...,6,6) matrix corresponding to the stiffness tensor, written using the Voigt notation, or array of shape
+            (...,3,3,3,3).
         phase_name : str, default None
             Name to display
         symmetry : str, default Triclinic
