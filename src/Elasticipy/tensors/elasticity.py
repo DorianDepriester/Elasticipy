@@ -54,7 +54,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
         Parameters
         ----------
-        M : np.ndarray
+        M : list or np.ndarray
             (...,6,6) matrix corresponding to the stiffness tensor, written using the Voigt notation, or array of shape
             (...,3,3,3,3).
         phase_name : str, default None
@@ -74,6 +74,90 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         results you will get when performing operations (Young's modulus, "product" with strain tensor etc.) will be
         consistent with these units. For instance, if the stiffness tensor is defined in GPa, the computed stress will
         be given in GPa as well.
+
+        Examples
+        --------
+        Create a stiffness tensor for cubic symmetry:
+
+        >>> matrix = [[200, 40,  40,  0,  0,  0 ],
+        ...           [40,  200, 40,  0,  0,  0 ],
+        ...           [40,  40,  200, 0,  0,  0 ],
+        ...           [0,   0,   0,   20, 0,  0 ],
+        ...           [0,   0,   0,   0,  20, 0 ],
+        ...           [0,   0,   0,   0,   0, 20]]
+        >>> from Elasticipy.tensors.elasticity import StiffnessTensor
+        >>> C = StiffnessTensor(matrix)
+        >>> print(C)
+        Stiffness tensor (in Voigt mapping):
+        [[200.  40.  40.   0.   0.   0.]
+         [ 40. 200.  40.   0.   0.   0.]
+         [ 40.  40. 200.   0.   0.   0.]
+         [  0.   0.   0.  20.   0.   0.]
+         [  0.   0.   0.   0.  20.   0.]
+         [  0.   0.   0.   0.   0.  20.]]
+
+        Create a stiffness tensor from full (3,3,3,3) array:
+
+        >>> C_full = C.full_tensor # (3,3,3,3) numpy array
+        >>> print((type(C_full), C_full.shape))
+        (<class 'numpy.ndarray'>, (3, 3, 3, 3))
+
+        >>> StiffnessTensor(C_full)
+        Stiffness tensor (in Voigt mapping):
+        [[200.  40.  40.   0.   0.   0.]
+         [ 40. 200.  40.   0.   0.   0.]
+         [ 40.  40. 200.   0.   0.   0.]
+         [  0.   0.   0.  20.   0.   0.]
+         [  0.   0.   0.   0.  20.   0.]
+         [  0.   0.   0.   0.   0.  20.]]
+
+        Create an array of stiffness tensors:
+
+        First, we create two slices of (6,6) matrices, corresponding to two stiffness values:
+
+        >>> slices = [[[200, 40,  40,  0,  0,  0 ],
+        ...            [40,  200, 40,  0,  0,  0 ],
+        ...            [40,  40,  200, 0,  0,  0 ],
+        ...            [0,   0,   0,   20, 0,  0 ],
+        ...            [0,   0,   0,   0,  20, 0 ],
+        ...            [0,   0,   0,   0,   0, 20]],
+        ...           [[250, 80,  80,  0,  0,  0 ],
+        ...            [80,  250, 80,  0,  0,  0 ],
+        ...            [80,  80,  250, 0,  0,  0 ],
+        ...            [0,   0,   0,   40, 0,  0 ],
+        ...            [0,   0,   0,   0,  40, 0 ],
+        ...            [0,   0,   0,   0,   0, 40]]]
+
+        Then, one can create an array of stiffness tensors:
+
+        >>> C_array=StiffnessTensor(slices)
+        >>> print(C_array)
+        Stiffness tensor (in Voigt mapping):
+        [[[200.  40.  40.   0.   0.   0.]
+          [ 40. 200.  40.   0.   0.   0.]
+          [ 40.  40. 200.   0.   0.   0.]
+          [  0.   0.   0.  20.   0.   0.]
+          [  0.   0.   0.   0.  20.   0.]
+          [  0.   0.   0.   0.   0.  20.]]
+        <BLANKLINE>
+         [[250.  80.  80.   0.   0.   0.]
+          [ 80. 250.  80.   0.   0.   0.]
+          [ 80.  80. 250.   0.   0.   0.]
+          [  0.   0.   0.  40.   0.   0.]
+          [  0.   0.   0.   0.  40.   0.]
+          [  0.   0.   0.   0.   0.  40.]]]
+
+
+        This array can be subindexed. E.g.:
+
+        >>> C_array[0]
+        Stiffness tensor (in Voigt mapping):
+        [[200.  40.  40.   0.   0.   0.]
+         [ 40. 200.  40.   0.   0.   0.]
+         [ 40.  40. 200.   0.   0.   0.]
+         [  0.   0.   0.  20.   0.   0.]
+         [  0.   0.   0.   0.  20.   0.]
+         [  0.   0.   0.   0.   0.  20.]]
         """
         super().__init__(M, mapping=mapping, **kwargs)
         if check_positive_definite:
