@@ -188,6 +188,77 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         -------
         ComplianceTensor
             Reciprocal tensor
+
+        Examples
+        --------
+        Create a stiffness tensor for cubic symmetry:
+
+        >>> C = StiffnessTensor.cubic(C11=186, C12=134, C44=77)
+        >>> print(C)
+        Stiffness tensor (in Voigt mapping):
+        [[186. 134. 134.   0.   0.   0.]
+         [134. 186. 134.   0.   0.   0.]
+         [134. 134. 186.   0.   0.   0.]
+         [  0.   0.   0.  77.   0.   0.]
+         [  0.   0.   0.   0.  77.   0.]
+         [  0.   0.   0.   0.   0.  77.]]
+
+        The reciprocal (compliance) tensor is given by:
+
+        >>> S = C.inv()
+        >>> print(S)
+        Compliance tensor (in Voigt mapping):
+        [[ 0.01355473 -0.00567604 -0.00567604  0.          0.          0.        ]
+         [-0.00567604  0.01355473 -0.00567604  0.          0.          0.        ]
+         [-0.00567604 -0.00567604  0.01355473  0.          0.          0.        ]
+         [ 0.          0.          0.          0.01298701  0.          0.        ]
+         [ 0.          0.          0.          0.          0.01298701  0.        ]
+         [ 0.          0.          0.          0.          0.          0.01298701]]
+
+        This also works for tensor arrays. In this case, the returned value will be a compliance tensor array of the
+        same shape as the tensor array. For instance:
+
+        >>> slices = [[[200, 40,  40,  0,  0,  0 ],
+        ...            [40,  200, 40,  0,  0,  0 ],
+        ...            [40,  40,  200, 0,  0,  0 ],
+        ...            [0,   0,   0,   20, 0,  0 ],
+        ...            [0,   0,   0,   0,  20, 0 ],
+        ...            [0,   0,   0,   0,   0, 20]],
+        ...           [[250, 80,  80,  0,  0,  0 ],
+        ...            [80,  250, 80,  0,  0,  0 ],
+        ...            [80,  80,  250, 0,  0,  0 ],
+        ...            [0,   0,   0,   40, 0,  0 ],
+        ...            [0,   0,   0,   0,  40, 0 ],
+        ...            [0,   0,   0,   0,   0, 40]]]
+        >>> C = StiffnessTensor(slices)
+        >>> S = C.inv()
+        >>> print(S)
+        Compliance tensor (in Voigt mapping):
+        [[[ 0.00535714 -0.00089286 -0.00089286  0.          0.
+            0.        ]
+          [-0.00089286  0.00535714 -0.00089286  0.          0.
+            0.        ]
+          [-0.00089286 -0.00089286  0.00535714  0.          0.
+            0.        ]
+          [ 0.          0.          0.          0.05        0.
+            0.        ]
+          [ 0.          0.          0.          0.          0.05
+            0.        ]
+          [ 0.          0.          0.          0.          0.
+            0.05      ]]
+        <BLANKLINE>
+         [[ 0.00473458 -0.00114778 -0.00114778  0.          0.
+            0.        ]
+          [-0.00114778  0.00473458 -0.00114778  0.          0.
+            0.        ]
+          [-0.00114778 -0.00114778  0.00473458  0.          0.
+            0.        ]
+          [ 0.          0.          0.          0.025       0.
+            0.        ]
+          [ 0.          0.          0.          0.          0.025
+            0.        ]
+          [ 0.          0.          0.          0.          0.
+            0.025     ]]]
         """
         C = np.linalg.inv(self._matrix)
         t2 = ComplianceTensor(C, mapping=kelvin_mapping, phase_name=self.phase_name)
