@@ -9,7 +9,7 @@ import numpy as np
 import re
 from warnings import warn
 
-def elementwise_property(func):
+def _elementwise_property(func):
     @property
     @wraps(func)
     def wrapper(self, *args, **kwargs):
@@ -696,7 +696,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
                            [C16, C26, C36, C46, C56, C66]])
         return cls(matrix, phase_name=phase_name)
 
-    @elementwise_property
+    @_elementwise_property
     def Young_modulus(self):
         """
         Directional Young's modulus
@@ -716,7 +716,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
         return SphericalFunction(compute_young_modulus)
 
-    @elementwise_property
+    @_elementwise_property
     def shear_modulus(self):
         """
         Directional shear modulus
@@ -736,7 +736,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
         return HyperSphericalFunction(compute_shear_modulus)
 
-    @elementwise_property
+    @_elementwise_property
     def Poisson_ratio(self):
         """
         Directional Poisson's ratio
@@ -768,7 +768,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
         return HyperSphericalFunction(compute_PoissonRatio)
 
-    @elementwise_property
+    @_elementwise_property
     def linear_compressibility(self):
         """
         Compute the directional linear compressibility.
@@ -807,7 +807,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         """
         return self.inv().bulk_modulus
 
-    @elementwise_property
+    @_elementwise_property
     def lame1(self):
         """
         Compute the first Lamé's parameter (only for isotropic materials).
@@ -829,7 +829,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         else:
             return np.nan
 
-    @elementwise_property
+    @_elementwise_property
     def lame2(self):
         """
         Compute the second Lamé's parameter (only for isotropic materials).
