@@ -4,9 +4,22 @@ from Elasticipy.crystal_symmetries import SYMMETRIES
 from Elasticipy.tensors.second_order import SymmetricSecondOrderTensor
 from Elasticipy.tensors.stress_strain import StrainTensor, StressTensor
 from Elasticipy.tensors.mapping import VoigtMapping
+from functools import wraps
 import numpy as np
 import re
 from warnings import warn
+
+def elementwise_property(func):
+    @property
+    @wraps(func)
+    def wrapper(self, *args, **kwargs):
+        if getattr(self, "ndim", 0) != 0:
+            flat = self.flatten()
+            result = [getattr(e, func.__name__) for e in flat]
+            return np.array(result).reshape(self.shape)
+        return func(self, *args, **kwargs)
+    return wrapper
+
 
 def _parse_tensor_components(prefix, **kwargs):
     pattern = r'^{}(\d{{2}})$'.format(prefix)
@@ -683,12 +696,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
                            [C16, C26, C36, C46, C56, C66]])
         return cls(matrix, phase_name=phase_name)
 
-    def _single_tensor_only(self, fun_name=''):
-        if self.ndim:
-            err_msg = fun_name + ' is not suitable for tensor array. Consider subscripting (e.g. C[0].{}).'.format(fun_name)
-            raise ValueError(err_msg)
-
-    @property
+    @elementwise_property
     def Young_modulus(self):
         """
         Directional Young's modulus
@@ -698,24 +706,17 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         SphericalFunction
             Young's modulus
         """
-        if self.ndim:
-            flat = self.flatten()
-            array = []
-            for i in range(flat.shape[0]):
-                array.append(flat[i].Young_modulus)
-            return np.array(array).reshape(self.shape)
+        if isinstance(self, ComplianceTensor):
+            S = self
         else:
-            if isinstance(self, ComplianceTensor):
-                S = self
-            else:
-                S = self.inv()
-            def compute_young_modulus(u):
-                a = np.einsum('ijkl,...i,...j,...k,...l->...', S.full_tensor, u, u, u, u)
-                return 1 / a
+            S = self.inv()
+        def compute_young_modulus(u):
+            a = np.einsum('ijkl,...i,...j,...k,...l->...', S.full_tensor, u, u, u, u)
+            return 1 / a
 
         return SphericalFunction(compute_young_modulus)
 
-    @property
+    @elementwise_property
     def shear_modulus(self):
         """
         Directional shear modulus
@@ -725,7 +726,6 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         HyperSphericalFunction
             Shear modulus
         """
-        self._single_tensor_only('shear_modulus')
         if isinstance(self, ComplianceTensor):
             S = self
         else:
@@ -736,7 +736,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
         return HyperSphericalFunction(compute_shear_modulus)
 
-    @property
+    @elementwise_property
     def Poisson_ratio(self):
         """
         Directional Poisson's ratio
@@ -757,7 +757,6 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
         where :math:`\\varepsilon_{jj}` denotes the (compressive) longitudinal strain along the j-th direction.
         """
-        self._single_tensor_only('Poisson_ratio')
         if isinstance(self, ComplianceTensor):
             Sfull = self.full_tensor
         else:
@@ -769,7 +768,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
         return HyperSphericalFunction(compute_PoissonRatio)
 
-    @property
+    @elementwise_property
     def linear_compressibility(self):
         """
         Compute the directional linear compressibility.
@@ -783,7 +782,6 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         --------
         bulk_modulus : bulk modulus of the material
         """
-        self._single_tensor_only('linear_compressibility')
         if isinstance(self, ComplianceTensor):
             S = self
         else:
@@ -809,7 +807,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         """
         return self.inv().bulk_modulus
 
-    @property
+    @elementwise_property
     def lame1(self):
         """
         Compute the first Lamé's parameter (only for isotropic materials).
@@ -825,14 +823,13 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         --------
         lame2 : second Lamé's parameter
         """
-        self._single_tensor_only('lame1')
         if self.is_isotropic():
             C11 = (self.C11 + self.C22 + self.C33) / 3
             return C11 - 2 * self.lame2
         else:
             return np.nan
 
-    @property
+    @elementwise_property
     def lame2(self):
         """
         Compute the second Lamé's parameter (only for isotropic materials).
@@ -848,7 +845,6 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         --------
         lame1 : first Lamé's parameter
         """
-        self._single_tensor_only('lame2')
         if self.is_isotropic():
             return (self.C44 + self.C55 + self.C66) / 3
         else:
@@ -1439,7 +1435,8 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         Spherical function
         Min=1.7034628596749235, Max=2.9315098498896437
         """
-        self._single_tensor_only('wave_velocity')
+        if self.ndim:
+            raise ValueError('This function is not suitable for tensor array. Consider subscripting (e.g. C[0].wave_velocity()).')
         def make_fun(index):
             def fun(n):
                 Gamma = self.Christoffel_tensor(n)
