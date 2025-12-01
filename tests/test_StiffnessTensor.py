@@ -242,10 +242,11 @@ class TestComplianceTensor(unittest.TestCase):
     def test_multidimensional_attributes(self):
         S_rotated = S * rotations
         shape = (len(rotations),)
-        for attr in ['Young_modulus', 'shear_modulus', 'linear_compressibility', 'Poisson_ratio', 'lame1', 'lame2']:
+        for attr in ['Young_modulus', 'shear_modulus', 'linear_compressibility', 'Poisson_ratio']:
             a = getattr(S_rotated, attr, 0)
             assert isinstance(a, np.ndarray)
             assert a.shape == shape
+            assert getattr(S_rotated[0], attr, 0) == a[0]
         with self.assertRaises(ValueError) as context:
             _ = S_rotated.wave_velocity(1.)
         expected = 'This function is not suitable for tensor array. Consider subscripting (e.g. C[0].wave_velocity()).'
