@@ -249,6 +249,15 @@ class SphericalFunction:
         else:
             return values
 
+    def __eq__(self, other):
+        if type(other) is self.__class__:
+            n_evals = 10000
+            _, a_evals = self.evaluate_on_spherical_grid(n_evals)
+            _, b_evals = other.evaluate_on_spherical_grid(n_evals)
+            return np.allclose(a_evals, b_evals)
+        else:
+            return False
+
     def eval_spherical(self, *args, degrees=False):
         """
         Evaluate value along a given (set of) direction(s) defined by its (their) spherical coordinates.
