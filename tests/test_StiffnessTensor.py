@@ -241,25 +241,16 @@ class TestComplianceTensor(unittest.TestCase):
 
     def test_multidimensional_attributes(self):
         S_rotated = S * rotations
-        expected = 'Young_modulus is not suitable for tensor array. Consider subscripting (e.g. C[0].Young_modulus).'
+        shape = (len(rotations),)
+        for attr in ['Young_modulus', 'shear_modulus', 'linear_compressibility', 'Poisson_ratio', 'lame1', 'lame2']:
+            a = getattr(S_rotated, attr, 0)
+            assert isinstance(a, np.ndarray)
+            assert a.shape == shape
         with self.assertRaises(ValueError) as context:
-            _ = S_rotated.Young_modulus
+            _ = S_rotated.wave_velocity(1.)
+        expected = 'This function is not suitable for tensor array. Consider subscripting (e.g. C[0].wave_velocity()).'
         self.assertEqual(str(context.exception), expected)
 
-        expected = 'shear_modulus is not suitable for tensor array. Consider subscripting (e.g. C[0].shear_modulus).'
-        with self.assertRaises(ValueError) as context:
-            _ = S_rotated.shear_modulus
-        self.assertEqual(str(context.exception), expected)
-
-        expected = 'linear_compressibility is not suitable for tensor array. Consider subscripting (e.g. C[0].linear_compressibility).'
-        with self.assertRaises(ValueError) as context:
-            _ = S_rotated.linear_compressibility
-        self.assertEqual(str(context.exception), expected)
-
-        expected = 'wave_velocity is not suitable for tensor array. Consider subscripting (e.g. C[0].wave_velocity).'
-        with self.assertRaises(ValueError) as context:
-            _ = S_rotated.wave_velocity(5)
-        self.assertEqual(str(context.exception), expected)
 
     def test_voigt_reuss_axis(self):
         m,n = 5,6
