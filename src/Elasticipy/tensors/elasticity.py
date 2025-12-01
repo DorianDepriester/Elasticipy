@@ -1923,6 +1923,121 @@ class ComplianceTensor(StiffnessTensor):
     _C46_C56_factor = 2.0
 
     def __init__(self, C, check_positive_definite=True, mapping=VoigtMapping(tensor='Compliance'), **kwargs):
+        """
+        Construct a compliance tensor or an array of commpliance tensors.
+
+        The compliance tensor can be constructed from a (6,6) matrix or slices of (6,6) matrices. These matrices must be
+        symmetric. An error is thrown if this matrix in not definite positive (except if
+        ``check_positive_definite==False``, see below). The input argument can also be the full tensor (array of shape
+        (...,3,3,3,3)).
+
+        Parameters
+        ----------
+        M : list or np.ndarray
+            (...,6,6) matrix corresponding to the compliance tensor, written using the Voigt notation, or array of shape
+            (...,3,3,3,3).
+        phase_name : str, optional
+            Phase name to display
+        check_positive_definite : bool, optional
+            Whether to check if the input matrix is positive definite or not. True by default.
+        check_symmetry : bool, optional
+            Whether to check or not that the input matrix is symmetric.
+        force_symmetry : bool, optional
+            If true, the major symmetry of the tensor is forced
+        mapping : str or MappingConvention
+            mapping convention to use. Default is VoigtMapping.
+
+        Notes
+        -----
+        The units used when building the comliance tensor are up to the user (/GPa, /MPa, /psi etc.). Therefore, the
+        results you will get when performing operations (Young's modulus, "product" with strain tensor etc.) will be
+        consistent with these units. For instance, if the compliance tensor is defined in /GPa, the computed stress will
+        be given in GPa.
+
+        Examples
+        --------
+        Create a compliance tensor for cubic symmetry:
+
+        >>> matrix = [[200, 40,  40,  0,  0,  0 ],
+        ...           [40,  200, 40,  0,  0,  0 ],
+        ...           [40,  40,  200, 0,  0,  0 ],
+        ...           [0,   0,   0,   20, 0,  0 ],
+        ...           [0,   0,   0,   0,  20, 0 ],
+        ...           [0,   0,   0,   0,   0, 20]]
+        >>> from Elasticipy.tensors.elasticity import ComplianceTensor
+        >>> S = ComplianceTensor(matrix)
+        >>> print(S)
+        Compliance tensor (in Voigt mapping):
+        [[200.  40.  40.   0.   0.   0.]
+         [ 40. 200.  40.   0.   0.   0.]
+         [ 40.  40. 200.   0.   0.   0.]
+         [  0.   0.   0.  20.   0.   0.]
+         [  0.   0.   0.   0.  20.   0.]
+         [  0.   0.   0.   0.   0.  20.]]
+
+        Create a stiffness tensor from full (3,3,3,3) array:
+
+        >>> S_full = S.full_tensor # (3,3,3,3) numpy array
+        >>> print((type(S_full), S_full.shape))
+        (<class 'numpy.ndarray'>, (3, 3, 3, 3))
+
+        >>> ComplianceTensor(S_full)
+        Compliance tensor (in Voigt mapping):
+        [[200.  40.  40.   0.   0.   0.]
+         [ 40. 200.  40.   0.   0.   0.]
+         [ 40.  40. 200.   0.   0.   0.]
+         [  0.   0.   0.  20.   0.   0.]
+         [  0.   0.   0.   0.  20.   0.]
+         [  0.   0.   0.   0.   0.  20.]]
+
+        Create an array of compliance tensors:
+
+        First, we create two slices of (6,6) matrices, corresponding to two compliance values:
+
+        >>> slices = [[[200, 40,  40,  0,  0,  0 ],
+        ...            [40,  200, 40,  0,  0,  0 ],
+        ...            [40,  40,  200, 0,  0,  0 ],
+        ...            [0,   0,   0,   20, 0,  0 ],
+        ...            [0,   0,   0,   0,  20, 0 ],
+        ...            [0,   0,   0,   0,   0, 20]],
+        ...           [[250, 80,  80,  0,  0,  0 ],
+        ...            [80,  250, 80,  0,  0,  0 ],
+        ...            [80,  80,  250, 0,  0,  0 ],
+        ...            [0,   0,   0,   40, 0,  0 ],
+        ...            [0,   0,   0,   0,  40, 0 ],
+        ...            [0,   0,   0,   0,   0, 40]]]
+
+        Then, one can create an array of compliance tensors:
+
+        >>> S_array=ComplianceTensor(slices)
+        >>> print(S_array)
+        Compliance tensor (in Voigt mapping):
+        [[[200.  40.  40.   0.   0.   0.]
+          [ 40. 200.  40.   0.   0.   0.]
+          [ 40.  40. 200.   0.   0.   0.]
+          [  0.   0.   0.  20.   0.   0.]
+          [  0.   0.   0.   0.  20.   0.]
+          [  0.   0.   0.   0.   0.  20.]]
+        <BLANKLINE>
+         [[250.  80.  80.   0.   0.   0.]
+          [ 80. 250.  80.   0.   0.   0.]
+          [ 80.  80. 250.   0.   0.   0.]
+          [  0.   0.   0.  40.   0.   0.]
+          [  0.   0.   0.   0.  40.   0.]
+          [  0.   0.   0.   0.   0.  40.]]]
+
+
+        This array can be subindexed. E.g.:
+
+        >>> S_array[0]
+        Compliance tensor (in Voigt mapping):
+        [[200.  40.  40.   0.   0.   0.]
+         [ 40. 200.  40.   0.   0.   0.]
+         [ 40.  40. 200.   0.   0.   0.]
+         [  0.   0.   0.  20.   0.   0.]
+         [  0.   0.   0.   0.  20.   0.]
+         [  0.   0.   0.   0.   0.  20.]]
+        """
         super().__init__(C, check_positive_definite=check_positive_definite, mapping=mapping, **kwargs)
         self.mapping_name = 'Voigt'
 
