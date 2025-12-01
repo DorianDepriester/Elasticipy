@@ -1,4 +1,4 @@
-Elasticipy.interfaces.FEPX module
+Elasticipy.interfaces.FEPX
 ====================================
 
 .. automodule:: Elasticipy.interfaces.FEPX

@@ -1,4 +1,4 @@
-Elasticipy.interfaces.PRISMS module
+Elasticipy.interfaces.PRISMS
 ====================================
 
 .. automodule:: Elasticipy.interfaces.PRISMS

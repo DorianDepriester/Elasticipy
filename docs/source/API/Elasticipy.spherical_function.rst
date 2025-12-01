@@ -1,4 +1,4 @@
-Elasticipy.spherical_function module
+Elasticipy.spherical_function
 ====================================
 
 .. automodule:: Elasticipy.spherical_function

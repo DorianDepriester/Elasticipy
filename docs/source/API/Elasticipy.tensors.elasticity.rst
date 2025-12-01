@@ -1,4 +1,4 @@
-Elasticipy.tensors.elasticity module
+Elasticipy.tensors.elasticity
 ====================================
 
 .. automodule:: Elasticipy.tensors.elasticity
