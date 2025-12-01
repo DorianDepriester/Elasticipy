@@ -65,7 +65,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         check_symmetry : bool, optional
             Whether to check or not that the input matrix is symmetric.
         force_symmetry : bool, optional
-            If true, the major symmetry of the tensor is forces
+            If true, the major symmetry of the tensor is forced
         mapping : str or MappingConvention
             mapping convention to use. Default is VoigtMapping.
 
