@@ -1174,7 +1174,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         Spherical function
         Min=210000.0000000001, Max=210000.00000000032
 
-        One can build a tensor array by providing a list of value for the input argument, instead of floats. For
+        One can build a tensor array by providing a list of values for the input arguments, instead of floats. For
         instance:
 
         >>> C = StiffnessTensor.isotropic(E=(210, 70), nu=(0.28, 0.35)) # Elastic moduli for steel and aluminium
