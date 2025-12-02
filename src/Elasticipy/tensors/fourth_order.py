@@ -71,7 +71,7 @@ class FourthOrderTensor:
     """
     Template class for manipulating symmetric fourth-order tensors.
     """
-    tensor_name = '4th-order'
+    _tensor_name = '4th-order'
 
     def _array_to_Kelvin(self, matrix):
         return matrix / self.mapping.matrix * kelvin_mapping.matrix
@@ -245,17 +245,17 @@ class FourthOrderTensor:
                     new_matrix = obj._matrix / kelvin_mapping.matrix * self.mapping.matrix
                     return new_matrix[...,I, J]
 
-                getter.__doc__ = f"Returns the ({i + 1},{j + 1}) component of the {self.tensor_name} matrix."
+                getter.__doc__ = f"Returns the ({i + 1},{j + 1}) component of the {self._tensor_name} matrix."
                 component_name = 'C{}{}'.format(i + 1, j + 1)
                 setattr(self.__class__, component_name, property(getter))  # Dynamically create the property
 
     def __repr__(self):
         if (self.ndim == 0) or ((self.ndim==1) and self.shape[0]<5):
-            msg = '{} tensor (in {} mapping):\n'.format(self.tensor_name, self.mapping.name)
+            msg = '{} tensor (in {} mapping):\n'.format(self._tensor_name, self.mapping.name)
             matrix = self.matrix(self.mapping)
             msg += matrix.__str__()
         else:
-            msg = '{} tensor array of shape {}'.format(self.tensor_name, self.shape)
+            msg = '{} tensor array of shape {}'.format(self._tensor_name, self.shape)
         return msg
 
     @property
@@ -394,16 +394,16 @@ class FourthOrderTensor:
          [ 1.41421356  1.41421356  1.41421356 -2.          2.         -2.        ]
          [-1.41421356 -1.41421356 -1.41421356  2.         -2.          2.        ]]
 
-         Actually, a more simple syntax is:
+        Actually, a more simple syntax is:
 
-         >>> T * g
-         4th-order tensor (in Kelvin mapping):
-         [[ 1.          1.          1.         -1.41421356  1.41421356 -1.41421356]
-          [ 1.          1.          1.         -1.41421356  1.41421356 -1.41421356]
-          [ 1.          1.          1.         -1.41421356  1.41421356 -1.41421356]
-          [-1.41421356 -1.41421356 -1.41421356  2.         -2.          2.        ]
-          [ 1.41421356  1.41421356  1.41421356 -2.          2.         -2.        ]
-          [-1.41421356 -1.41421356 -1.41421356  2.         -2.          2.        ]]
+        >>> T * g
+        4th-order tensor (in Kelvin mapping):
+        [[ 1.          1.          1.         -1.41421356  1.41421356 -1.41421356]
+         [ 1.          1.          1.         -1.41421356  1.41421356 -1.41421356]
+         [ 1.          1.          1.         -1.41421356  1.41421356 -1.41421356]
+         [-1.41421356 -1.41421356 -1.41421356  2.         -2.          2.        ]
+         [ 1.41421356  1.41421356  1.41421356 -2.          2.         -2.        ]
+         [-1.41421356 -1.41421356 -1.41421356  2.         -2.          2.        ]]
 
         Obviously, the original tensor can be retrieved by applying the reverse rotation:
 
@@ -1217,7 +1217,7 @@ class FourthOrderTensor:
         return a
 
 class SymmetricFourthOrderTensor(FourthOrderTensor):
-    tensor_name = 'Symmetric 4th-order'
+    _tensor_name = 'Symmetric 4th-order'
 
     def __init__(self, M, check_symmetries=True, force_symmetries=False, **kwargs):
         """

@@ -52,7 +52,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
     """
     Class for manipulating fourth-order stiffness tensors.
     """
-    tensor_name = 'Stiffness'
+    _tensor_name = 'Stiffness'
     _C11_C12_factor = 0.5
     _C46_C56_factor = 1.0
     _component_prefix = 'C'
@@ -1992,7 +1992,7 @@ class ComplianceTensor(StiffnessTensor):
     """
     Class for manipulating compliance tensors
     """
-    tensor_name = 'Compliance'
+    _tensor_name = 'Compliance'
     _C11_C12_factor = 2.0
     _component_prefix = 'S'
     _C46_C56_factor = 2.0
