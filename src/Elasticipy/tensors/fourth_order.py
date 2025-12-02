@@ -1128,6 +1128,29 @@ class FourthOrderTensor:
         Returns
         -------
         FourthOrderTensor
+
+        Examples
+        --------
+        The single-valued null 4th order tensor is just:
+
+        >>> from Elasticipy.tensors.fourth_order import FourthOrderTensor
+        >>> FourthOrderTensor.zeros()
+        4th-order tensor (in Kelvin mapping):
+        [[0. 0. 0. 0. 0. 0.]
+         [0. 0. 0. 0. 0. 0.]
+         [0. 0. 0. 0. 0. 0.]
+         [0. 0. 0. 0. 0. 0.]
+         [0. 0. 0. 0. 0. 0.]
+         [0. 0. 0. 0. 0. 0.]]
+
+        One can also create an array of such tensors:
+
+        >>> zeros_tensor = FourthOrderTensor.zeros(shape=3)
+
+        and check that it populated with zeros:
+
+        >>> zeros_tensor == 0.
+        array([ True,  True,  True])
         """
         if isinstance(shape, int):
             shape = (shape, 6, 6)
