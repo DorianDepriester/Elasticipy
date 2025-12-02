@@ -234,6 +234,7 @@ class IsotropicHardening:
          current strain: 0.1
 
         If one wants to reset the JC, without recreating it:
+
         >>> stress = JC.reset_strain()
         >>> print(JC)
         Johnson-Cook plasticity model
