@@ -53,7 +53,7 @@ class IsotropicHardening:
 
         Examples
         --------
-        First, create a JC model:
+        As an example, we consider a Jonhson-Cook model:
 
         >>> from Elasticipy.plasticity import JohnsonCook
         >>> JC = JohnsonCook(A=792, B=510, n=0.26)
@@ -98,7 +98,7 @@ class IsotropicHardening:
 
         Examples
         --------
-        As an example, we consider the Jonshon-Cook plasticity model:
+        As an example, we consider the Johnson-Cook plasticity model:
 
         >>> from Elasticipy.plasticity import JohnsonCook
         >>> JC = JohnsonCook(A=792, B=510, n=0.26)
@@ -162,8 +162,52 @@ class IsotropicHardening:
         See Also
         --------
         apply_strain : apply strain to the JC model and updates its hardening value
+
+        Examples
+        --------
+        As an example, we consider the Johnson-Cook plasticity model:
+
+        >>> from Elasticipy.plasticity import JohnsonCook
+        >>> JC = JohnsonCook(A=792, B=510, n=0.26)
+
+        The yield stress is equal to A here. So consider a tensile stress whose magnitude below A:
+
+        >>> from Elasticipy.tensors.stress_strain import StressTensor
+        >>> sigma = StressTensor.tensile([1,0,0], 700)
+        >>> strain_inc = JC.compute_strain_increment(sigma)
+        >>> print(strain_inc)
+        Strain tensor
+        [[ 0.  0.  0.]
+         [ 0. -0.  0.]
+         [ 0.  0. -0.]]
+
+        whereas if the stress is larger than A:
+
+        >>> sigma = StressTensor.tensile([1,0,0], 800)
+        >>> strain_inc = JC.compute_strain_increment(sigma)
+        >>> print(strain_inc)
+        Strain tensor
+        [[ 1.14733854e-07  0.00000000e+00  0.00000000e+00]
+         [ 0.00000000e+00 -5.73669268e-08  0.00000000e+00]
+         [ 0.00000000e+00  0.00000000e+00 -5.73669268e-08]]
+
+        Check out that the JC model has been updated:
+
+        >>> print(JC)
+        Johnson-Cook plasticity model
+         type: Isotropic
+         criterion: von Mises
+         current strain: 1.1473385353505149e-07
+
+        Therefore, the yield stress has increased because of hardening. For instance, if we apply the same stress has
+        before, we get:
+
+        >>> JC.compute_strain_increment(sigma)
+        Strain tensor
+        [[ 0.  0.  0.]
+         [ 0. -0.  0.]
+         [ 0.  0. -0.]]
         """
-        pass
 
     def reset_strain(self):
         """
