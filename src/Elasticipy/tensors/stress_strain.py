@@ -322,7 +322,8 @@ class StressTensor(SymmetricSecondOrderTensor):
         Returns
         -------
         float or np.ndarray
-            Stress triaxiality
+            Stress triaxiality. A float is returned if the tensor is single-valued, otherwise, an array of the same
+            shape of the tensor is returned.
 
         See Also
         --------
@@ -341,5 +342,19 @@ class StressTensor(SymmetricSecondOrderTensor):
         where :math:`p` and :math:`\\sigma_{vM}` are the hydrostatic pressure and the von Mises equivalent stress,
         respectively.
 
+        Examples
+        --------
+        One can check that the stress triaxiality is for simple tensile is 1/3:
+
+        >>> from Elasticipy.tensors.stress_strain import StressTensor
+        >>> s1 = StressTensor.tensile([1,0,0],1.)
+        >>> s1.triaxiality()
+        0.3333333333333333
+
+        For a stress array (e.g. for biaxial tensile stress):
+
+        >>> s2 = s1 + StressTensor.tensile([0,1,0],[0,0.5,1])
+        >>> s2.triaxiality()
+        array([0.33333333, 0.57735027, 0.66666667])
         """
         return self.I1 / self.vonMises() / 3
