@@ -459,6 +459,31 @@ class FourthOrderTensor:
         -------
         numpy.ndarray
             If no axis is given, the result will be of shape (3,3,3,3).
+
+        Examples
+        --------
+        Create a random tensor array of shape (5,6):
+
+        >>> from Elasticipy.tensors.fourth_order import FourthOrderTensor
+        >>> T = FourthOrderTensor.rand(shape=(5,6))
+        >>> Overall_mean = T.mean()
+        >>> Overall_mean.shape
+        ()
+        >>> Overall_mean # doctest: +SKIP
+        4th-order tensor (in Kelvin mapping):
+        [[0.514295   0.52259217 0.42899181 0.77148692 0.64073221 0.73211491]
+         [0.49422678 0.43718365 0.40786118 0.8170971  0.68435571 0.67262655]
+         [0.48753674 0.51142541 0.44650454 0.76310921 0.67724973 0.69430165]
+         [0.53946846 0.75101474 0.73578098 1.04338905 1.21598419 0.99489014]
+         [0.75354555 0.61193555 0.82341479 1.11197826 0.89183143 1.20986243]
+         [0.66078807 0.70126535 0.63719147 0.87567139 1.05671229 1.03004098]]
+
+         >>> axis_0_mean = T.mean(axis=0)
+         >>> axis_0_mean.shape
+         (6,)
+         >>> axis_1_mean = T.mean(axis=1)
+         >>> axis_1_mean.shape
+         (5,)
         """
         t2 = deepcopy(self)
         if axis is None:
