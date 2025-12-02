@@ -216,6 +216,30 @@ class IsotropicHardening:
         Returns
         -------
         None
+
+        Examples
+        --------
+        As an example, we consider the Johnson-Cook plasticity model:
+
+        >>> from Elasticipy.plasticity import JohnsonCook
+        >>> JC = JohnsonCook(A=792, B=510, n=0.26)
+
+        First apply a strain increment:
+
+        >>> stress = JC.apply_strain(0.1)
+        >>> print(JC)
+        Johnson-Cook plasticity model
+         type: Isotropic
+         criterion: von Mises
+         current strain: 0.1
+
+        If one wants to reset the JC, without recreating it:
+        >>> stress = JC.reset_strain()
+        >>> print(JC)
+        Johnson-Cook plasticity model
+         type: Isotropic
+         criterion: von Mises
+         current strain: 0.0
         """
         self.plastic_strain = 0.0
 
