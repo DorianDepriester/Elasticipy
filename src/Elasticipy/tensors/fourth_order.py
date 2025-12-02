@@ -1246,13 +1246,14 @@ class SymmetricFourthOrderTensor(FourthOrderTensor):
         """
         Construct a fully symmetric fourth-order tensor from a (...,6,6) or a (...,3,3,3,3) array.
 
-        The input matrix must be symmetric, otherwise an error is thrown (except if check_symmetry==False, see below)
+        The input matrix must be symmetric, otherwise an error is thrown (except if ``check_symmetry==False``, see
+        below)
 
         Parameters
         ----------
         M : np.ndarray or FourthOrderTensor
-            (6,6) matrix corresponding to the stiffness tensor, written using the Voigt notation, or array of shape
-            (3,3,3,3).
+            (6,6) matrix corresponding to the stiffness tensor, or slices of (6,6) matrices or array of shape
+            (...,3,3,3,3).
         check_symmetries : bool, optional
             Whether to check or not that the tensor to built displays both major and minor symmetries (see Notes).
         force_symmetries : bool, optional
