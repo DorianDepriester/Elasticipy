@@ -237,6 +237,23 @@ class SphericalFunction:
         See Also
         --------
         eval_spherical : evaluate the function along a given direction given using the spherical coordinates
+
+        Examples
+        --------
+        As an example of spherical function, we consider the Young modulus estimated from a stiffness tensor:
+
+        >>> from Elasticipy.tensors.elasticity import StiffnessTensor
+        >>> E = StiffnessTensor.cubic(C11=110, C12=54, C44=60).Young_modulus
+
+        The Young modulus along x direction is:
+
+        >>> E.eval([1,0,0])
+        74.4390243902439
+
+        The Young moduli along a set a directions can be evaluated at once. E.g. along x, y and z:
+
+        >>> E.eval([[1,0,0], [0,1,0], [0,0,1]])
+        array([74.43902439, 74.43902439, 74.43902439])
         """
         u_vec = np.atleast_2d(u)
         norm = np.linalg.norm(u_vec, axis=1)
