@@ -49,7 +49,29 @@ class IsotropicHardening:
 
         Returns
         -------
-        StrainTensor or float
+        float or np.ndarray
+
+        Examples
+        --------
+        First, create a JC model:
+
+        >>> from Elasticipy.plasticity import JohnsonCook
+        >>> JC = JohnsonCook(A=792, B=510, n=0.26)
+        >>> print(JC)
+        Johnson-Cook plasticity model
+         type: Isotropic
+         criterion: von Mises
+         current strain: 0.0
+
+        >>> JC.flow_stress(0.0) # Check that the yield stress = A
+        792.0
+
+        In order to get the full tensile curve in 0 to 10% strain range:
+
+        >>> import numpy as nn
+        >>> JC.flow_stress(np.linspace(0,0.1,5)) # Check that the yield stress = B
+        array([ 792.        ,  987.44950657, 1026.04662195, 1052.067513  ,
+               1072.26584567])
         """
         pass
 
