@@ -772,30 +772,30 @@ class FourthOrderTensor:
          [0. 0. 0. 0. 1. 0.]
          [0. 0. 0. 0. 0. 1.]]
 
-         Alternatively, one can use another mapping convention, e.g. Voigt:
+        Alternatively, one can use another mapping convention, e.g. Voigt:
 
-         >>> from Elasticipy.tensors.mapping import VoigtMapping
-         >>> Iv = FourthOrderTensor.eye(mapping=VoigtMapping())
-         >>> print(Iv)
-         4th-order tensor (in Voigt mapping):
-         [[1.  0.  0.  0.  0.  0. ]
-          [0.  1.  0.  0.  0.  0. ]
-          [0.  0.  1.  0.  0.  0. ]
-          [0.  0.  0.  0.5 0.  0. ]
-          [0.  0.  0.  0.  0.5 0. ]
-          [0.  0.  0.  0.  0.  0.5]]
+        >>> from Elasticipy.tensors.mapping import VoigtMapping
+        >>> Iv = FourthOrderTensor.eye(mapping=VoigtMapping())
+        >>> print(Iv)
+        4th-order tensor (in Voigt mapping):
+        [[1.  0.  0.  0.  0.  0. ]
+         [0.  1.  0.  0.  0.  0. ]
+         [0.  0.  1.  0.  0.  0. ]
+         [0.  0.  0.  0.5 0.  0. ]
+         [0.  0.  0.  0.  0.5 0. ]
+         [0.  0.  0.  0.  0.  0.5]]
 
-         Still, we have:
+        Still, we have:
 
-         >>> I == Iv
-         True
+        >>> I == Iv
+        True
 
-         as they correspond to the same tensor, but expressed as a matrix with different mapping conventions. Indeed,
-         one can check that:
+        as they correspond to the same tensor, but expressed as a matrix with different mapping conventions. Indeed,
+        one can check that:
 
-         >>> import numpy as np
-         >>> np.array_equal(I.full_tensor, Iv.full_tensor)
-         True
+        >>> import numpy as np
+        >>> np.array_equal(I.full_tensor, Iv.full_tensor)
+        True
         """
         return cls._broadcast_matrix(np.eye(6), shape=shape, **kwargs)
 
