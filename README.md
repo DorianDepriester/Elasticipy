@@ -2,6 +2,7 @@
 [![PyPI - Downloads](https://img.shields.io/pypi/dm/Elasticipy?link=https%3A%2F%2Fpypi.org%2Fproject%2FElasticipy%2F)](https://pypistats.org/packages/elasticipy)
 [![Conda Version](https://img.shields.io/conda/v/conda-forge/Elasticipy)](https://anaconda.org/channels/conda-forge/packages/elasticipy/overview)
 ![Conda Downloads](https://img.shields.io/conda/d/conda-forge/Elasticipy)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/y/DorianDepriester/Elasticipy)
 [![PyPI - License](https://img.shields.io/pypi/l/Elasticipy)](https://github.com/DorianDepriester/Elasticipy/blob/main/LICENSE)
 [![ReadTheDoc](https://readthedocs.org/projects/elasticipy/badge/?version=latest)](https://elasticipy.readthedocs.io/)
 [![codecov](https://codecov.io/gh/DorianDepriester/Elasticipy/graph/badge.svg?token=VUZPEUPBH1)](https://codecov.io/gh/DorianDepriester/Elasticipy)
