@@ -1125,6 +1125,55 @@ class FourthOrderTensor:
         -------
         numpy.ndarray
             Components of the tensor as a matrix
+
+        Examples
+        --------
+        Create an identity 4th-order tensor:
+
+        >>> from Elasticipy.tensors.fourth_order import FourthOrderTensor
+        >>> t = FourthOrderTensor.eye()
+
+        Its matrix with respect to Kelvin mapping is:
+
+        >>> t.matrix()
+        array([[1., 0., 0., 0., 0., 0.],
+               [0., 1., 0., 0., 0., 0.],
+               [0., 0., 1., 0., 0., 0.],
+               [0., 0., 0., 1., 0., 0.],
+               [0., 0., 0., 0., 1., 0.],
+               [0., 0., 0., 0., 0., 1.]])
+
+        whereas, when using the Voigt mapping, we have:
+
+        >>> from Elasticipy.tensors.mapping import VoigtMapping
+        >>> t.matrix(mapping_convention=VoigtMapping())
+        array([[1. , 0. , 0. , 0. , 0. , 0. ],
+               [0. , 1. , 0. , 0. , 0. , 0. ],
+               [0. , 0. , 1. , 0. , 0. , 0. ],
+               [0. , 0. , 0. , 0.5, 0. , 0. ],
+               [0. , 0. , 0. , 0. , 0.5, 0. ],
+               [0. , 0. , 0. , 0. , 0. , 0.5]])
+
+        For stiffness tensors, the default mapping convention is Voigt, so that:
+
+        >>> from Elasticipy.tensors.elasticity import StiffnessTensor, ComplianceTensor
+        >>> StiffnessTensor.eye().matrix()
+        array([[1. , 0. , 0. , 0. , 0. , 0. ],
+               [0. , 1. , 0. , 0. , 0. , 0. ],
+               [0. , 0. , 1. , 0. , 0. , 0. ],
+               [0. , 0. , 0. , 0.5, 0. , 0. ],
+               [0. , 0. , 0. , 0. , 0.5, 0. ],
+               [0. , 0. , 0. , 0. , 0. , 0.5]])
+
+        whereas for compliance tensor, the default mapping convention gives:
+
+        >>> ComplianceTensor.eye().matrix()
+        array([[1., 0., 0., 0., 0., 0.],
+               [0., 1., 0., 0., 0., 0.],
+               [0., 0., 1., 0., 0., 0.],
+               [0., 0., 0., 2., 0., 0.],
+               [0., 0., 0., 0., 2., 0.],
+               [0., 0., 0., 0., 0., 2.]])
         """
         matrix = self._matrix
         if mapping_convention is None:
