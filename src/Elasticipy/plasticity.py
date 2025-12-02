@@ -37,6 +37,20 @@ class IsotropicHardening:
                 ' current strain: {}'.format(self.plastic_strain))
 
     def flow_stress(self, strain, **kwargs):
+        """
+        Compute the stress from the cumulative plastic strain
+
+        Parameters
+        ----------
+        strain : float
+            Equivalent Plastic strain
+        kwargs
+            Additional arguments passed to the function
+
+        Returns
+        -------
+        StrainTensor or float
+        """
         pass
 
     def apply_strain(self, strain, **kwargs):
@@ -98,6 +112,13 @@ class IsotropicHardening:
         pass
 
     def reset_strain(self):
+        """
+        Update the internal variable so that the plastic strain is reset to zero.
+
+        Returns
+        -------
+        None
+        """
         self.plastic_strain = 0.0
 
 
@@ -241,9 +262,6 @@ class JohnsonCook(IsotropicHardening):
             return strain_increment
 
     def reset_strain(self):
-        """
-        Reinitialize the plastic strain to 0
-        """
         self.plastic_strain = 0.0
 
 
