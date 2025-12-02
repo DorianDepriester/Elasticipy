@@ -856,5 +856,15 @@ class TestStressStrainTensors(unittest.TestCase):
         assert np.all(ax.get_xticks() == (-e12, -e12/2, 0, e12/2, e12))
         assert np.all(ax.get_yticks() == (-e12, -e12/2, 0, e12/2, e12))
 
+    def test_triaxiality(self):
+        s1 = StressTensor.tensile([1,0,0],1.)
+        assert s1.triaxiality() == 1/3
+
+        s2 = StressTensor.tensile([1,0,0],-1.)
+        assert s2.triaxiality() == -1/3
+
+        s3 = s1 + StressTensor.tensile([0,1,0],0.5)
+        assert np.isclose(s3.triaxiality(), 3**(-0.5))
+
 if __name__ == '__main__':
     unittest.main()
