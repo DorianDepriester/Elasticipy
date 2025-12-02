@@ -351,14 +351,44 @@ class DruckerPrager(PlasticityCriterion):
         -----
         The pressure-dependent DG plasticity criterion assumes that the equivalent stress is defined as:
 
+        .. math::
 
+            \\alpha I_1 + \\sqrt{J_2}
+
+        where :math:`I_1` is the first invariant of the stress tensor, and :math:`J_2` is the second invariant of the
+        deviatoric stress tensor.
         """
         self.alpha = alpha
 
     def eq_stress(self, stress, **kwargs):
+        """
+        Return the equivalent stress, with respect to the DP yield criterion.
+
+        Parameters
+        ----------
+        stress : StressTensor
+        kwargs
+
+        Returns
+        -------
+        float or numpy.ndarray
+        """
         return (stress.J2**0.5 + self.alpha * stress.I1) / (1/3**0.5 + self.alpha)
 
     def normal(self, stress, **kwargs):
+        """
+        Apply the normality rule to the DP yield criterion.
+
+        Parameters
+        ----------
+        stress : StressTensor
+        kwargs
+
+        Returns
+        -------
+        numpy.ndarray
+            Components of the plastic directions (vector pointing outward the Yield surface)
+        """
         J2 = stress.J2
         gradient = stress.deviatoric_part() / (2 * J2**0.5) + self.alpha * StressTensor.eye(stress.shape)
         strain = StrainTensor(gradient.matrix)
