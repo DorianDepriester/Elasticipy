@@ -459,7 +459,6 @@ class FourthOrderTensor:
         -------
         numpy.ndarray
             If no axis is given, the result will be of shape (3,3,3,3).
-            Otherwise, if T.ndim=m, and len(axis)=n, the returned value will be of shape (...,3,3,3,3), with ndim=m-n+4
         """
         t2 = deepcopy(self)
         if axis is None:
