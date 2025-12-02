@@ -1244,7 +1244,7 @@ class SymmetricFourthOrderTensor(FourthOrderTensor):
 
     def __init__(self, M, check_symmetries=True, force_symmetries=False, **kwargs):
         """
-        Construct a fully symmetric fourth-order tensor from a (...,6,6) or a (3,3,3,3) array.
+        Construct a fully symmetric fourth-order tensor from a (...,6,6) or a (...,3,3,3,3) array.
 
         The input matrix must be symmetric, otherwise an error is thrown (except if check_symmetry==False, see below)
 
