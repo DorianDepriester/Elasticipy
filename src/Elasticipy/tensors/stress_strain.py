@@ -317,6 +317,19 @@ class StressTensor(SymmetricSecondOrderTensor):
         """
         Compute the stress triaxiality.
 
+        It is defined as the hydrostatic stress to the von Mises equivalent stress ratio (see Notes).
+
+        Returns
+        -------
+        float or np.ndarray
+            Stress triaxiality
+
+        See Also
+        --------
+        hydrostatic_pressure : compute the hydrostatic pressure
+        vonMises : compute the von Mises equivalent stress
+        Lode_angle : compute the Lode angle
+
         Notes
         -----
         The stress triaxiality is defined as follows:
@@ -328,9 +341,5 @@ class StressTensor(SymmetricSecondOrderTensor):
         where :math:`p` and :math:`\\sigma_{vM}` are the hydrostatic pressure and the von Mises equivalent stress,
         respectively.
 
-        Returns
-        -------
-        float or np.ndarray
-            Stress triaxiality
         """
         return self.I1 / self.vonMises() / 3
