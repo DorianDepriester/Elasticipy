@@ -1,4 +1,4 @@
-Elasticipy.tensors.second_order module
+Elasticipy.tensors.second_order
 ======================================
 
 .. automodule:: Elasticipy.tensors.second_order
