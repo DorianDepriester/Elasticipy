@@ -41,7 +41,7 @@ class IsotropicHardening:
 
     def apply_strain(self, strain, **kwargs):
         """
-        Apply strain to the current JC model.
+        Apply strain to the current plasticity model.
 
         This function updates the internal variable to store hardening state.
 
@@ -68,7 +68,33 @@ class IsotropicHardening:
             raise ValueError('The applied strain must be float of StrainTensor')
         return self.flow_stress(self.plastic_strain, **kwargs)
 
-    def compute_strain_increment(self, stress, **kwargs):
+    def compute_strain_increment(self, stress, criterion='von Mises', apply_strain=True, **kwargs):
+        """
+        Given the equivalent stress, compute the strain increment with respect to the normality rule.
+
+        Parameters
+        ----------
+        stress : float or StressTensor
+            Equivalent stress to compute the stress from, or full stress tensor.
+        apply_strain : bool, optional
+            If true, the plasticity model will be updated to account for the applied strain (hardening)
+        criterion : str, optional
+            Plasticity criterion to consider to compute the equivalent stress and apply the normality rule.
+            It can be 'von Mises', 'Tresca' or 'J2'. 'J2' is equivalent to 'von Mises'.
+        kwargs
+            Keyword arguments passed to the model
+
+        Returns
+        -------
+        StrainTensor or float
+            Increment of plastic strain. If the input stress is float, only the magnitude of the increment will be
+            returned (float value). If the stress is of type StressTensor, the returned value will be a full
+            StrainTensor.
+
+        See Also
+        --------
+        apply_strain : apply strain to the JC model and updates its hardening value
+        """
         pass
 
     def reset_strain(self):
@@ -153,6 +179,7 @@ class JohnsonCook(IsotropicHardening):
             eps_p.
         T : float or list or tuple or np.ndarray
             Temperature. If float, the temperature is supposed to be homogeneous for every value of eps_p.
+
         Returns
         -------
         float or numpy.ndarray
@@ -177,35 +204,7 @@ class JohnsonCook(IsotropicHardening):
 
         return stress
 
-
-
     def compute_strain_increment(self, stress, T=None, apply_strain=True, criterion='von Mises'):
-        """
-        Given the equivalent stress, compute the strain increment with respect to the normality rule.
-
-        Parameters
-        ----------
-        stress : float or StressTensor
-            Equivalent stress to compute the stress from, or full stress tensor.
-        T : float
-            Temperature
-        apply_strain : bool, optional
-            If true, the JC model will be updated to account for the applied strain (hardening)
-        criterion : str, optional
-            Plasticity criterion to consider to compute the equivalent stress and apply the normality rule.
-            It can be 'von Mises', 'Tresca' or 'J2'. 'J2' is equivalent to 'von Mises'.
-
-        Returns
-        -------
-        StrainTensor or float
-            Increment of plastic strain. If the input stress is float, only the magnitude of the increment will be
-            returned (float value). If the stress is of type StressTensor, the returned value will be a full
-            StrainTensor.
-
-        See Also
-        --------
-        apply_strain : apply strain to the JC model and updates its hardening value
-        """
         if isinstance(stress, StressTensor):
             eq_stress = self.criterion.eq_stress(stress)
         else:
@@ -361,34 +360,9 @@ class DruckerPrager(PlasticityCriterion):
         self.alpha = alpha
 
     def eq_stress(self, stress, **kwargs):
-        """
-        Return the equivalent stress, with respect to the DP yield criterion.
-
-        Parameters
-        ----------
-        stress : StressTensor
-        kwargs
-
-        Returns
-        -------
-        float or numpy.ndarray
-        """
         return (stress.J2**0.5 + self.alpha * stress.I1) / (1/3**0.5 + self.alpha)
 
     def normal(self, stress, **kwargs):
-        """
-        Apply the normality rule to the DP yield criterion.
-
-        Parameters
-        ----------
-        stress : StressTensor
-        kwargs
-
-        Returns
-        -------
-        numpy.ndarray
-            Components of the plastic directions (vector pointing outward the Yield surface)
-        """
         J2 = stress.J2
         gradient = stress.deviatoric_part() / (2 * J2**0.5) + self.alpha * StressTensor.eye(stress.shape)
         strain = StrainTensor(gradient.matrix)
