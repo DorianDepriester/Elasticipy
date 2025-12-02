@@ -312,3 +312,25 @@ class StressTensor(SymmetricSecondOrderTensor):
         ax.set_xlabel(ax.get_xlabel() + ' stress')
         ax.set_ylabel(ax.get_ylabel() + ' stress')
         return fig, ax
+
+    def triaxiality(self):
+        """
+        Compute the stress triaxiality.
+
+        Notes
+        -----
+        The stress triaxiality is defined as follows:
+
+        .. math::
+
+            \\eta = \\frac{-p}{\\sigma_{vM}}
+
+        where :math:`p` and :math:`\\sigma_{vM}` are the hydrostatic pressure and the von Mises equivalent stress,
+        respectively.
+
+        Returns
+        -------
+        float or np.ndarray
+            Stress triaxiality
+        """
+        return self.I1 / self.vonMises() / 3
