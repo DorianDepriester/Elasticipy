@@ -762,7 +762,7 @@ class FourthOrderTensor:
         Create a (single) identity tensor:
 
         >>> from Elasticipy.tensors.fourth_order import FourthOrderTensor
-        >>> I = FourthOrderTensor.identity()
+        >>> I = FourthOrderTensor.eye()
         >>> print(I)
         4th-order tensor (in Kelvin mapping):
         [[1. 0. 0. 0. 0. 0.]
@@ -775,7 +775,7 @@ class FourthOrderTensor:
          Alternatively, one can use another mapping convention, e.g. Voigt:
 
          >>> from Elasticipy.tensors.mapping import VoigtMapping
-         >>> Iv = FourthOrderTensor.identity(mapping=VoigtMapping())
+         >>> Iv = FourthOrderTensor.eye(mapping=VoigtMapping())
          >>> print(Iv)
          4th-order tensor (in Voigt mapping):
          [[1.  0.  0.  0.  0.  0. ]
