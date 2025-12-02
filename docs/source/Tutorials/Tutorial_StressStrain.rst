@@ -129,8 +129,7 @@ Multidimensional tensor arrays
 Elasticipy allows to process thousands of tensors at one, with the aid of tensor arrays.
 As an illustration, we consider the anisotropic behaviour of ferrite:
 
-    >>> C = StiffnessTensor.fromCrystalSymmetry(symmetry='cubic', phase_name='ferrite',
-    ...                                         C11=274, C12=175, C44=89)
+    >>> C = StiffnessTensor.cubic(C11=274, C12=175, C44=89, phase_name='ferrite',)
     >>> print(C)
     Stiffness tensor (in Voigt mapping):
     [[274. 175. 175.   0.   0.   0.]
