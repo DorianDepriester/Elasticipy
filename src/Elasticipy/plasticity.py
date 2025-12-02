@@ -95,6 +95,38 @@ class IsotropicHardening:
         See Also
         --------
         flow_stress : compute the flow stress, given a cumulative equivalent strain
+
+        Examples
+        --------
+        As an example, we consider the Jonshon-Cook plasticity model:
+
+        >>> from Elasticipy.plasticity import JohnsonCook
+        >>> JC = JohnsonCook(A=792, B=510, n=0.26)
+        >>> print(JC)
+        Johnson-Cook plasticity model
+         type: Isotropic
+         criterion: von Mises
+         current strain: 0.0
+
+        >>> stress = JC.apply_strain(0.1)
+        >>> print(stress)
+        1072.2658456673885
+        >>> print(JC)
+        Johnson-Cook plasticity model
+         type: Isotropic
+         criterion: von Mises
+         current strain: 0.1
+
+        Obvisously, the applied strain is cumulative:
+
+        >>> stress = JC.apply_strain(0.1)
+        >>> print(stress)
+        1127.612381818713
+        >>> print(JC)
+        Johnson-Cook plasticity model
+         type: Isotropic
+         criterion: von Mises
+         current strain: 0.2
         """
         if isinstance(strain, float):
             self.plastic_strain += np.abs(strain)
