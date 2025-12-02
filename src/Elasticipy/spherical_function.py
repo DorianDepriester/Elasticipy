@@ -295,7 +295,18 @@ class SphericalFunction:
 
         See Also
         --------
-        eval : evaluate the function along a direction given by its cartesian coordinates
+        eval : evaluate the function along a direction given by its cartesian
+
+        Examples
+        --------
+        >>> from Elasticipy.tensors.elasticity import StiffnessTensor
+        >>> E = StiffnessTensor.cubic(C11=110, C12=54, C44=60).Young_modulus
+
+        In spherical coordinates, the x direction is defined by theta=90° and phi=0. Therefore, the Young modulus along
+        x direction is:
+
+        >>> E.eval_spherical([0, 90], degrees=True)
+        74.4390243902439
         """
         angles = np.atleast_2d(args)
         if degrees:
