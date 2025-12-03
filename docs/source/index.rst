@@ -1,4 +1,4 @@
-Welcome to Elasticipy's Documentation!
+Elasticipy Documentation
 ======================================
 
 .. |JOSS| image:: https://joss.theoj.org/papers/10.21105/joss.07940/status.svg
