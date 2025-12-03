@@ -68,7 +68,7 @@ class IsotropicHardening:
 
         In order to get the full tensile curve in 0 to 10% strain range:
 
-        >>> import numpy as nn
+        >>> import numpy as np
         >>> JC.flow_stress(np.linspace(0,0.1,5)) # Check that the yield stress = B
         array([ 792.        ,  987.44950657, 1026.04662195, 1052.067513  ,
                1072.26584567])
