@@ -20,8 +20,12 @@ Welcome to Elasticipy's Documentation!
 .. image:: https://img.shields.io/conda/d/conda-forge/Elasticipy
    :alt: Conda Downloads
 
-.. image:: https://img.shields.io/badge/Hosted%20on%20-%20GitHub%20-%20blue
-   :alt: Static Badge
+.. image:: https://img.shields.io/github/commit-activity/y/DorianDepriester/Elasticipy
+   :alt: GitHub commit activity
+   :target: https://github.com/DorianDepriester/Elasticipy
+
+.. image:: https://img.shields.io/github/stars/DorianDepriester/Elasticipy
+   :alt: GitHub Repo stars
    :target: https://github.com/DorianDepriester/Elasticipy
 
 .. image:: https://img.shields.io/pypi/l/Elasticipy
