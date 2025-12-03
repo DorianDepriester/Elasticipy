@@ -58,7 +58,8 @@ stiffness/compliance tensors.
 It provides a couple of ways to perform basic operations on these tensors in a user-friendly way. In addition, it
 handles arrays of tensors, allowing to perform thousands of data at once (see an example :ref:`here<multidimensional-arrays>`).
 
-It also comes with plotting features (e.g. spatial dependence of Young modulus).
+It also comes with plotting features (e.g. spatial dependence of Young modulus) and tensor analysis tools (algebra,
+invariants, symmetries...).
 
 Fundamentals of continuum mechanics
 -----------------------------------
