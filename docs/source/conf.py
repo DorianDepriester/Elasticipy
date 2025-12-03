@@ -15,7 +15,7 @@ print(f"Chemin ajouté au PYTHONPATH : {sys.path}")
 project = 'Elasticipy'
 copyright = '2024, Dorian Depriester'
 author = 'Dorian Depriester'
-release = '1.0.0'
+release = '4.2.0'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
