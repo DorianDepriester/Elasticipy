@@ -13,7 +13,7 @@ print(f"Chemin ajouté au PYTHONPATH : {sys.path}")
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'Elasticipy'
-copyright = '2024, Dorian Depriester'
+copyright = '%Y, Dorian Depriester'
 author = 'Dorian Depriester'
 release = '4.2.0'
 
