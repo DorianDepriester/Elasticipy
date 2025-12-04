@@ -1,4 +1,4 @@
-from Elasticipy.tensors.fourth_order import FourthOrderTensorManipulation of 4th-order tensors
+Manipulation of 4th-order tensors
 ---------------------------------
 
 This tutorial illustrates how you can take advantage of the ``FourthOrderTensor`` class (and its subclasses
