@@ -1682,7 +1682,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
         Notes
         -----
-        This mapping convention is defined as follows [4]_:
+        This mapping convention is defined as follows [Helbig]_:
 
         .. math::
 
@@ -1698,8 +1698,10 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
         References
         ----------
-        .. [4] Helbig, K. (2013). What Kelvin might have written about Elasticity. Geophysical Prospecting, 61(1), 1-20.
-            doi: 10.1111/j.1365-2478.2011.01049.x
+        .. [Helbig] Helbig, K. (2013). What Kelvin might have written about Elasticity. Geophysical Prospecting, 61(1), 1-20.
+            doi: `10.1111/j.1365-2478.2011.01049.x`_
+
+            .. _10.1111/j.1365-2478.2011.01049.x: https://doi.org/10.1111/j.1365-2478.2011.01049.x
 
         Examples
         --------
