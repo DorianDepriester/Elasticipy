@@ -13,3 +13,4 @@ Tutorials
     ./Tutorials/Tutorial_MultiplePhases.rst
     ./Tutorials/Tutorial_ReadWriteFiles.rst
     ./Tutorials/Plasticity.rst
+    ./Tutorials/FourthOrderTensors.rst
