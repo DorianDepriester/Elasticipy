@@ -92,29 +92,32 @@ Spherical functions
 ~~~~~~~~~~~~~~~~~~~
 In order to fully evidence the directional dependence of the Young moduli, we can plot them as 3D surface:
 
-    >>> from matplotlib import pyplot as plt
-    >>> E.plot3D() # doctest: +SKIP
-    >>> plt.show()
+.. plot::
 
-    .. image:: images/E_plot3D.png
-        :width: 400
+    from Elasticipy.tensors.elasticity import StiffnessTensor
+    C = StiffnessTensor.cubic(C11=186, C12=134, C44=77)
+    E = C.Young_modulus
+    E.plot3D()
 
 It is advised to use interactive plot to be able to zoom/rotate the surface. For flat images (i.e. to put in
 document/articles), we can plot the values as a Pole Figure (PF):
 
-    >>> E.plot_as_pole_figure() # doctest: +SKIP
-    >>> plt.show()
+.. plot::
 
-    .. image:: images/E_PF.png
-        :width: 400
+    from Elasticipy.tensors.elasticity import StiffnessTensor
+    C = StiffnessTensor.cubic(C11=186, C12=134, C44=77)
+    E = C.Young_modulus
+    E.plot_as_pole_figure()
+
 
 Alternatively, we can plot the Young moduli on X-Y, X-Z and Y-Z sections only:
 
-    >>> E.plot_xyz_sections() # doctest: +SKIP
-    >>> plt.show()
+.. plot::
 
-    .. image:: images/E_xyz_sections.png
-        :width: 600
+    from Elasticipy.tensors.elasticity import StiffnessTensor
+    C = StiffnessTensor.cubic(C11=186, C12=134, C44=77)
+    E = C.Young_modulus
+    E.plot_xyz_sections()
 
 Hyperspherical functions
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -122,29 +125,32 @@ Hyperspherical functions cannot plotted as 3D surfaces, as their values depend o
 But at least, for a each direction **u**, we can consider the mean value for all the orthogonal directions **v** when
 plotting:
 
-    >>> G.plot3D() # doctest: +SKIP
-    >>> plt.show()
+.. plot::
 
-    .. image:: images/G_plot3D.png
-        :width: 400
+    from Elasticipy.tensors.elasticity import StiffnessTensor
+    C = StiffnessTensor.cubic(C11=186, C12=134, C44=77)
+    G = C.shear_modulus
+    G.plot3D()
 
 Instead of the mean value, we can consider other statistics, e.g.:
 
-    >>> G.plot3D(which='min')   # doctest: +SKIP
-    >>> plt.show()
+.. plot::
 
-    .. image:: images/G_plot3D_min.png
-        :width: 400
+    from Elasticipy.tensors.elasticity import StiffnessTensor
+    C = StiffnessTensor.cubic(C11=186, C12=134, C44=77)
+    G = C.shear_modulus
+    G.plot3D(which='min')
 
 This also works for ``max`` and ``std``. These parameters also apply for pole figures (see above).
 
 When plotting the X-Y, X-Z and Y-Z sections, the min, max and mean values are plotted at once:
 
-    >>> G.plot_xyz_sections() # doctest: +SKIP
-    >>> plt.show()
+.. plot::
 
-    .. image:: images/G_xyz_sections.png
-        :width: 600
+    from Elasticipy.tensors.elasticity import StiffnessTensor
+    C = StiffnessTensor.cubic(C11=186, C12=134, C44=77)
+    G = C.shear_modulus
+    G.plot_xyz_sections()
 
 .. note::
 
