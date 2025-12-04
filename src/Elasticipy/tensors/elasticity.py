@@ -1376,7 +1376,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
         Notes
         -----
-        The estimation of the wave velocities is made by finding the eigenvalues of the Christoffel tensor [2]_.
+        The estimation of the wave velocities is made by finding the eigenvalues of the Christoffel tensor [Jaeken]_.
 
         One should double-check the units. The table below provides hints about the unit you get, depending on the units
         you use for stiffness and the mass density:
@@ -1397,7 +1397,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
         References
         ----------
-        .. [2] J. W. Jaeken, S. Cottenier, Solving the Christoffel equation: Phase and group velocities, Computer Physics
+        .. [Jaeken] J. W. Jaeken, S. Cottenier, Solving the Christoffel equation: Phase and group velocities, Computer Physics
                Communications (207), 2016, https://doi.org/10.1016/j.cpc.2016.06.014.
 
         Examples
