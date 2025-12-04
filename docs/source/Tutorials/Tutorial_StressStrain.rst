@@ -104,7 +104,6 @@ A practical way to visualize its principal stresses and the possible shear stres
 `Mohr circles <https://en.wikipedia.org/wiki/Mohr%27s_circle>`_:
 
 .. plot::
-    :include-source: True
 
     from Elasticipy.tensors.stress_strain import StressTensor
     s = StressTensor.rand(seed=123) # Use seed to ensure reproducibility
@@ -122,7 +121,7 @@ that the maximum shear stress is around 0.849. Those can be checked by:
 
 .. note::
 
-    As a recall, the Tresca's equivalent stress is defined as half the maximum shear stress.
+    As a recall, the Tresca's equivalent stress is defined as twice the maximum shear stress.
 
 .. _multidimensional-arrays:
 
