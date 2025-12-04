@@ -429,11 +429,11 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
         Notes
         -----
-        The relationships between the tensor's components depend on the crystallogrpahic symmetry [1]_.
+        The relationships between the tensor's components depend on the crystallogrpahic symmetry [Nye]_.
 
         References
         ----------
-        .. [1] Nye, J. F. Physical Properties of Crystals. London: Oxford University Press, 1959.
+        .. [Nye] Nye, J. F. Physical Properties of Crystals. London: Oxford University Press, 1959.
 
         Examples
         --------
@@ -1333,7 +1333,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
         Notes
         -----
-        For a given stiffness tensor **C** and a given unit vector **u**, the Christoffel tensor is defined as [2]_ :
+        For a given stiffness tensor **C** and a given unit vector **u**, the Christoffel tensor is defined as [Jaeken]_ :
 
             .. math:: M_{ij} = C_{iklj}.u_k.u_l
 
@@ -1746,7 +1746,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
         Notes
         -----
-        The definition for eigenstiffnesses and the eigenstrains are introduced in [4]_.
+        The definition for eigenstiffnesses and the eigenstrains are introduced in [Helbig]_.
         """
         return np.linalg.eigh(self._matrix)
 
@@ -1768,7 +1768,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
         Notes
         -----
-        The eigenstiffnesses are defined in [4]_.
+        The eigenstiffnesses are defined in [Helbig]_.
 
         Examples
         --------
@@ -1778,7 +1778,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         array([ 40.,  40.,  40., 160., 160., 280.])
 
         These values actually correspond to 2*C44 (with multiplicity = 3), C11-C12 (with multiplicity = 2) and C11+2C12
-        (no multiplicity); see [4]_.
+        (no multiplicity); see [Helbig]_.
         """
         return np.linalg.eigvalsh(self._matrix)
 
@@ -2295,7 +2295,7 @@ class ComplianceTensor(StiffnessTensor):
 
         Notes
         -----
-        The definition for eigencompliances and the eigenstresses are introduced in [4]_.
+        The definition for eigencompliances and the eigenstresses are introduced in [Helbig]_.
         """
         return np.linalg.eigh(self.to_Kelvin())
 

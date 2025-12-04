@@ -1329,7 +1329,7 @@ class SymmetricFourthOrderTensor(FourthOrderTensor):
 
         Notes
         -----
-        The quadratic invariants are defined as [4]_:
+        The quadratic invariants are defined as [Norris]_:
 
         .. math::
 
@@ -1345,7 +1345,7 @@ class SymmetricFourthOrderTensor(FourthOrderTensor):
 
         References
         ----------
-        .. [4] Norris, A. N. (22 May 2007). "Quadratic invariants of elastic moduli". The Quarterly Journal of Mechanics
+        .. [Norris] Norris, A. N. (22 May 2007). "Quadratic invariants of elastic moduli". The Quarterly Journal of Mechanics
          and Applied Mathematics. 60 (3): 367–389. doi:10.1093/qjmam/hbm007
 
         """
