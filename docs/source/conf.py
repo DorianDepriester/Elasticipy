@@ -6,6 +6,9 @@ src_path = os.path.abspath('../../src/')
 sys.path.insert(0, src_path)
 print(f"Chemin ajouté au PYTHONPATH : {sys.path}")
 
+import matplotlib
+matplotlib.use("Agg")
+
 # For the full list of built-in configuration values, see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
