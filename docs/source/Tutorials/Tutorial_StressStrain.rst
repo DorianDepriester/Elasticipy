@@ -103,11 +103,13 @@ Let's consider a random stress tensor:
 A practical way to visualize its principal stresses and the possible shear stresses is to draw the
 `Mohr circles <https://en.wikipedia.org/wiki/Mohr%27s_circle>`_:
 
-    >>> fig, ax = s.draw_Mohr_circles()
-    >>> fig.show()
+.. plot::
+    :include-source: True
 
-.. image:: images/Mohr.png
-        :width: 600
+    from Elasticipy.tensors.stress_strain import StressTensor
+    s = StressTensor.rand(seed=123) # Use seed to ensure reproducibility
+    fig, ax = s.draw_Mohr_circles()
+    fig.show()
 
 In this figure, one can see that the principal stresses are around 1.512, 0.352 and -0.186 (in decreasing order); and
 that the maximum shear stress is around 0.849. Those can be checked by:

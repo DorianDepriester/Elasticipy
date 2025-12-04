@@ -30,11 +30,15 @@ extensions = [
    'sphinx.ext.autosectionlabel',
    'sphinx.ext.mathjax',
    'sphinx.ext.linkcode',
-   'sphinx_copybutton']
+   'sphinx_copybutton',
+   'matplotlib.sphinxext.plot_directive']
+
 templates_path = ['_templates']
 exclude_patterns = []
 copybutton_prompt_text = r">>> |\.\.\. "
 copybutton_prompt_is_regexp = True
+plot_include_source = True
+plot_html_show_source_link = False
 
 
 language = 'english'
