@@ -128,6 +128,42 @@ class ElasticityGUI(QMainWindow):
         self.calculate_button.clicked.connect(self.calculate_and_plot)
         left_panel_layout.addWidget(self.calculate_button)
 
+        # Add horizontal separator
+        separator = QFrame()
+        separator.setFrameShape(QFrame.HLine)
+        separator.setFrameShadow(QFrame.Sunken)
+        left_panel_layout.addWidget(separator)
+
+        ############################################
+        # Numeric results
+        ############################################
+        results_title = QLabel("Results")
+        results_title.setStyleSheet("font-weight: bold;")
+        left_panel_layout.addWidget(results_title)
+
+        self.result_labels = {}
+        results = [
+            ("E_mean", "Young modulus (mean):"),
+            ("G_mean", "Shear modulus (mean):"),
+            ("nu_mean", "Poisson ratio (mean):"),
+            ("Beta", "Linear compressibility (mean):"),
+            ("K", "Bulk modulus:"),
+            ("Z", "Zener ratio:"),
+            ("A", "Univ. anisotropy factor:"),
+        ]
+
+        for key, text in results:
+            row = QHBoxLayout()
+            label_name = QLabel(text)
+            label_value = QLabel("—")
+            label_value.setMinimumWidth(100)
+            self.result_labels[key] = label_value
+
+            row.addWidget(label_name)
+            row.addStretch()
+            row.addWidget(label_value)
+            left_panel_layout.addLayout(row)
+
         # Fill space
         left_panel_layout.addStretch()
         bottom_layout.addLayout(left_panel_layout)
@@ -225,6 +261,17 @@ class ElasticityGUI(QMainWindow):
                 value.plot_xyz_sections(fig=self.figure)
             else:
                 value.plot_as_pole_figure(fig=self.figure, **plot_kwargs)
+            self.result_labels["E_mean"].setText(f"{stiff.Young_modulus.mean():.3f}")
+            self.result_labels["G_mean"].setText(f"{stiff.shear_modulus.mean():.3f}")
+            self.result_labels["nu_mean"].setText(f"{stiff.Poisson_ratio.mean():.3f}")
+            self.result_labels["Beta"].setText(f"{stiff.linear_compressibility.mean():.3f}")
+            self.result_labels["K"].setText(f"{stiff.bulk_modulus:.3f}")
+            try:
+                Z = stiff.Zener_ratio()
+                self.result_labels["Z"].setText(f"{stiff.Zener_ratio():.3f}")
+            except ValueError:
+                self.result_labels["Z"].setText("—")
+            self.result_labels["A"].setText(f"{stiff.universal_anisotropy:.3f}")
             self.canvas.draw()
 
         except ValueError as inst:
