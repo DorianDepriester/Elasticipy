@@ -137,7 +137,7 @@ class ElasticityGUI(QMainWindow):
         ############################################
         # Numeric results
         ############################################
-        results_title = QLabel("Results")
+        results_title = QLabel("Numerical results")
         results_title.setStyleSheet("font-weight: bold;")
         left_panel_layout.addWidget(results_title)
 
