@@ -12,7 +12,7 @@
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/DorianDepriester/Elasticipy/HEAD?urlpath=%2Fdoc%2Ftree%2FElasticipy_for_the_Impatient.ipynb)
 
 
-# ![Elasticipy](docs/source/logo/logo_text.png)
+# ![Elasticipy](https://raw.githubusercontent.com/DorianDepriester/Elasticipy/refs/heads/main/docs/source/logo/logo_text.svg)
 
 A python toolkit to manipulate stress and strain tensors, and other linear elasticity-related tensors (e.g. stiffness). 
 This package also provides a collection of easy-to-use and very fast tools to work on stress and strain tensors.
