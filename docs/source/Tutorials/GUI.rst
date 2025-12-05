@@ -17,6 +17,7 @@ To launch this GUI, just run::
     from Elasticipy.gui import crystal_elastic_plotter
     crystal_elastic_plotter()
 
-Or, from a terminal (e.g. Anaconda prompt), simply run::
+If you have installed Elasticipy with ``pip`` or ``conda``, just open a terminal (e.g. Powershell or Anaconda prompt)
+and run::
 
     elasticipy-gui
