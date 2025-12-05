@@ -17,7 +17,7 @@
 A python toolkit to manipulate stress and strain tensors, and other linear elasticity-related tensors (e.g. stiffness). 
 This package also provides a collection of easy-to-use and very fast tools to work on stress and strain tensors.
 
-## :rocket: Main features
+## 🚀 Main features
 Among other features, this package implements:
 
 - Computation of elasticity tensors,
@@ -31,7 +31,7 @@ Among other features, this package implements:
 - Compatibility with the [Materials Project](https://next-gen.materialsproject.org/) API, [pymatgen](https://pymatgen.org/) and 
 [orix](https://orix.readthedocs.io/).
 
-## :snake: Installation
+## 🐍 Installation
 Elasticipy can be installed with PIP:
 ````
 pip install Elasticipy
@@ -42,18 +42,18 @@ On anaconda, one can also use:
 conda install conda-forge::elasticipy
 ````
 
-## :books: Documentation
+## 📚 Documentation
 Tutorials and full documentation are available on [ReadTheDoc](https://elasticipy.readthedocs.io/).
 
-## :hourglass_flowing_sand: Elasticipy in a nutshell
+## ⏱️ Elasticipy in a nutshell
 Take a 5-minute tour through Elasticipy's main features by running the online Jupyter Notebook, hosted on 
 [Binder](https://mybinder.org/v2/gh/DorianDepriester/Elasticipy/HEAD?urlpath=%2Fdoc%2Ftree%2FElasticipy_for_the_Impatient.ipynb).
  
 
-## :mag: Sources
+## 🔍 Sources
 The source code is available on [GitHub](https://github.com/DorianDepriester/Elasticipy) under the [MIT licence](https://github.com/DorianDepriester/Elasticipy/blob/c6c3d441a2d290ab8f4939992d5d753a1ad3bdb0/LICENSE).
 
-## :umbrella: Tests and Code Coverage
+## ☔ Tests and Code Coverage
 
 The project uses unit tests with `pytest` and coverage reports generated using `coverage`. These reports are hosted on 
 [codecov](https://app.codecov.io/gh/DorianDepriester/Elasticipy).
@@ -64,7 +64,7 @@ Certain parts of the code, particularly those related to graphical user interfac
 
 - **`src/Elasticipy/gui.py`**
 
-## :mortar_board: Cite this package
+## 🎓 Cite this package
 If you use Elasticipy, please cite [![DOI](https://joss.theoj.org/papers/10.21105/joss.07940/status.svg)](https://doi.org/10.21105/joss.07940)
 
 You can use the following BibTeX entry:
