@@ -404,6 +404,15 @@ class ElasticityGUI(QMainWindow):
         link.setOpenExternalLinks(True)
         layout.addWidget(link)
 
+        # --- Bug report ---
+        link = QLabel(
+            '<a href="https://github.com/DorianDepriester/Elasticipy/issues">'
+            'Report a bug</a>'
+        )
+        link.setAlignment(Qt.AlignCenter)
+        link.setOpenExternalLinks(True)
+        layout.addWidget(link)
+
         # --- Close button ---
         close_btn = QPushButton("Close")
         close_btn.clicked.connect(dialog.close)
