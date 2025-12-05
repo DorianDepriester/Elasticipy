@@ -235,6 +235,8 @@ class ElasticityGUI(QMainWindow):
         self.plotting_selector.setCurrentText('Young modulus')
         self.which_selector.setEnabled(False)
 
+        self.C_matrix = np.zeros((6, 6))
+
     def update_fields(self):
         # Deactivate unused fields
         active_fields = self.selected_symmetry().required
@@ -301,24 +303,25 @@ class ElasticityGUI(QMainWindow):
             else:
                 value.plot_as_pole_figure(fig=self.figure, **plot_kwargs)
             self.canvas.draw()
-            Cv = stiff.Voigt_average()
-            self.result_labels["E_mean"].setText(f"{stiff.Young_modulus.mean():.3f}")
-            self.result_labels["G_mean"].setText(f"{stiff.shear_modulus.mean():.3f}")
-            self.result_labels["nu_mean"].setText(f"{stiff.Poisson_ratio.mean():.3f}")
-            self.result_labels["Beta_mean"].setText(f"{stiff.linear_compressibility.mean():.3f}")
-            for method in ['voigt', 'reuss', 'hill']:
-                C = stiff.average(method=method)
-                self.result_labels[f"E_{method}"].setText(f"{C.Young_modulus.eval([1,0,0]):.3f}")
-                self.result_labels[f"G_{method}"].setText(f"{C.shear_modulus.eval([1, 0, 0],[0,1,0]):.3f}")
-                self.result_labels[f"nu_{method}"].setText(f"{C.Poisson_ratio.eval([1, 0, 0], [0, 1, 0]):.3f}")
-                self.result_labels[f"Beta_{method}"].setText(f"{C.linear_compressibility.eval([1, 0, 0]):.3f}")
-            self.result_labels["K"].setText(f"{stiff.bulk_modulus:.3f}")
-            try:
-                Z = stiff.Zener_ratio()
-                self.result_labels["Z"].setText(f"{stiff.Zener_ratio():.3f}")
-            except ValueError:
-                self.result_labels["Z"].setText("—")
-            self.result_labels["A"].setText(f"{stiff.universal_anisotropy:.3f}")
+            if not np.all(self.C_matrix == Csym):
+                self.result_labels["E_mean"].setText(f"{stiff.Young_modulus.mean():.3f}")
+                self.result_labels["G_mean"].setText(f"{stiff.shear_modulus.mean():.3f}")
+                self.result_labels["nu_mean"].setText(f"{stiff.Poisson_ratio.mean():.3f}")
+                self.result_labels["Beta_mean"].setText(f"{stiff.linear_compressibility.mean():.3f}")
+                for method in ['voigt', 'reuss', 'hill']:
+                    C = stiff.average(method=method)
+                    self.result_labels[f"E_{method}"].setText(f"{C.Young_modulus.eval([1,0,0]):.3f}")
+                    self.result_labels[f"G_{method}"].setText(f"{C.shear_modulus.eval([1, 0, 0],[0,1,0]):.3f}")
+                    self.result_labels[f"nu_{method}"].setText(f"{C.Poisson_ratio.eval([1, 0, 0], [0, 1, 0]):.3f}")
+                    self.result_labels[f"Beta_{method}"].setText(f"{C.linear_compressibility.eval([1, 0, 0]):.3f}")
+                self.result_labels["K"].setText(f"{stiff.bulk_modulus:.3f}")
+                try:
+                    Z = stiff.Zener_ratio()
+                    self.result_labels["Z"].setText(f"{stiff.Zener_ratio():.3f}")
+                except ValueError:
+                    self.result_labels["Z"].setText("—")
+                self.result_labels["A"].setText(f"{stiff.universal_anisotropy:.3f}")
+                self.C_matrix = Csym
 
         except ValueError as inst:
             QMessageBox.critical(self, "Singular stiffness", inst.__str__(), QMessageBox.Ok)
