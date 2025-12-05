@@ -10,12 +10,10 @@ from matplotlib.figure import Figure
 
 from Elasticipy.crystal_symmetries import SYMMETRIES
 from Elasticipy.tensors.elasticity import StiffnessTensor
-from pathlib import Path
 from qtpy.QtWidgets import QDialog, QVBoxLayout, QLabel, QPushButton
 from qtpy.QtGui import QPixmap
 from qtpy.QtCore import Qt
 from pathlib import Path
-import webbrowser
 
 WHICH_OPTIONS = {'Mean': 'mean', 'Max': 'max', 'Min': 'min', 'Std. dev.': 'std'}
 
@@ -59,6 +57,7 @@ class ElasticityGUI(QMainWindow):
 
         # Space Group selection
         self.point_group_selector = QComboBox()
+        self.point_group_selector.setMinimumWidth(140)
         self.point_group_selector.addItems(['', ''])
         self.point_group_selector.currentIndexChanged.connect(self.update_fields)
         selectors_layout.addWidget(QLabel("Point group:"))
@@ -74,8 +73,9 @@ class ElasticityGUI(QMainWindow):
         # About button
         self.about_button = QPushButton("About")
         self.about_button.setFixedHeight(24)
-        self.about_button.setMaximumWidth(80)
+        self.about_button.setMaximumWidth(60)
         self.about_button.clicked.connect(self.show_about)
+        selectors_layout.addStretch()
         selectors_layout.addWidget(self.about_button)
 
         # Add horizontal separator
