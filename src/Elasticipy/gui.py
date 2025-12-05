@@ -357,3 +357,6 @@ def crystal_elastic_plotter():
     window = ElasticityGUI()
     window.show()
     sys.exit(app.exec_())
+
+if __name__ == "__main__":
+    crystal_elastic_plotter()
