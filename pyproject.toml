@@ -60,5 +60,5 @@ description = "Short tutorial for Elasticipy"
 authors = ["Dorian DEPRIESTER <dorian.dep@gmail.com>"]
 readme = "README.md"
 
-[project.scripts]
+[project.gui-scripts]
 elasticipy-gui = "Elasticipy.gui:crystal_elastic_plotter"
