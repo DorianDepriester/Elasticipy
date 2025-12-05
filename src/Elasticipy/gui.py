@@ -11,6 +11,11 @@ from matplotlib.figure import Figure
 from Elasticipy.crystal_symmetries import SYMMETRIES
 from Elasticipy.tensors.elasticity import StiffnessTensor
 from pathlib import Path
+from qtpy.QtWidgets import QDialog, QVBoxLayout, QLabel, QPushButton
+from qtpy.QtGui import QPixmap
+from qtpy.QtCore import Qt
+from pathlib import Path
+import webbrowser
 
 WHICH_OPTIONS = {'Mean': 'mean', 'Max': 'max', 'Min': 'min', 'Std. dev.': 'std'}
 
@@ -206,6 +211,16 @@ class ElasticityGUI(QMainWindow):
 
         # Fill space
         left_panel_layout.addStretch()
+
+        # About button (discret)
+        self.about_button = QPushButton("About")
+        self.about_button.setFixedHeight(24)
+        self.about_button.setMaximumWidth(80)
+        self.about_button.clicked.connect(self.show_about)
+
+        left_panel_layout.addWidget(self.about_button)
+
+
         bottom_layout.addLayout(left_panel_layout,1)
 
         ############################################
@@ -237,6 +252,7 @@ class ElasticityGUI(QMainWindow):
         self.which_selector.setEnabled(False)
 
         self.C_matrix = np.zeros((6, 6))
+
 
     def update_fields(self):
         # Deactivate unused fields
@@ -353,6 +369,49 @@ class ElasticityGUI(QMainWindow):
             except ValueError:
                 pass
 
+    def show_about(self):
+        dialog = QDialog(self)
+        dialog.setWindowTitle("About Elasticipy")
+        dialog.setFixedWidth(400)
+
+        layout = QVBoxLayout(dialog)
+
+        # --- Logo ---
+        here = Path(__file__).resolve().parent
+        logo_path = here / "resources" / "logo_text.svg"
+
+        if logo_path.exists():
+            logo = QLabel()
+            pixmap = QPixmap(str(logo_path))
+            pixmap = pixmap.scaledToWidth(250, Qt.SmoothTransformation)
+            logo.setPixmap(pixmap)
+            logo.setAlignment(Qt.AlignCenter)
+            layout.addWidget(logo)
+
+        # --- Text ---
+        text = QLabel(
+            "A Python library for elasticity tensor computations<br><br>"
+            "© 2024–2025 Dorian Depriester"
+        )
+        text.setAlignment(Qt.AlignCenter)
+        layout.addWidget(text)
+
+        # --- Link ---
+        link = QLabel(
+            '<a href="https://elasticipy.readthedocs.io/">'
+            'https://elasticipy.readthedocs.io/</a>'
+        )
+        link.setAlignment(Qt.AlignCenter)
+        link.setOpenExternalLinks(True)
+        layout.addWidget(link)
+
+        # --- Close button ---
+        close_btn = QPushButton("Close")
+        close_btn.clicked.connect(dialog.close)
+        layout.addWidget(close_btn)
+
+        dialog.exec_()
+
 def crystal_elastic_plotter():
     app = QApplication(sys.argv)
     try:
@@ -367,6 +426,7 @@ def crystal_elastic_plotter():
     window.setWindowIcon(icon)
     window.show()
     sys.exit(app.exec_())
+
 
 if __name__ == "__main__":
     crystal_elastic_plotter()
