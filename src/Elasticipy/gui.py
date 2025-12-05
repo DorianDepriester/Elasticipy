@@ -71,6 +71,13 @@ class ElasticityGUI(QMainWindow):
         selectors_layout.addWidget(QLabel("Diad convention:"))
         selectors_layout.addWidget(self.diag_selector)
 
+        # About button
+        self.about_button = QPushButton("About")
+        self.about_button.setFixedHeight(24)
+        self.about_button.setMaximumWidth(80)
+        self.about_button.clicked.connect(self.show_about)
+        selectors_layout.addWidget(self.about_button)
+
         # Add horizontal separator
         separator = QFrame()
         separator.setFrameShape(QFrame.HLine)
@@ -211,14 +218,6 @@ class ElasticityGUI(QMainWindow):
 
         # Fill space
         left_panel_layout.addStretch()
-
-        # About button (discret)
-        self.about_button = QPushButton("About")
-        self.about_button.setFixedHeight(24)
-        self.about_button.setMaximumWidth(80)
-        self.about_button.clicked.connect(self.show_about)
-
-        left_panel_layout.addWidget(self.about_button)
 
 
         bottom_layout.addLayout(left_panel_layout,1)
@@ -390,8 +389,8 @@ class ElasticityGUI(QMainWindow):
 
         # --- Text ---
         text = QLabel(
-            "A Python library for elasticity tensor computations<br><br>"
-            "© 2024–2025 Dorian Depriester"
+            "A Python library for elasticity tensors computations<br><br>"
+            "© 2024–2025 Dorian Depriester, MIT Licence"
         )
         text.setAlignment(Qt.AlignCenter)
         layout.addWidget(text)
