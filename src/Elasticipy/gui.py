@@ -137,32 +137,71 @@ class ElasticityGUI(QMainWindow):
         ############################################
         # Numeric results
         ############################################
-        results_title = QLabel("Numerical results")
-        results_title.setStyleSheet("font-weight: bold;")
-        left_panel_layout.addWidget(results_title)
-
         self.result_labels = {}
-        results = [
-            ("E_mean", "Young modulus (mean):"),
-            ("G_mean", "Shear modulus (mean):"),
-            ("nu_mean", "Poisson ratio (mean):"),
-            ("Beta", "Linear compressibility (mean):"),
-            ("K", "Bulk modulus:"),
-            ("Z", "Zener ratio:"),
-            ("A", "Univ. anisotropy factor:"),
-        ]
+        RESULT_GROUPS = {
+            "Young modulus": [
+                ("E_mean", "Mean"),
+                ("E_voigt", "Voigt"),
+                ("E_reuss", "Reuss"),
+                ("E_hill", "Hill"),
+            ],
+            "Shear modulus": [
+                ("G_mean", "Mean"),
+                ("G_voigt", "Voigt"),
+                ("G_reuss", "Reuss"),
+                ("G_hill", "Hill"),
+            ],
+            "Poisson ratio": [
+                ("nu_mean", "Mean"),
+                ("nu_voigt", "Voigt"),
+                ("nu_reuss", "Reuss"),
+                ("nu_hill", "Hill"),
+            ],
+            "Linear compressibility": [
+                ("Beta_mean", "Mean"),
+                ("Beta_voigt", "Voigt"),
+                ("Beta_reuss", "Reuss"),
+                ("Beta_hill", "Hill"),
+            ],
+            "Other": [
+                ("K", "Bulk modulus"),
+                ("Z", "Zener ratio"),
+                ("A", "Univ. anisotropy factor"),
+            ]
+        }
 
-        for key, text in results:
-            row = QHBoxLayout()
-            label_name = QLabel(text)
-            label_value = QLabel("—")
-            label_value.setMinimumWidth(100)
-            self.result_labels[key] = label_value
+        ############################################
+        # Numeric results (grouped)
+        ############################################
+        self.result_labels = {}
+        for group_name, items in RESULT_GROUPS.items():
 
-            row.addWidget(label_name)
-            row.addStretch()
-            row.addWidget(label_value)
-            left_panel_layout.addLayout(row)
+            # Group title
+            group_label = QLabel(group_name + ":")
+            group_label.setStyleSheet("font-weight: bold; margin-top: 6px;")
+            left_panel_layout.addWidget(group_label)
+
+            # Indented layout
+            indent_layout = QVBoxLayout()
+            indent_layout.setContentsMargins(15, 0, 0, 0)
+
+            for key, label_text in items:
+                row = QHBoxLayout()
+
+                label_name = QLabel(f"{label_text}:")
+                label_value = QLabel("—")
+                label_value.setMinimumWidth(100)
+                label_value.setStyleSheet("font-family: Consolas, Courier;")
+
+                self.result_labels[key] = label_value
+
+                row.addWidget(label_name)
+                row.addStretch()
+                row.addWidget(label_value)
+
+                indent_layout.addLayout(row)
+
+            left_panel_layout.addLayout(indent_layout)
 
         # Fill space
         left_panel_layout.addStretch()
@@ -261,10 +300,18 @@ class ElasticityGUI(QMainWindow):
                 value.plot_xyz_sections(fig=self.figure)
             else:
                 value.plot_as_pole_figure(fig=self.figure, **plot_kwargs)
+            self.canvas.draw()
+            Cv = stiff.Voigt_average()
             self.result_labels["E_mean"].setText(f"{stiff.Young_modulus.mean():.3f}")
             self.result_labels["G_mean"].setText(f"{stiff.shear_modulus.mean():.3f}")
             self.result_labels["nu_mean"].setText(f"{stiff.Poisson_ratio.mean():.3f}")
-            self.result_labels["Beta"].setText(f"{stiff.linear_compressibility.mean():.3f}")
+            self.result_labels["Beta_mean"].setText(f"{stiff.linear_compressibility.mean():.3f}")
+            for method in ['voigt', 'reuss', 'hill']:
+                C = stiff.average(method=method)
+                self.result_labels[f"E_{method}"].setText(f"{C.Young_modulus.eval([1,0,0]):.3f}")
+                self.result_labels[f"G_{method}"].setText(f"{C.shear_modulus.eval([1, 0, 0],[0,1,0]):.3f}")
+                self.result_labels[f"nu_{method}"].setText(f"{C.Poisson_ratio.eval([1, 0, 0], [0, 1, 0]):.3f}")
+                self.result_labels[f"Beta_{method}"].setText(f"{C.linear_compressibility.eval([1, 0, 0]):.3f}")
             self.result_labels["K"].setText(f"{stiff.bulk_modulus:.3f}")
             try:
                 Z = stiff.Zener_ratio()
@@ -272,7 +319,6 @@ class ElasticityGUI(QMainWindow):
             except ValueError:
                 self.result_labels["Z"].setText("—")
             self.result_labels["A"].setText(f"{stiff.universal_anisotropy:.3f}")
-            self.canvas.draw()
 
         except ValueError as inst:
             QMessageBox.critical(self, "Singular stiffness", inst.__str__(), QMessageBox.Ok)
