@@ -205,7 +205,7 @@ class ElasticityGUI(QMainWindow):
 
         # Fill space
         left_panel_layout.addStretch()
-        bottom_layout.addLayout(left_panel_layout)
+        bottom_layout.addLayout(left_panel_layout,1)
 
         ############################################
         # Plotting area
@@ -218,7 +218,7 @@ class ElasticityGUI(QMainWindow):
 
         self.figure = Figure()
         self.canvas = FigureCanvas(self.figure)
-        bottom_layout.addWidget(self.canvas)
+        bottom_layout.addWidget(self.canvas,4)
 
         #######################################################################################
         # Main widget
