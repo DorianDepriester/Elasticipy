@@ -170,7 +170,7 @@ class ElasticityGUI(QMainWindow):
                 ("nu_reuss", "Reuss"),
                 ("nu_hill", "Hill"),
             ],
-            "Linear compressibility": [
+            "Linear compressibility (x1000)": [
                 ("Beta_mean", "Mean"),
                 ("Beta_voigt", "Voigt"),
                 ("Beta_reuss", "Reuss"),
@@ -323,13 +323,13 @@ class ElasticityGUI(QMainWindow):
                 self.result_labels["E_mean"].setText(f"{stiff.Young_modulus.mean():.3f}")
                 self.result_labels["G_mean"].setText(f"{stiff.shear_modulus.mean():.3f}")
                 self.result_labels["nu_mean"].setText(f"{stiff.Poisson_ratio.mean():.3f}")
-                self.result_labels["Beta_mean"].setText(f"{stiff.linear_compressibility.mean():.3f}")
+                self.result_labels["Beta_mean"].setText(f"{stiff.linear_compressibility.mean()*1000:.3f}")
                 for method in ['voigt', 'reuss', 'hill']:
                     C = stiff.average(method=method)
                     self.result_labels[f"E_{method}"].setText(f"{C.Young_modulus.eval([1,0,0]):.3f}")
                     self.result_labels[f"G_{method}"].setText(f"{C.shear_modulus.eval([1, 0, 0],[0,1,0]):.3f}")
                     self.result_labels[f"nu_{method}"].setText(f"{C.Poisson_ratio.eval([1, 0, 0], [0, 1, 0]):.3f}")
-                    self.result_labels[f"Beta_{method}"].setText(f"{C.linear_compressibility.eval([1, 0, 0]):.3f}")
+                    self.result_labels[f"Beta_{method}"].setText(f"{C.linear_compressibility.eval([1, 0, 0])*1000:.3f}")
                 self.result_labels["K"].setText(f"{stiff.bulk_modulus:.3f}")
                 try:
                     Z = stiff.Zener_ratio()
