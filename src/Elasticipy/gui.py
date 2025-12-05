@@ -1,15 +1,16 @@
 import sys
-
 import numpy as np
 from qtpy.QtWidgets import (
     QApplication, QMainWindow, QComboBox, QGridLayout, QLabel,
     QLineEdit, QPushButton, QVBoxLayout, QHBoxLayout, QWidget, QFrame, QMessageBox
 )
+from qtpy.QtGui import QIcon
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 
 from Elasticipy.crystal_symmetries import SYMMETRIES
 from Elasticipy.tensors.elasticity import StiffnessTensor
+from pathlib import Path
 
 WHICH_OPTIONS = {'Mean': 'mean', 'Max': 'max', 'Min': 'min', 'Std. dev.': 'std'}
 
@@ -354,7 +355,16 @@ class ElasticityGUI(QMainWindow):
 
 def crystal_elastic_plotter():
     app = QApplication(sys.argv)
+    try:
+        here = Path(__file__).resolve().parent
+        icon_path = here / "resources" / "favicon.png"
+        icon = QIcon(str(icon_path))
+        print(icon_path, icon_path.exists())
+    except Exception:
+        icon = QIcon()
+    app.setWindowIcon(icon)
     window = ElasticityGUI()
+    window.setWindowIcon(icon)
     window.show()
     sys.exit(app.exec_())
 
