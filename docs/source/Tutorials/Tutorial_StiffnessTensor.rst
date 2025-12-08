@@ -111,7 +111,7 @@ deviation of the Young modulus:
     >>> print(E_std / E_mean)
     0.45580071168605646
 
-Another way to evidence anisotropy is to use the universal anisotropy factor [1]_:
+Another way to evidence anisotropy is to use the universal anisotropy factor [Ranganathan]_:
 
     >>> C.universal_anisotropy
     5.141009551641412
@@ -212,7 +212,7 @@ When plotting the X-Y, X-Z and Y-Z sections, the min, max and mean values are pl
     :ref:`GUI<gui>`!
 
 
-.. [1] S. I. Ranganathan and M. Ostoja-Starzewski (2008), Universal Elastic Anisotropy Index,
+.. [Ranganathan] S. I. Ranganathan and M. Ostoja-Starzewski (2008), Universal Elastic Anisotropy Index,
            *Phys. Rev. Lett.*, 101(5), 055504, . https://doi.org/10.1103/PhysRevLett.101.055504
 .. [Nye] Nye, J. F. (1985), Physical properties of crystals: Their representation by tensors and matrices,
             Oxford university press.
