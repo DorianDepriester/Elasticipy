@@ -5,21 +5,75 @@ Computing and plotting engineering constants
 This page illustrates how one can create stiffness (or compliance) tensors, manipulate them and plot some
 elasticity-related values (e.g. Young modulus).
 
-Direction-dependent Young moduli
---------------------------------
-
-First, create a stiffness tensor with a given symmetry (let say, monoclinic):
+The isotropic case
+-------------------
+As an introduction, we consider the simple case of isotropic elastic behaviour. The stiffness tensor can be constructed
+as follows:
 
 .. doctest::
 
     >>> from Elasticipy.tensors.elasticity import StiffnessTensor
+    >>> C = StiffnessTensor.isotropic(E=210e3, nu=0.25)
+    >>> print(C)
+    Stiffness tensor (in Voigt mapping):
+    [[252000.  84000.  84000.      0.      0.      0.]
+     [ 84000. 252000.  84000.      0.      0.      0.]
+     [ 84000.  84000. 252000.      0.      0.      0.]
+     [     0.      0.      0.  84000.      0.      0.]
+     [     0.      0.      0.      0.  84000.      0.]
+     [     0.      0.      0.      0.      0.  84000.]]
+
+Here, we have constructed the stiffness tensor from Young modulus and Poisson ratio. Actually, for the isotropic case,
+it can be constructed from any pair-values amongst the following:
+
+    - Young modulus (``E``),
+    - Poisson ratio,
+    - shear modulus (``G`` or ``lame1``),
+    - bulk modulus (``K``),
+    - second Lame's parameter (``lame2``).
+
+The conversion from these pair-value to stiffness components is made from the well-known
+`conversion table <https://en.wikipedia.org/wiki/Lam%C3%A9_parameters#References>`_. For instance, let's compute the
+shear and bulk moduli
+
+    >>> C.shear_modulus
+    Hyperspherical function
+    Min=83999.99999999991, Max=84000.00000000007
+
+    >>> C.bulk_modulus
+    140000.0
+
+.. note::
+
+    The returned value for ``C.shear_modulus`` is not a float, because in general (i.e. anisotropic case), the shear
+    modulus is not constant over space (see below).
+
+One can check that both approaches yield the same tensor:
+
+    >>> C2 = StiffnessTensor.isotropic(G=84e3, K=140e3)
+    >>> C2 == C
+    True
+
+
+Anisotropic cases
+-----------------
+Elasticipy supports anisotropy (actually, it was meant for that...). It supports usual material symmetries, such as
+orthotropy and transverse-isotropy. In additions, it also supports all crystal symmetries, as listed by [Nye]_ and
+summed up below:
+
+.. figure:: images/Nye.png
+
+    Patterns of stiffness and compliance tensors of crystals, depending on their symmetries [Nye]_.
+
+For example, create a stiffness tensor with monoclinic symmetry:
+
     >>> C = StiffnessTensor.monoclinic(phase_name='TiNi',
     ...                                C11=231, C12=127, C13=104,
     ...                                C22=240, C23=131, C33=175,
     ...                                C44=81, C55=11, C66=85,
     ...                                C15=-18, C25=1, C35=-3, C46=3)
 
-Let's investigate the Young modulus:
+and check out the Young modulus:
 
     >>> E = C.Young_modulus
 
@@ -158,5 +212,7 @@ When plotting the X-Y, X-Z and Y-Z sections, the min, max and mean values are pl
     :ref:`GUI<gui>`!
 
 
-.. [1] S. I. Ranganathan and M. Ostoja-Starzewski, Universal Elastic Anisotropy Index,
-           *Phys. Rev. Lett.*, 101(5), 055504, 2008. https://doi.org/10.1103/PhysRevLett.101.055504
+.. [1] S. I. Ranganathan and M. Ostoja-Starzewski (2008), Universal Elastic Anisotropy Index,
+           *Phys. Rev. Lett.*, 101(5), 055504, . https://doi.org/10.1103/PhysRevLett.101.055504
+.. [Nye] Nye, J. F. (1985), Physical properties of crystals: Their representation by tensors and matrices,
+            Oxford university press.
