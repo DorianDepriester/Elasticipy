@@ -534,6 +534,8 @@ class EulerBungeDialog(QDialog):
 
     def reset(self):
         self._set_angles(0.0, 0.0, 0.0)
+        for slider in self.sliders:
+            slider.setValue(0)
 
     def _set_angles(self, phi1, Phi, phi2):
         for spin, val in zip(self.spins, (phi1, Phi, phi2)):
