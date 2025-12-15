@@ -8,7 +8,7 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 
 from Elasticipy.crystal_symmetries import SYMMETRIES
-from Elasticipy.rotate_window import EulerBungeDialog
+from Elasticipy.gui.rotate_window import EulerBungeDialog
 from Elasticipy.tensors.elasticity import StiffnessTensor
 from qtpy.QtGui import QPixmap
 from pathlib import Path
