@@ -1,24 +1,19 @@
 import sys
 import numpy as np
 from qtpy.QtWidgets import (
-    QApplication, QMainWindow, QComboBox, QGridLayout, QLabel,
-    QLineEdit, QPushButton, QVBoxLayout, QHBoxLayout, QWidget, QFrame, QMessageBox
+    QApplication, QMainWindow, QComboBox, QGridLayout, QLineEdit, QWidget, QFrame, QMessageBox
 )
 from qtpy.QtGui import QIcon
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 
 from Elasticipy.crystal_symmetries import SYMMETRIES
+from Elasticipy.rotate_window import EulerBungeDialog
 from Elasticipy.tensors.elasticity import StiffnessTensor
-from Elasticipy.tensors.fourth_order import SymmetricFourthOrderTensor
-from qtpy.QtWidgets import QDialog, QVBoxLayout, QLabel, QPushButton
 from qtpy.QtGui import QPixmap
-from qtpy.QtCore import Qt
 from pathlib import Path
 
 from scipy.spatial.transform import Rotation
-
-from Elasticipy.tensors.mapping import VoigtMapping
 
 WHICH_OPTIONS = {'Mean': 'mean', 'Max': 'max', 'Min': 'min', 'Std. dev.': 'std'}
 
@@ -473,82 +468,9 @@ def crystal_elastic_plotter():
 
 from qtpy.QtWidgets import (
     QDialog, QVBoxLayout, QHBoxLayout,
-    QLabel, QSlider, QDoubleSpinBox, QPushButton
+    QLabel, QPushButton
 )
-from qtpy.QtCore import Qt, Signal
-
-
-class EulerBungeDialog(QDialog):
-    anglesChanged = Signal(float, float, float)
-
-    def __init__(self, parent=None, C=np.zeros((6, 6))):
-        super().__init__(parent)
-        self.setWindowTitle("Euler angles (Bunge ZXZ)")
-        self._build_ui()
-        self.reset()
-        self.C = C
-
-    def _build_ui(self):
-        self.layout = QVBoxLayout(self)
-
-        self.sliders = []
-        self.spins = []
-
-        labels = ["φ₁ (deg)", "Φ (deg)", "φ₂ (deg)"]
-        ranges = [(0, 360), (0, 180), (0, 360)]
-
-        for label, (vmin, vmax) in zip(labels, ranges):
-            row = QHBoxLayout()
-
-            row.addWidget(QLabel(label))
-
-            slider = QSlider(Qt.Horizontal)
-            slider.setRange(vmin * 10, vmax * 10)
-            slider.setSingleStep(1)
-
-            spin = QDoubleSpinBox()
-            spin.setRange(vmin, vmax)
-            spin.setDecimals(1)
-            spin.setSingleStep(0.1)
-
-            slider.valueChanged.connect(
-                lambda v, s=spin: s.setValue(v / 10)
-            )
-            spin.valueChanged.connect(
-                lambda v, s=slider: s.setValue(int(v * 10))
-            )
-            spin.valueChanged.connect(self._emit_angles)
-
-            row.addWidget(slider, stretch=1)
-            row.addWidget(spin)
-
-            self.sliders.append(slider)
-            self.spins.append(spin)
-
-            self.layout.addLayout(row)
-
-        # Reset button
-        reset_button = QPushButton("Reset orientation")
-        reset_button.clicked.connect(self.reset)
-        self.layout.addWidget(reset_button)
-
-    def reset(self):
-        self._set_angles(0.0, 0.0, 0.0)
-        for slider in self.sliders:
-            slider.setValue(0)
-
-    def _set_angles(self, phi1, Phi, phi2):
-        for spin, val in zip(self.spins, (phi1, Phi, phi2)):
-            spin.blockSignals(True)
-            spin.setValue(val)
-            spin.blockSignals(False)
-        self._emit_angles()
-
-    def _emit_angles(self):
-        angles = [spin.value() for spin in self.spins]
-        self.anglesChanged.emit(*angles)
-
-
+from qtpy.QtCore import Qt
 
 if __name__ == "__main__":
     crystal_elastic_plotter()
