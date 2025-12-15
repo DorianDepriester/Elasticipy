@@ -401,8 +401,8 @@ class ElasticityGUI(QMainWindow):
         self.euler_dialog.show()
 
     def update_from_euler(self, phi1, Phi, phi2):
-        C0 = self.C_stiff  # StiffnessTensor initial
-        rot = Rotation.from_euler('ZXZ', [phi1, Phi, phi2], degrees=True)
+        C0 = StiffnessTensor(self.euler_dialog.C)
+        rot = Rotation.from_euler(seq='ZXZ', angles=[phi1, Phi, phi2], degrees=True)
         if np.any(np.array([phi1, Phi, phi2])) != 0.:
             self.symmetry_selector.setCurrentText('Triclinic')
             C_new = C0.rotate(rot).matrix()
