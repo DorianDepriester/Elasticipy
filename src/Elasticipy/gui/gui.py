@@ -264,8 +264,6 @@ class ElasticityGUI(QMainWindow):
         self.plotting_selector.setCurrentText('Young modulus')
         self.which_selector.setEnabled(False)
 
-        self.C_matrix = np.zeros((6, 6))
-
 
     def update_fields(self):
         # Deactivate unused fields
@@ -398,7 +396,7 @@ class ElasticityGUI(QMainWindow):
             self.current_config = {'sym': self.symmetry_selector.currentText(),
                               'pg': self.point_group_selector.currentText(),
                               'diag': self.diag_selector.currentText()}
-            self.euler_dialog = EulerBungeDialog(self, C=self.C_matrix)
+            self.euler_dialog = EulerBungeDialog(self, C=self.C_stiff.matrix())
             self.euler_dialog.anglesChanged.connect(self.update_from_euler)
         self.euler_dialog.show()
 
