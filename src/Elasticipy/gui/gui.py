@@ -9,13 +9,17 @@ from matplotlib.figure import Figure
 
 from Elasticipy.crystal_symmetries import SYMMETRIES
 from Elasticipy.gui.rotate_window import EulerBungeDialog
+from Elasticipy.gui.about import about
 from Elasticipy.tensors.elasticity import StiffnessTensor
-from qtpy.QtGui import QPixmap
 from pathlib import Path
 
 from scipy.spatial.transform import Rotation
 
 WHICH_OPTIONS = {'Mean': 'mean', 'Max': 'max', 'Min': 'min', 'Std. dev.': 'std'}
+
+# --- Logo ---
+here = Path(__file__).resolve().parent
+logo_path = here / "../resources" / "logo_text.svg"
 
 class ElasticityGUI(QMainWindow):
     def __init__(self):
@@ -375,54 +379,7 @@ class ElasticityGUI(QMainWindow):
 
     def show_about(self):
         dialog = QDialog(self)
-        dialog.setWindowTitle("About Elasticipy")
-        dialog.setFixedWidth(400)
-
-        layout = QVBoxLayout(dialog)
-
-        # --- Logo ---
-        here = Path(__file__).resolve().parent
-        logo_path = here / "resources" / "logo_text.svg"
-
-        if logo_path.exists():
-            logo = QLabel()
-            pixmap = QPixmap(str(logo_path))
-            pixmap = pixmap.scaledToWidth(250, Qt.SmoothTransformation)
-            logo.setPixmap(pixmap)
-            logo.setAlignment(Qt.AlignCenter)
-            layout.addWidget(logo)
-
-        # --- Text ---
-        text = QLabel(
-            "A Python library for elasticity tensors computations<br><br>"
-            "© 2024–2025 Dorian Depriester, MIT Licence"
-        )
-        text.setAlignment(Qt.AlignCenter)
-        layout.addWidget(text)
-
-        # --- Link ---
-        link = QLabel(
-            '<a href="https://elasticipy.readthedocs.io/">'
-            'https://elasticipy.readthedocs.io/</a>'
-        )
-        link.setAlignment(Qt.AlignCenter)
-        link.setOpenExternalLinks(True)
-        layout.addWidget(link)
-
-        # --- Bug report ---
-        link = QLabel(
-            '<a href="https://github.com/DorianDepriester/Elasticipy/issues">'
-            'Report a bug</a>'
-        )
-        link.setAlignment(Qt.AlignCenter)
-        link.setOpenExternalLinks(True)
-        layout.addWidget(link)
-
-        # --- Close button ---
-        close_btn = QPushButton("Close")
-        close_btn.clicked.connect(dialog.close)
-        layout.addWidget(close_btn)
-
+        dialog = about(dialog, logo_path)
         dialog.exec_()
 
     def open_euler_dialog(self):
@@ -454,7 +411,7 @@ def crystal_elastic_plotter():
     app = QApplication(sys.argv)
     try:
         here = Path(__file__).resolve().parent
-        icon_path = here / "resources" / "favicon.png"
+        icon_path = here / "../resources" / "favicon.png"
         icon = QIcon(str(icon_path))
         print(icon_path, icon_path.exists())
     except Exception:
@@ -470,7 +427,6 @@ from qtpy.QtWidgets import (
     QDialog, QVBoxLayout, QHBoxLayout,
     QLabel, QPushButton
 )
-from qtpy.QtCore import Qt
 
 if __name__ == "__main__":
     crystal_elastic_plotter()
