@@ -10,10 +10,15 @@ from matplotlib.figure import Figure
 
 from Elasticipy.crystal_symmetries import SYMMETRIES
 from Elasticipy.tensors.elasticity import StiffnessTensor
+from Elasticipy.tensors.fourth_order import SymmetricFourthOrderTensor
 from qtpy.QtWidgets import QDialog, QVBoxLayout, QLabel, QPushButton
 from qtpy.QtGui import QPixmap
 from qtpy.QtCore import Qt
 from pathlib import Path
+
+from scipy.spatial.transform import Rotation
+
+from Elasticipy.tensors.mapping import VoigtMapping
 
 WHICH_OPTIONS = {'Mean': 'mean', 'Max': 'max', 'Min': 'min', 'Std. dev.': 'std'}
 
@@ -140,6 +145,11 @@ class ElasticityGUI(QMainWindow):
         self.calculate_button = QPushButton("Plot")
         self.calculate_button.clicked.connect(self.calculate_and_plot)
         left_panel_layout.addWidget(self.calculate_button)
+
+        self.euler_button = QPushButton("Apply rotation")
+        self.euler_button.setToolTip("Rotate stiffness tensor (Bunge ZXZ)")
+        self.euler_button.clicked.connect(self.open_euler_dialog)
+        left_panel_layout.addWidget(self.euler_button)
 
         # Add horizontal separator
         separator = QFrame()
@@ -420,6 +430,31 @@ class ElasticityGUI(QMainWindow):
 
         dialog.exec_()
 
+    def open_euler_dialog(self):
+        if not hasattr(self, "euler_dialog"):
+            self.current_config = {'sym': self.symmetry_selector.currentText(),
+                              'pg': self.point_group_selector.currentText(),
+                              'diag': self.diag_selector.currentText()}
+            self.euler_dialog = EulerBungeDialog(self, C=self.C_matrix)
+            self.euler_dialog.anglesChanged.connect(self.update_from_euler)
+        self.euler_dialog.show()
+
+    def update_from_euler(self, phi1, Phi, phi2):
+        C0 = StiffnessTensor(self.C_matrix)  # StiffnessTensor initial
+        rot = Rotation.from_euler('ZXZ', [phi1, Phi, phi2], degrees=True)
+        if np.any(np.array([phi1, phi2, phi2])) != 0.:
+            self.symmetry_selector.setCurrentText('Triclinic')
+            C_new = C0.rotate(rot).matrix()
+            for (i, j), field in self.coefficient_fields.items():
+                self.coefficient_fields[(i,j)].setText(f"{C_new[i,j]}")
+        else:
+            for (i, j), field in self.coefficient_fields.items():
+                self.coefficient_fields[(i,j)].setText(f"{self.euler_dialog.C[i,j]}")
+            self.symmetry_selector.setCurrentText(self.current_config['sym'])
+            self.point_group_selector.setCurrentText(self.current_config['pg'])
+            self.diag_selector.setCurrentText(self.current_config['diag'])
+
+
 def crystal_elastic_plotter():
     app = QApplication(sys.argv)
     try:
@@ -434,6 +469,83 @@ def crystal_elastic_plotter():
     window.setWindowIcon(icon)
     window.show()
     sys.exit(app.exec_())
+
+
+from qtpy.QtWidgets import (
+    QDialog, QVBoxLayout, QHBoxLayout,
+    QLabel, QSlider, QDoubleSpinBox, QPushButton
+)
+from qtpy.QtCore import Qt, Signal
+
+
+class EulerBungeDialog(QDialog):
+    anglesChanged = Signal(float, float, float)
+
+    def __init__(self, parent=None, C=np.zeros((6, 6))):
+        super().__init__(parent)
+        self.setWindowTitle("Euler angles (Bunge ZXZ)")
+        self._build_ui()
+        self.reset()
+        self.C = C
+
+    def _build_ui(self):
+        self.layout = QVBoxLayout(self)
+
+        self.sliders = []
+        self.spins = []
+
+        labels = ["φ₁ (deg)", "Φ (deg)", "φ₂ (deg)"]
+        ranges = [(0, 360), (0, 180), (0, 360)]
+
+        for label, (vmin, vmax) in zip(labels, ranges):
+            row = QHBoxLayout()
+
+            row.addWidget(QLabel(label))
+
+            slider = QSlider(Qt.Horizontal)
+            slider.setRange(vmin * 10, vmax * 10)
+            slider.setSingleStep(1)
+
+            spin = QDoubleSpinBox()
+            spin.setRange(vmin, vmax)
+            spin.setDecimals(1)
+            spin.setSingleStep(0.1)
+
+            slider.valueChanged.connect(
+                lambda v, s=spin: s.setValue(v / 10)
+            )
+            spin.valueChanged.connect(
+                lambda v, s=slider: s.setValue(int(v * 10))
+            )
+            spin.valueChanged.connect(self._emit_angles)
+
+            row.addWidget(slider, stretch=1)
+            row.addWidget(spin)
+
+            self.sliders.append(slider)
+            self.spins.append(spin)
+
+            self.layout.addLayout(row)
+
+        # Reset button
+        reset_button = QPushButton("Reset orientation")
+        reset_button.clicked.connect(self.reset)
+        self.layout.addWidget(reset_button)
+
+    def reset(self):
+        self._set_angles(0.0, 0.0, 0.0)
+
+    def _set_angles(self, phi1, Phi, phi2):
+        for spin, val in zip(self.spins, (phi1, Phi, phi2)):
+            spin.blockSignals(True)
+            spin.setValue(val)
+            spin.blockSignals(False)
+        self._emit_angles()
+
+    def _emit_angles(self):
+        angles = [spin.value() for spin in self.spins]
+        self.anglesChanged.emit(*angles)
+
 
 
 if __name__ == "__main__":
