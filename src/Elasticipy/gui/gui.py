@@ -143,10 +143,12 @@ class ElasticityGUI(QMainWindow):
 
         # Plot button
         self.calculate_button = QPushButton("Plot")
+        self.calculate_button.setEnabled(False)
         self.calculate_button.clicked.connect(self.calculate_and_plot)
         left_panel_layout.addWidget(self.calculate_button)
 
         self.euler_button = QPushButton("Apply rotation")
+        self.euler_button.setEnabled(False)
         self.euler_button.setToolTip("Rotate stiffness tensor (Bunge ZXZ)")
         self.euler_button.clicked.connect(self.open_euler_dialog)
         left_panel_layout.addWidget(self.euler_button)
@@ -377,6 +379,24 @@ class ElasticityGUI(QMainWindow):
                     self.coefficient_fields[index].setText(f"{0.5*(C11-C12)}")
             except ValueError:
                 pass
+        coefficients = np.zeros((6, 6))
+        for (i, j), field in self.coefficient_fields.items():
+            try:
+                coefficients[i, j] = float(field.text())
+            except ValueError:
+                coefficients[i, j] = 0
+        Csym = coefficients + np.tril(coefficients.T, -1) # Rebuild the lower triangular part
+        try:
+            StiffnessTensor(Csym)
+            self.calculate_button.setEnabled(True)
+            self.euler_button.setToolTip("Plot directional dependence")
+            self.euler_button.setEnabled(True)
+            self.euler_button.setToolTip("Rotate stiffness tensor (Bunge ZXZ)")
+        except ValueError:
+            self.calculate_button.setEnabled(False)
+            self.calculate_button.setToolTip("The stiffness tensor is not definite positive!")
+            self.euler_button.setEnabled(False)
+            self.euler_button.setToolTip("The stiffness tensor is not definite positive!")
 
     def show_about(self):
         dialog = QDialog(self)
