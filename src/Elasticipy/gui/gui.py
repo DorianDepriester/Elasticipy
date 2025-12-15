@@ -25,9 +25,11 @@ ICON_PATH = here / ".." / "resources" / "favicon.png"
 class ElasticityGUI(QMainWindow):
     def __init__(self):
         super().__init__()
+        self.C_stiff = None
         self.coefficient_fields = {}
         self.setWindowTitle("Elasticipy - GUI")
         self.initUI()
+        self.C_invar= np.zeros(7)
 
     def selected_symmetry(self):
         symmetry_name = self.symmetry_selector.currentText()
@@ -298,61 +300,48 @@ class ElasticityGUI(QMainWindow):
             self.which_selector.setEnabled(True)
 
     def calculate_and_plot(self):
-        """Collect entries and compute the stiffness tensor"""
-        coefficients = np.zeros((6, 6))
-        for (i, j), field in self.coefficient_fields.items():
+        stiff = self.C_stiff
+        self.figure.clear()
+        requested_value = self.plotting_selector.currentText()
+        if requested_value == "Young modulus":
+            value = stiff.Young_modulus
+            plot_kwargs = {}
+        elif requested_value == 'Linear compressibility':
+            value = stiff.linear_compressibility
+            plot_kwargs = {}
+        else:
+            if requested_value == 'Shear modulus':
+                value = stiff.shear_modulus
+            else:
+                value = stiff.Poisson_ratio
+            plot_kwargs = {'which': WHICH_OPTIONS[self.which_selector.currentText()]}
+        if self.plot_style_selector.currentIndex() == 0:
+            value.plot3D(fig=self.figure, **plot_kwargs)
+        elif self.plot_style_selector.currentIndex() == 1:
+            value.plot_xyz_sections(fig=self.figure)
+        else:
+            value.plot_as_pole_figure(fig=self.figure, **plot_kwargs)
+        self.canvas.draw()
+        invariants = np.array(stiff.linear_invariants() + stiff.quadratic_invariants())
+        if not np.all(np.isclose(invariants, self.C_invar)):
+            self.C_invar = invariants
+            self.result_labels["E_mean"].setText(f"{stiff.Young_modulus.mean():.3f}")
+            self.result_labels["G_mean"].setText(f"{stiff.shear_modulus.mean():.3f}")
+            self.result_labels["nu_mean"].setText(f"{stiff.Poisson_ratio.mean():.3f}")
+            self.result_labels["Beta_mean"].setText(f"{stiff.linear_compressibility.mean()*1000:.3f}")
+            for method in ['voigt', 'reuss', 'hill']:
+                C = stiff.average(method=method)
+                self.result_labels[f"E_{method}"].setText(f"{C.Young_modulus.eval([1,0,0]):.3f}")
+                self.result_labels[f"G_{method}"].setText(f"{C.shear_modulus.eval([1, 0, 0],[0,1,0]):.3f}")
+                self.result_labels[f"nu_{method}"].setText(f"{C.Poisson_ratio.eval([1, 0, 0], [0, 1, 0]):.3f}")
+                self.result_labels[f"Beta_{method}"].setText(f"{C.linear_compressibility.eval([1, 0, 0])*1000:.3f}")
+            self.result_labels["K"].setText(f"{stiff.bulk_modulus:.3f}")
             try:
-                coefficients[i, j] = float(field.text())
+                Z = stiff.Zener_ratio()
+                self.result_labels["Z"].setText(f"{stiff.Zener_ratio():.3f}")
             except ValueError:
-                coefficients[i, j] = 0
-        C = np.array(coefficients)
-        Csym = C + np.tril(C.T, -1) # Rebuild the lower triangular part
-
-        try:
-            stiff = StiffnessTensor(Csym)
-            self.figure.clear()
-            requested_value = self.plotting_selector.currentText()
-            if requested_value == "Young modulus":
-                value = stiff.Young_modulus
-                plot_kwargs = {}
-            elif requested_value == 'Linear compressibility':
-                value = stiff.linear_compressibility
-                plot_kwargs = {}
-            else:
-                if requested_value == 'Shear modulus':
-                    value = stiff.shear_modulus
-                else:
-                    value = stiff.Poisson_ratio
-                plot_kwargs = {'which': WHICH_OPTIONS[self.which_selector.currentText()]}
-            if self.plot_style_selector.currentIndex() == 0:
-                value.plot3D(fig=self.figure, **plot_kwargs)
-            elif self.plot_style_selector.currentIndex() == 1:
-                value.plot_xyz_sections(fig=self.figure)
-            else:
-                value.plot_as_pole_figure(fig=self.figure, **plot_kwargs)
-            self.canvas.draw()
-            if not np.all(self.C_matrix == Csym):
-                self.result_labels["E_mean"].setText(f"{stiff.Young_modulus.mean():.3f}")
-                self.result_labels["G_mean"].setText(f"{stiff.shear_modulus.mean():.3f}")
-                self.result_labels["nu_mean"].setText(f"{stiff.Poisson_ratio.mean():.3f}")
-                self.result_labels["Beta_mean"].setText(f"{stiff.linear_compressibility.mean()*1000:.3f}")
-                for method in ['voigt', 'reuss', 'hill']:
-                    C = stiff.average(method=method)
-                    self.result_labels[f"E_{method}"].setText(f"{C.Young_modulus.eval([1,0,0]):.3f}")
-                    self.result_labels[f"G_{method}"].setText(f"{C.shear_modulus.eval([1, 0, 0],[0,1,0]):.3f}")
-                    self.result_labels[f"nu_{method}"].setText(f"{C.Poisson_ratio.eval([1, 0, 0], [0, 1, 0]):.3f}")
-                    self.result_labels[f"Beta_{method}"].setText(f"{C.linear_compressibility.eval([1, 0, 0])*1000:.3f}")
-                self.result_labels["K"].setText(f"{stiff.bulk_modulus:.3f}")
-                try:
-                    Z = stiff.Zener_ratio()
-                    self.result_labels["Z"].setText(f"{stiff.Zener_ratio():.3f}")
-                except ValueError:
-                    self.result_labels["Z"].setText("—")
-                self.result_labels["A"].setText(f"{stiff.universal_anisotropy:.3f}")
-                self.C_matrix = Csym
-
-        except ValueError as inst:
-            QMessageBox.critical(self, "Singular stiffness", inst.__str__(), QMessageBox.Ok)
+                self.result_labels["Z"].setText("—")
+            self.result_labels["A"].setText(f"{stiff.universal_anisotropy:.3f}")
 
 
     def update_dependent_fields(self):
@@ -387,16 +376,17 @@ class ElasticityGUI(QMainWindow):
                 coefficients[i, j] = 0
         Csym = coefficients + np.tril(coefficients.T, -1) # Rebuild the lower triangular part
         try:
-            StiffnessTensor(Csym)
+            self.C_stiff = StiffnessTensor(Csym)
             self.calculate_button.setEnabled(True)
             self.euler_button.setToolTip("Plot directional dependence")
             self.euler_button.setEnabled(True)
             self.euler_button.setToolTip("Rotate stiffness tensor (Bunge ZXZ)")
         except ValueError:
             self.calculate_button.setEnabled(False)
-            self.calculate_button.setToolTip("The stiffness tensor is not definite positive!")
+            error_msg = "The stiffness tensor is not definite positive!"
+            self.calculate_button.setToolTip(error_msg)
             self.euler_button.setEnabled(False)
-            self.euler_button.setToolTip("The stiffness tensor is not definite positive!")
+            self.euler_button.setToolTip(error_msg)
 
     def show_about(self):
         dialog = QDialog(self)
@@ -413,7 +403,7 @@ class ElasticityGUI(QMainWindow):
         self.euler_dialog.show()
 
     def update_from_euler(self, phi1, Phi, phi2):
-        C0 = StiffnessTensor(self.C_matrix)  # StiffnessTensor initial
+        C0 = self.C_stiff  # StiffnessTensor initial
         rot = Rotation.from_euler('ZXZ', [phi1, Phi, phi2], degrees=True)
         if np.any(np.array([phi1, phi2, phi2])) != 0.:
             self.symmetry_selector.setCurrentText('Triclinic')
