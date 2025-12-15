@@ -421,9 +421,7 @@ class ElasticityGUI(QMainWindow):
 def crystal_elastic_plotter():
     app = QApplication(sys.argv)
     try:
-        here = Path(__file__).resolve().parent
-        icon_path = here / "../resources" / "favicon.png"
-        icon = QIcon(str(icon_path))
+        icon = QIcon(str(ICON_PATH))
     except Exception:
         icon = QIcon()
     app.setWindowIcon(icon)
