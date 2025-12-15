@@ -1,6 +1,6 @@
 import numpy as np
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QDialog, QVBoxLayout, QHBoxLayout, QLabel, QSlider, QDoubleSpinBox, QPushButton
+from PyQt5.QtWidgets import QDialog, QVBoxLayout, QHBoxLayout, QLabel, QSlider, QDoubleSpinBox, QPushButton, QCheckBox
 from qtpy.QtCore import Qt, Signal
 
 
@@ -52,6 +52,10 @@ class EulerBungeDialog(QDialog):
             self.spins.append(spin)
 
             self.layout.addLayout(row)
+
+        # Live update
+        self.live_button = QCheckBox("Live-update plotting")
+        self.layout.addWidget(self.live_button)
 
         # Reset button
         reset_button = QPushButton("Reset orientation")

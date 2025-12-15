@@ -414,7 +414,8 @@ class ElasticityGUI(QMainWindow):
             self.symmetry_selector.setCurrentText(self.current_config['sym'])
             self.point_group_selector.setCurrentText(self.current_config['pg'])
             self.diag_selector.setCurrentText(self.current_config['diag'])
-
+        if self.euler_dialog.live_button.isChecked():
+            self.calculate_and_plot()
 
 def crystal_elastic_plotter():
     app = QApplication(sys.argv)
