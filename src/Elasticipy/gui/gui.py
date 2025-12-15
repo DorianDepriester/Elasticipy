@@ -19,7 +19,8 @@ WHICH_OPTIONS = {'Mean': 'mean', 'Max': 'max', 'Min': 'min', 'Std. dev.': 'std'}
 
 # --- Logo ---
 here = Path(__file__).resolve().parent
-logo_path = here / "../resources" / "logo_text.svg"
+LOGO_PATH = here / ".." / "resources" / "logo_text.svg"
+ICON_PATH = here / ".." / "resources" / "favicon.png"
 
 class ElasticityGUI(QMainWindow):
     def __init__(self):
@@ -379,7 +380,7 @@ class ElasticityGUI(QMainWindow):
 
     def show_about(self):
         dialog = QDialog(self)
-        dialog = about(dialog, logo_path)
+        dialog = about(dialog, LOGO_PATH)
         dialog.exec_()
 
     def open_euler_dialog(self):
@@ -413,7 +414,6 @@ def crystal_elastic_plotter():
         here = Path(__file__).resolve().parent
         icon_path = here / "../resources" / "favicon.png"
         icon = QIcon(str(icon_path))
-        print(icon_path, icon_path.exists())
     except Exception:
         icon = QIcon()
     app.setWindowIcon(icon)
