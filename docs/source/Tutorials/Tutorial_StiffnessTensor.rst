@@ -26,20 +26,6 @@ as follows:
     Here, we have constructed the stiffness tensor from Young modulus and Poisson ratio. Actually, for the isotropic case,
     it can be constructed from any pair-values amongst the following:
 
-        - Young modulus (`
-    >>> C = StiffnessTensor.isotropic(E=210e3, nu=0.25)
-    >>> print(C)
-    Stiffness tensor (in Voigt mapping):
-    [[252000.  84000.  84000.      0.      0.      0.]
-     [ 84000. 252000.  84000.      0.      0.      0.]
-     [ 84000.  84000. 252000.      0.      0.      0.]
-     [     0.      0.      0.  84000.      0.      0.]
-     [     0.      0.      0.      0.  84000.      0.]
-     [     0.      0.      0.      0.      0.  84000.]]
-
-Here, we have constructed the stiffness tensor from Young modulus and Poisson ratio. Actually, for the isotropic case,
-it can be constructed from any pair-values amongst the following:
-
     - Young modulus (``E``),
     - Poisson ratio,
     - shear modulus (``G`` or ``lame1``),
