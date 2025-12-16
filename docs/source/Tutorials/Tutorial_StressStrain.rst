@@ -12,34 +12,17 @@ equivalent stresses:
 .. doctest::
 
     >>> from elasticipy.tensors.stress_strain import StressTensor, StrainTensor
-        >>> stress = StressTensor.shear([1, 0, 0], [0, 1, 0], 1.0) # Unit XY shear stress
-        >>> print(stress.vonMises(), stress.Tresca())
-        1.7320508075688772 2.0
-
-    So now, let's have a look on the strain tensor, and compute the principal strains and the volumetric change:
-
-        >>> strain = StrainTensor.shear([1,0,0], [0,1,0], 1e-3) # XY Shear strain with 1e-3 mag.
-        >>> print(strain.principal_strains())
-        [ 0.001  0.    -0.001]
-        >>> print(strain.volumetric_strain())
-        0.0
-        >>> stress = StressTensor.shear([1, 0, 0], [0, 1, 0], 1.0) # Unit XY shear stress
-        >>> print(stress.vonMises(), stress.Tresca())
-        1.7320508075688772 2.0
     >>> stress = StressTensor.shear([1, 0, 0], [0, 1, 0], 1.0) # Unit XY shear stress
     >>> print(stress.vonMises(), stress.Tresca())
     1.7320508075688772 2.0
 
-So now, let's have a look on the strain tensor, and compute the principal strains and the volumetric change:
+    So now, let's have a look on the strain tensor, and compute the principal strains and the volumetric change:
 
     >>> strain = StrainTensor.shear([1,0,0], [0,1,0], 1e-3) # XY Shear strain with 1e-3 mag.
     >>> print(strain.principal_strains())
     [ 0.001  0.    -0.001]
     >>> print(strain.volumetric_strain())
     0.0
-    >>> stress = StressTensor.shear([1, 0, 0], [0, 1, 0], 1.0) # Unit XY shear stress
-    >>> print(stress.vonMises(), stress.Tresca())
-    1.7320508075688772 2.0
 
 Linear elasticity
 --------------------------------
@@ -72,34 +55,7 @@ Considering the previous strain, evaluate the corresponding stress:
     [[  0.     164.0625   0.    ]
      [164.0625   0.       0.    ]
      [  0.       0.       0.    ]]
-As an example, create a stiffness tensor corresponding to steel:
 
-    >>> from elasticipy.tensors.elasticity import StiffnessTensor
-    >>> C = StiffnessTensor.isotropic(E=210e3, nu=0.28)
-    >>> print(C)
-    Stiffness tensor (in Voigt mapping):
-    [[268465.90909091 104403.40909091 104403.40909091      0.
-           0.              0.        ]
-     [104403.40909091 268465.90909091 104403.40909091      0.
-           0.              0.        ]
-     [104403.40909091 104403.40909091 268465.90909091      0.
-           0.              0.        ]
-     [     0.              0.              0.          82031.25
-           0.              0.        ]
-     [     0.              0.              0.              0.
-       82031.25            0.        ]
-     [     0.              0.              0.              0.
-           0.          82031.25      ]]
-
-
-Considering the previous strain, evaluate the corresponding stress:
-
-    >>> sigma = C * strain
-    >>> print(sigma)
-    Stress tensor
-    [[  0.     164.0625   0.    ]
-     [164.0625   0.       0.    ]
-     [  0.       0.       0.    ]]
 As an example, create a stiffness tensor corresponding to steel:
 
     >>> from elasticipy.tensors.elasticity import StiffnessTensor
@@ -175,7 +131,7 @@ A practical way to visualize its principal stresses and the possible shear stres
 
 .. plot::
 
-    from Elasticipy.tensors.stress_strain import StressTensor
+    from elasticipy.tensors.stress_strain import StressTensor
     s = StressTensor.rand(seed=123) # Use seed to ensure reproducibility
     fig, ax = s.draw_Mohr_circles()
     fig.show()
