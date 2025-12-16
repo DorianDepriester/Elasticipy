@@ -122,4 +122,5 @@ sections (see :ref:`here<plotting>` for details) for each of the aforementioned 
          else:
              fig, axs = C_avg.Young_modulus.plot_xyz_sections(fig=fig, axs=axs, label=method) # Use existing axes
     axs[-1].legend()
+    fig.tight_layout()
     fig.show()
