@@ -1,4 +1,4 @@
-from Elasticipy.tensors.elasticity import StiffnessTensor
+from elasticipy.tensors.elasticity import StiffnessTensor
 from matplotlib import pyplot as plt
 
 C = StiffnessTensor.orthorhombic(phase_name='forsterite',

@@ -8,7 +8,15 @@ At first, let's consider steel as an example, assuming an isotropic behaviour:
 
 .. doctest::
 
-    >>> from Elasticipy.tensors.thermal_expansion import ThermalExpansionTensor as ThEx
+    >>> from elasticipy.tensors.thermal_expansion import ThermalExpansionTensor as ThEx
+        >>> alpha = ThEx.isotropic(11e-6)
+        >>> print(alpha)
+        Thermal expansion tensor
+        [[1.1e-05 0.0e+00 0.0e+00]
+         [0.0e+00 1.1e-05 0.0e+00]
+         [0.0e+00 0.0e+00 1.1e-05]]
+
+    To compute the strain due to an increase of temperature, just multiply
     >>> alpha = ThEx.isotropic(11e-6)
     >>> print(alpha)
     Thermal expansion tensor

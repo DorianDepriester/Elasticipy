@@ -4,7 +4,7 @@ from matplotlib.colors import Normalize
 from numpy import cos, sin
 from scipy import integrate as integrate
 from scipy import optimize
-from Elasticipy.polefigure import add_polefigure
+from elasticipy.polefigure import add_polefigure
 
 
 def sph2cart(*args):
@@ -242,7 +242,7 @@ class SphericalFunction:
         --------
         As an example of spherical function, we consider the Young modulus estimated from a stiffness tensor:
 
-        >>> from Elasticipy.tensors.elasticity import StiffnessTensor
+        >>> from elasticipy.tensors.elasticity import StiffnessTensor
         >>> E = StiffnessTensor.cubic(C11=110, C12=54, C44=60).Young_modulus
 
         The Young modulus along x direction is:
@@ -299,7 +299,7 @@ class SphericalFunction:
 
         Examples
         --------
-        >>> from Elasticipy.tensors.elasticity import StiffnessTensor
+        >>> from elasticipy.tensors.elasticity import StiffnessTensor
         >>> E = StiffnessTensor.cubic(C11=110, C12=54, C44=60).Young_modulus
 
         In spherical coordinates, the x direction is defined by theta=90° and phi=0. Therefore, the Young modulus along

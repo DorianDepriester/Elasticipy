@@ -1,8 +1,8 @@
 import unittest
-from Elasticipy.interfaces.FEPX import from_step_file, from_results_folder
-from Elasticipy.tensors.second_order import SecondOrderTensor, SymmetricSecondOrderTensor, \
+from elasticipy.interfaces.FEPX import from_step_file, from_results_folder
+from elasticipy.tensors.second_order import SecondOrderTensor, SymmetricSecondOrderTensor, \
     SkewSymmetricSecondOrderTensor
-from Elasticipy.tensors.stress_strain import StrainTensor, StressTensor
+from elasticipy.tensors.stress_strain import StrainTensor, StressTensor
 import os
 import numpy as np
 

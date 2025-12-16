@@ -1,5 +1,5 @@
-from Elasticipy.tensors.stress_strain import StrainTensor
-from Elasticipy.tensors.elasticity import StiffnessTensor
+from elasticipy.tensors.stress_strain import StrainTensor
+from elasticipy.tensors.elasticity import StiffnessTensor
 from matplotlib import pyplot as plt
 import matplotlib as mpl
 mpl.use('Qt5Agg')   # Ensure interactive plot
@@ -7,7 +7,7 @@ import numpy as np
 import time
 
 C = StiffnessTensor.transverse_isotropic(Ex=200, Ez=300, nu_yx=0.2, nu_zx=0.3, Gxz=80)
-## Elasticipy's stuff
+## elasticipy's stuff
 exp = np.arange(0, 8)
 n = 10**exp
 t_stress_elast=[]
@@ -37,9 +37,9 @@ for ni in n:
 
 fig, ax = plt.subplots()
 ax.plot(n, t_stress_mg, label="Generalized Hooke's law (Pymatgen)", marker="s")
-ax.plot(n, t_stress_elast, label="Generalized Hooke's law (Elasticipy)", marker="o")
+ax.plot(n, t_stress_elast, label="Generalized Hooke's law (elasticipy)", marker="o")
 ax.plot(n, t_vm_mg, label='von Mises eq. stress (Pymatgen)', linestyle='dotted', marker="s")
-ax.plot(n, t_vm_elast, label='von Mises eq. stress  (Elasticipy)', linestyle='dotted', marker="o")
+ax.plot(n, t_vm_elast, label='von Mises eq. stress  (elasticipy)', linestyle='dotted', marker="o")
 plt.legend()
 plt.xscale('log')
 plt.yscale('log')

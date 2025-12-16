@@ -3,7 +3,7 @@ from qtpy.QtGui import QPixmap
 from qtpy.QtCore import Qt
 
 def about(dialog, logo_path):
-    dialog.setWindowTitle("About Elasticipy")
+    dialog.setWindowTitle("About elasticipy")
     dialog.setFixedWidth(400)
 
     layout = QVBoxLayout(dialog)

@@ -5,14 +5,14 @@ from pytest import approx
 import os
 import pandas as pd
 
-from Elasticipy.tensors.elasticity import StiffnessTensor, ComplianceTensor
+from elasticipy.tensors.elasticity import StiffnessTensor, ComplianceTensor
 from scipy.spatial.transform import Rotation
-from Elasticipy.tensors.elasticity import _indices2str
-from Elasticipy.crystal_symmetries import SYMMETRIES
-from Elasticipy.tensors.stress_strain import StressTensor, StrainTensor
+from elasticipy.tensors.elasticity import _indices2str
+from elasticipy.crystal_symmetries import SYMMETRIES
+from elasticipy.tensors.stress_strain import StressTensor, StrainTensor
 from pymatgen.analysis.elasticity import elastic as mg
 from orix.quaternion import Rotation as orix_rot
-from Elasticipy.tensors.mapping import KelvinMapping, VoigtMapping
+from elasticipy.tensors.mapping import KelvinMapping, VoigtMapping
 import sys
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -290,10 +290,10 @@ class TestComplianceTensor(unittest.TestCase):
             np.testing.assert_array_almost_equal(inv_rotated_i, lin_inv[i])
 
     def test_deprecated_path(self):
-        expected_warn = ("The module 'Elasticipy.FourthOrderTensor' is deprecated and will be removed in a future "
-                            "release. Please use 'Elasticipy.tensors.elasticity' instead.")
+        expected_warn = ("The module 'elasticipy.FourthOrderTensor' is deprecated and will be removed in a future "
+                            "release. Please use 'elasticipy.tensors.elasticity' instead.")
         with self.assertWarns(DeprecationWarning) as context:
-            from Elasticipy.FourthOrderTensor import ComplianceTensor, StiffnessTensor
+            from elasticipy.FourthOrderTensor import ComplianceTensor, StiffnessTensor
         self.assertEqual(str(context.warning), expected_warn)
 
 

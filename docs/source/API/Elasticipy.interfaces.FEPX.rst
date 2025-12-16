@@ -1,7 +1,7 @@
-Elasticipy.interfaces.FEPX
+elasticipy.interfaces.FEPX
 ====================================
 
-.. automodule:: Elasticipy.interfaces.FEPX
+.. automodule:: elasticipy.interfaces.FEPX
    :members:
    :undoc-members:
    :show-inheritance:

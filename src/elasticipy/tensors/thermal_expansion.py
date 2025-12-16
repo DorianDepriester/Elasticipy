@@ -1,7 +1,7 @@
 import warnings
 
-from Elasticipy.tensors.second_order import SymmetricSecondOrderTensor, ALPHABET, is_orix_rotation
-from Elasticipy.tensors.stress_strain import StrainTensor
+from elasticipy.tensors.second_order import SymmetricSecondOrderTensor, ALPHABET, is_orix_rotation
+from elasticipy.tensors.stress_strain import StrainTensor
 import numpy as np
 from scipy.spatial.transform import Rotation
 
@@ -41,7 +41,7 @@ class ThermalExpansionTensor(SymmetricSecondOrderTensor):
         --------
         Let consider a transverse isotropic case (e.g. carbon fibers):
 
-        >>> from Elasticipy.tensors.thermal_expansion import ThermalExpansionTensor as ThEx
+        >>> from elasticipy.tensors.thermal_expansion import ThermalExpansionTensor as ThEx
         >>> alpha = ThEx.transverse_isotropic(alpha_11=5.6e-6, alpha_33=-0.4e-6)
 
         Now apply temperature increases:

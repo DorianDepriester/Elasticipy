@@ -156,7 +156,7 @@ For ``FourthOrderTensor`` and ``SymmetricFourthOrderTensor``, the default mappin
 
 .. doctest::
 
-    >>> from Elasticipy.tensors.fourth_order import FourthOrderTensor
+    >>> from elasticipy.tensors.fourth_order import FourthOrderTensor
     >>> I_kelvin = FourthOrderTensor.eye()
     >>> print(I_kelvin)
     4th-order tensor (in Kelvin mapping):
@@ -167,9 +167,9 @@ For ``FourthOrderTensor`` and ``SymmetricFourthOrderTensor``, the default mappin
      [0. 0. 0. 0. 1. 0.]
      [0. 0. 0. 0. 0. 1.]]
 
-Still, the Voigt mapping can be used instead:
+    Still, the Voigt mapping can be used instead:
 
-    >>> from Elasticipy.tensors.mapping import VoigtMapping
+    >>> from elasticipy.tensors.mapping import VoigtMapping
     >>> I_voigt = FourthOrderTensor.eye(mapping=VoigtMapping())
     >>> print(I_voigt)
     4th-order tensor (in Voigt mapping):
@@ -269,7 +269,7 @@ Between 4th and a 2nd -order tensors
 
 The same applies when working with 2nd-order tensors (provided by the ``SecondOrderTensor`` class):
 
-    >>> from Elasticipy.tensors.second_order import SecondOrderTensor
+    >>> from elasticipy.tensors.second_order import SecondOrderTensor
     >>> t = SecondOrderTensor.rand(shape=(4,))
     >>> T1.ddot(t)
     Second-order tensor

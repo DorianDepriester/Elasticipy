@@ -1,9 +1,9 @@
 import numpy as np
 from elastic import Elastic
-from Elasticipy.tensors.elasticity import StiffnessTensor
+from elasticipy.tensors.elasticity import StiffnessTensor
 import matplotlib as mpl
 mpl.use('Qt5Agg')   # Ensure interactive plot
-from Elasticipy.spherical_function import sph2cart, _plot3D
+from elasticipy.spherical_function import sph2cart, _plot3D
 import time
 import matplotlib.pyplot as plt
 
@@ -36,5 +36,5 @@ ax.set_title("Elate (t={:.3f} s)".format(t))
 start_time=time.perf_counter()
 fig, ax = C.Young_modulus.plot3D(n_phi=n_phi, n_theta=n_theta)
 t = time.perf_counter() - start_time
-#ax.set_title("Elasticipy (t={:.3f} s)".format(t))
+#ax.set_title("elasticipy (t={:.3f} s)".format(t))
 fig.savefig('../JOSS/Plot_E.png', dpi=300)

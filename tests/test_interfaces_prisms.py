@@ -1,7 +1,7 @@
 import unittest
-from Elasticipy.interfaces.PRISMS import from_quadrature_file, from_stressstrain_file
-from Elasticipy.tensors.second_order import SecondOrderTensor, SymmetricSecondOrderTensor
-from Elasticipy.tensors.stress_strain import StressTensor
+from elasticipy.interfaces.PRISMS import from_quadrature_file, from_stressstrain_file
+from elasticipy.tensors.second_order import SecondOrderTensor, SymmetricSecondOrderTensor
+from elasticipy.tensors.stress_strain import StressTensor
 import numpy as np
 import os
 import pandas as pd

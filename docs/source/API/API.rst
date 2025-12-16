@@ -13,11 +13,3 @@ API documentation
    Elasticipy.spherical_function
    Elasticipy.interfaces.PRISMS
    Elasticipy.interfaces.FEPX
-
-Module contents
----------------
-
-.. automodule:: Elasticipy
-   :members:
-   :undoc-members:
-   :show-inheritance:

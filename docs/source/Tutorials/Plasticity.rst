@@ -39,17 +39,144 @@ First, let us create the model:
 
 .. doctest::
 
-    >>> from Elasticipy.plasticity import JohnsonCook
+    >>> from elasticipy.plasticity import JohnsonCook
+        >>> JC = JohnsonCook(A=363, B=792.7122, n=0.5756)
+
+    The parameters are taken from
     >>> JC = JohnsonCook(A=363, B=792.7122, n=0.5756)
 
 The parameters are taken from [1]_. As we will also take elastic behaviour into account, we also need:
 
-    >>> from Elasticipy.tensors.elasticity import StiffnessTensor
+    >>> from elasticipy.tensors.elasticity import StiffnessTensor
     >>> C = StiffnessTensor.isotropic(E=210000, nu=0.27)
 
 Now, let say that we want to investigate the material's response for the tensile stress ranging from 0 to 725 MPa:
 
-    >>> from Elasticipy.tensors.stress_strain import StressTensor, StrainTensor
+    >>> from elasticipy.tensors.stress_strain import StressTensor, StrainTensor
+    >>> import numpy as np
+    >>> n_step = 100
+    >>> stress_mag = np.linspace(0, 725, n_step)
+    >>> stress = StressTensor.tensile([1,0,0], stress_mag)
+
+At least, we can directly compute the elastic strain for each step:
+
+    >>> elastic_strain = C.inv() * stress
+
+So now, the plastic strain can be computed using an iterative approach:
+
+    >>> plastic_strain = StrainTensor.zeros(n_step)
+    >>> for i in range(1, n_step):
+    ...       strain_increment = JC.compute_strain_increment(stress[i])
+    ...       plastic_strain[i] = plastic_strain[i-1] + strain_increment
+
+That's all. Finally, let us plot the applied stress as a function of the overall elongation:
+
+    >>> from matplotlib import pyplot as plt
+    >>> elong = elastic_strain.C[0,0]+plastic_strain.C[0,0]
+    >>> fig, ax = plt.subplots()
+    >>> ax.plot(elong, stress_mag, label='Stress-controlled') # doctest: +SKIP
+    >>> ax.set_xlabel(r'$\varepsilon_{xx}$') # doctest: +SKIP
+    >>> ax.set_ylabel('Tensile stress (MPa)') # doctest: +SKIP
+
+    >>> from elasticipy.tensors.elasticity import StiffnessTensor
+    >>> C = StiffnessTensor.isotropic(E=210000, nu=0.27)
+
+Now, let say that we want to investigate the material's response for the tensile stress ranging from 0 to 725 MPa:
+
+    >>> from elasticipy.tensors.stress_strain import StressTensor, StrainTensor
+    >>> import numpy as np
+    >>> n_step = 100
+    >>> stress_mag = np.linspace(0, 725, n_step)
+    >>> stress = StressTensor.tensile([1,0,0], stress_mag)
+
+At least, we can directly compute the elastic strain for each step:
+
+    >>> elastic_strain = C.inv() * stress
+
+So now, the plastic strain can be computed using an iterative approach:
+
+    >>> plastic_strain = StrainTensor.zeros(n_step)
+    >>> for i in range(1, n_step):
+    ...       strain_increment = JC.compute_strain_increment(stress[i])
+    ...       plastic_strain[i] = plastic_strain[i-1] + strain_increment
+
+That's all. Finally, let us plot the applied stress as a function of the overall elongation:
+
+    >>> from matplotlib import pyplot as plt
+    >>> elong = elastic_strain.C[0,0]+plastic_strain.C[0,0]
+    >>> fig, ax = plt.subplots()
+    >>> ax.plot(elong, stress_mag, label='Stress-controlled') # doctest: +SKIP
+    >>> ax.set_xlabel(r'$\varepsilon_{xx}$') # doctest: +SKIP
+    >>> ax.set_ylabel('Tensile stress (MPa)') # doctest: +SKIP
+
+    >>> from elasticipy.tensors.elasticity import StiffnessTensor
+    >>> C = StiffnessTensor.isotropic(E=210000, nu=0.27)
+
+Now, let say that we want to investigate the material's response for the tensile stress ranging from 0 to 725 MPa:
+
+    >>> from elasticipy.tensors.stress_strain import StressTensor, StrainTensor
+    >>> import numpy as np
+    >>> n_step = 100
+    >>> stress_mag = np.linspace(0, 725, n_step)
+    >>> stress = StressTensor.tensile([1,0,0], stress_mag)
+
+At least, we can directly compute the elastic strain for each step:
+
+    >>> elastic_strain = C.inv() * stress
+
+So now, the plastic strain can be computed using an iterative approach:
+
+    >>> plastic_strain = StrainTensor.zeros(n_step)
+    >>> for i in range(1, n_step):
+    ...       strain_increment = JC.compute_strain_increment(stress[i])
+    ...       plastic_strain[i] = plastic_strain[i-1] + strain_increment
+
+That's all. Finally, let us plot the applied stress as a function of the overall elongation:
+
+    >>> from matplotlib import pyplot as plt
+    >>> elong = elastic_strain.C[0,0]+plastic_strain.C[0,0]
+    >>> fig, ax = plt.subplots()
+    >>> ax.plot(elong, stress_mag, label='Stress-controlled') # doctest: +SKIP
+    >>> ax.set_xlabel(r'$\varepsilon_{xx}$') # doctest: +SKIP
+    >>> ax.set_ylabel('Tensile stress (MPa)') # doctest: +SKIP
+
+    >>> from elasticipy.tensors.elasticity import StiffnessTensor
+    >>> C = StiffnessTensor.isotropic(E=210000, nu=0.27)
+
+Now, let say that we want to investigate the material's response for the tensile stress ranging from 0 to 725 MPa:
+
+    >>> from elasticipy.tensors.stress_strain import StressTensor, StrainTensor
+    >>> import numpy as np
+    >>> n_step = 100
+    >>> stress_mag = np.linspace(0, 725, n_step)
+    >>> stress = StressTensor.tensile([1,0,0], stress_mag)
+
+At least, we can directly compute the elastic strain for each step:
+
+    >>> elastic_strain = C.inv() * stress
+
+So now, the plastic strain can be computed using an iterative approach:
+
+    >>> plastic_strain = StrainTensor.zeros(n_step)
+    >>> for i in range(1, n_step):
+    ...       strain_increment = JC.compute_strain_increment(stress[i])
+    ...       plastic_strain[i] = plastic_strain[i-1] + strain_increment
+
+That's all. Finally, let us plot the applied stress as a function of the overall elongation:
+
+    >>> from matplotlib import pyplot as plt
+    >>> elong = elastic_strain.C[0,0]+plastic_strain.C[0,0]
+    >>> fig, ax = plt.subplots()
+    >>> ax.plot(elong, stress_mag, label='Stress-controlled') # doctest: +SKIP
+    >>> ax.set_xlabel(r'$\varepsilon_{xx}$') # doctest: +SKIP
+    >>> ax.set_ylabel('Tensile stress (MPa)') # doctest: +SKIP
+
+    >>> from elasticipy.tensors.elasticity import StiffnessTensor
+    >>> C = StiffnessTensor.isotropic(E=210000, nu=0.27)
+
+Now, let say that we want to investigate the material's response for the tensile stress ranging from 0 to 725 MPa:
+
+    >>> from elasticipy.tensors.stress_strain import StressTensor, StrainTensor
     >>> import numpy as np
     >>> n_step = 100
     >>> stress_mag = np.linspace(0, 725, n_step)

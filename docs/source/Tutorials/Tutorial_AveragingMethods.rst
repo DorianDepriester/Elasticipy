@@ -17,7 +17,12 @@ As an example, let's consider the stiffness tensor for monoclinic TiNi:
 
 .. doctest::
 
-    >>> from Elasticipy.tensors.elasticity import StiffnessTensor
+    >>> from elasticipy.tensors.elasticity import StiffnessTensor
+        >>> C = StiffnessTensor.monoclinic(phase_name='TiNi',
+        ...                                C11=231, C12=127, C13=104,
+        ...                                C22=240, C23=131, C33=175,
+        ...                                C44=81, C55=11, C66=85,
+        ...                                C15=-18, C25=1, C35=-3, C46=3)
     >>> C = StiffnessTensor.monoclinic(phase_name='TiNi',
     ...                                C11=231, C12=127, C13=104,
     ...                                C22=240, C23=131, C33=175,

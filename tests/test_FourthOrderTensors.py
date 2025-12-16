@@ -1,9 +1,9 @@
 import unittest
-from Elasticipy.tensors.fourth_order import FourthOrderTensor, SymmetricFourthOrderTensor
+from elasticipy.tensors.fourth_order import FourthOrderTensor, SymmetricFourthOrderTensor
 import numpy as np
 
-from Elasticipy.tensors.mapping import VoigtMapping
-from Elasticipy.tensors.second_order import SecondOrderTensor
+from elasticipy.tensors.mapping import VoigtMapping
+from elasticipy.tensors.second_order import SecondOrderTensor
 
 
 class TestFourthOrderTensor(unittest.TestCase):

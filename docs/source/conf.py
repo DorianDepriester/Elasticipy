@@ -15,7 +15,7 @@ matplotlib.use("Agg")
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = 'Elasticipy'
+project = 'elasticipy'
 copyright = '%Y, Dorian Depriester'
 author = 'Dorian Depriester'
 release = '4.2.0'

@@ -1,9 +1,9 @@
-from Elasticipy.tensors.fourth_order import SymmetricFourthOrderTensor, kelvin_mapping, _isotropic_matrix
-from Elasticipy.spherical_function import SphericalFunction, HyperSphericalFunction
-from Elasticipy.crystal_symmetries import SYMMETRIES
-from Elasticipy.tensors.second_order import SymmetricSecondOrderTensor
-from Elasticipy.tensors.stress_strain import StrainTensor, StressTensor
-from Elasticipy.tensors.mapping import VoigtMapping
+from elasticipy.tensors.fourth_order import SymmetricFourthOrderTensor, kelvin_mapping, _isotropic_matrix
+from elasticipy.spherical_function import SphericalFunction, HyperSphericalFunction
+from elasticipy.crystal_symmetries import SYMMETRIES
+from elasticipy.tensors.second_order import SymmetricSecondOrderTensor
+from elasticipy.tensors.stress_strain import StrainTensor, StressTensor
+from elasticipy.tensors.mapping import VoigtMapping
 from functools import wraps
 import numpy as np
 import re
@@ -99,7 +99,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         ...           [0,   0,   0,   20, 0,  0 ],
         ...           [0,   0,   0,   0,  20, 0 ],
         ...           [0,   0,   0,   0,   0, 20]]
-        >>> from Elasticipy.tensors.elasticity import StiffnessTensor
+        >>> from elasticipy.tensors.elasticity import StiffnessTensor
         >>> C = StiffnessTensor(matrix)
         >>> print(C)
         Stiffness tensor (in Voigt mapping):
@@ -437,7 +437,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
         Examples
         --------
-        >>> from Elasticipy.tensors.elasticity import StiffnessTensor\n
+        >>> from elasticipy.tensors.elasticity import StiffnessTensor\n
         >>> StiffnessTensor.fromCrystalSymmetry(symmetry='monoclinic', diad='y', phase_name='TiNi',
         ...                                     C11=231, C12=127, C13=104,
         ...                                     C22=240, C23=131, C33=175,
@@ -452,7 +452,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
          [  0.   0.   0.   3.   0.  85.]]
         Phase: TiNi
 
-        >>> from Elasticipy.tensors.elasticity import ComplianceTensor\n
+        >>> from elasticipy.tensors.elasticity import ComplianceTensor\n
         >>> ComplianceTensor.fromCrystalSymmetry(symmetry='monoclinic', diad='y', phase_name='TiNi',
         ...                                      S11=8, S12=-3, S13=-2,
         ...                                      S22=8, S23=-5, S33=10,
@@ -877,7 +877,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         --------
         Let us consider the stiffness of pure copper:
 
-        >>> from Elasticipy.tensors.elasticity import StiffnessTensor
+        >>> from elasticipy.tensors.elasticity import StiffnessTensor
         >>> C = StiffnessTensor.cubic(C11=186, C12=134, C44=77)
 
         If we assume that an aggregate is composed of an infinite set grains whose orientations are uniformly
@@ -954,7 +954,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         --------
         Let us consider the stiffness of pure copper:
 
-        >>> from Elasticipy.tensors.elasticity import StiffnessTensor
+        >>> from elasticipy.tensors.elasticity import StiffnessTensor
         >>> C = StiffnessTensor.cubic(C11=186, C12=134, C44=77)
 
         If we assume that an aggregate is composed of an infinite set grains whose orientations are uniformly
@@ -1034,7 +1034,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         --------
         Let us consider the stiffness of pure copper:
 
-        >>> from Elasticipy.tensors.elasticity import StiffnessTensor
+        >>> from elasticipy.tensors.elasticity import StiffnessTensor
         >>> C = StiffnessTensor.cubic(C11=186, C12=134, C44=77)
 
         If we assume that an aggregate is composed of an infinite set grains whose orientations are uniformly
@@ -1163,7 +1163,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         --------
         On can check that the shear modulus for steel is around 82 GPa:
 
-        >>> from Elasticipy.tensors.elasticity import StiffnessTensor
+        >>> from elasticipy.tensors.elasticity import StiffnessTensor
         >>> C=StiffnessTensor.isotropic(E=210e3, nu=0.28)
         >>> C.shear_modulus
         Hyperspherical function
@@ -1339,7 +1339,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
         Examples
         --------
-        >>> from Elasticipy.tensors.elasticity import StiffnessTensor
+        >>> from elasticipy.tensors.elasticity import StiffnessTensor
         >>> C = StiffnessTensor.cubic(C11=186, C12=134, C44=77) # Cubic Cu
         >>> C.Christoffel_tensor([0, 0, 1])
         Symmetric second-order tensor
@@ -1610,7 +1610,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
         Examples
         --------
-        >>> from Elasticipy.tensors.elasticity import StiffnessTensor
+        >>> from elasticipy.tensors.elasticity import StiffnessTensor
         >>> C = StiffnessTensor.cubic(C11=200, C12=40, C44=20)
         >>> C.Zener_ratio()
         0.25
@@ -1653,7 +1653,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
     def to_pymatgen(self):
         """
-        Convert the stiffness tensor (from Elasticipy) to Python Materials Genomics (Pymatgen) format.
+        Convert the stiffness tensor (from elasticipy) to Python Materials Genomics (Pymatgen) format.
 
         Returns
         -------
@@ -1705,7 +1705,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
         Examples
         --------
-        >>> from Elasticipy.tensors.elasticity import StiffnessTensor
+        >>> from elasticipy.tensors.elasticity import StiffnessTensor
         >>> C = StiffnessTensor.cubic(C11=200, C12=40, C44=20)
         >>> print(C)
         Stiffness tensor (in Voigt mapping):
@@ -1772,7 +1772,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
         Examples
         --------
-        >>> from Elasticipy.tensors.elasticity import StiffnessTensor
+        >>> from elasticipy.tensors.elasticity import StiffnessTensor
         >>> C = StiffnessTensor.cubic(C11=200, C12=40, C44=20)
         >>> C.eig_stiffnesses
         array([ 40.,  40.,  40., 160., 160., 280.])
@@ -1861,7 +1861,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
         Examples
         --------
-        >>> from Elasticipy.tensors.elasticity import StiffnessTensor
+        >>> from elasticipy.tensors.elasticity import StiffnessTensor
         >>> C = StiffnessTensor.cubic(C11=186, C12=134, C44=77)
         >>> C.eig_stiffnesses
         array([ 52.,  52., 154., 154., 154., 454.])
@@ -1938,7 +1938,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
         Examples
         --------
-        >>> from Elasticipy.tensors.elasticity import StiffnessTensor
+        >>> from elasticipy.tensors.elasticity import StiffnessTensor
         >>> from scipy.spatial.transform import Rotation
         >>> C = StiffnessTensor.cubic(C11=186, C12=134, C44=77)
         >>> C_rotated = C * Rotation.random(random_state=123)
@@ -2041,7 +2041,7 @@ class ComplianceTensor(StiffnessTensor):
         ...           [0,   0,   0,   20, 0,  0 ],
         ...           [0,   0,   0,   0,  20, 0 ],
         ...           [0,   0,   0,   0,   0, 20]]
-        >>> from Elasticipy.tensors.elasticity import ComplianceTensor
+        >>> from elasticipy.tensors.elasticity import ComplianceTensor
         >>> S = ComplianceTensor(matrix)
         >>> print(S)
         Compliance tensor (in Voigt mapping):
@@ -2261,7 +2261,7 @@ class ComplianceTensor(StiffnessTensor):
 
     def to_pymatgen(self):
         """
-        Convert the compliance tensor (from Elasticipy) to Python Materials Genomics (Pymatgen) format.
+        Convert the compliance tensor (from elasticipy) to Python Materials Genomics (Pymatgen) format.
 
         Returns
         -------

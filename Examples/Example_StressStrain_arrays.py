@@ -1,6 +1,6 @@
 import numpy as np
-from Elasticipy.tensors.stress_strain import StressTensor, StrainTensor
-from Elasticipy.tensors.elasticity import StiffnessTensor
+from elasticipy.tensors.stress_strain import StressTensor, StrainTensor
+from elasticipy.tensors.elasticity import StiffnessTensor
 from scipy.spatial.transform import Rotation
 
 # ======================================================

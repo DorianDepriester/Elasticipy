@@ -7,10 +7,10 @@ from qtpy.QtGui import QIcon
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 
-from Elasticipy.crystal_symmetries import SYMMETRIES
-from Elasticipy.gui.rotate_window import EulerBungeDialog
-from Elasticipy.gui.about import about
-from Elasticipy.tensors.elasticity import StiffnessTensor
+from elasticipy.crystal_symmetries import SYMMETRIES
+from elasticipy.gui.rotate_window import EulerBungeDialog
+from elasticipy.gui.about import about
+from elasticipy.tensors.elasticity import StiffnessTensor
 from pathlib import Path
 
 from scipy.spatial.transform import Rotation
@@ -27,7 +27,7 @@ class ElasticityGUI(QMainWindow):
         super().__init__()
         self.C_stiff = None
         self.coefficient_fields = {}
-        self.setWindowTitle("Elasticipy - GUI")
+        self.setWindowTitle("elasticipy - GUI")
         self.initUI()
         self.C_invar= np.zeros(7)
 

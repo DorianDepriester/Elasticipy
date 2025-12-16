@@ -3,10 +3,10 @@ from pytest import approx
 import numpy as np
 from scipy.spatial.transform import Rotation
 
-from Elasticipy.tensors.elasticity import StiffnessTensor
-import Elasticipy.tensors.stress_strain as Tensors
-from Elasticipy.tensors.second_order import SecondOrderTensor, SymmetricSecondOrderTensor, SkewSymmetricSecondOrderTensor
-from Elasticipy.tensors.stress_strain import StrainTensor, StressTensor
+from elasticipy.tensors.elasticity import StiffnessTensor
+import elasticipy.tensors.stress_strain as Tensors
+from elasticipy.tensors.second_order import SecondOrderTensor, SymmetricSecondOrderTensor, SkewSymmetricSecondOrderTensor
+from elasticipy.tensors.stress_strain import StrainTensor, StressTensor
 from pymatgen.analysis.elasticity import Strain as mgStrain, Stress as mgStress
 from orix.quaternion import Rotation as OrixRot
 
@@ -569,7 +569,7 @@ class TestStressStrainTensors(unittest.TestCase):
         assert isinstance(spin * rotations, SkewSymmetricSecondOrderTensor)
 
     def test_to_pymatgen(self):
-        """Test convertion from Elasticipy to pymatgen"""
+        """Test convertion from elasticipy to pymatgen"""
         # First, try with a single tensor
         a = np.random.random((3, 3))
         a_sym = a + a.T
@@ -820,10 +820,10 @@ class TestStressStrainTensors(unittest.TestCase):
         np.testing.assert_array_almost_equal(strain.matrix, StrainTensor.from_Kelvin(strain_kelvin).matrix)
 
     def test_deprecated_path(self):
-        expected_warn = ("The module 'Elasticipy.StressStrainTensors' is deprecated and will be removed in a future "
-                            "release. Please use 'Elasticipy.tensors.stress_strain' instead.")
+        expected_warn = ("The module 'elasticipy.StressStrainTensors' is deprecated and will be removed in a future "
+                            "release. Please use 'elasticipy.tensors.stress_strain' instead.")
         with self.assertWarns(DeprecationWarning) as context:
-            from Elasticipy.StressStrainTensors import StressTensor, StrainTensor
+            from elasticipy.StressStrainTensors import StressTensor, StrainTensor
         self.assertEqual(str(context.warning), expected_warn)
 
     def test_stack(self):

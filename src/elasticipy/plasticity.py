@@ -1,5 +1,5 @@
 import numpy as np
-from Elasticipy.tensors.stress_strain import StrainTensor, StressTensor
+from elasticipy.tensors.stress_strain import StrainTensor, StressTensor
 
 
 class IsotropicHardening:
@@ -55,7 +55,7 @@ class IsotropicHardening:
         --------
         As an example, we consider a Jonhson-Cook model:
 
-        >>> from Elasticipy.plasticity import JohnsonCook
+        >>> from elasticipy.plasticity import JohnsonCook
         >>> JC = JohnsonCook(A=792, B=510, n=0.26)
         >>> print(JC)
         Johnson-Cook plasticity model
@@ -100,7 +100,7 @@ class IsotropicHardening:
         --------
         As an example, we consider the Johnson-Cook plasticity model:
 
-        >>> from Elasticipy.plasticity import JohnsonCook
+        >>> from elasticipy.plasticity import JohnsonCook
         >>> JC = JohnsonCook(A=792, B=510, n=0.26)
         >>> print(JC)
         Johnson-Cook plasticity model
@@ -167,12 +167,12 @@ class IsotropicHardening:
         --------
         As an example, we consider the Johnson-Cook plasticity model:
 
-        >>> from Elasticipy.plasticity import JohnsonCook
+        >>> from elasticipy.plasticity import JohnsonCook
         >>> JC = JohnsonCook(A=792, B=510, n=0.26)
 
         The yield stress is equal to A here. So consider a tensile stress whose magnitude below A:
 
-        >>> from Elasticipy.tensors.stress_strain import StressTensor
+        >>> from elasticipy.tensors.stress_strain import StressTensor
         >>> sigma = StressTensor.tensile([1,0,0], 700)
         >>> strain_inc = JC.compute_strain_increment(sigma)
         >>> print(strain_inc)
@@ -221,7 +221,7 @@ class IsotropicHardening:
         --------
         As an example, we consider the Johnson-Cook plasticity model:
 
-        >>> from Elasticipy.plasticity import JohnsonCook
+        >>> from elasticipy.plasticity import JohnsonCook
         >>> JC = JohnsonCook(A=792, B=510, n=0.26)
 
         First apply a strain increment:

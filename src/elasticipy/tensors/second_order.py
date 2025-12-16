@@ -559,7 +559,7 @@ class SecondOrderTensor:
 
         Examples
         --------
-        >>> from Elasticipy.tensors.second_order import SecondOrderTensor
+        >>> from elasticipy.tensors.second_order import SecondOrderTensor
         >>> A=SecondOrderTensor.rand(10)
         >>> B=SecondOrderTensor.rand(10)
         >>> AB_pair = A.dot(B)
@@ -1085,7 +1085,7 @@ class SecondOrderTensor:
         --------
         Generate a single random tensor:
 
-        >>> from Elasticipy.tensors.second_order import SecondOrderTensor as tensor
+        >>> from elasticipy.tensors.second_order import SecondOrderTensor as tensor
         >>> tensor.rand(seed=123)
         Second-order tensor
         [[0.68235186 0.05382102 0.22035987]
@@ -1219,7 +1219,7 @@ class SecondOrderTensor:
         --------
         First, we build an array of tensile stress with evenly spaced magnitude:
 
-        >>> from Elasticipy.tensors.stress_strain import StressTensor
+        >>> from elasticipy.tensors.stress_strain import StressTensor
         >>> magnitude = [0,1,2,3,4]
         >>> s = StressTensor.tensile([1,0,0],magnitude)
         >>> s.div()
@@ -1415,7 +1415,7 @@ class SecondOrderTensor:
         flatten : Converts a tensor array to 1D tensor array
         """
         try:
-            from Elasticipy.tensors.stress_strain import StrainTensor, StressTensor
+            from elasticipy.tensors.stress_strain import StrainTensor, StressTensor
             if isinstance(self, StrainTensor):
                 from pymatgen.analysis.elasticity import Strain as Constructor
             elif isinstance(self, StressTensor):
@@ -1450,7 +1450,7 @@ class SecondOrderTensor:
 
         Examples
         --------
-        >>> from Elasticipy.tensors.second_order import SecondOrderTensor
+        >>> from elasticipy.tensors.second_order import SecondOrderTensor
         >>> import numpy as np
         >>> a = SecondOrderTensor.rand(shape=3)
         >>> b = SecondOrderTensor.rand(shape=3)
@@ -1501,7 +1501,7 @@ class SymmetricSecondOrderTensor(SecondOrderTensor):
         --------
         We can create a symmetric tensor by privoding the full matrix, as long it is symmetric:
 
-        >>> from Elasticipy.tensors.second_order import SymmetricSecondOrderTensor
+        >>> from elasticipy.tensors.second_order import SymmetricSecondOrderTensor
         >>> a = SymmetricSecondOrderTensor([[11, 12, 13],[12, 22, 23],[13, 23, 33]])
         >>> print(a)
         Symmetric second-order tensor
@@ -1564,7 +1564,7 @@ class SymmetricSecondOrderTensor(SecondOrderTensor):
 
         Examples
         --------
-        >>> from Elasticipy.tensors.second_order import SymmetricSecondOrderTensor
+        >>> from elasticipy.tensors.second_order import SymmetricSecondOrderTensor
         >>> SymmetricSecondOrderTensor.from_Voigt([11, 22, 33, 23, 13, 12])
         Symmetric second-order tensor
         [[11. 12. 13.]
@@ -1719,7 +1719,7 @@ class SkewSymmetricSecondOrderTensor(SecondOrderTensor):
         --------
         One can construct a skew-symmetric tensor by providing the full skew-symmetric matrix:
 
-        >>> from Elasticipy.tensors.second_order import SkewSymmetricSecondOrderTensor
+        >>> from elasticipy.tensors.second_order import SkewSymmetricSecondOrderTensor
         >>> a = SkewSymmetricSecondOrderTensor([[0, 12, 13],[-12, 0, 23],[-13, -23, 0]])
         >>> print(a)
         Skew-symmetric second-order tensor

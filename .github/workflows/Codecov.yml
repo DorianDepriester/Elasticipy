@@ -28,7 +28,7 @@ jobs:
           pip install pytest pytest-cov codecov pymatgen orix
 
       - name: Install project and its dependencies
-        run: pip install -e .[dev]  # Installe Elasticipy et les dépendances dev
+        run: pip install -e .[dev]  # Installe elasticipy et les dépendances dev
 
       - name: Run tests
         env:
@@ -40,6 +40,6 @@ jobs:
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          slug: DorianDepriester/Elasticipy
+          slug: DorianDepriester/elasticipy
           flags: ${{ matrix.python-version }}
           name: python-${{ matrix.python-version }}

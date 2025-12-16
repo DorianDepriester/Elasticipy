@@ -1,5 +1,5 @@
-from Elasticipy.tensors.second_order import SecondOrderTensor, SymmetricSecondOrderTensor
-from Elasticipy.tensors.stress_strain import StressTensor
+from elasticipy.tensors.second_order import SecondOrderTensor, SymmetricSecondOrderTensor
+from elasticipy.tensors.stress_strain import StressTensor
 import pandas as pd
 import numpy as np
 

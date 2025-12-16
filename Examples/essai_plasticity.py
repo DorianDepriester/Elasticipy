@@ -1,6 +1,6 @@
-from Elasticipy.plasticity import JohnsonCook
-from Elasticipy.tensors.stress_strain import StressTensor, StrainTensor
-from Elasticipy.tensors.elasticity import StiffnessTensor
+from elasticipy.plasticity import JohnsonCook
+from elasticipy.tensors.stress_strain import StressTensor, StrainTensor
+from elasticipy.tensors.elasticity import StiffnessTensor
 import numpy as np
 from matplotlib import pyplot as plt
 

@@ -1,6 +1,6 @@
 import numpy as np
-from Elasticipy.tensors.fourth_order import FourthOrderTensor
-from Elasticipy.tensors.elasticity import StiffnessTensor
+from elasticipy.tensors.fourth_order import FourthOrderTensor
+from elasticipy.tensors.elasticity import StiffnessTensor
 from scipy.integrate import trapezoid
 from scipy.spatial.transform import Rotation
 

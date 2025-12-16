@@ -1,9 +1,9 @@
 import numpy as np
-from Elasticipy.tensors.second_order import SymmetricSecondOrderTensor, rotation_to_matrix, is_orix_rotation, \
+from elasticipy.tensors.second_order import SymmetricSecondOrderTensor, rotation_to_matrix, is_orix_rotation, \
     SecondOrderTensor, ALPHABET
 from scipy.spatial.transform import Rotation
 from copy import deepcopy
-from Elasticipy.tensors.mapping import KelvinMapping, VoigtMapping
+from elasticipy.tensors.mapping import KelvinMapping, VoigtMapping
 
 kelvin_mapping = KelvinMapping()
 
@@ -119,7 +119,7 @@ class FourthOrderTensor:
         --------
         Consider a Fourth-order tensor, whose Kelvin matrix is:
 
-        >>> from Elasticipy.tensors.fourth_order import FourthOrderTensor
+        >>> from elasticipy.tensors.fourth_order import FourthOrderTensor
         >>> import numpy as np
         >>> mat = np.array([[100, 200, 300, 0, 0, 0],
         ...                 [-200, 100, 50, 0, 0, 0],
@@ -154,7 +154,7 @@ class FourthOrderTensor:
         The half factor comes from the Kelvin mapping convention (see Notes). One can also use the Voigt mapping to
         avoid this:
 
-        >>> from Elasticipy.tensors.mapping import VoigtMapping
+        >>> from elasticipy.tensors.mapping import VoigtMapping
         >>> T_voigt = FourthOrderTensor(mat, mapping=VoigtMapping())
         >>> print(T_voigt)
         4th-order tensor (in Voigt mapping):
@@ -283,7 +283,7 @@ class FourthOrderTensor:
 
         Examples
         --------
-        >>> from Elasticipy.tensors.fourth_order import FourthOrderTensor
+        >>> from elasticipy.tensors.fourth_order import FourthOrderTensor
         >>> I = FourthOrderTensor.eye() # 4th order identity tensor
         >>> print(I)
         4th-order tensor (in Kelvin mapping):
@@ -326,7 +326,7 @@ class FourthOrderTensor:
 
         Examples
         --------
-        >>> from Elasticipy.tensors.fourth_order import FourthOrderTensor
+        >>> from elasticipy.tensors.fourth_order import FourthOrderTensor
         >>> T = FourthOrderTensor.rand(shape=(5,6))
         >>> T
         4th-order tensor array of shape (5, 6)
@@ -366,7 +366,7 @@ class FourthOrderTensor:
         --------
         Let start from a given tensor, (say ones):
 
-        >>> from Elasticipy.tensors.fourth_order import FourthOrderTensor
+        >>> from elasticipy.tensors.fourth_order import FourthOrderTensor
         >>> T = FourthOrderTensor.ones()
         >>> T
         4th-order tensor (in Kelvin mapping):
@@ -464,7 +464,7 @@ class FourthOrderTensor:
         --------
         Create a random tensor array of shape (5,6):
 
-        >>> from Elasticipy.tensors.fourth_order import FourthOrderTensor
+        >>> from elasticipy.tensors.fourth_order import FourthOrderTensor
         >>> T = FourthOrderTensor.rand(shape=(5,6))
         >>> Overall_mean = T.mean()
         >>> Overall_mean.shape
@@ -539,7 +539,7 @@ class FourthOrderTensor:
         --------
         First, let consider two random arrays of Fourth-order tensors:
 
-        >>> from Elasticipy.tensors.fourth_order import FourthOrderTensor
+        >>> from elasticipy.tensors.fourth_order import FourthOrderTensor
         >>> T1 = FourthOrderTensor.rand(shape=(2,3))
         >>> T2 = FourthOrderTensor.rand(shape=3)
         >>> T1T2_pair = T1.ddot(T2)
@@ -666,7 +666,7 @@ class FourthOrderTensor:
 
         Examples
         --------
-        >>> from Elasticipy.tensors.fourth_order import FourthOrderTensor
+        >>> from elasticipy.tensors.fourth_order import FourthOrderTensor
         >>> A = FourthOrderTensor.rand(shape=(3,4))
         >>> A.transpose_array()
         4th-order tensor array of shape (4, 3)
@@ -785,7 +785,7 @@ class FourthOrderTensor:
         --------
         Create a (single) identity tensor:
 
-        >>> from Elasticipy.tensors.fourth_order import FourthOrderTensor
+        >>> from elasticipy.tensors.fourth_order import FourthOrderTensor
         >>> I = FourthOrderTensor.eye()
         >>> print(I)
         4th-order tensor (in Kelvin mapping):
@@ -798,7 +798,7 @@ class FourthOrderTensor:
 
         Alternatively, one can use another mapping convention, e.g. Voigt:
 
-        >>> from Elasticipy.tensors.mapping import VoigtMapping
+        >>> from elasticipy.tensors.mapping import VoigtMapping
         >>> Iv = FourthOrderTensor.eye(mapping=VoigtMapping())
         >>> print(Iv)
         4th-order tensor (in Voigt mapping):
@@ -859,7 +859,7 @@ class FourthOrderTensor:
 
         Alternatively, the Voigt mapping convention may help figuring it out:
 
-        >>> from Elasticipy.tensors.mapping import VoigtMapping
+        >>> from elasticipy.tensors.mapping import VoigtMapping
         >>> tensor_of_ones_voigt = FourthOrderTensor.ones(mapping=VoigtMapping())
         >>> tensor_of_ones_voigt
         4th-order tensor (in Voigt mapping):
@@ -910,7 +910,7 @@ class FourthOrderTensor:
 
         Examples
         --------
-        >>> from Elasticipy.tensors.fourth_order import FourthOrderTensor
+        >>> from elasticipy.tensors.fourth_order import FourthOrderTensor
         >>> J = FourthOrderTensor.identity_spherical_part()
         >>> print(J)
         4th-order tensor (in Kelvin mapping):
@@ -975,7 +975,7 @@ class FourthOrderTensor:
 
         Examples
         --------
-        >>> from Elasticipy.tensors.fourth_order import FourthOrderTensor
+        >>> from elasticipy.tensors.fourth_order import FourthOrderTensor
         >>> K = FourthOrderTensor.identity_deviatoric_part()
         >>> print(K)
         4th-order tensor (in Kelvin mapping):
@@ -1054,7 +1054,7 @@ class FourthOrderTensor:
         --------
         Let consider a random Fourth-order tensor:
 
-        >>> from Elasticipy.tensors.fourth_order import FourthOrderTensor
+        >>> from elasticipy.tensors.fourth_order import FourthOrderTensor
         >>> T = FourthOrderTensor.rand()
         >>> print(T) # doctest: +SKIP
 
@@ -1133,7 +1133,7 @@ class FourthOrderTensor:
         --------
         The single-valued null 4th order tensor is just:
 
-        >>> from Elasticipy.tensors.fourth_order import FourthOrderTensor
+        >>> from elasticipy.tensors.fourth_order import FourthOrderTensor
         >>> FourthOrderTensor.zeros()
         4th-order tensor (in Kelvin mapping):
         [[0. 0. 0. 0. 0. 0.]
@@ -1177,7 +1177,7 @@ class FourthOrderTensor:
         --------
         Create an identity 4th-order tensor:
 
-        >>> from Elasticipy.tensors.fourth_order import FourthOrderTensor
+        >>> from elasticipy.tensors.fourth_order import FourthOrderTensor
         >>> t = FourthOrderTensor.eye()
 
         Its matrix with respect to Kelvin mapping is:
@@ -1192,7 +1192,7 @@ class FourthOrderTensor:
 
         whereas, when using the Voigt mapping, we have:
 
-        >>> from Elasticipy.tensors.mapping import VoigtMapping
+        >>> from elasticipy.tensors.mapping import VoigtMapping
         >>> t.matrix(mapping_convention=VoigtMapping())
         array([[1. , 0. , 0. , 0. , 0. , 0. ],
                [0. , 1. , 0. , 0. , 0. , 0. ],
@@ -1203,7 +1203,7 @@ class FourthOrderTensor:
 
         For stiffness tensors, the default mapping convention is Voigt, so that:
 
-        >>> from Elasticipy.tensors.elasticity import StiffnessTensor, ComplianceTensor
+        >>> from elasticipy.tensors.elasticity import StiffnessTensor, ComplianceTensor
         >>> StiffnessTensor.eye().matrix()
         array([[1. , 0. , 0. , 0. , 0. , 0. ],
                [0. , 1. , 0. , 0. , 0. , 0. ],

@@ -1,5 +1,5 @@
 import numpy as np
-from Elasticipy.tensors.second_order import SymmetricSecondOrderTensor
+from elasticipy.tensors.second_order import SymmetricSecondOrderTensor
 
 
 class StrainTensor(SymmetricSecondOrderTensor):
@@ -25,7 +25,7 @@ class StrainTensor(SymmetricSecondOrderTensor):
         --------
         For a single strain value, the principal strain values are composed of 3 float. E.g.:
 
-        >>> from Elasticipy.tensors.stress_strain import StrainTensor
+        >>> from elasticipy.tensors.stress_strain import StrainTensor
         >>> eps = StrainTensor.shear([1,0,0],[0,1,0],1e-3)
         >>> eps.principal_strains()
         array([ 0.001,  0.   , -0.001])
@@ -55,7 +55,7 @@ class StrainTensor(SymmetricSecondOrderTensor):
         --------
         At first, try with pure shear:
 
-        >>> from Elasticipy.tensors.stress_strain import StrainTensor
+        >>> from elasticipy.tensors.stress_strain import StrainTensor
         >>> eps = StrainTensor.shear([1,0,0],[0,1,0],1e-3)
         >>> eps.volumetric_strain()
         0.0
@@ -92,7 +92,7 @@ class StrainTensor(SymmetricSecondOrderTensor):
 
         Examples
         --------
-        >>> from Elasticipy.tensors.stress_strain import StrainTensor
+        >>> from elasticipy.tensors.stress_strain import StrainTensor
         >>> StrainTensor.tensile([1,0,0], 1e-3).eq_strain()
         0.000816496580927726
         >>> StrainTensor.shear([1,0,0],[0,1,0], 1e-3).eq_strain()
@@ -122,8 +122,8 @@ class StrainTensor(SymmetricSecondOrderTensor):
         Let consider an isotropic material (e.g. steel), undergoing tensile strain. In order to compute the volumetric
         elastic energy, one can do the following:
 
-        >>> from Elasticipy.tensors.stress_strain import StrainTensor
-        >>> from Elasticipy.tensors.elasticity import StiffnessTensor
+        >>> from elasticipy.tensors.stress_strain import StrainTensor
+        >>> from elasticipy.tensors.elasticity import StiffnessTensor
         >>> C = StiffnessTensor.isotropic(E=210e3, nu=0.28)
         >>> eps = StrainTensor.tensile([1,0,0],1e-3) # Define the strain
         >>> sigma = C * eps # Compute the stress
@@ -183,7 +183,7 @@ class StressTensor(SymmetricSecondOrderTensor):
         --------
         For (single-valued) tensile stress:
 
-        >>> from Elasticipy.tensors.stress_strain import StressTensor
+        >>> from elasticipy.tensors.stress_strain import StressTensor
         >>> sigma = StressTensor.tensile([1,0,0],1)
         >>> sigma.vonMises()
         1.0
@@ -222,7 +222,7 @@ class StressTensor(SymmetricSecondOrderTensor):
         --------
         For (single-valued) tensile stress:
 
-        >>> from Elasticipy.tensors.stress_strain import StressTensor
+        >>> from elasticipy.tensors.stress_strain import StressTensor
         >>> sigma = StressTensor.tensile([1,0,0],1)
         >>> sigma.Tresca()
         1.0
@@ -295,7 +295,7 @@ class StressTensor(SymmetricSecondOrderTensor):
         --------
         In order to illustrate this function, we consider a triaxial tensile stress:
 
-        >>> from Elasticipy.tensors.stress_strain import StressTensor
+        >>> from elasticipy.tensors.stress_strain import StressTensor
         >>> sigma = StressTensor.tensile([1,0,0],1) + StressTensor.tensile([0,1,0],3)
 
         The princiapl stresses are obviously 0, 1 and 2:
@@ -346,7 +346,7 @@ class StressTensor(SymmetricSecondOrderTensor):
         --------
         One can check that the stress triaxiality is for simple tensile is 1/3:
 
-        >>> from Elasticipy.tensors.stress_strain import StressTensor
+        >>> from elasticipy.tensors.stress_strain import StressTensor
         >>> s1 = StressTensor.tensile([1,0,0],1.)
         >>> s1.triaxiality()
         0.3333333333333333
