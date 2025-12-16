@@ -33,7 +33,7 @@ behaviour. In this case, the aforementioned averages can be estimated as follows
     >>> C_Reuss = C.Reuss_average()
     >>> C_Hill = C.Hill_average()
 
-    Let's see how ``C_Hill`` looks like:
+Let's see how ``C_Hill`` looks like:
 
     >>> print(C_Hill)
     Stiffness tensor (in Voigt mapping):
@@ -51,7 +51,7 @@ behaviour. In this case, the aforementioned averages can be estimated as follows
        40.66513606]]
     Phase: TiNi
 
-    As a comparison, let's see how the underlying assumption impair the Young moduli:
+As a comparison, let's see how the underlying assumption impair the Young moduli:
 
     >>> E_Voigt = C_Voigt.Young_modulus
     >>> E_Reuss = C_Reuss.Young_modulus
