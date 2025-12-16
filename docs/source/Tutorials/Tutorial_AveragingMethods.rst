@@ -100,15 +100,26 @@ Above, we have only used the Hill average for estimating the macroscopic elastic
 influence of the method (namely Voigt, Reuss or Hill), we can plot the directional Young moduli on orthogonal
 sections (see :ref:`here<plotting>` for details) for each of the aforementioned methods as follows:
 
-    >>> for method in ['Reuss', 'Hill', 'Voigt']:
-    ...     C_avg = C_rotated.average(method)
-    ...     if method == 'Reuss':
-    ...         fig, axs = C_avg.Young_modulus.plot_xyz_sections(label='Reuss') # Create fig and axes (sections)
-    ...     else:
-    ...         fig, axs = C_avg.Young_modulus.plot_xyz_sections(fig=fig, axs=axs, label=method) # Use existing axes
-    >>> axs[-1].legend() # doctest: +SKIP
+.. plot::
 
-which gives:
-
-
-.. image:: images/E_VRH_sections.png
+    from scipy.spatial.transform import Rotation
+    import numpy as np
+    from elasticipy.tensors.elasticity import StiffnessTensor
+    C = StiffnessTensor.monoclinic(phase_name='TiNi',
+                                    C11=231, C12=127, C13=104,
+                                    C22=240, C23=131, C33=175,
+                                    C44=81, C55=11, C66=85,
+                                    C15=-18, C25=1, C35=-3, C46=3)
+    phi1 = np.random.random(10000)*2*np.pi # Random sampling from 0 to 2pi
+    Phi = phi2 = np.zeros(10000)
+    Euler_angles = np.array([phi1, Phi, phi2]).T
+    rotations = Rotation.from_euler('ZXZ', Euler_angles)    # Bunge-Euler angles
+    C_rotated = C * rotations
+    for method in ['Reuss', 'Hill', 'Voigt']:
+         C_avg = C_rotated.average(method)
+         if method == 'Reuss':
+             fig, axs = C_avg.Young_modulus.plot_xyz_sections(label='Reuss') # Create fig and axes (sections)
+         else:
+             fig, axs = C_avg.Young_modulus.plot_xyz_sections(fig=fig, axs=axs, label=method) # Use existing axes
+    axs[-1].legend()
+    fig.show()
