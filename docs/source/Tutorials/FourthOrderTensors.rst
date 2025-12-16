@@ -167,7 +167,7 @@ For ``FourthOrderTensor`` and ``SymmetricFourthOrderTensor``, the default mappin
      [0. 0. 0. 0. 1. 0.]
      [0. 0. 0. 0. 0. 1.]]
 
-    Still, the Voigt mapping can be used instead:
+Still, the Voigt mapping can be used instead:
 
     >>> from elasticipy.tensors.mapping import VoigtMapping
     >>> I_voigt = FourthOrderTensor.eye(mapping=VoigtMapping())

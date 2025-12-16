@@ -43,8 +43,6 @@ Let's start by creating the two stiffness tensors in Python:
 .. doctest::
 
     >>> from elasticipy.tensors.elasticity import StiffnessTensor
-        >>> C_austenite = StiffnessTensor.cubic(C11=204, C12=137, C44=126)
-        >>> C_ferrite = StiffnessTensor.cubic(C11=242, C12=146, C44=116)
     >>> C_austenite = StiffnessTensor.cubic(C11=204, C12=137, C44=126)
     >>> C_ferrite = StiffnessTensor.cubic(C11=242, C12=146, C44=116)
 
