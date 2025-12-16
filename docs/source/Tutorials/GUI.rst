@@ -14,7 +14,7 @@ The figure bellow illustrates the Young's modulus of
 
 To launch this GUI, just run::
 
-    from Elasticipy.gui import crystal_elastic_plotter
+    from elasticipy.gui import crystal_elastic_plotter
     crystal_elastic_plotter()
 
 If you have installed Elasticipy with ``pip`` or ``conda``, just open a terminal (e.g. Powershell or Anaconda prompt)
