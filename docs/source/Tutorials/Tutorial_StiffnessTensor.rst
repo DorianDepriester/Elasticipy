@@ -148,7 +148,7 @@ In order to fully evidence the directional dependence of the Young moduli, we ca
 
 .. plot::
 
-    from Elasticipy.tensors.elasticity import StiffnessTensor
+    from elasticipy.tensors.elasticity import StiffnessTensor
     C = StiffnessTensor.cubic(C11=186, C12=134, C44=77)
     E = C.Young_modulus
     E.plot3D()
@@ -158,7 +158,7 @@ document/articles), we can plot the values as a Pole Figure (PF):
 
 .. plot::
 
-    from Elasticipy.tensors.elasticity import StiffnessTensor
+    from elasticipy.tensors.elasticity import StiffnessTensor
     C = StiffnessTensor.cubic(C11=186, C12=134, C44=77)
     E = C.Young_modulus
     E.plot_as_pole_figure()
@@ -168,7 +168,7 @@ Alternatively, we can plot the Young moduli on X-Y, X-Z and Y-Z sections only:
 
 .. plot::
 
-    from Elasticipy.tensors.elasticity import StiffnessTensor
+    from elasticipy.tensors.elasticity import StiffnessTensor
     C = StiffnessTensor.cubic(C11=186, C12=134, C44=77)
     E = C.Young_modulus
     E.plot_xyz_sections()
@@ -181,7 +181,7 @@ plotting:
 
 .. plot::
 
-    from Elasticipy.tensors.elasticity import StiffnessTensor
+    from elasticipy.tensors.elasticity import StiffnessTensor
     C = StiffnessTensor.cubic(C11=186, C12=134, C44=77)
     G = C.shear_modulus
     G.plot3D()
@@ -190,7 +190,7 @@ Instead of the mean value, we can consider other statistics, e.g.:
 
 .. plot::
 
-    from Elasticipy.tensors.elasticity import StiffnessTensor
+    from elasticipy.tensors.elasticity import StiffnessTensor
     C = StiffnessTensor.cubic(C11=186, C12=134, C44=77)
     G = C.shear_modulus
     G.plot3D(which='min')
@@ -201,7 +201,7 @@ When plotting the X-Y, X-Z and Y-Z sections, the min, max and mean values are pl
 
 .. plot::
 
-    from Elasticipy.tensors.elasticity import StiffnessTensor
+    from elasticipy.tensors.elasticity import StiffnessTensor
     C = StiffnessTensor.cubic(C11=186, C12=134, C44=77)
     G = C.shear_modulus
     G.plot_xyz_sections()
