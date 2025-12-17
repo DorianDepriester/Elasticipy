@@ -67,4 +67,4 @@ authors = ["Dorian DEPRIESTER <dorian.dep@gmail.com>"]
 readme = "README.md"
 
 [project.gui-scripts]
-elasticipy-gui = "Elasticipy.gui:crystal_elastic_plotter"
+elasticipy-gui = "elasticipy.gui:crystal_elastic_plotter"
