@@ -190,6 +190,8 @@ Try it online!
 --------------
 Take a 5-minute tour through Elasticipy's main features by running the online Jupyter Notebook, hosted on |binder|.
 
+----
+
 .. toctree::
    :maxdepth: 2
    :caption: Table of Contents
