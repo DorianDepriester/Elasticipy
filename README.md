@@ -34,7 +34,7 @@ Among other features, this package implements:
 ## 🐍 Installation
 Elasticipy can be installed with PIP:
 ````
-pip install Elasticipy
+pip install elasticipy
 ````
 
 On anaconda, one can also use:
