@@ -5,6 +5,14 @@ Elasticipy Documentation
   :alt: doi:10.21105/joss.07940
   :target: https://doi.org/10.21105/joss.07940
 
+.. |binder| image:: https://mybinder.org/badge_logo.svg
+   :alt: Binder
+   :target: https://mybinder.org/v2/gh/DorianDepriester/Elasticipy/HEAD?urlpath=%2Fdoc%2Ftree%2FElasticipy_for_the_Impatient.ipynb
+
+.. image:: https://joss.theoj.org/papers/10.21105/joss.07940/status.svg
+  :alt: doi:10.21105/joss.07940
+  :target: https://doi.org/10.21105/joss.07940
+
 .. image:: https://img.shields.io/pypi/v/Elasticipy
    :alt: PyPI - Version
    :target: https://pypi.org/project/elasticipy/
@@ -46,6 +54,12 @@ Elasticipy Documentation
 
 .. image:: https://img.shields.io/pypi/pyversions/Elasticipy
    :alt: PyPI - Python Version
+
+.. image:: https://mybinder.org/badge_logo.svg
+   :alt: Binder
+   :target: https://mybinder.org/v2/gh/DorianDepriester/Elasticipy/HEAD?urlpath=%2Fdoc%2Ftree%2FElasticipy_for_the_Impatient.ipynb
+
+
 
 
 
@@ -169,12 +183,16 @@ Installation
 ------------
 To install this package, simply run::
 
-    pip install Elasticipy
+    pip install elasticipy
 
 
 On Anaconda, you can use::
 
     conda install conda-forge::elasticipy
+
+Try it online!
+--------------
+Take a 5-minute tour through Elasticipy's main features by running the online Jupyter Notebook, hosted on |binder|.
 
 Cite this work
 --------------
