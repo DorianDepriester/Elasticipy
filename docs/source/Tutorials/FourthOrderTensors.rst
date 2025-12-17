@@ -144,8 +144,8 @@ and
     0 & 0 & 0 & 0 & 0 & 1\\
     \end{bmatrix}
 
-In Elasticpy
-~~~~~~~~~~~~
+In Elasticipy
+~~~~~~~~~~~~~
 
 The Kelvin mapping preserves tensor norms and inner products between second-order tensors. This makes it particularly suitable
 for tensor algebra, projections and eigendecompositions. Therefore, in Elasticipy, the Kelvin mapping is used for all
