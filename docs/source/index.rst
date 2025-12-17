@@ -167,17 +167,6 @@ Elasticipy streamlines the exploration of linear elasticity, making it accessibl
 geophysics, and mechanical engineering.
 
 
-Installation
-------------
-To install this package, simply run::
-
-    pip install elasticipy
-
-
-On Anaconda, you can use::
-
-    conda install conda-forge::elasticipy
-
 Try it online!
 --------------
 Take a 5-minute tour through Elasticipy's main features by running the online Jupyter Notebook, hosted on binder:
@@ -189,6 +178,7 @@ Take a 5-minute tour through Elasticipy's main features by running the online Ju
    :maxdepth: 2
    :caption: Table of Contents
 
-   ./Tutorials.rst
+   install.rst
+   Tutorials.rst
    API/API.rst
    citation.rst
