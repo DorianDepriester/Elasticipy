@@ -1,10 +1,6 @@
 Elasticipy Documentation
 ======================================
 
-.. |JOSS| image:: https://joss.theoj.org/papers/10.21105/joss.07940/status.svg
-  :alt: doi:10.21105/joss.07940
-  :target: https://doi.org/10.21105/joss.07940
-
 .. |binder| image:: https://mybinder.org/badge_logo.svg
    :alt: Binder
    :target: https://mybinder.org/v2/gh/DorianDepriester/Elasticipy/HEAD?urlpath=%2Fdoc%2Ftree%2FElasticipy_for_the_Impatient.ipynb
@@ -194,26 +190,10 @@ Try it online!
 --------------
 Take a 5-minute tour through Elasticipy's main features by running the online Jupyter Notebook, hosted on |binder|.
 
-Cite this work
---------------
-If you use Elasticipy, please cite |JOSS|, or use the following BibTeX entry::
-
-    @article{Elasticipy,
-        doi = {10.21105/joss.07940},
-        url = {https://doi.org/10.21105/joss.07940},
-        year = {2025},
-        publisher = {The Open Journal},
-        volume = {10},
-        number = {115},
-        pages = {7940},
-        author = {Depriester, Dorian and Kubler, Régis},
-        title = {Elasticipy: A Python package for linear elasticity and tensor analysis},
-        journal = {Journal of Open Source Software}
-    }
-
 .. toctree::
    :maxdepth: 2
    :caption: Table of Contents
 
    ./Tutorials.rst
    API/API.rst
+   citation.rst
