@@ -5,59 +5,51 @@ Elasticipy Documentation
    :alt: Binder
    :target: https://mybinder.org/v2/gh/DorianDepriester/Elasticipy/HEAD?urlpath=%2Fdoc%2Ftree%2FElasticipy_for_the_Impatient.ipynb
 
-.. image:: https://joss.theoj.org/papers/10.21105/joss.07940/status.svg
+.. |joss| image:: https://joss.theoj.org/papers/10.21105/joss.07940/status.svg
   :alt: doi:10.21105/joss.07940
   :target: https://doi.org/10.21105/joss.07940
 
-.. image:: https://img.shields.io/pypi/v/Elasticipy
+.. |pypi| image:: https://img.shields.io/pypi/v/Elasticipy
    :alt: PyPI - Version
    :target: https://pypi.org/project/elasticipy/
 
-.. image:: https://img.shields.io/pypi/dm/Elasticipy
+.. |pypi-downloads| image:: https://img.shields.io/pypi/dm/elasticipy?label=pypi%7Cdownloads
    :alt: PyPI - Downloads
    :target: https://pypistats.org/packages/elasticipy
 
-.. image:: https://img.shields.io/conda/v/conda-forge/Elasticipy
+.. |conda| image:: https://img.shields.io/conda/v/conda-forge/Elasticipy
    :alt: Conda Version
    :target: https://anaconda.org/channels/conda-forge/packages/elasticipy/overview
 
-.. image:: https://img.shields.io/conda/d/conda-forge/Elasticipy
+.. |conda-downloads| image:: https://img.shields.io/conda/d/conda-forge/Elasticipy
    :alt: Conda Downloads
 
-.. image:: https://img.shields.io/github/commit-activity/y/DorianDepriester/Elasticipy
+.. |github-commit| image:: https://img.shields.io/github/commit-activity/y/DorianDepriester/Elasticipy
    :alt: GitHub commit activity
    :target: https://github.com/DorianDepriester/Elasticipy
 
-.. image:: https://img.shields.io/github/stars/DorianDepriester/Elasticipy
+.. |github-stars| image:: https://img.shields.io/github/stars/DorianDepriester/Elasticipy
    :alt: GitHub Repo stars
    :target: https://github.com/DorianDepriester/Elasticipy
 
-.. image:: https://img.shields.io/pypi/l/Elasticipy
+.. |license| image:: https://img.shields.io/pypi/l/Elasticipy
    :alt: PyPI - License
    :target: https://github.com/DorianDepriester/Elasticipy/blob/main/LICENSE
 
-.. image:: https://readthedocs.org/projects/elasticipy/badge/?version=latest
+.. |doc| image:: https://readthedocs.org/projects/elasticipy/badge/?version=latest
    :alt: ReadTheDoc
    :target: https://elasticipy.readthedocs.io/
 
-.. image:: https://joss.theoj.org/papers/10.21105/joss.07940/status.svg
-  :alt: doi:10.21105/joss.07940
-  :target: https://doi.org/10.21105/joss.07940
-
-.. image:: https://codecov.io/gh/DorianDepriester/Elasticipy/graph/badge.svg?token=VUZPEUPBH1
+.. |coverage| image:: https://codecov.io/gh/DorianDepriester/Elasticipy/graph/badge.svg?token=VUZPEUPBH1
    :alt: coverage
    :target: https://codecov.io/gh/DorianDepriester/Elasticipy
 
-.. image:: https://img.shields.io/pypi/pyversions/Elasticipy
+.. |pypi-version| image:: https://img.shields.io/pypi/pyversions/Elasticipy
    :alt: PyPI - Python Version
 
-.. image:: https://mybinder.org/badge_logo.svg
-   :alt: Binder
-   :target: https://mybinder.org/v2/gh/DorianDepriester/Elasticipy/HEAD?urlpath=%2Fdoc%2Ftree%2FElasticipy_for_the_Impatient.ipynb
-
-
-
-
+|pypi| |pypi-downloads| |conda| |conda-downloads|
+|github-commit| |github-stars| |license|
+|doc| |coverage| |pypi-version| |joss|
 
 
 Purpose of this package
@@ -188,7 +180,8 @@ On Anaconda, you can use::
 
 Try it online!
 --------------
-Take a 5-minute tour through Elasticipy's main features by running the online Jupyter Notebook, hosted on |binder|.
+Take a 5-minute tour through Elasticipy's main features by running the online Jupyter Notebook, hosted on binder:
+|binder|.
 
 ----
 
