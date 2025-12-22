@@ -34,7 +34,7 @@ jobs:
         env:
           MP_API_KEY: ${{ secrets.MP_TOKEN }}
 
-        run: pytest tests
+        run: pytest --cov=elasticipy --cov-report xml:coverage.xml --cov-report term tests
 
       - name: Upload results to Codecov
         uses: codecov/codecov-action@v5
