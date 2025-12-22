@@ -56,7 +56,7 @@ addopts = "--cov=src/Elasticipy --cov-report=xml"
 
 [tool.coverage.run]
 omit = [
-    "src/elasticipy/gui.py",
+    "src/elasticipy/gui/*",
 ]
 
 [tool.poetry]
