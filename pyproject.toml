@@ -59,12 +59,5 @@ omit = [
     "src/elasticipy/gui/*",
 ]
 
-[tool.poetry]
-name = "jupyter-notebook-tutorial"
-version = "0.1.0"
-description = "Short tutorial for Elasticipy"
-authors = ["Dorian DEPRIESTER <dorian.dep@gmail.com>"]
-readme = "README.md"
-
 [project.gui-scripts]
 elasticipy-gui = "elasticipy.gui:crystal_elastic_plotter"
