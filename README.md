@@ -9,7 +9,7 @@
 [![codecov](https://codecov.io/gh/DorianDepriester/Elasticipy/graph/badge.svg?token=VUZPEUPBH1)](https://codecov.io/gh/DorianDepriester/Elasticipy)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/Elasticipy)
 [![DOI](https://joss.theoj.org/papers/10.21105/joss.07940/status.svg)](https://doi.org/10.21105/joss.07940)
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/DorianDepriester/Elasticipy/HEAD?urlpath=%2Fdoc%2Ftree%2FElasticipy_for_the_Impatient.ipynb)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/DorianDepriester/elasticipy-notebook/HEAD?urlpath=%2Fdoc%2Ftree%2FElasticipy.ipynb)
 
 
 # ![Elasticipy](https://raw.githubusercontent.com/DorianDepriester/Elasticipy/refs/heads/main/docs/source/logo/logo_text.svg)
