@@ -3,7 +3,7 @@ Elasticipy Documentation
 
 .. |binder| image:: https://mybinder.org/badge_logo.svg
    :alt: Binder
-   :target: https://mybinder.org/v2/gh/DorianDepriester/Elasticipy/HEAD?urlpath=%2Fdoc%2Ftree%2FElasticipy_for_the_Impatient.ipynb
+   :target: https://mybinder.org/v2/gh/DorianDepriester/elasticipy-notebook/HEAD?urlpath=%2Fdoc%2Ftree%2FElasticipy.ipynb
 
 .. |joss| image:: https://joss.theoj.org/papers/10.21105/joss.07940/status.svg
   :alt: doi:10.21105/joss.07940
