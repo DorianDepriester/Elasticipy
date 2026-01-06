@@ -47,7 +47,7 @@ Tutorials and full documentation are available on [ReadTheDoc](https://elasticip
 
 ## ⏱️ Elasticipy in a nutshell
 Take a 5-minute tour through Elasticipy's main features by running the online Jupyter Notebook, hosted on 
-[Binder](https://mybinder.org/v2/gh/DorianDepriester/Elasticipy/HEAD?urlpath=%2Fdoc%2Ftree%2FElasticipy_for_the_Impatient.ipynb).
+[Binder](https://mybinder.org/v2/gh/DorianDepriester/elasticipy-notebook/HEAD?urlpath=%2Fdoc%2Ftree%2FElasticipy.ipynb).
  
 
 ## 🔍 Sources
