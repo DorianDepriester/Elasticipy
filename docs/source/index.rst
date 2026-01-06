@@ -49,7 +49,7 @@ Elasticipy Documentation
 
 |pypi| |pypi-downloads| |conda| |conda-downloads|
 |github-commit| |github-stars| |license|
-|doc| |coverage| |pypi-version| |joss|
+|doc| |coverage| |pypi-version| |joss| |binder|
 
 
 Purpose of this package
