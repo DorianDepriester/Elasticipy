@@ -78,7 +78,7 @@ You can use the following BibTeX entry:
     number = {115}, 
     pages = {7940}, 
     author = {Depriester, Dorian and Kubler, Régis}, 
-    title = {elasticipy: A Python package for linear elasticity and tensor analysis}, 
+    title = {Elasticipy: A Python package for linear elasticity and tensor analysis}, 
     journal = {Journal of Open Source Software}
 }
 ````
