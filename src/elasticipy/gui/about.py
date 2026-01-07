@@ -1,25 +1,27 @@
 from qtpy.QtWidgets import QVBoxLayout, QLabel, QPushButton
 from qtpy.QtGui import QPixmap
 from qtpy.QtCore import Qt
+from importlib import resources
 
-def about(dialog, logo_path):
-    dialog.setWindowTitle("About elasticipy")
+def about(dialog):
+    dialog.setWindowTitle("About Elasticipy")
     dialog.setFixedWidth(400)
 
     layout = QVBoxLayout(dialog)
 
-    if logo_path.exists():
-        logo = QLabel()
-        pixmap = QPixmap(str(logo_path))
-        pixmap = pixmap.scaledToWidth(250, Qt.SmoothTransformation)
-        logo.setPixmap(pixmap)
-        logo.setAlignment(Qt.AlignCenter)
-        layout.addWidget(logo)
+    logo = QLabel()
+    pixmap = QPixmap(
+        str(resources.files("elasticipy.resources") / "logo_text.png")
+    )
+    pixmap = pixmap.scaledToWidth(250, Qt.SmoothTransformation)
+    logo.setPixmap(pixmap)
+    logo.setAlignment(Qt.AlignCenter)
+    layout.addWidget(logo)
 
     # --- Text ---
     text = QLabel(
         "A Python library for elasticity tensors computations<br><br>"
-        "© 2024–2025 Dorian Depriester, MIT Licence"
+        "© 2025–2026 Dorian Depriester, MIT Licence"
     )
     text.setAlignment(Qt.AlignCenter)
     layout.addWidget(text)

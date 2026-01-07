@@ -19,7 +19,6 @@ WHICH_OPTIONS = {'Mean': 'mean', 'Max': 'max', 'Min': 'min', 'Std. dev.': 'std'}
 
 # --- Logo ---
 here = Path(__file__).resolve().parent
-LOGO_PATH = here / ".." / "resources" / "logo_text.svg"
 ICON_PATH = here / ".." / "resources" / "favicon.png"
 
 class ElasticityGUI(QMainWindow):
@@ -388,7 +387,7 @@ class ElasticityGUI(QMainWindow):
 
     def show_about(self):
         dialog = QDialog(self)
-        dialog = about(dialog, LOGO_PATH)
+        dialog = about(dialog)
         dialog.exec_()
 
     def open_euler_dialog(self):
