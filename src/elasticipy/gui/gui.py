@@ -11,15 +11,12 @@ from elasticipy.crystal_symmetries import SYMMETRIES
 from elasticipy.gui.rotate_window import EulerBungeDialog
 from elasticipy.gui.about import about
 from elasticipy.tensors.elasticity import StiffnessTensor
-from pathlib import Path
+from importlib import resources
 
 from scipy.spatial.transform import Rotation
 
 WHICH_OPTIONS = {'Mean': 'mean', 'Max': 'max', 'Min': 'min', 'Std. dev.': 'std'}
 
-# --- Logo ---
-here = Path(__file__).resolve().parent
-ICON_PATH = here / ".." / "resources" / "favicon.png"
 
 class ElasticityGUI(QMainWindow):
     def __init__(self):
@@ -419,7 +416,8 @@ class ElasticityGUI(QMainWindow):
 def crystal_elastic_plotter():
     app = QApplication(sys.argv)
     try:
-        icon = QIcon(str(ICON_PATH))
+        path_to_icon = str(resources.files("elasticipy.resources") / "favicon.png")
+        icon = QIcon(str(path_to_icon))
     except Exception:
         icon = QIcon()
     app.setWindowIcon(icon)
