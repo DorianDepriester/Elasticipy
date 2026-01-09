@@ -1,6 +1,6 @@
 from elasticipy.tensors.second_order import SymmetricSecondOrderTensor, SecondOrderTensor, \
     SkewSymmetricSecondOrderTensor
-from elasticipy.tensors.stress_strain import StressTensor, StrainTensor
+from elasticipy.tensors.stress_strain import StressTensor, StrainTensor, StrainRateTensor
 import pandas as pd
 import numpy as np
 import os
@@ -12,8 +12,8 @@ DTYPES={'stress':StressTensor,
         'strain_el':StrainTensor,
         'strain_pl':StrainTensor,
         'velgrad':SecondOrderTensor,
-        'defrate':SymmetricSecondOrderTensor,
-        'defrate_pl':SymmetricSecondOrderTensor,
+        'defrate':StrainRateTensor,
+        'defrate_pl':StrainRateTensor,
         'spinrate':SkewSymmetricSecondOrderTensor,
         }
 
