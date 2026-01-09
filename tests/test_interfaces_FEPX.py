@@ -2,7 +2,7 @@ import unittest
 from elasticipy.interfaces.FEPX import from_step_file, from_results_folder
 from elasticipy.tensors.second_order import SecondOrderTensor, SymmetricSecondOrderTensor, \
     SkewSymmetricSecondOrderTensor
-from elasticipy.tensors.stress_strain import StrainTensor, StressTensor
+from elasticipy.tensors.stress_strain import StrainTensor, StressTensor, StrainRateTensor
 import os
 import numpy as np
 
@@ -29,7 +29,7 @@ class TestFEPX(unittest.TestCase):
 
     def test_defrate_from_folder(self):
         a = from_results_folder(FEPX_DATA + 'defrate')
-        assert isinstance(a, SymmetricSecondOrderTensor)
+        assert isinstance(a, StrainRateTensor)
         assert a.shape == (NSTEP_FEPX_DATA, SIZE_FEPX_DATA)
 
     def test_velgrad_from_folder(self):
