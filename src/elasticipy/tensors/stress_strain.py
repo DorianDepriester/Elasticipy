@@ -4,8 +4,7 @@ from elasticipy.tensors.second_order import SymmetricSecondOrderTensor
 
 class StrainTensor(SymmetricSecondOrderTensor):
     """
-    Class for manipulating symmetric strain tensors or arrays of symmetric strain tensors.
-
+    Class for manipulating the symmetric part of gradient tensor (aka. strain tensor), or arrays of such tensors.
     """
     name = 'Strain tensor'
     _voigt_map = [1, 1, 1, 2, 2, 2]
@@ -358,3 +357,10 @@ class StressTensor(SymmetricSecondOrderTensor):
         array([0.33333333, 0.57735027, 0.66666667])
         """
         return self.I1 / self.vonMises() / 3
+
+
+class StrainRateTensor(StrainTensor):
+    """
+    Class for manipulating strain rate tensors, or arrays of strain rate tensors.
+    """
+    name = 'Strain rate tensor'
