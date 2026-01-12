@@ -82,3 +82,4 @@ You can use the following BibTeX entry:
     journal = {Journal of Open Source Software}
 }
 ````
+Alternatively, you can by me a coffee on [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/W7W11S5TCH)
