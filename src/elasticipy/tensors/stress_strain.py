@@ -367,6 +367,7 @@ class StressTensor(SymmetricSecondOrderTensor):
     def save_as_txt(self, file, name_prefix='S', **kwargs):
         super().save_as_txt(file, name_prefix=name_prefix, **kwargs)
 
+    @classmethod
     def load_from_txt(cls, file, name_prefix='S', **kwargs):
         super().load_from_txt(file, name_prefix=name_prefix, **kwargs)
 
