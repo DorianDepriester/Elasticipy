@@ -75,7 +75,7 @@ def _map(matrix, mapping_convention):
         array[...,i] = matrix[...,j,k]
     return array * mapping_convention
 
-def filldraw_circle(ax, center, radius, color, fill=False, alpha=1.):
+def _filldraw_circle(ax, center, radius, color, fill=False, alpha=1.):
     theta = np.linspace(0, 2 * np.pi, 500)
     x = center[0] + radius * np.cos(theta)
     y = center[1] + radius * np.sin(theta)
@@ -1685,12 +1685,12 @@ class SymmetricSecondOrderTensor(SecondOrderTensor):
         center3 = ((a + c) /2, 0)
 
         fig, ax = plt.subplots()
-        filldraw_circle(ax, center1, r1, 'skyblue')
-        filldraw_circle(ax, center2, r2, 'lightgreen')
-        filldraw_circle(ax, center3, r3, 'red')
-        filldraw_circle(ax, center3, r3, 'red', fill=True, alpha=0.2)
-        filldraw_circle(ax, center1, r1, 'white', fill=True)
-        filldraw_circle(ax, center2, r2, 'white', fill=True)
+        _filldraw_circle(ax, center1, r1, 'skyblue')
+        _filldraw_circle(ax, center2, r2, 'lightgreen')
+        _filldraw_circle(ax, center3, r3, 'red')
+        _filldraw_circle(ax, center3, r3, 'red', fill=True, alpha=0.2)
+        _filldraw_circle(ax, center1, r1, 'white', fill=True)
+        _filldraw_circle(ax, center2, r2, 'white', fill=True)
         ax.set_aspect('equal')
         ax.set_xlabel(f"Normal")
         ax.set_ylabel(f"Shear")
