@@ -1353,6 +1353,7 @@ class SecondOrderTensor:
         Examples
         --------
         Let's start with a random tensor:
+
         >>> from elasticipy.tensors.second_order import SecondOrderTensor
         >>> t = SecondOrderTensor.rand(seed=123) # Use seed to ensure reproducibility
         >>> t
@@ -1362,22 +1363,25 @@ class SecondOrderTensor:
          [0.923345   0.2765744  0.81975456]]
 
         Then, this tensor can be saved to a text file:
+
         >>> t.save_as_txt('random_tensor.txt')
 
-        The content of this file will look like this:
-        ````
-        11,12,13,21,22,23,31,32,33
-        0.6823518632481435,0.053821018802222675,0.22035987277261138,0.1843718106986697,0.17590590108503035,0.8120945066557737,0.9233449980270564,0.27657439779710624,0.8197545615930021
-        ````
+        The content of this file will look like this::
+
+            11,12,13,21,22,23,31,32,33
+            0.6823518632481435,0.053821018802222675,0.22035987277261138,0.1843718106986697,0.17590590108503035,0.8120945066557737,0.9233449980270564,0.27657439779710624,0.8197545615930021
+
 
         Later, this file can be read with ``load_from_txt``:
+
         >>> t2 = SecondOrderTensor.load_from_txt('random_tensor.txt')
         >>> t2
         Second-order tensor
         Shape=(1,)
 
-        One can note that the returned object is an array, as the functions above are mainly meant to deal with tensor
-        arrays, but we still have:
+        One can note that the returned object is an array here (although ``t`` was a single tensor). This is because the
+        functions above are mainly meant to deal with tensor arrays. Still, we have:
+
         >>> t2[0]
         Second-order tensor
         [[0.68235186 0.05382102 0.22035987]
@@ -1385,9 +1389,11 @@ class SecondOrderTensor:
          [0.923345   0.2765744  0.81975456]]
 
         Now, let's consider a random tensor array:
+
         >>> t = SecondOrderTensor.rand(shape=(100,), seed=123)
 
         Have a look on its first value:
+
         >>> t[0]
         Second-order tensor
         [[0.68235186 0.05382102 0.22035987]
@@ -1395,22 +1401,47 @@ class SecondOrderTensor:
          [0.923345   0.2765744  0.81975456]]
 
         Now save the array:
+
         >>> t.save_as_txt('random_tensor_array.txt')
 
         and try to reload it:
+
         >>> t2 = SecondOrderTensor.load_from_txt('random_tensor_array.txt')
 
         One can check that the original shape has bee retreived:
+
         >>> t2.shape
         (100,)
 
         And that its value are almost the same of the original one (because of round off errors), e.g.:
+
         >>> t2[0]
         Second-order tensor
         [[0.68235186 0.05382102 0.22035987]
          [0.18437181 0.1759059  0.81209451]
          [0.923345   0.2765744  0.81975456]]
 
+        By default, the columns in the text file are named 11, 12, etc. These names can be appended with a prefix:
+
+        >>> t.save_as_txt('random_tensor_array_with_prefix.txt', name_prefix='E')
+
+        In this case, the resulting text file will look like this::
+
+            E11,E12,E13,E21,E22,E23,E31,E32,E33
+            0.6823518632481435,0.053821018802222675,0.22035987277261138,0.1843718106986697,0.17590590108503035,0.8120945066557737,0.9233449980270564,0.27657439779710624,0.8197545615930021
+            0.8898926931111859,0.5129704552295319,0.24496460106879647,0.8242415960974113,0.21376296337509548,0.7414670522347097,0.6299402045896808,0.927407258525167,0.23190818860641882
+            0.7991251286200829,0.5181650368527142,0.23155562481706748,0.16590399324074456,0.49778896849779386,0.5827246406153199,0.18433798742847973,0.014894916760232246,0.47113322889046083
+            [...]
+
+        And it can still be parsed to rebuild the tensor:
+
+        >>> t3 = SecondOrderTensor.load_from_txt('random_tensor_array_with_prefix.txt', name_prefix='E')
+
+        One can check that all the values of ``t2`` and ``t3`` are the same:
+
+        >>> import numpy as np
+        >>> np.all(t3 == t2)
+        np.True_
         """
         if self.ndim > 1:
             raise ValueError('The array must be flatten before getting dumped to text file.')
