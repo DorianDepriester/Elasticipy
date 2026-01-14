@@ -1349,6 +1349,10 @@ class SecondOrderTensor:
         if self.ndim > 1:
             raise ValueError('The array must be flatten before getting dumped to text file.')
         else:
+            if self.shape:
+                matrix = self.matrix
+            else:
+                matrix = self.matrix[np.newaxis,:,:]
             d = dict()
             for i in range(3):
                 if isinstance(self, SkewSymmetricSecondOrderTensor):
