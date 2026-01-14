@@ -145,6 +145,12 @@ class StrainTensor(SymmetricSecondOrderTensor):
         ax.set_ylabel(ax.get_ylabel() + ' strain')
         return fig, ax
 
+    def save_as_txt(self, file, name_prefix='E', **kwargs):
+        super().save_as_txt(file, name_prefix=name_prefix, **kwargs)
+
+    def load_from_txt(cls, file, name_prefix='E', **kwargs):
+        super().load_from_txt(file, name_prefix=name_prefix, **kwargs)
+
 
 class StressTensor(SymmetricSecondOrderTensor):
     """
@@ -357,6 +363,12 @@ class StressTensor(SymmetricSecondOrderTensor):
         array([0.33333333, 0.57735027, 0.66666667])
         """
         return self.I1 / self.vonMises() / 3
+
+    def save_as_txt(self, file, name_prefix='S', **kwargs):
+        super().save_as_txt(file, name_prefix=name_prefix, **kwargs)
+
+    def load_from_txt(cls, file, name_prefix='S', **kwargs):
+        super().load_from_txt(file, name_prefix=name_prefix, **kwargs)
 
 
 class StrainRateTensor(StrainTensor):
