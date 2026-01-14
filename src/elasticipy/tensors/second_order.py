@@ -1345,6 +1345,72 @@ class SecondOrderTensor:
             E13 etc.
         kwargs : dict
             Keyword arguments passed to pandas.DataFrame.to_csv()
+
+        See Also
+        --------
+        load_from_txt : load a tensor array from a text file
+
+        Examples
+        --------
+        Let's start with a random tensor:
+        >>> from elasticipy.tensors.second_order import SecondOrderTensor
+        >>> t = SecondOrderTensor.rand(seed=123) # Use seed to ensure reproducibility
+        >>> t
+        Second-order tensor
+        [[0.68235186 0.05382102 0.22035987]
+         [0.18437181 0.1759059  0.81209451]
+         [0.923345   0.2765744  0.81975456]]
+
+        Then, this tensor can be saved to a text file:
+        >>> t.save_as_txt('random_tensor.txt')
+
+        The content of this file will look like this:
+        ````
+        11,12,13,21,22,23,31,32,33
+        0.6823518632481435,0.053821018802222675,0.22035987277261138,0.1843718106986697,0.17590590108503035,0.8120945066557737,0.9233449980270564,0.27657439779710624,0.8197545615930021
+        ````
+
+        Later, this file can be read with ``load_from_txt``:
+        >>> t2 = SecondOrderTensor.load_from_txt('random_tensor.txt')
+        >>> t2
+        Second-order tensor
+        Shape=(1,)
+
+        One can note that the returned object is an array, as the functions above are mainly meant to deal with tensor
+        arrays, but we still have:
+        >>> t2[0]
+        Second-order tensor
+        [[0.68235186 0.05382102 0.22035987]
+         [0.18437181 0.1759059  0.81209451]
+         [0.923345   0.2765744  0.81975456]]
+
+        Now, let's consider a random tensor array:
+        >>> t = SecondOrderTensor.rand(shape=(100,), seed=123)
+
+        Have a look on its first value:
+        >>> t[0]
+        Second-order tensor
+        [[0.68235186 0.05382102 0.22035987]
+         [0.18437181 0.1759059  0.81209451]
+         [0.923345   0.2765744  0.81975456]]
+
+        Now save the array:
+        >>> t.save_as_txt('random_tensor_array.txt')
+
+        and try to reload it:
+        >>> t2 = SecondOrderTensor.load_from_txt('random_tensor_array.txt')
+
+        One can check that the original shape has bee retreived:
+        >>> t2.shape
+        (100,)
+
+        And that its value are almost the same of the original one (because of round off errors), e.g.:
+        >>> t2[0]
+        Second-order tensor
+        [[0.68235186 0.05382102 0.22035987]
+         [0.18437181 0.1759059  0.81209451]
+         [0.923345   0.2765744  0.81975456]]
+
         """
         if self.ndim > 1:
             raise ValueError('The array must be flatten before getting dumped to text file.')
@@ -1363,7 +1429,7 @@ class SecondOrderTensor:
                     r =range(3)
                 for j in r:
                     key = name_prefix + '{}{}'.format(i+1, j+1)
-                    d[key] = self.C[i,j]
+                    d[key] = matrix[:,i,j]
             df = pd.DataFrame(d)
             df.to_csv(file, index=False, **kwargs)
 
