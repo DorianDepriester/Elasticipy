@@ -866,5 +866,60 @@ class TestStressStrainTensors(unittest.TestCase):
         s3 = s1 + StressTensor.tensile([0,1,0],0.5)
         assert np.isclose(s3.triaxiality(), 3**(-0.5))
 
+    def test_read_write_strain_as_txt(self):
+        # First, try with a single tensor
+        fname = 'strain.txt'
+        strain = StrainTensor.rand()
+        strain.save_as_txt(fname)
+
+        # Check that the column names start with 'E'
+        with open(fname, "r", encoding="utf-8") as f:
+            assert f.read(1) == 'E'
+
+        strain2 = StrainTensor.load_from_txt(fname)
+        assert strain2.shape == (1,)
+        np.testing.assert_almost_equal(strain.matrix, strain2.matrix[0])
+
+        # Then a tensor array
+        strain_array = StrainTensor.rand(shape=(100,))
+        strain_array.save_as_txt(fname)
+
+        # Check that the column names start with 'E'
+        with open(fname, "r", encoding="utf-8") as f:
+            assert f.read(1) == 'E'
+
+        strain_array2 = StrainTensor.load_from_txt(fname)
+        assert strain_array2.shape == (100,)
+        np.testing.assert_almost_equal(strain_array.matrix, strain_array2.matrix)
+
+
+    def test_read_write_stress_as_txt(self):
+        # First, try with a single tensor
+        fname = 'stress.txt'
+        stress = StressTensor.rand()
+        stress.save_as_txt(fname)
+
+        # Check that the column names start with 'E'
+        with open(fname, "r", encoding="utf-8") as f:
+            assert f.read(1) == 'S'
+
+        stress2 = StressTensor.load_from_txt(fname)
+        assert stress2.shape == (1,)
+        np.testing.assert_almost_equal(stress.matrix, stress2.matrix[0])
+
+        # Then a tensor array
+        stress_array = StressTensor.rand(shape=(100,))
+        stress_array.save_as_txt(fname)
+
+        # Check that the column names start with 'E'
+        with open(fname, "r", encoding="utf-8") as f:
+            assert f.read(1) == 'S'
+
+        stress_array2 = StressTensor.load_from_txt(fname)
+        assert stress_array2.shape == (100,)
+        np.testing.assert_almost_equal(stress_array.matrix, stress_array2.matrix)
+
+
+
 if __name__ == '__main__':
     unittest.main()
