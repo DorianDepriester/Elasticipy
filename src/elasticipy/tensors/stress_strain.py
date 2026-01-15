@@ -150,7 +150,7 @@ class StrainTensor(SymmetricSecondOrderTensor):
 
     @classmethod
     def load_from_txt(cls, file, name_prefix='E', **kwargs):
-        super().load_from_txt(file, name_prefix=name_prefix, **kwargs)
+        return super().load_from_txt(file, name_prefix=name_prefix, **kwargs)
 
 
 class StressTensor(SymmetricSecondOrderTensor):
@@ -370,7 +370,7 @@ class StressTensor(SymmetricSecondOrderTensor):
 
     @classmethod
     def load_from_txt(cls, file, name_prefix='S', **kwargs):
-        super().load_from_txt(file, name_prefix=name_prefix, **kwargs)
+        return super().load_from_txt(file, name_prefix=name_prefix, **kwargs)
 
 
 class StrainRateTensor(StrainTensor):
