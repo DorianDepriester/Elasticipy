@@ -1485,9 +1485,9 @@ class SecondOrderTensor:
         df = pd.read_csv(file, **kwargs)
         matrix = np.zeros((len(df), 3, 3))
         for i in range(3):
-            if cls is SkewSymmetricSecondOrderTensor:
+            if issubclass(cls, SkewSymmetricSecondOrderTensor):
                 r = range(i+1, 3)
-            elif cls is SymmetricSecondOrderTensor:
+            elif issubclass(cls, SymmetricSecondOrderTensor):
                 r = range(i, 3)
             else:
                 r= range(3)
