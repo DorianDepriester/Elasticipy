@@ -4,3 +4,15 @@ matplotlib
 setuptools
 pandas
 qtpy
+PyQt5
+orix
+pytest
+pymatgen
+requests
+seaborn
+scikit-learn
+emmet-core
+ase
+matscipy
+paraqus
+sympy
