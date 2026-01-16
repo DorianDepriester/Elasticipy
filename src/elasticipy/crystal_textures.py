@@ -17,7 +17,7 @@ class FibreTexture(CrystalTexture):
             miller = miller.replace('[', '<').replace(']', '>')
         else:
             miller = s = str(self.miller.hkl[0])
-        row_0 =  "Fiber texture with {miller} || {axis}".format(miller=miller, axis=self.axis)
+        row_0 =  "Fibre texture with {miller} || {axis}".format(miller=miller, axis=self.axis)
         point_group = self.miller.phase.point_group.name
         row_1 = 'Point group: ' + str(point_group)
         return row_0 + '\n' + row_1
