@@ -1,6 +1,13 @@
 from orix.quaternion import Orientation
-import numpy as np
 from scipy.integrate import quad_vec
+import numpy as np
+
+ANGLE_35 = 35.26438968
+ANGLE_37 = 36.6992252
+ANGLE_59 = 58.97991646
+ANGLE_63 = 63.43494882
+ANGLE_74 = 74.20683095
+
 
 class CrystalTexture:
     def __init__(self, orientation):
@@ -16,17 +23,17 @@ class CrystalTexture:
 
     @classmethod
     def Brass(cls):
-        o = Orientation.from_euler([35.26438968, 45, 0], degrees=True)
+        o = Orientation.from_euler([ANGLE_35, 45, 0], degrees=True)
         return CrystalTexture(o)
 
     @classmethod
-    def Copper(cls):
-        o = Orientation.from_euler([90, 35.26438968, 45], degrees=True)
+    def GossBrass(cls):
+        o = Orientation.from_euler([ANGLE_74, 90, 45], degrees=True)
         return CrystalTexture(o)
 
     @classmethod
     def S(cls):
-        o = Orientation.from_euler([58.97991646, 36.6992252, 63.43494882], degrees=True)
+        o = Orientation.from_euler([ANGLE_59, ANGLE_37, ANGLE_63], degrees=True)
         return CrystalTexture(o)
 
 
