@@ -32,7 +32,8 @@ class CrystalTexture:
 
 class FibreTexture(CrystalTexture):
     def __init__(self, miller, axis):
-        super().__init__(None)
+        ref_orient = Orientation.from_align_vectors(miller, axis)
+        super().__init__(ref_orient)
         self.miller = miller
         self.axis = axis
 
@@ -48,8 +49,7 @@ class FibreTexture(CrystalTexture):
         return row_0 + '\n' + row_1
 
     def mean_tensor(self, tensor):
-        ref_orient = Orientation.from_align_vectors(self.miller, self.axis)
-        tensor_ref_orient = tensor * ref_orient
+        tensor_ref_orient = tensor * self.orientation
         def fun(theta):
             rotation = Orientation.from_axes_angles(self.axis, theta)
             tensor_rotated = tensor_ref_orient * rotation
