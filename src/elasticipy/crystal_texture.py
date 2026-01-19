@@ -25,51 +25,127 @@ class CrystalTexture:
     """
 
     def __init__(self, orientation):
+        """
+        Create a single-orientation crystallographic texture
+
+        Parameters
+        ----------
+        orientation : orix.quaternion.orientation.Orientation
+            Orientation of the crystallographic texture
+        """
         self.orientation = orientation
 
     def __repr__(self):
         return str(self.orientation.to_euler(degrees=True))
 
     def mean_tensor(self, tensor):
+        """
+        Perform the texture-weighted mean of a 4th-order tensor.
+
+        Parameters
+        ----------
+        tensor : FourthOrderTensor
+            Reference tensor (unrotated)
+        Returns
+        -------
+        FourthOrderTensor
+            mean value of the rotated tensor
+        """
         return tensor * self.orientation
 
     @classmethod
     def Goss(cls):
+        """
+        Create a Goss crystallographic texture: {110}<100>
+
+        Returns
+        -------
+        CrystalTexture
+        """
         o = Orientation.from_euler([0, 45, 0], degrees=True)
         return CrystalTexture(o)
 
     @classmethod
     def Brass(cls):
+        """
+        Create a Brass crystallographic texture: {110}<112>
+
+        Returns
+        -------
+        CrystalTexture
+        """
         o = Orientation.from_euler([ANGLE_35, 45, 0], degrees=True)
         return CrystalTexture(o)
 
     @classmethod
     def GossBrass(cls):
+        """
+        Create a Goss/Brass crystallographic texture: {110}<115>
+
+        Returns
+        -------
+        CrystalTexture
+        """
         o = Orientation.from_euler([ANGLE_74, 90, 45], degrees=True)
         return CrystalTexture(o)
 
     @classmethod
     def Copper(cls):
+        """
+        Create a copper crystallographic texture: {112}<111>
+
+        Returns
+        -------
+        CrystalTexture
+        """
         o = Orientation.from_euler([90, ANGLE_35, 45], degrees=True)
         return CrystalTexture(o)
 
     @classmethod
     def A(cls):
+        """
+        Create an "A" crystallographic texture: {110}<111>
+
+        Returns
+        -------
+        CrystalTexture
+        """
         o = Orientation.from_euler([ANGLE_35, 90, 45], degrees=True)
         return CrystalTexture(o)
 
     @classmethod
     def P(cls):
+        """
+        Create a "P"" crystallographic texture: {011}<211>
+
+        Returns
+        -------
+        CrystalTexture
+        """
         o = Orientation.from_euler([30, 90, 45], degrees=True)
         return CrystalTexture(o)
 
     @classmethod
     def CuT(cls):
+        """
+        Create a CuT crystallographic texture: {552}<115>
+
+        Returns
+        -------
+        CrystalTexture
+        """
         o = Orientation.from_euler([90, ANGLE_74, 45], degrees=True)
         return CrystalTexture(o)
 
     @classmethod
     def S(cls):
+        """
+        Create a Goss crystallographic texture: {123}<634>
+
+        Returns
+        -------
+        CrystalTexture
+        """
         o = Orientation.from_euler([ANGLE_59, ANGLE_37, ANGLE_63], degrees=True)
         return CrystalTexture(o)
 
