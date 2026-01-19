@@ -10,6 +10,20 @@ ANGLE_74 = 74.20683095
 
 
 class CrystalTexture:
+    """
+    Class to handle classical crystallographic texture.
+
+    Notes
+    -----
+    This class implements the crystallographic textures listed by [Lohmuller et al.]_
+
+    References
+    ----------
+    .. [Lohmuller et al.] Lohmuller, P.; Peltier, L.; Hazotte, A.; Zollinger, J.; Laheurte, P.; Fleury, E. Variations of
+    the Elastic Properties of the CoCrFeMnNi High Entropy Alloy Deformed by Groove Cold Rolling.
+    Materials 2018, 11, 1337. https://doi.org/10.3390/ma11081337
+    """
+
     def __init__(self, orientation):
         self.orientation = orientation
 
