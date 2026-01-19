@@ -16,6 +16,9 @@ class CrystalTexture:
     def __repr__(self):
         return str(self.orientation.to_euler(degrees=True))
 
+    def mean_tensor(self, tensor):
+        return tensor * self.orientation
+
     @classmethod
     def Goss(cls):
         o = Orientation.from_euler([0, 45, 0], degrees=True)
