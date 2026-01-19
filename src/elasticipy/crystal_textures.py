@@ -32,6 +32,24 @@ class CrystalTexture:
         return CrystalTexture(o)
 
     @classmethod
+    def Copper(cls):
+        o = Orientation.from_euler([90, ANGLE_35, 45], degrees=True)
+        return CrystalTexture(o)
+
+    @classmethod
+    def A(cls):
+        o = Orientation.from_euler([ANGLE_35, 90, 45], degrees=True)
+        return CrystalTexture(o)
+
+    def P(cls):
+        o = Orientation.from_euler([30, 90, 45], degrees=True)
+        return CrystalTexture(o)
+
+    def CuT(cls):
+        o = Orientation.from_euler([90, ANGLE_74, 45], degrees=True)
+        return CrystalTexture(o)
+
+    @classmethod
     def S(cls):
         o = Orientation.from_euler([ANGLE_59, ANGLE_37, ANGLE_63], degrees=True)
         return CrystalTexture(o)
