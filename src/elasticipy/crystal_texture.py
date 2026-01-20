@@ -5,6 +5,7 @@ import numpy as np
 
 ANGLE_35 = 35.26438968
 ANGLE_37 = 36.6992252
+ANGLE_54 = 54.73561032
 ANGLE_59 = 58.97991646
 ANGLE_63 = 63.43494882
 ANGLE_74 = 74.20683095
@@ -135,7 +136,7 @@ class CrystalTexture:
         -------
         CrystalTexture
         """
-        o = Orientation.from_euler([30, 90, 45], degrees=True)
+        o = Orientation.from_euler([ANGLE_54, 90, 45], degrees=True)
         return CrystalTexture(o)
 
     @classmethod
