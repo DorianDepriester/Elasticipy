@@ -170,10 +170,10 @@ class FibreTexture(CrystalTexture):
 
     def __repr__(self):
         if self.miller.coordinate_format == 'uvw' or self.miller.coordinate_format == 'UVTW':
-            miller = s = str(self.miller.uvw[0])
+            miller = str(self.miller.uvw[0])
             miller = miller.replace('[', '<').replace(']', '>')
         else:
-            miller = s = str(self.miller.hkl[0])
+            miller = str(self.miller.hkl[0])
         row_0 =  "Fibre texture with {miller} || {axis}".format(miller=miller, axis=self.axis.data[0])
         point_group = self.miller.phase.point_group.name
         row_1 = 'Point group: ' + str(point_group)
