@@ -153,7 +153,7 @@ class CrystalTexture:
     @classmethod
     def S(cls):
         """
-        Create a Goss crystallographic texture: {123}<634>
+        Create an "S" crystallographic texture: {123}<634>
 
         Returns
         -------
