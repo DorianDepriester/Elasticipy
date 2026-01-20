@@ -1,4 +1,5 @@
 from orix.quaternion import Orientation
+from orix.vector import Vector3d
 from scipy.integrate import quad_vec
 import numpy as np
 
@@ -155,7 +156,7 @@ class FibreTexture(CrystalTexture):
         ref_orient = Orientation.from_align_vectors(miller, axis)
         super().__init__(ref_orient)
         self.miller = miller
-        self.axis = axis
+        self.axis = Vector3d(axis)
 
     def __repr__(self):
         if self.miller.coordinate_format == 'uvw' or self.miller.coordinate_format == 'UVTW':
@@ -163,7 +164,7 @@ class FibreTexture(CrystalTexture):
             miller = miller.replace('[', '<').replace(']', '>')
         else:
             miller = s = str(self.miller.hkl[0])
-        row_0 =  "Fibre texture with {miller} || {axis}".format(miller=miller, axis=self.axis)
+        row_0 =  "Fibre texture with {miller} || {axis}".format(miller=miller, axis=self.axis.data[0])
         point_group = self.miller.phase.point_group.name
         row_1 = 'Point group: ' + str(point_group)
         return row_0 + '\n' + row_1
