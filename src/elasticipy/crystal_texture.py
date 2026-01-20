@@ -55,6 +55,18 @@ class CrystalTexture:
         return tensor * self.orientation
 
     @classmethod
+    def Cube(cls):
+        """
+        Create a Cube crystallographic texture: {100}<100>
+
+        Returns
+        -------
+        CrystalTexture
+        """
+        o = Orientation.from_euler([0, 0, 0], degrees=True)
+        return CrystalTexture(o)
+
+    @classmethod
     def Goss(cls):
         """
         Create a Goss crystallographic texture: {110}<100>
@@ -185,5 +197,6 @@ class FibreTexture(CrystalTexture):
             rotation = Orientation.from_axes_angles(self.axis, theta)
             tensor_rotated = tensor_ref_orient * rotation
             return tensor_rotated.to_Kelvin()
-        res, *_ = quad_vec(fun, 0, 2 * np.pi)
-        return tensor.__class__.from_Kelvin(res / (2*np.pi))
+        circle = 2 * np.pi
+        res, *_ = quad_vec(fun, 0, circle)
+        return tensor.__class__.from_Kelvin(res / circle)
