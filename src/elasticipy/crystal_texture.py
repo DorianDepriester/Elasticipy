@@ -163,6 +163,24 @@ class CrystalTexture:
         o = Orientation.from_euler([ANGLE_59, ANGLE_37, ANGLE_63], degrees=True)
         return CrystalTexture(o)
 
+    def scatter(self, miller, **kwargs):
+        """
+        Plot the the pole figure of the crystallographic texture
+
+        Parameters
+        ----------
+        miller : orix.vector.miller.Miller
+            Miller indices of directions/plane to plot
+        kwargs
+            Keyword arguments passed to orix.vector.Vector3d.scatter
+
+        Returns
+        -------
+        matplotlib.figure.Figure
+            Handle to figure
+        """
+        v = Vector3d(~self.orientation * miller)
+        return v.scatter(return_figure=True, **kwargs)
 
 class FibreTexture(CrystalTexture):
     def __init__(self, miller, axis):
@@ -193,9 +211,9 @@ class FibreTexture(CrystalTexture):
         return row_0 + '\n' + row_1
 
     def mean_tensor(self, tensor):
-        tensor_ref_orient = tensor * self.orientation
+        tensor_ref_orient = tensor * ~self.orientation
         def fun(theta):
-            rotation = Orientation.from_axes_angles(self.axis, theta)
+            rotation = ~Orientation.from_axes_angles(self.axis, theta)
             tensor_rotated = tensor_ref_orient * rotation
             return tensor_rotated.to_Kelvin()
         circle = 2 * np.pi
