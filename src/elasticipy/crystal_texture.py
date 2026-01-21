@@ -1,7 +1,9 @@
+from matplotlib import pyplot as plt
 from orix.quaternion import Orientation
 from orix.vector import Vector3d
 from scipy.integrate import quad_vec
 import numpy as np
+from elasticipy.polefigure import add_polefigure
 
 ANGLE_35 = 35.26438968
 ANGLE_37 = 36.6992252
@@ -163,7 +165,7 @@ class CrystalTexture:
         o = Orientation.from_euler([ANGLE_59, ANGLE_37, ANGLE_63], degrees=True)
         return CrystalTexture(o)
 
-    def scatter(self, miller, **kwargs):
+    def plot_as_pole_figure(self, miller, **kwargs):
         """
         Plot the the pole figure of the crystallographic texture
 
@@ -219,3 +221,23 @@ class FibreTexture(CrystalTexture):
         circle = 2 * np.pi
         res, *_ = quad_vec(fun, 0, circle)
         return tensor.__class__.from_Kelvin(res / circle)
+
+    def plot_as_pole_figure(self, miller, symmetrize=False, n_orientations=100, fig=None, projection='lambert', **kwargs):
+        theta = np.linspace(0, 2 * np.pi, n_orientations)
+        orientations = self.orientation * Orientation.from_axes_angles(self.axis, theta)
+        if fig is None:
+            fig = plt.figure()
+        ax = add_polefigure(fig, projection=projection)
+        if symmetrize:
+            miller = miller.symmetrise(unique=True)
+        for m in miller:
+            t = Vector3d(~orientations * m)
+            xyz = t.data
+            r = np.linalg.norm(xyz, axis=1)
+            phi = np.arctan2(xyz[:,1], xyz[:,0])
+            phi[phi < 0] += 2 * np.pi
+            theta = np.arccos(xyz[:,2] / r)
+            ax.plot(phi, theta)
+        ax.set_ylim([0, np.pi/2])
+        return fig, ax
+
