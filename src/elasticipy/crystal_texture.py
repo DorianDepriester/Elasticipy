@@ -172,7 +172,7 @@ class CrystalTexture:
         Parameters
         ----------
         miller : orix.vector.miller.Miller
-            Miller indices of directions/plane to plot
+            Miller indices of directions/planes to plot
         kwargs
             Keyword arguments passed to orix.vector.Vector3d.scatter
 
