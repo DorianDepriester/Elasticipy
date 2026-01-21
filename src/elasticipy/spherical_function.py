@@ -1032,7 +1032,7 @@ class HyperSphericalFunction(SphericalFunction):
             subplot_kwargs = {}
         if fig is None:
             fig = plt.figure()
-        ax = add_polefigure(fig, *subplot_kwargs, projection=projection, **subplot_kwargs)
+        ax = add_polefigure(fig, *subplot_args, projection=projection, **subplot_kwargs)
         phi = np.linspace(*self.domain[0], n_phi)
         theta = np.linspace(*self.domain[1], n_theta)
         psi = np.linspace(*self.domain[2], n_psi)
