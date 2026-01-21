@@ -222,14 +222,12 @@ class FibreTexture(CrystalTexture):
         res, *_ = quad_vec(fun, 0, circle)
         return tensor.__class__.from_Kelvin(res / circle)
 
-    def plot_as_pole_figure(self, miller, symmetrize=False, n_orientations=100, fig=None, projection='lambert', **kwargs):
+    def plot_as_pole_figure(self, miller, n_orientations=100, fig=None, projection='lambert', **kwargs):
         theta = np.linspace(0, 2 * np.pi, n_orientations)
         orientations = self.orientation * Orientation.from_axes_angles(self.axis, theta)
         if fig is None:
             fig = plt.figure()
         ax = add_polefigure(fig, projection=projection)
-        if symmetrize:
-            miller = miller.symmetrise(unique=True)
         for m in miller:
             t = Vector3d(~orientations * m)
             xyz = t.data
