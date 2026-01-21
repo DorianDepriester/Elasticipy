@@ -12,6 +12,24 @@ ANGLE_59 = 58.97991646
 ANGLE_63 = 63.43494882
 ANGLE_74 = 74.20683095
 
+def _plot_as_pf(orientations, miller, fig, projection, plot_type='plot'):
+    if fig is None:
+        fig = plt.figure()
+    ax = add_polefigure(fig, projection=projection)
+    for m in miller:
+        t = Vector3d(~orientations * m)
+        xyz = t.data
+        r = np.linalg.norm(xyz, axis=1)
+        phi = np.arctan2(xyz[:, 1], xyz[:, 0])
+        phi[phi < 0] += 2 * np.pi
+        theta = np.arccos(xyz[:, 2] / r)
+        if plot_type == 'scatter':
+            ax.scatter(phi, theta)
+        else:
+            ax.plot(phi, theta)
+    ax.set_ylim([0, np.pi / 2])
+    return fig, ax
+
 
 class CrystalTexture:
     """
@@ -165,24 +183,26 @@ class CrystalTexture:
         o = Orientation.from_euler([ANGLE_59, ANGLE_37, ANGLE_63], degrees=True)
         return CrystalTexture(o)
 
-    def plot_as_pole_figure(self, miller, **kwargs):
+    def plot_as_pole_figure(self, miller, projection='lambert', fig=None):
         """
-        Plot the the pole figure of the crystallographic texture
+        Plot the pole figure of the crystallographic texture
 
         Parameters
         ----------
         miller : orix.vector.miller.Miller
             Miller indices of directions/planes to plot
-        kwargs
-            Keyword arguments passed to orix.vector.Vector3d.scatter
+        projection : str, optional
+            Type of projection to use, it can be either stereographic or Lambert
+        fig : matplotlib.figure.Figure, optional
+            Handle to existing figure, if needed
 
         Returns
         -------
         matplotlib.figure.Figure
             Handle to figure
+
         """
-        v = Vector3d(~self.orientation * miller)
-        return v.scatter(return_figure=True, **kwargs)
+        return _plot_as_pf(self.orientation, miller, fig, projection, plot_type='scatter')
 
 class FibreTexture(CrystalTexture):
     def __init__(self, miller, axis):
@@ -225,17 +245,4 @@ class FibreTexture(CrystalTexture):
     def plot_as_pole_figure(self, miller, n_orientations=100, fig=None, projection='lambert', **kwargs):
         theta = np.linspace(0, 2 * np.pi, n_orientations)
         orientations = self.orientation * Orientation.from_axes_angles(self.axis, theta)
-        if fig is None:
-            fig = plt.figure()
-        ax = add_polefigure(fig, projection=projection)
-        for m in miller:
-            t = Vector3d(~orientations * m)
-            xyz = t.data
-            r = np.linalg.norm(xyz, axis=1)
-            phi = np.arctan2(xyz[:,1], xyz[:,0])
-            phi[phi < 0] += 2 * np.pi
-            theta = np.arccos(xyz[:,2] / r)
-            ax.plot(phi, theta)
-        ax.set_ylim([0, np.pi/2])
-        return fig, ax
-
+        return _plot_as_pf(orientations, miller, fig, projection)
