@@ -216,10 +216,11 @@ class FibreTexture(CrystalTexture):
         axis : tuple or list
             Axis (in sample CS) to align with
         """
-        ref_orient = Orientation.from_align_vectors(miller, axis)
+        self.axis = Vector3d(axis)
+        ref_orient = Orientation.from_align_vectors(miller, self.axis)
         super().__init__(ref_orient)
         self.miller = miller
-        self.axis = Vector3d(axis)
+
 
     def __repr__(self):
         if self.miller.coordinate_format == 'uvw' or self.miller.coordinate_format == 'UVTW':
