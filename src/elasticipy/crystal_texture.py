@@ -205,7 +205,35 @@ class CrystalTexture:
         return _plot_as_pf(self.orientation, miller, fig, projection, plot_type='scatter')
 
 class FibreTexture(CrystalTexture):
-    def __init__(self, miller, axis):
+    def __init__(self, o, axis):
+        super().__init__(o)
+        self.axis = Vector3d(axis)
+        self.miller = None
+        self.phi1 = None
+        self.Phi = None
+        self.phi2 = None
+
+    @classmethod
+    def from_Euler_angles(cls, phi1=None, Phi=None, phi2=None, degrees=False):
+        cls.phi1 = phi1
+        cls.Phi = Phi
+        cls.phi2 = phi2
+        if phi1 is None:
+            orient1 = Orientation.from_euler([0., Phi, phi2] , degrees=degrees)
+            orient2 = Orientation.from_euler([1., Phi, phi2] , degrees=degrees)
+        elif Phi is None:
+            orient1 = Orientation.from_euler([phi1, 0., phi2], degrees=degrees)
+            orient2 = Orientation.from_euler([phi1, 1., phi2], degrees=degrees)
+        elif phi2 is None:
+            orient1 = Orientation.from_euler([phi1, Phi, 0.] , degrees=degrees)
+            orient2 = Orientation.from_euler([phi1, Phi, 1.] , degrees=degrees)
+        else:
+            raise ValueError("Exactly two Euler angles are required.")
+        axis = (~orient1 * orient2).axis
+        return cls(orient2, axis)
+
+    @classmethod
+    def from_Miller_axis(cls, miller, axis):
         """
         Create a perfect fibre crystallographic texture
 
@@ -216,11 +244,10 @@ class FibreTexture(CrystalTexture):
         axis : tuple or list
             Axis (in sample CS) to align with
         """
-        self.axis = Vector3d(axis)
-        ref_orient = Orientation.from_align_vectors(miller, self.axis)
-        super().__init__(ref_orient)
-        self.miller = miller
-
+        ref_orient = Orientation.from_align_vectors(miller, Vector3d(axis))
+        a = cls(ref_orient, axis)
+        a.miller = miller
+        return a
 
     def __repr__(self):
         if self.miller.coordinate_format == 'uvw' or self.miller.coordinate_format == 'UVTW':
