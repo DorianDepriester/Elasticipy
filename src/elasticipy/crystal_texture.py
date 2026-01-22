@@ -212,9 +212,9 @@ class FibreTexture(CrystalTexture):
         Parameters
         ----------
         miller : orix.vector.miller.Miller
-            Plane or direction to align with the axis
-        axis :
-
+            Crystal plane or direction to align with the axis
+        axis : tuple or list
+            Axis (in sample CS) to align with
         """
         ref_orient = Orientation.from_align_vectors(miller, axis)
         super().__init__(ref_orient)
