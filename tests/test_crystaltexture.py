@@ -1,5 +1,5 @@
 import unittest
-from elasticipy.crystal_texture import CrystalTexture
+from elasticipy.crystal_texture import CrystalTexture, FibreTexture
 from orix.vector import Miller, Vector3d
 from orix.crystal_map import Phase
 import numpy as np
@@ -58,6 +58,19 @@ class TestCrystalTexture(unittest.TestCase):
         t = CrystalTexture.S()
         orientation_checker(t, [1,2,3], [6,3,4])
 
+class TestFibreTexture(unittest.TestCase):
+    def test_from_Euler(self):
+        t = FibreTexture.from_euler(phi1=0, Phi=10)
+        assert t.__repr__() == 'Fibre texture\nphi1= 0°, Phi= 10°'
+
+        t = FibreTexture.from_euler(phi1=0, phi2=10)
+        assert t.__repr__() == 'Fibre texture\nphi1= 0°, phi2= 10°'
+
+        t = FibreTexture.from_euler(Phi=0, phi2=10)
+        assert t.__repr__() == 'Fibre texture\nPhi= 0°, phi2= 10°'
+
+        t = FibreTexture.from_euler(Phi=0, phi2=10 * np.pi / 180, degrees=False)
+        assert t.__repr__() == 'Fibre texture\nPhi= 0.0°, phi2= 10.0°'
 
 
 
