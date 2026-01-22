@@ -76,6 +76,13 @@ class TestFibreTexture(unittest.TestCase):
         t = FibreTexture.from_euler(Phi=0, phi2=0)
         assert t.axis.dot(Vector3d([0,0,1])) == 1. or t.axis.dot(Vector3d([0,0,1])) == -1.
 
+        t = FibreTexture.from_euler(phi1=0, phi2=0)
+        assert t.axis.dot(Vector3d([0,0,1])) == 1. or t.axis.dot(Vector3d([1,0,0])) == -1.
+
+    def test_from_Miller_axis(self):
+        m = Miller(uvw=[1, 0, 0], phase=phase)
+        texture = FibreTexture.from_Miller_axis(m, [0, 0, 1])
+        assert texture.__repr__() == 'Fibre texture\n<1. 0. 0.> || [0, 0, 1]\nPoint group: m-3m'
 
 
 if __name__ == '__main__':
