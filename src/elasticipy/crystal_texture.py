@@ -211,7 +211,7 @@ class FibreTexture(CrystalTexture):
         self._repr = 'Fibre texture'
 
     @classmethod
-    def from_Euler_angles(cls, phi1=None, Phi=None, phi2=None, degrees=True):
+    def from_euler(cls, phi1=None, Phi=None, phi2=None, degrees=True):
         if phi1 is None:
             orient1 = Orientation.from_euler([0., Phi, phi2] , degrees=degrees)
             orient2 = Orientation.from_euler([1., Phi, phi2] , degrees=degrees)
