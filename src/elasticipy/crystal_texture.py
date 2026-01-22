@@ -208,29 +208,32 @@ class FibreTexture(CrystalTexture):
     def __init__(self, o, axis):
         super().__init__(o)
         self.axis = Vector3d(axis)
-        self.miller = None
-        self.phi1 = None
-        self.Phi = None
-        self.phi2 = None
+        self._repr = 'Fibre texture'
 
     @classmethod
-    def from_Euler_angles(cls, phi1=None, Phi=None, phi2=None, degrees=False):
-        cls.phi1 = phi1
-        cls.Phi = Phi
-        cls.phi2 = phi2
+    def from_Euler_angles(cls, phi1=None, Phi=None, phi2=None, degrees=True):
         if phi1 is None:
             orient1 = Orientation.from_euler([0., Phi, phi2] , degrees=degrees)
             orient2 = Orientation.from_euler([1., Phi, phi2] , degrees=degrees)
+            angle_list = {'Phi':Phi, 'phi2':phi2}
         elif Phi is None:
             orient1 = Orientation.from_euler([phi1, 0., phi2], degrees=degrees)
             orient2 = Orientation.from_euler([phi1, 1., phi2], degrees=degrees)
+            angle_list = {'phi1':phi1, 'phi2':phi2}
         elif phi2 is None:
             orient1 = Orientation.from_euler([phi1, Phi, 0.] , degrees=degrees)
             orient2 = Orientation.from_euler([phi1, Phi, 1.] , degrees=degrees)
+            angle_list = {'phi1':phi1, 'Phi':Phi}
         else:
             raise ValueError("Exactly two Euler angles are required.")
         axis = (~orient1 * orient2).axis
-        return cls(orient2, axis)
+        a = cls(orient2, axis)
+        (k1, v1), (k2, v2) = angle_list.items()
+        if not degrees:
+            v1 = v1 * 180 / np.pi
+            v2 = v2 * 180 / np.pi
+        a._repr += f"\n{k1}= {v1}°, {k2}= {v2}°"
+        return a
 
     @classmethod
     def from_Miller_axis(cls, miller, axis):
@@ -246,19 +249,19 @@ class FibreTexture(CrystalTexture):
         """
         ref_orient = Orientation.from_align_vectors(miller, Vector3d(axis))
         a = cls(ref_orient, axis)
-        a.miller = miller
+        if miller.coordinate_format == 'uvw' or miller.coordinate_format == 'UVTW':
+            miller_str = str(miller.uvw[0])
+            miller_str = miller_str.replace('[', '<').replace(']', '>')
+        else:
+            miller_str = str(miller.hkl[0])
+        row_0 =  "\n{miller} || {axis}".format(miller=miller_str, axis=axis)
+        point_group = miller.phase.point_group.name
+        row_1 = 'Point group: ' + str(point_group)
+        a._repr += row_0 + '\n' + row_1
         return a
 
     def __repr__(self):
-        if self.miller.coordinate_format == 'uvw' or self.miller.coordinate_format == 'UVTW':
-            miller = str(self.miller.uvw[0])
-            miller = miller.replace('[', '<').replace(']', '>')
-        else:
-            miller = str(self.miller.hkl[0])
-        row_0 =  "Fibre texture with {miller} || {axis}".format(miller=miller, axis=self.axis.data[0])
-        point_group = self.miller.phase.point_group.name
-        row_1 = 'Point group: ' + str(point_group)
-        return row_0 + '\n' + row_1
+        return self._repr
 
     def mean_tensor(self, tensor):
         tensor_ref_orient = tensor * ~self.orientation
