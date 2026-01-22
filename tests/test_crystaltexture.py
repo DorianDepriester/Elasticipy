@@ -72,6 +72,9 @@ class TestFibreTexture(unittest.TestCase):
         t = FibreTexture.from_euler(Phi=0, phi2=10 * np.pi / 180, degrees=False)
         assert t.__repr__() == 'Fibre texture\nPhi= 0.0°, phi2= 10.0°'
 
+    def test_from_Euler_axis(self):
+        t = FibreTexture.from_euler(Phi=0, phi2=0)
+        assert t.axis.dot(Vector3d([0,0,1])) == 1. or t.axis.dot(Vector3d([0,0,1])) == -1.
 
 
 
