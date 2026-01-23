@@ -71,6 +71,12 @@ class _CrystalTextureBase:
     def __rmul__(self, other):
         return self * other
 
+    def __add__(self, other):
+        return CrystalTextureMix([self, other])
+
+    def __radd__(self, other):
+        return self + other
+
 class CrystalTexture(_CrystalTextureBase):
     """
     Class to handle classical crystallographic texture.
@@ -308,5 +314,11 @@ class FibreTexture(_CrystalTextureBase):
 class CrystalTextureMix:
     def __init__(self, texture_list):
         self.texture_list = [texture_list]
+
+    def __mul__(self, other):
+        tm = deepcopy(self)
+        for t in tm.texture_list:
+            t.weight *= other
+        return tm
 
 
