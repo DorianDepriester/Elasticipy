@@ -30,22 +30,7 @@ def _plot_as_pf(orientations, miller, fig, projection, plot_type='plot'):
     ax.set_ylim([0, np.pi / 2])
     return fig, ax
 
-
-class CrystalTexture:
-    """
-    Class to handle classical crystallographic texture.
-
-    Notes
-    -----
-    This class implements the crystallographic textures listed by [Lohmuller et al.]_
-
-    References
-    ----------
-    .. [Lohmuller et al.] Lohmuller, P.; Peltier, L.; Hazotte, A.; Zollinger, J.; Laheurte, P.; Fleury, E. Variations of
-    the Elastic Properties of the CoCrFeMnNi High Entropy Alloy Deformed by Groove Cold Rolling.
-    Materials 2018, 11, 1337. https://doi.org/10.3390/ma11081337
-    """
-
+class _CrystalTextureBase:
     def __init__(self, orientation):
         """
         Create a single-orientation crystallographic texture
@@ -56,10 +41,6 @@ class CrystalTexture:
             Orientation of the crystallographic texture
         """
         self.orientation = orientation
-
-    def __repr__(self):
-        title = "Crystallographic texture"
-        return title + '\nphi1={:.2f}°, Phi={:.2f}°, phi2={:.2f}°'.format(*self.orientation.to_euler(degrees=True)[0])
 
     def mean_tensor(self, tensor):
         """
@@ -78,6 +59,25 @@ class CrystalTexture:
             return tensor.infinite_random_average()
         else:
             return tensor * self.orientation
+
+class CrystalTexture(_CrystalTextureBase):
+    """
+    Class to handle classical crystallographic texture.
+
+    Notes
+    -----
+    This class implements the crystallographic textures listed by [Lohmuller et al.]_
+
+    References
+    ----------
+    .. [Lohmuller et al.] Lohmuller, P.; Peltier, L.; Hazotte, A.; Zollinger, J.; Laheurte, P.; Fleury, E. Variations of
+    the Elastic Properties of the CoCrFeMnNi High Entropy Alloy Deformed by Groove Cold Rolling.
+    Materials 2018, 11, 1337. https://doi.org/10.3390/ma11081337
+    """
+
+    def __repr__(self):
+        title = "Crystallographic texture"
+        return title + '\nphi1={:.2f}°, Phi={:.2f}°, phi2={:.2f}°'.format(*self.orientation.to_euler(degrees=True)[0])
 
     @classmethod
     def uniform(cls):
@@ -219,7 +219,7 @@ class CrystalTexture:
         """
         return _plot_as_pf(self.orientation, miller, fig, projection, plot_type='scatter')
 
-class FibreTexture(CrystalTexture):
+class FibreTexture(_CrystalTextureBase):
     def __init__(self, o, axis):
         super().__init__(o)
         self.axis = Vector3d(axis)
