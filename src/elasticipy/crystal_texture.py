@@ -292,3 +292,11 @@ class FibreTexture(_CrystalTextureBase):
         theta = np.linspace(0, 2 * np.pi, n_orientations)
         orientations = self.orientation * Orientation.from_axes_angles(self.axis, theta)
         return _plot_as_pf(orientations, miller, fig, projection)
+
+
+class CrystalTextureMix:
+    def __init__(self, texture_list, weights):
+        self.texture_list = texture_list
+        self.weights = np.atleast_1d(weights)
+
+

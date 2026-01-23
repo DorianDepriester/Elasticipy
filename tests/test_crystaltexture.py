@@ -29,6 +29,13 @@ def orientation_checker(texture, hkl, uvw):
 
 
 class TestCrystalTexture(unittest.TestCase):
+    def test_uniform(self):
+        t = CrystalTexture.uniform()
+        assert t.orientation is None
+        assert C * t == C.Voigt_average()
+        S = C.inv()
+        assert S * t == S.Reuss_average()
+
     def test_cube(self):
         t = CrystalTexture.Cube()
         orientation_checker(t, [0,0,1], [1,0,0])
