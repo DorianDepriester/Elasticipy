@@ -4,17 +4,22 @@ from orix.vector import Miller, Vector3d
 from orix.crystal_map import Phase
 import numpy as np
 
-phase = Phase(point_group="m-3m")
+PHASE = Phase(point_group="m-3m")
+C = StiffnessTensor.monoclinic(phase_name='TiNi',
+                               C11=231, C12=127, C13=104,
+                               C22=240, C23=131, C33=175,
+                               C44=81, C55=11, C66=85,
+                               C15=-18, C25=1, C35=-3, C46=3)
 
 def orientation_checker(texture, hkl, uvw):
     orientation = texture.orientation
-    m_hkl = Miller(uvw=hkl, phase=phase)
+    m_hkl = Miller(uvw=hkl, phase=PHASE)
     x = ~orientation * m_hkl.symmetrise(unique=True)
     u_hkl = x.data
     cos_hkl = np.dot(u_hkl, [0, 0, 1]) / np.linalg.norm(u_hkl, axis=1)
     assert np.any(np.isclose(cos_hkl, 1))
 
-    m_uvw = Miller(uvw=uvw, phase=phase)
+    m_uvw = Miller(uvw=uvw, phase=PHASE)
     x = ~orientation * m_uvw.symmetrise(unique=True)
     u_uvw = x.data
     cos_uvw = np.dot(u_uvw, [1, 0, 0]) / np.linalg.norm(u_uvw, axis=1)
@@ -80,7 +85,7 @@ class TestFibreTexture(unittest.TestCase):
         assert t.axis.dot(Vector3d([0,0,1])) == 1. or t.axis.dot(Vector3d([1,0,0])) == -1.
 
     def test_from_Miller_axis(self):
-        m = Miller(uvw=[1, 0, 0], phase=phase)
+        m = Miller(uvw=[1, 0, 0], phase=PHASE)
         texture = FibreTexture.from_Miller_axis(m, [0, 0, 1])
         assert texture.__repr__() == 'Fibre texture\n<1. 0. 0.> || [0, 0, 1]\nPoint group: m-3m'
 
