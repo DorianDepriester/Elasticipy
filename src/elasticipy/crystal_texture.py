@@ -313,7 +313,7 @@ class FibreTexture(_CrystalTextureBase):
 
 class CrystalTextureMix:
     def __init__(self, texture_list):
-        self.texture_list = [texture_list]
+        self.texture_list = texture_list
 
     def __mul__(self, other):
         tm = deepcopy(self)
