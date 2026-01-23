@@ -3,6 +3,7 @@ from elasticipy.crystal_texture import CrystalTexture, FibreTexture
 from orix.vector import Miller, Vector3d
 from orix.crystal_map import Phase
 import numpy as np
+from elasticipy.tensors.elasticity import StiffnessTensor
 
 PHASE = Phase(point_group="m-3m")
 C = StiffnessTensor.monoclinic(phase_name='TiNi',
@@ -62,6 +63,11 @@ class TestCrystalTexture(unittest.TestCase):
     def test_S(self):
         t = CrystalTexture.S()
         orientation_checker(t, [1,2,3], [6,3,4])
+
+    def test_mult(self):
+        t = CrystalTexture.S()
+        Crot = C * t
+        assert Crot == C * t.orientation
 
 class TestFibreTexture(unittest.TestCase):
     def test_from_Euler(self):
