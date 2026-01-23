@@ -1,5 +1,5 @@
 import unittest
-from elasticipy.crystal_texture import CrystalTexture, FibreTexture
+from elasticipy.crystal_texture import CrystalTexture, FibreTexture, CrystalTextureMix
 from orix.vector import Miller, Vector3d
 from orix.crystal_map import Phase
 import numpy as np
@@ -72,11 +72,6 @@ class TestCrystalTexture(unittest.TestCase):
         t = CrystalTexture.S()
         orientation_checker(t, [1,2,3], [6,3,4])
 
-    def test_mult(self):
-        t = CrystalTexture.S()
-        Crot = C * t
-        assert Crot == C * t.orientation
-
     def test_repr(self):
         t = CrystalTexture.Goss()
         assert t.__repr__() == 'Crystallographic texture\nphi1=0.00°, Phi=45.00°, phi2=0.00°'
@@ -145,16 +140,11 @@ class TestFibreTexture(unittest.TestCase):
 
 
 class TestCrystalTextureMix(unittest.TestCase):
-    def test_mult(self):
-        t = CrystalTexture.Goss()
-        tm = t * 0.5
-        assert isinstance(tm, CrystalTexture)
-        assert t.orientation == tm.orientation
-        assert tm.weight == 0.5
-
-        tm2 = 0.5 * t
-        assert isinstance(tm2, CrystalTexture)
-        assert t.orientation == tm2.orientation
+    def test_add(self):
+        tm = CrystalTexture.Goss() + CrystalTexture.Brass()
+        assert isinstance(tm, CrystalTextureMix)
+        wgts = [t.weight for t in tm.texture_list]
+        assert wgts == [1., 1.]
 
 if __name__ == '__main__':
     unittest.main()
