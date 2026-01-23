@@ -116,5 +116,17 @@ class TestFibreTexture(unittest.TestCase):
         assert (approx(Exy[0]) == Exy[1]) and (approx(Exy[0]) == Exy[2])
 
 
+class TestCrystalTextureMix(unittest.TestCase):
+    def test_mult(self):
+        t = CrystalTexture.Goss()
+        tm = t * 0.5
+        assert isinstance(tm.texture_list, list)
+        assert tm.texture_list[0] == t
+        assert tm.weights[0] == 0.5
+
+        tm2 = 0.5 * t
+        assert isinstance(tm2.texture_list, list)
+        assert tm2.texture_list[0] == t
+
 if __name__ == '__main__':
     unittest.main()
