@@ -43,7 +43,7 @@ class _CrystalTextureBase:
             Orientation of the crystallographic texture
         """
         self.orientation = orientation
-        self.weight = 0.
+        self.weight = 1.
 
     def mean_tensor(self, tensor):
         """
