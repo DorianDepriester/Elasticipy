@@ -81,6 +81,22 @@ class TestCrystalTexture(unittest.TestCase):
         t = CrystalTexture.Goss()
         assert t.__repr__() == 'Crystallographic texture\nphi1=0.00°, Phi=45.00°, phi2=0.00°'
 
+    def test_mult_stiffness(self):
+        t = CrystalTexture.S()
+        Crot = C * t
+        assert Crot == C * t.orientation
+
+    def test_mult_float(self):
+        t = CrystalTexture.Goss()
+        tm = t * 0.5
+        assert isinstance(tm, CrystalTexture)
+        assert t.orientation == tm.orientation
+        assert tm.weight == 0.5
+
+        tm2 = 0.5 * t
+        assert isinstance(tm2, CrystalTexture)
+        assert t.orientation == tm2.orientation
+
 class TestFibreTexture(unittest.TestCase):
     def test_from_Euler(self):
         t = FibreTexture.from_euler(phi1=0, Phi=10)
@@ -107,13 +123,25 @@ class TestFibreTexture(unittest.TestCase):
         texture = FibreTexture.from_Miller_axis(m, [0, 0, 1])
         assert texture.__repr__() == 'Fibre texture\n<1. 0. 0.> || [0, 0, 1]\nPoint group: m-3m'
 
-    def test_mult(self):
+    def test_mult_stiffness(self):
         # Check that a fibre texture along [0,0,1] leads to transverse isotropy
         m = Miller(uvw=[1, 0, 0], phase=PHASE)
         texture = FibreTexture.from_Miller_axis(m, [0, 0, 1])
         Crot = C * texture
         Exy = Crot.Young_modulus.eval([[1,0,0],[1,1,0],[0,1,0]])
         assert (approx(Exy[0]) == Exy[1]) and (approx(Exy[0]) == Exy[2])
+
+    def test_mult_float(self):
+        m = Miller(uvw=[1, 0, 0], phase=PHASE)
+        t = FibreTexture.from_Miller_axis(m, [0, 0, 1])
+        tm = t * 0.5
+        assert isinstance(tm, FibreTexture)
+        assert t.orientation == tm.orientation
+        assert tm.weight == 0.5
+
+        tm2 = 0.5 * t
+        assert isinstance(tm2, FibreTexture)
+        assert t.orientation == tm2.orientation
 
 
 class TestCrystalTextureMix(unittest.TestCase):
