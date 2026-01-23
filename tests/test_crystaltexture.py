@@ -4,6 +4,7 @@ from orix.vector import Miller, Vector3d
 from orix.crystal_map import Phase
 import numpy as np
 from elasticipy.tensors.elasticity import StiffnessTensor
+from pytest import approx
 
 PHASE = Phase(point_group="m-3m")
 C = StiffnessTensor.monoclinic(phase_name='TiNi',
@@ -94,6 +95,14 @@ class TestFibreTexture(unittest.TestCase):
         m = Miller(uvw=[1, 0, 0], phase=PHASE)
         texture = FibreTexture.from_Miller_axis(m, [0, 0, 1])
         assert texture.__repr__() == 'Fibre texture\n<1. 0. 0.> || [0, 0, 1]\nPoint group: m-3m'
+
+    def test_mult(self):
+        # Check that a fibre texture along [0,0,1] leads to transverse isotropy
+        m = Miller(uvw=[1, 0, 0], phase=PHASE)
+        texture = FibreTexture.from_Miller_axis(m, [0, 0, 1])
+        Crot = C * texture
+        Exy = Crot.Young_modulus.eval([[1,0,0],[1,1,0],[0,1,0]])
+        assert (approx(Exy[0]) == Exy[1]) and (approx(Exy[0]) == Exy[2])
 
 
 if __name__ == '__main__':
