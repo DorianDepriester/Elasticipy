@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 from matplotlib import pyplot as plt
 from orix.quaternion import Orientation
 from orix.vector import Vector3d
@@ -41,6 +43,7 @@ class _CrystalTextureBase:
             Orientation of the crystallographic texture
         """
         self.orientation = orientation
+        self.weight = 0.
 
     def mean_tensor(self, tensor):
         """
@@ -61,7 +64,9 @@ class _CrystalTextureBase:
             return tensor * self.orientation
 
     def __mul__(self, other):
-        return CrystalTextureMix(self, other)
+        t = deepcopy(self)
+        t.weight = other
+        return t
 
     def __rmul__(self, other):
         return self * other
@@ -301,8 +306,7 @@ class FibreTexture(_CrystalTextureBase):
 
 
 class CrystalTextureMix:
-    def __init__(self, texture_list, weights):
+    def __init__(self, texture_list):
         self.texture_list = [texture_list]
-        self.weights = np.atleast_1d(weights)
 
 

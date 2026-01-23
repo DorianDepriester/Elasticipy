@@ -120,13 +120,13 @@ class TestCrystalTextureMix(unittest.TestCase):
     def test_mult(self):
         t = CrystalTexture.Goss()
         tm = t * 0.5
-        assert isinstance(tm.texture_list, list)
-        assert tm.texture_list[0] == t
-        assert tm.weights[0] == 0.5
+        assert isinstance(tm, CrystalTexture)
+        assert t.orientation == tm.orientation
+        assert tm.weight == 0.5
 
         tm2 = 0.5 * t
-        assert isinstance(tm2.texture_list, list)
-        assert tm2.texture_list[0] == t
+        assert isinstance(tm2, CrystalTexture)
+        assert t.orientation == tm2.orientation
 
 if __name__ == '__main__':
     unittest.main()
