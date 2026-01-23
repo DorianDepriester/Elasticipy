@@ -70,6 +70,10 @@ class TestCrystalTexture(unittest.TestCase):
         Crot = C * t
         assert Crot == C * t.orientation
 
+    def test_repr(self):
+        t = CrystalTexture.Goss()
+        assert t.__repr__() == 'Crystallographic texture\nphi1=0.00°, Phi=45.00°, phi2=0.00°'
+
 class TestFibreTexture(unittest.TestCase):
     def test_from_Euler(self):
         t = FibreTexture.from_euler(phi1=0, Phi=10)
