@@ -140,7 +140,7 @@ class TestFibreTexture(unittest.TestCase):
 
 
 class TestCrystalTextureMix(unittest.TestCase):
-    def test_add(self):
+    def test_add_Textures(self):
         tg = CrystalTexture.Goss()
         tb = CrystalTexture.Brass()
         tm = tb + tg
@@ -149,6 +149,26 @@ class TestCrystalTextureMix(unittest.TestCase):
         assert wgts == [1., 1.]
         assert tm.texture_list[0] == tb
         assert tm.texture_list[1] == tg
+
+    def test_mult(self):
+        tg = CrystalTexture.Goss()
+        tb = CrystalTexture.Brass()
+        tm = 0.5 * (tb + tg)
+        wgts = [t.weight for t in tm.texture_list]
+        assert wgts == [0.5, 0.5]
+
+    def test_add_TexturesMix(self):
+        tg = CrystalTexture.Goss()
+        tb = CrystalTexture.Brass()
+        tc = CrystalTexture.Cube()
+        tm1 = 0.5 * tg + 0.3 * tb
+        tm2 = tm1 + 0.4 * tc
+        assert isinstance(tm2, CrystalTextureMix)
+        orientations = [t.orientation for t in tm2.texture_list]
+        assert orientations == [tg.orientation, tb.orientation, tc.orientation]
+        assert orientations == [tg.orientation, tb.orientation, tc.orientation]
+        weights = [t.weight for t in tm2.texture_list]
+        assert weights == [0.5, 0.3, 0.4]
 
 if __name__ == '__main__':
     unittest.main()
