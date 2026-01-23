@@ -60,6 +60,12 @@ class _CrystalTextureBase:
         else:
             return tensor * self.orientation
 
+    def __mul__(self, other):
+        return CrystalTextureMix(self, other)
+
+    def __rmul__(self, other):
+        return self * other
+
 class CrystalTexture(_CrystalTextureBase):
     """
     Class to handle classical crystallographic texture.
@@ -296,7 +302,7 @@ class FibreTexture(_CrystalTextureBase):
 
 class CrystalTextureMix:
     def __init__(self, texture_list, weights):
-        self.texture_list = texture_list
+        self.texture_list = [texture_list]
         self.weights = np.atleast_1d(weights)
 
 
