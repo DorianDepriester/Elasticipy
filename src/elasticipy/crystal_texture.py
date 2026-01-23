@@ -58,7 +58,8 @@ class CrystalTexture:
         self.orientation = orientation
 
     def __repr__(self):
-        return str(self.orientation.to_euler(degrees=True))
+        title = "Crystallographic texture"
+        return title + '\nphi1={:.2f}°, Phi={:.2f}°, phi2={:.2f}°'.format(*self.orientation.to_euler(degrees=True)[0])
 
     def mean_tensor(self, tensor):
         """
