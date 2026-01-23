@@ -52,7 +52,7 @@ class CrystalTexture:
 
         Parameters
         ----------
-        orientation : orix.quaternion.orientation.Orientation
+        orientation : orix.quaternion.orientation.Orientation or None
             Orientation of the crystallographic texture
         """
         self.orientation = orientation
@@ -74,7 +74,21 @@ class CrystalTexture:
         FourthOrderTensor
             mean value of the rotated tensor
         """
-        return tensor * self.orientation
+        if self.orientation is None:
+            return tensor.infinite_random_average()
+        else:
+            return tensor * self.orientation
+
+    @classmethod
+    def uniform(cls):
+        """
+        Create a uniform crystallographic texture
+
+        Returns
+        -------
+        CrystalTexture
+        """
+        return cls(None)
 
     @classmethod
     def Cube(cls):
