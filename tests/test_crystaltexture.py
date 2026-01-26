@@ -189,11 +189,11 @@ class TestCrystalTextureMix(unittest.TestCase):
         tm = t1 + t2 + t3
         assert isinstance(tm, CrystalTextureMix)
         expected_str = ('Mixture of crystallographic textures\n'
-                        ' Wgt.  Component\n'
+                        ' Wgt.  Type            Component\n'
                         ' -----------------------------------------\n')
-        expected_str += ' 1.00  φ1=0.00°, ϕ=45.00°, φ2=0.00°\n'
-        expected_str += ' 1.00  <1. 0. 0.> || [0, 0, 1] (Pt. gr.: m-3m)\n'
-        expected_str += ' 1.00  φ1= 0°, ϕ= 10°'
+        expected_str += ' 1.00  single-orient.  φ1=0.00°, ϕ=45.00°, φ2=0.00°\n'
+        expected_str += ' 1.00  fibre           <1. 0. 0.> || [0, 0, 1] (Pt. gr.: m-3m)\n'
+        expected_str += ' 1.00  fibre           φ1= 0°, ϕ= 10°'
         assert tm.__repr__() == expected_str
 
 

@@ -353,7 +353,13 @@ class CrystalTextureMix:
 
     def __repr__(self):
         title = 'Mixture of crystallographic textures'
-        heading = ' Wgt.  Component'
+        heading = ' Wgt.  Type            Component'
         sep =     ' -----------------------------------------'
-        table =  [' {:.2f}  {}'.format(t.weight, t._details) for t in self.texture_list]
+        table = []
+        for t in self.texture_list:
+            if isinstance(t, CrystalTexture):
+                kind = 'single-orient.'
+            else:
+                kind = 'fibre         '
+            table.append(' {:.2f}  {}  {}'.format(t.weight, kind, t._details))
         return '\n'.join([title, heading, sep] + table)
