@@ -33,6 +33,8 @@ def _plot_as_pf(orientations, miller, fig, projection, plot_type='plot'):
     return fig, ax
 
 class _CrystalTextureBase:
+    _title = 'Template class for crystallographic texture'
+
     def __init__(self, orientation):
         """
         Create a single-orientation crystallographic texture
@@ -44,6 +46,7 @@ class _CrystalTextureBase:
         """
         self.orientation = orientation
         self.weight = 1.
+        self._details = None
 
     def mean_tensor(self, tensor):
         """
@@ -80,6 +83,12 @@ class _CrystalTextureBase:
             t.texture_list.insert(0, self)
             return t
 
+    def __repr__(self):
+        if self._details is None:
+            return self._title
+        else:
+            return self._title + '\n' + self._details
+
 class CrystalTexture(_CrystalTextureBase):
     """
     Class to handle classical crystallographic texture.
@@ -94,10 +103,14 @@ class CrystalTexture(_CrystalTextureBase):
     the Elastic Properties of the CoCrFeMnNi High Entropy Alloy Deformed by Groove Cold Rolling.
     Materials 2018, 11, 1337. https://doi.org/10.3390/ma11081337
     """
+    _title = "Crystallographic texture"
 
-    def __repr__(self):
-        title = "Crystallographic texture"
-        return title + '\nphi1={:.2f}°, Phi={:.2f}°, phi2={:.2f}°'.format(*self.orientation.to_euler(degrees=True)[0])
+    def __init__(self, orientation):
+        super().__init__(orientation)
+        if orientation is None:
+            self._details = 'Uniform over SO(3)'
+        else:
+            self._details = 'phi1={:.2f}°, Phi={:.2f}°, phi2={:.2f}°'.format(*self.orientation.to_euler(degrees=True)[0])
 
     @classmethod
     def uniform(cls):
@@ -240,10 +253,11 @@ class CrystalTexture(_CrystalTextureBase):
         return _plot_as_pf(self.orientation, miller, fig, projection, plot_type='scatter')
 
 class FibreTexture(_CrystalTextureBase):
+    _title = 'Fibre texture'
+
     def __init__(self, o, axis):
         super().__init__(o)
         self.axis = Vector3d(axis)
-        self._repr = 'Fibre texture'
 
     @classmethod
     def from_euler(cls, phi1=None, Phi=None, phi2=None, degrees=True):
@@ -267,7 +281,7 @@ class FibreTexture(_CrystalTextureBase):
         if not degrees:
             v1 = v1 * 180 / np.pi
             v2 = v2 * 180 / np.pi
-        a._repr += f"\n{k1}= {v1}°, {k2}= {v2}°"
+        a._details = f"{k1}= {v1}°, {k2}= {v2}°"
         return a
 
     @classmethod
@@ -289,14 +303,10 @@ class FibreTexture(_CrystalTextureBase):
             miller_str = miller_str.replace('[', '<').replace(']', '>')
         else:
             miller_str = str(miller.hkl[0])
-        row_0 =  "\n{miller} || {axis}".format(miller=miller_str, axis=axis)
         point_group = miller.phase.point_group.name
-        row_1 = 'Point group: ' + str(point_group)
-        a._repr += row_0 + '\n' + row_1
+        row_0 = "{miller} || {axis} (Pt. gr.: {pg})".format(miller=miller_str, axis=axis, pg=str(point_group))
+        a._details = row_0
         return a
-
-    def __repr__(self):
-        return self._repr
 
     def mean_tensor(self, tensor):
         tensor_ref_orient = tensor * ~self.orientation
