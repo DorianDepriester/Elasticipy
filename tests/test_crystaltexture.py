@@ -181,5 +181,21 @@ class TestCrystalTextureMix(unittest.TestCase):
         orientations = [t.orientation for t in tm4.texture_list]
         assert orientations == [t.orientation for t in tm1.texture_list] + [t.orientation for t in tm2.texture_list]
 
+    def test_repr(self):
+        t1 = CrystalTexture.Goss()
+        m = Miller(uvw=[1, 0, 0], phase=PHASE)
+        t2 = FibreTexture.from_Miller_axis(m, [0, 0, 1])
+        t3 = FibreTexture.from_euler(phi1=0, Phi=10)
+        tm = t1 + t2 + t3
+        assert isinstance(tm, CrystalTextureMix)
+        expected_str = ('Mixture of crystallographic textures\n'
+                        ' Wgt.  Component\n'
+                        ' -----------------------------------------\n')
+        expected_str += ' 1.00  φ1=0.00°, ϕ=45.00°, φ2=0.00°\n'
+        expected_str += ' 1.00  <1. 0. 0.> || [0, 0, 1] (Pt. gr.: m-3m)\n'
+        expected_str += ' 1.00  φ1= 0°, ϕ= 10°'
+        assert tm.__repr__() == expected_str
+
+
 if __name__ == '__main__':
     unittest.main()
