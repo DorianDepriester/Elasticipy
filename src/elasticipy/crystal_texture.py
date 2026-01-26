@@ -72,10 +72,13 @@ class _CrystalTextureBase:
         return self * other
 
     def __add__(self, other):
-        return CrystalTextureMix([self, other])
-
-    def __radd__(self, other):
-        return CrystalTextureMix([other, self])
+        # self + other
+        if isinstance(other, _CrystalTextureBase):
+            return CrystalTextureMix([self, other])
+        elif isinstance(other, CrystalTextureMix):
+            t = deepcopy(other)
+            t.texture_list.insert(0, self)
+            return t
 
 class CrystalTexture(_CrystalTextureBase):
     """
@@ -333,6 +336,4 @@ class CrystalTextureMix:
             t.texture_list.append(other)
             return t
         elif isinstance(other, CrystalTextureMix):
-            return CrystalTextureMix(other.texture_list + self.texture_list)
-
-
+            return CrystalTextureMix(self.texture_list + other.texture_list)
