@@ -74,7 +74,7 @@ class TestCrystalTexture(unittest.TestCase):
 
     def test_repr(self):
         t = CrystalTexture.Goss()
-        assert t.__repr__() == 'Crystallographic texture\nphi1=0.00°, Phi=45.00°, phi2=0.00°'
+        assert t.__repr__() == 'Crystallographic texture\nφ1=0.00°, ϕ=45.00°, φ2=0.00°'
 
     def test_mult_stiffness(self):
         t = CrystalTexture.S()
@@ -95,16 +95,16 @@ class TestCrystalTexture(unittest.TestCase):
 class TestFibreTexture(unittest.TestCase):
     def test_from_Euler(self):
         t = FibreTexture.from_euler(phi1=0, Phi=10)
-        assert t.__repr__() == 'Fibre texture\nphi1= 0°, Phi= 10°'
+        assert t.__repr__() == 'Fibre texture\nφ1= 0°, ϕ= 10°'
 
         t = FibreTexture.from_euler(phi1=0, phi2=10)
-        assert t.__repr__() == 'Fibre texture\nphi1= 0°, phi2= 10°'
+        assert t.__repr__() == 'Fibre texture\nφ1= 0°, φ2= 10°'
 
         t = FibreTexture.from_euler(Phi=0, phi2=10)
-        assert t.__repr__() == 'Fibre texture\nPhi= 0°, phi2= 10°'
+        assert t.__repr__() == 'Fibre texture\nϕ= 0°, φ2= 10°'
 
         t = FibreTexture.from_euler(Phi=0, phi2=10 * np.pi / 180, degrees=False)
-        assert t.__repr__() == 'Fibre texture\nPhi= 0.0°, phi2= 10.0°'
+        assert t.__repr__() == 'Fibre texture\nϕ= 0.0°, φ2= 10.0°'
 
     def test_from_Euler_axis(self):
         t = FibreTexture.from_euler(Phi=0, phi2=0)
