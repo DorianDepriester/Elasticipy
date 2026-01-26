@@ -166,9 +166,20 @@ class TestCrystalTextureMix(unittest.TestCase):
         assert isinstance(tm2, CrystalTextureMix)
         orientations = [t.orientation for t in tm2.texture_list]
         assert orientations == [tg.orientation, tb.orientation, tc.orientation]
-        assert orientations == [tg.orientation, tb.orientation, tc.orientation]
         weights = [t.weight for t in tm2.texture_list]
         assert weights == [0.5, 0.3, 0.4]
+
+        tm3 = 0.4 * tc + tm1
+        assert isinstance(tm3, CrystalTextureMix)
+        orientations = [t.orientation for t in tm3.texture_list]
+        assert orientations == [tc.orientation, tg.orientation, tb.orientation]
+        weights = [t.weight for t in tm3.texture_list]
+        assert weights == [0.4, 0.5, 0.3]
+
+        tm4 = tm1 + tm2
+        assert isinstance(tm4, CrystalTextureMix)
+        orientations = [t.orientation for t in tm4.texture_list]
+        assert orientations == [t.orientation for t in tm1.texture_list] + [t.orientation for t in tm2.texture_list]
 
 if __name__ == '__main__':
     unittest.main()
