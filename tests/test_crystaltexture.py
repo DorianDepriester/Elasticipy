@@ -116,7 +116,7 @@ class TestFibreTexture(unittest.TestCase):
     def test_from_Miller_axis(self):
         m = Miller(uvw=[1, 0, 0], phase=PHASE)
         texture = FibreTexture.from_Miller_axis(m, [0, 0, 1])
-        assert texture.__repr__() == 'Fibre texture\n<1. 0. 0.> || [0, 0, 1]\nPoint group: m-3m'
+        assert texture.__repr__() == 'Fibre texture\n<1. 0. 0.> || [0, 0, 1] (Pt. gr.: m-3m)'
 
     def test_mult_stiffness(self):
         # Check that a fibre texture along [0,0,1] leads to transverse isotropy
