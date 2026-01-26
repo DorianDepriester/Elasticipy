@@ -347,3 +347,13 @@ class CrystalTextureMix:
             return t
         elif isinstance(other, CrystalTextureMix):
             return CrystalTextureMix(self.texture_list + other.texture_list)
+
+    def __len__(self):
+        return len(self.texture_list)
+
+    def __repr__(self):
+        title = 'Mixture of crystallographic textures'
+        heading = ' Wgt.  Component'
+        sep =     ' -----------------------------------------'
+        table =  [' {:.2f}  {}'.format(t.weight, t._details) for t in self.texture_list]
+        return '\n'.join([title, heading, sep] + table)
