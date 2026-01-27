@@ -363,24 +363,6 @@ class DiscreteTexture(CrystalTexture):
         return DiscreteTexture(o)
 
     def plot_as_pole_figure(self, miller, projection='lambert', fig=None, ax=None):
-        """
-        Plot the pole figure of the crystallographic texture
-
-        Parameters
-        ----------
-        miller : orix.vector.miller.Miller
-            Miller indices of directions/planes to plot
-        projection : str, optional
-            Type of projection to use, it can be either stereographic or Lambert
-        fig : matplotlib.figure.Figure, optional
-            Handle to existing figure, if needed
-
-        Returns
-        -------
-        matplotlib.figure.Figure
-            Handle to figure
-
-        """
         return _plot_as_pf(self.orientation, miller, fig, projection, ax=ax, plot_type='scatter')
 
 class FibreTexture(CrystalTexture):
