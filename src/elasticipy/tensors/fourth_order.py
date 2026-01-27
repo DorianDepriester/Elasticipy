@@ -1,5 +1,4 @@
 import numpy as np
-from elasticipy.crystal_texture import _CrystalTextureBase
 from elasticipy.tensors.second_order import SymmetricSecondOrderTensor, rotation_to_matrix, is_orix_rotation, \
     SecondOrderTensor, ALPHABET
 from scipy.spatial.transform import Rotation
@@ -644,12 +643,12 @@ class FourthOrderTensor:
                 raise ValueError('The arrays to multiply could not be broadcasted with shapes {} and {}'.format(self.shape, other.shape[:-2]))
         elif isinstance(other, Rotation) or is_orix_rotation(other):
             return self.rotate(other)
-        elif isinstance(other, _CrystalTextureBase):
-            return other.mean_tensor(self)
-        else:
+        elif isinstance(other, (float, int)):
             new_tensor = deepcopy(self)
             new_tensor._matrix = self._matrix * other
             return new_tensor
+        else:
+            return NotImplemented
 
     def __truediv__(self, other):
         if isinstance(other, (SecondOrderTensor, FourthOrderTensor)):
