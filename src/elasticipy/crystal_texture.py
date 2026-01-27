@@ -120,6 +120,18 @@ class CrystalTexture(_CrystalTextureBase):
         Returns
         -------
         CrystalTexture
+
+        See Also
+        --------
+        A : Create a A single-orientation crystallographic texture
+        Brass : Create a Brass single-orientation crystallographic texture
+        Copper : Create a Copper single-orientation crystallographic texture
+        Cube : Create a Cube single-orientation crystallographic texture
+        CuT : Create a CuT single-orientation crystallographic texture
+        Goss : Create a Goss single-orientation crystallographic texture
+        GossBrass : Create a Goss-Brass single-orientation crystallographic texture
+        P : Create a P single-orientation crystallographic texture
+        S : Create an S single-orientation crystallographic texture
         """
         return cls(None)
 
@@ -131,6 +143,18 @@ class CrystalTexture(_CrystalTextureBase):
         Returns
         -------
         CrystalTexture
+
+        See Also
+        --------
+        A : Create a A single-orientation crystallographic texture
+        Brass : Create a Brass single-orientation crystallographic texture
+        Copper : Create a Copper single-orientation crystallographic texture
+        CuT : Create a CuT single-orientation crystallographic texture
+        Goss : Create a Goss single-orientation crystallographic texture
+        GossBrass : Create a Goss-Brass single-orientation crystallographic texture
+        P : Create a P single-orientation crystallographic texture
+        S : Create an S single-orientation crystallographic texture
+        uniform : Create a uniform crystallographic texture over SO(3)
         """
         o = Orientation.from_euler([0, 0, 0], degrees=True)
         return CrystalTexture(o)
@@ -143,6 +167,18 @@ class CrystalTexture(_CrystalTextureBase):
         Returns
         -------
         CrystalTexture
+
+        See Also
+        --------
+        A : Create an A single-orientation crystallographic texture
+        Brass : Create a Brass single-orientation crystallographic texture
+        Copper : Create a Copper single-orientation crystallographic texture
+        Cube : Create a Cube single-orientation crystallographic texture
+        CuT : Create a CuT single-orientation crystallographic texture
+        GossBrass : Create a Goss-Brass single-orientation crystallographic texture
+        P : Create a P single-orientation crystallographic texture
+        S : Create an S single-orientation crystallographic texture
+        uniform : Create a uniform crystallographic texture over SO(3)
         """
         o = Orientation.from_euler([0, 45, 0], degrees=True)
         return CrystalTexture(o)
@@ -155,6 +191,18 @@ class CrystalTexture(_CrystalTextureBase):
         Returns
         -------
         CrystalTexture
+
+        See Also
+        --------
+        A : Create a A single-orientation crystallographic texture
+        Copper : Create a Copper single-orientation crystallographic texture
+        Cube : Create a Cube single-orientation crystallographic texture
+        CuT : Create a CuT single-orientation crystallographic texture
+        Goss : Create a Goss single-orientation crystallographic texture
+        GossBrass : Create a Goss-Brass single-orientation crystallographic texture
+        P : Create a P single-orientation crystallographic texture
+        S : Create an S single-orientation crystallographic texture
+        uniform : Create a uniform crystallographic texture over SO(3)
         """
         o = Orientation.from_euler([ANGLE_35, 45, 0], degrees=True)
         return CrystalTexture(o)
@@ -167,6 +215,17 @@ class CrystalTexture(_CrystalTextureBase):
         Returns
         -------
         CrystalTexture
+
+        See Also
+        --------
+        A : Create an A single-orientation crystallographic texture
+        Copper : Create a Copper single-orientation crystallographic texture
+        Cube : Create a Cube single-orientation crystallographic texture
+        CuT : Create a CuT single-orientation crystallographic texture
+        Goss : Create a Goss single-orientation crystallographic texture
+        P : Create a P single-orientation crystallographic texture
+        S : Create an S single-orientation crystallographic texture
+        uniform : Create a uniform crystallographic texture over SO(3)
         """
         o = Orientation.from_euler([ANGLE_74, 90, 45], degrees=True)
         return CrystalTexture(o)
@@ -179,6 +238,17 @@ class CrystalTexture(_CrystalTextureBase):
         Returns
         -------
         CrystalTexture
+
+        See Also
+        --------
+        A : Create an A single-orientation crystallographic texture
+        Cube : Create a Cube single-orientation crystallographic texture
+        CuT : Create a CuT single-orientation crystallographic texture
+        Goss : Create a Goss single-orientation crystallographic texture
+        GossBrass : Create a Goss-Brass single-orientation crystallographic texture
+        P : Create a P single-orientation crystallographic texture
+        S : Create an S single-orientation crystallographic texture
+        uniform : Create a uniform crystallographic texture over SO(3)
         """
         o = Orientation.from_euler([90, ANGLE_35, 45], degrees=True)
         return CrystalTexture(o)
@@ -191,6 +261,17 @@ class CrystalTexture(_CrystalTextureBase):
         Returns
         -------
         CrystalTexture
+
+        See Also
+        --------
+        Copper : Create a Copper single-orientation crystallographic texture
+        Cube : Create a Cube single-orientation crystallographic texture
+        CuT : Create a CuT single-orientation crystallographic texture
+        Goss : Create a Goss single-orientation crystallographic texture
+        GossBrass : Create a Goss-Brass single-orientation crystallographic texture
+        P : Create a P single-orientation crystallographic texture
+        S : Create an S single-orientation crystallographic texture
+        uniform : Create a uniform crystallographic texture over SO(3)
         """
         o = Orientation.from_euler([ANGLE_35, 90, 45], degrees=True)
         return CrystalTexture(o)
@@ -203,6 +284,17 @@ class CrystalTexture(_CrystalTextureBase):
         Returns
         -------
         CrystalTexture
+
+        See Also
+        --------
+        A : Create an A single-orientation crystallographic texture
+        Copper : Create a Copper single-orientation crystallographic texture
+        Cube : Create a Cube single-orientation crystallographic texture
+        CuT : Create a CuT single-orientation crystallographic texture
+        Goss : Create a Goss single-orientation crystallographic texture
+        GossBrass : Create a Goss-Brass single-orientation crystallographic texture
+        S : Create an S single-orientation crystallographic texture
+        uniform : Create a uniform crystallographic texture over SO(3)
         """
         o = Orientation.from_euler([ANGLE_54, 90, 45], degrees=True)
         return CrystalTexture(o)
@@ -215,6 +307,17 @@ class CrystalTexture(_CrystalTextureBase):
         Returns
         -------
         CrystalTexture
+
+        See Also
+        --------
+        A : Create an A single-orientation crystallographic texture
+        Copper : Create a Copper single-orientation crystallographic texture
+        Cube : Create a Cube single-orientation crystallographic texture
+        Goss : Create a Goss single-orientation crystallographic texture
+        GossBrass : Create a Goss-Brass single-orientation crystallographic texture
+        P : Create a P single-orientation crystallographic texture
+        S : Create an S single-orientation crystallographic texture
+        uniform : Create a uniform crystallographic texture over SO(3)
         """
         o = Orientation.from_euler([90, ANGLE_74, 45], degrees=True)
         return CrystalTexture(o)
@@ -227,6 +330,17 @@ class CrystalTexture(_CrystalTextureBase):
         Returns
         -------
         CrystalTexture
+
+        See Also
+        --------
+        A : Create an A single-orientation crystallographic texture
+        Copper : Create a Copper single-orientation crystallographic texture
+        Cube : Create a Cube single-orientation crystallographic texture
+        CuT : Create a CuT single-orientation crystallographic texture
+        Goss : Create a Goss single-orientation crystallographic texture
+        GossBrass : Create a Goss-Brass single-orientation crystallographic texture
+        P : Create a P single-orientation crystallographic texture
+        uniform : Create a uniform crystallographic texture over SO(3)
         """
         o = Orientation.from_euler([ANGLE_59, ANGLE_37, ANGLE_63], degrees=True)
         return CrystalTexture(o)
@@ -255,7 +369,7 @@ class CrystalTexture(_CrystalTextureBase):
 class FibreTexture(_CrystalTextureBase):
     _title = 'Fibre texture'
 
-    def __init__(self, o, axis):
+    def __init__(self, o, axis, point_group=None):
         super().__init__(o)
         self.axis = Vector3d(axis)
         self.point_group = point_group
@@ -298,7 +412,7 @@ class FibreTexture(_CrystalTextureBase):
             Axis (in sample CS) to align with
         """
         ref_orient = Orientation.from_align_vectors(miller, Vector3d(axis))
-        a = cls(ref_orient, axis)
+        a = cls(ref_orient, axis, point_group=miller.phase.point_group.name)
         if miller.coordinate_format == 'uvw' or miller.coordinate_format == 'UVTW':
             miller_str = str(miller.uvw[0])
             miller_str = miller_str.replace('[', '<').replace(']', '>')
