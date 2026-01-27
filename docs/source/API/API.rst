@@ -4,6 +4,7 @@ API documentation
 .. toctree::
    :maxdepth: 5
 
+   Elasticipy.crystal_texture
    Elasticipy.tensors.elasticity
    Elasticipy.tensors.fourth_order
    Elasticipy.tensors.second_order
