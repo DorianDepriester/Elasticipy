@@ -217,6 +217,10 @@ class TestCrystalTextureMix(unittest.TestCase):
         Cmean_voigt = StiffnessTensor.weighted_average((C * t1, C * t2), [1.5, 0.5], 'Voigt')
         np.testing.assert_almost_equal(Cmean_voigt.matrix(), Cmean.matrix())
 
+    def test_uniform(self):
+        t = 0.3 * CrystalTexture.uniform() + 0.5 * CrystalTexture.uniform()
+        np.testing.assert_array_almost_equal(C.Voigt_average().matrix(), (C * t).matrix())
+
 
 if __name__ == '__main__':
     unittest.main()
