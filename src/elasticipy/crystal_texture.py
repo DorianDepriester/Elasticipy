@@ -358,7 +358,10 @@ class CrystalTextureMix:
         table = []
         for t in self.texture_list:
             if isinstance(t, CrystalTexture):
-                kind = 'single-orient.'
+                if t.orientation is None:
+                    kind = 'uniform       '
+                else:
+                    kind = 'single-orient.'
             else:
                 kind = 'fibre         '
             table.append(' {:.2f}  {}  {}'.format(t.weight, kind, t._details))
