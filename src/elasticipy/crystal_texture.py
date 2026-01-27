@@ -258,6 +258,7 @@ class FibreTexture(_CrystalTextureBase):
     def __init__(self, o, axis):
         super().__init__(o)
         self.axis = Vector3d(axis)
+        self.point_group = point_group
 
     @classmethod
     def from_euler(cls, phi1=None, Phi=None, phi2=None, degrees=True):
@@ -303,8 +304,8 @@ class FibreTexture(_CrystalTextureBase):
             miller_str = miller_str.replace('[', '<').replace(']', '>')
         else:
             miller_str = str(miller.hkl[0])
-        point_group = miller.phase.point_group.name
-        row_0 = "{miller} || {axis} (Pt. gr.: {pg})".format(miller=miller_str, axis=axis, pg=str(point_group))
+        a.point_group = miller.phase.point_group.name
+        row_0 = "{miller} || {axis}".format(miller=miller_str, axis=axis)
         a._details = row_0
         return a
 

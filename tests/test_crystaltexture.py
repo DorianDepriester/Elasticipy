@@ -116,7 +116,7 @@ class TestFibreTexture(unittest.TestCase):
     def test_from_Miller_axis(self):
         m = Miller(uvw=[1, 0, 0], phase=PHASE)
         texture = FibreTexture.from_Miller_axis(m, [0, 0, 1])
-        assert texture.__repr__() == 'Fibre texture\n<1. 0. 0.> || [0, 0, 1] (Pt. gr.: m-3m)'
+        assert texture.__repr__() == 'Fibre texture\n<1. 0. 0.> || [0, 0, 1]'
 
     def test_mult_stiffness(self):
         # Check that a fibre texture along [0,0,1] leads to transverse isotropy
@@ -193,7 +193,7 @@ class TestCrystalTextureMix(unittest.TestCase):
                         ' Wgt.  Type            Component\n'
                         ' -----------------------------------------\n')
         expected_str += ' 1.00  single-orient.  φ1=0.00°, ϕ=45.00°, φ2=0.00°\n'
-        expected_str += ' 1.00  fibre           <1. 0. 0.> || [0, 0, 1] (Pt. gr.: m-3m)\n'
+        expected_str += ' 1.00  fibre           <1. 0. 0.> || [0, 0, 1]\n'
         expected_str += ' 1.00  fibre           φ1= 0°, ϕ= 10°\n'
         expected_str += ' 0.50  uniform         Uniform over SO(3)'
         assert tm.__repr__() == expected_str
