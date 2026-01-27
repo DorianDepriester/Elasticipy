@@ -205,7 +205,7 @@ class TestCrystalTextureMix(unittest.TestCase):
         t2 = CrystalTexture.cube()
         t1 = CrystalTexture.Goss()
         tm = t1 + t2
-        Cmean = tm.mean_tensor(C)
+        Cmean = C * tm
         assert isinstance(Cmean, StiffnessTensor)
         ori = Orientation.from_euler([[0, 0, 0], [0, 45, 0]], degrees=True)
         assert Cmean == (C * ori).Voigt_average()
