@@ -192,12 +192,12 @@ class TestCrystalTextureMix(unittest.TestCase):
         tm = t1 + t2 + t3 + 0.5*t4
         assert isinstance(tm, CompositeTexture)
         expected_str = ('Mixture of crystallographic textures\n'
-                        ' Wgt.  Type            Component\n'
-                        ' -------------------------------------------------------------------\n')
-        expected_str += ' 1.00  single-orient.  φ1=0.00°, ϕ=45.00°, φ2=0.00°\n'
-        expected_str += ' 1.00  fibre           <1. 0. 0.> || [0, 0, 1]\n'
-        expected_str += ' 1.00  fibre           φ1= 0°, ϕ= 10°\n'
-        expected_str += ' 0.50  uniform         Uniform distribution over SO(3)'
+                        ' Wgt.  Type      Component\n'
+                        ' ------------------------------------------------------------\n')
+        expected_str += ' 1.00  discrete  φ1=0.00°, ϕ=45.00°, φ2=0.00°\n'
+        expected_str += ' 1.00  fibre     <1. 0. 0.> || [0, 0, 1]\n'
+        expected_str += ' 1.00  fibre     φ1= 0°, ϕ= 10°\n'
+        expected_str += ' 0.50  uniform   Uniform distribution over SO(3)'
         assert tm.__repr__() == expected_str
 
     def test_mean(self):
