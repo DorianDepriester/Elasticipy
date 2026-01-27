@@ -136,7 +136,7 @@ class CrystalTexture(_CrystalTextureBase):
         return cls(None)
 
     @classmethod
-    def Cube(cls):
+    def cube(cls):
         """
         Create a Cube crystallographic texture: {100}<100>
 
@@ -184,7 +184,7 @@ class CrystalTexture(_CrystalTextureBase):
         return CrystalTexture(o)
 
     @classmethod
-    def Brass(cls):
+    def brass(cls):
         """
         Create a Brass crystallographic texture: {110}<112>
 
@@ -231,7 +231,7 @@ class CrystalTexture(_CrystalTextureBase):
         return CrystalTexture(o)
 
     @classmethod
-    def Copper(cls):
+    def copper(cls):
         """
         Create a copper crystallographic texture: {112}<111>
 

@@ -37,7 +37,7 @@ class TestCrystalTexture(unittest.TestCase):
         assert S * t == S.Reuss_average()
 
     def test_cube(self):
-        t = CrystalTexture.Cube()
+        t = CrystalTexture.cube()
         orientation_checker(t, [0,0,1], [1,0,0])
 
     def test_Goss(self):
@@ -45,7 +45,7 @@ class TestCrystalTexture(unittest.TestCase):
         orientation_checker(t, [1,1,0], [1,0,0])
 
     def test_Brass(self):
-        t = CrystalTexture.Brass()
+        t = CrystalTexture.brass()
         orientation_checker(t, [1,1,0], [1,1,2])
 
     def test_GossBrass(self):
@@ -53,7 +53,7 @@ class TestCrystalTexture(unittest.TestCase):
         orientation_checker(t, [1,1,0], [1,1,5])
 
     def test_Copper(self):
-        t = CrystalTexture.Copper()
+        t = CrystalTexture.copper()
         orientation_checker(t, [1,1,2], [1,1,1])
 
     def test_A(self):
@@ -142,7 +142,7 @@ class TestFibreTexture(unittest.TestCase):
 class TestCrystalTextureMix(unittest.TestCase):
     def test_add_Textures(self):
         tg = CrystalTexture.Goss()
-        tb = CrystalTexture.Brass()
+        tb = CrystalTexture.brass()
         tm = tb + tg
         assert isinstance(tm, CrystalTextureMix)
         wgts = [t.weight for t in tm.texture_list]
@@ -152,15 +152,15 @@ class TestCrystalTextureMix(unittest.TestCase):
 
     def test_mult(self):
         tg = CrystalTexture.Goss()
-        tb = CrystalTexture.Brass()
+        tb = CrystalTexture.brass()
         tm = 0.5 * (tb + tg)
         wgts = [t.weight for t in tm.texture_list]
         assert wgts == [0.5, 0.5]
 
     def test_add_TexturesMix(self):
         tg = CrystalTexture.Goss()
-        tb = CrystalTexture.Brass()
-        tc = CrystalTexture.Cube()
+        tb = CrystalTexture.brass()
+        tc = CrystalTexture.cube()
         tm1 = 0.5 * tg + 0.3 * tb
         tm2 = tm1 + 0.4 * tc
         assert isinstance(tm2, CrystalTextureMix)
