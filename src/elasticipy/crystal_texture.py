@@ -376,6 +376,38 @@ class FibreTexture(_CrystalTextureBase):
 
     @classmethod
     def from_euler(cls, phi1=None, Phi=None, phi2=None, degrees=True):
+        """
+        Create a fibre texture by providing two fixed Bunge-Euler values
+
+        Parameters
+        ----------
+        phi1 : float
+            First Euler angle
+        Phi : float
+            Second Euler angle
+        phi2 : float
+            Third Euler angle
+        degrees : boolean, optional
+            If true (default), the angles must be passed in degrees (in radians otherwise)
+
+        Returns
+        -------
+        FibreTexture
+
+        See Also
+        --------
+        from_Miller_axis : Define a fibre texture by aligning a miller direction with a given axis
+
+        Examples
+        --------
+        A fibre texture corresponding to constant values for phi1 and phi2 (and uniform distribution of Phi on [0,2π[)
+        can be defined as follows:
+        >>> from elasticipy.crystal_texture import FibreTexture
+        >>> t1 = FibreTexture.from_euler(phi1=0., phi2=0.)
+        >>> t1
+        Fibre texture
+        φ1= 0.0°, φ2= 0.0°
+        """
         if phi1 is None:
             orient1 = Orientation.from_euler([0., Phi, phi2] , degrees=degrees)
             orient2 = Orientation.from_euler([1., Phi, phi2] , degrees=degrees)
