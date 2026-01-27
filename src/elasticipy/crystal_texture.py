@@ -563,7 +563,3 @@ class CrystalTextureMix:
             average += ti.mean_tensor(tensor2) * wgt
             weight_sum += wgt
         return tensor.__class__(average / weight_sum)
-
-    def __mult__(self, other):
-        if isinstance(other, FourthOrderTensor):
-            return self.mean_tensor(other)
