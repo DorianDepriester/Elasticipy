@@ -577,12 +577,12 @@ class CrystalTextureMix:
         FourthOrderTensor
         """
         n = len(self)
-        average = FourthOrderTensor.zeros()
-        tensor2 = FourthOrderTensor(tensor)
-        weight_sum = 0.
+        t = tensor.__class__.eye(shape=(n,))
+        wgt = []
         for i in range(0, n):
             ti = self.texture_list[i]
-            wgt = ti.weight
-            average += ti.mean_tensor(tensor2) * wgt
-            weight_sum += wgt
-        return tensor.__class__(average / weight_sum)
+            wgt.append(ti.weight)
+            t[i] = ti.mean_tensor(tensor)
+        tensor_avg = deepcopy(tensor)
+        tensor_avg._matrix = np.average(t._matrix, weights=wgt, axis=0)
+        return tensor_avg
