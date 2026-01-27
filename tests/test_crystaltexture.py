@@ -1,4 +1,7 @@
 import unittest
+
+from orix.quaternion import Orientation
+
 from elasticipy.crystal_texture import CrystalTexture, FibreTexture, CrystalTextureMix
 from orix.vector import Miller, Vector3d
 from orix.crystal_map import Phase
@@ -197,6 +200,21 @@ class TestCrystalTextureMix(unittest.TestCase):
         expected_str += ' 1.00  fibre           φ1= 0°, ϕ= 10°\n'
         expected_str += ' 0.50  uniform         Uniform over SO(3)'
         assert tm.__repr__() == expected_str
+
+    def test_mean(self):
+        t2 = CrystalTexture.cube()
+        t1 = CrystalTexture.Goss()
+        tm = t1 + t2
+        Cmean = tm.mean_tensor(C)
+        assert isinstance(Cmean, StiffnessTensor)
+        ori = Orientation.from_euler([[0, 0, 0], [0, 45, 0]], degrees=True)
+        assert Cmean == (C * ori).Voigt_average()
+
+        tm_wgt = 1.5 * t1 + 0.5 * t2
+        Cmean = tm_wgt.mean_tensor(C)
+        assert isinstance(Cmean, StiffnessTensor)
+        Cmean_voigt = StiffnessTensor.weighted_average((C * t1, C * t2), [1.5, 0.5], 'Voigt')
+        np.testing.assert_almost_equal(Cmean_voigt.matrix(), Cmean.matrix())
 
 
 if __name__ == '__main__':
