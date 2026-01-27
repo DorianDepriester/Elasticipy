@@ -2,7 +2,7 @@ import unittest
 
 from orix.quaternion import Orientation
 
-from elasticipy.crystal_texture import DiscreteTexture, FibreTexture, CrystalTextureMix
+from elasticipy.crystal_texture import DiscreteTexture, FibreTexture, CompositeTexture
 from orix.vector import Miller, Vector3d
 from orix.crystal_map import Phase
 import numpy as np
@@ -147,7 +147,7 @@ class TestCrystalTextureMix(unittest.TestCase):
         tg = DiscreteTexture.Goss()
         tb = DiscreteTexture.brass()
         tm = tb + tg
-        assert isinstance(tm, CrystalTextureMix)
+        assert isinstance(tm, CompositeTexture)
         wgts = [t.weight for t in tm.texture_list]
         assert wgts == [1., 1.]
         assert tm.texture_list[0] == tb
@@ -166,21 +166,21 @@ class TestCrystalTextureMix(unittest.TestCase):
         tc = DiscreteTexture.cube()
         tm1 = 0.5 * tg + 0.3 * tb
         tm2 = tm1 + 0.4 * tc
-        assert isinstance(tm2, CrystalTextureMix)
+        assert isinstance(tm2, CompositeTexture)
         orientations = [t.orientation for t in tm2.texture_list]
         assert orientations == [tg.orientation, tb.orientation, tc.orientation]
         weights = [t.weight for t in tm2.texture_list]
         assert weights == [0.5, 0.3, 0.4]
 
         tm3 = 0.4 * tc + tm1
-        assert isinstance(tm3, CrystalTextureMix)
+        assert isinstance(tm3, CompositeTexture)
         orientations = [t.orientation for t in tm3.texture_list]
         assert orientations == [tc.orientation, tg.orientation, tb.orientation]
         weights = [t.weight for t in tm3.texture_list]
         assert weights == [0.4, 0.5, 0.3]
 
         tm4 = tm1 + tm2
-        assert isinstance(tm4, CrystalTextureMix)
+        assert isinstance(tm4, CompositeTexture)
         orientations = [t.orientation for t in tm4.texture_list]
         assert orientations == [t.orientation for t in tm1.texture_list] + [t.orientation for t in tm2.texture_list]
 
@@ -191,7 +191,7 @@ class TestCrystalTextureMix(unittest.TestCase):
         t3 = FibreTexture.from_Euler(phi1=0, Phi=10)
         t4 = DiscreteTexture.uniform()
         tm = t1 + t2 + t3 + 0.5*t4
-        assert isinstance(tm, CrystalTextureMix)
+        assert isinstance(tm, CompositeTexture)
         expected_str = ('Mixture of crystallographic textures\n'
                         ' Wgt.  Type            Component\n'
                         ' -----------------------------------------\n')

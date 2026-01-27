@@ -82,8 +82,8 @@ class _CrystalTextureBase:
     def __add__(self, other):
         # self + other
         if isinstance(other, _CrystalTextureBase):
-            return CrystalTextureMix([self, other])
-        elif isinstance(other, CrystalTextureMix):
+            return CompositeTexture([self, other])
+        elif isinstance(other, CompositeTexture):
             t = deepcopy(other)
             t.texture_list.insert(0, self)
             return t
@@ -509,7 +509,7 @@ class FibreTexture(_CrystalTextureBase):
         return _plot_as_pf(orientations, miller, fig, projection)
 
 
-class CrystalTextureMix:
+class CompositeTexture:
     def __init__(self, texture_list):
         """
         Create a mix of crystal textures
@@ -541,8 +541,8 @@ class CrystalTextureMix:
             t = deepcopy(self)
             t.texture_list.append(other)
             return t
-        elif isinstance(other, CrystalTextureMix):
-            return CrystalTextureMix(self.texture_list + other.texture_list)
+        elif isinstance(other, CompositeTexture):
+            return CompositeTexture(self.texture_list + other.texture_list)
 
     def __len__(self):
         return len(self.texture_list)
