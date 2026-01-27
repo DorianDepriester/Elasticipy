@@ -94,7 +94,7 @@ class _CrystalTextureBase:
         else:
             return self._title + '\n' + self._details
 
-class CrystalTexture(_CrystalTextureBase):
+class DiscreteTexture(_CrystalTextureBase):
     """
     Class to handle classical crystallographic texture.
 
@@ -124,7 +124,7 @@ class CrystalTexture(_CrystalTextureBase):
 
         Returns
         -------
-        CrystalTexture
+        DiscreteTexture
 
         See Also
         --------
@@ -147,7 +147,7 @@ class CrystalTexture(_CrystalTextureBase):
 
         Returns
         -------
-        CrystalTexture
+        DiscreteTexture
 
         See Also
         --------
@@ -162,7 +162,7 @@ class CrystalTexture(_CrystalTextureBase):
         uniform : Create a uniform crystallographic texture over SO(3)
         """
         o = Orientation.from_euler([0, 0, 0], degrees=True)
-        return CrystalTexture(o)
+        return DiscreteTexture(o)
 
     @classmethod
     def Goss(cls):
@@ -171,7 +171,7 @@ class CrystalTexture(_CrystalTextureBase):
 
         Returns
         -------
-        CrystalTexture
+        DiscreteTexture
 
         See Also
         --------
@@ -186,7 +186,7 @@ class CrystalTexture(_CrystalTextureBase):
         uniform : Create a uniform crystallographic texture over SO(3)
         """
         o = Orientation.from_euler([0, 45, 0], degrees=True)
-        return CrystalTexture(o)
+        return DiscreteTexture(o)
 
     @classmethod
     def brass(cls):
@@ -195,7 +195,7 @@ class CrystalTexture(_CrystalTextureBase):
 
         Returns
         -------
-        CrystalTexture
+        DiscreteTexture
 
         See Also
         --------
@@ -210,7 +210,7 @@ class CrystalTexture(_CrystalTextureBase):
         uniform : Create a uniform crystallographic texture over SO(3)
         """
         o = Orientation.from_euler([ANGLE_35, 45, 0], degrees=True)
-        return CrystalTexture(o)
+        return DiscreteTexture(o)
 
     @classmethod
     def GossBrass(cls):
@@ -219,7 +219,7 @@ class CrystalTexture(_CrystalTextureBase):
 
         Returns
         -------
-        CrystalTexture
+        DiscreteTexture
 
         See Also
         --------
@@ -233,7 +233,7 @@ class CrystalTexture(_CrystalTextureBase):
         uniform : Create a uniform crystallographic texture over SO(3)
         """
         o = Orientation.from_euler([ANGLE_74, 90, 45], degrees=True)
-        return CrystalTexture(o)
+        return DiscreteTexture(o)
 
     @classmethod
     def copper(cls):
@@ -242,7 +242,7 @@ class CrystalTexture(_CrystalTextureBase):
 
         Returns
         -------
-        CrystalTexture
+        DiscreteTexture
 
         See Also
         --------
@@ -256,7 +256,7 @@ class CrystalTexture(_CrystalTextureBase):
         uniform : Create a uniform crystallographic texture over SO(3)
         """
         o = Orientation.from_euler([90, ANGLE_35, 45], degrees=True)
-        return CrystalTexture(o)
+        return DiscreteTexture(o)
 
     @classmethod
     def A(cls):
@@ -265,7 +265,7 @@ class CrystalTexture(_CrystalTextureBase):
 
         Returns
         -------
-        CrystalTexture
+        DiscreteTexture
 
         See Also
         --------
@@ -279,7 +279,7 @@ class CrystalTexture(_CrystalTextureBase):
         uniform : Create a uniform crystallographic texture over SO(3)
         """
         o = Orientation.from_euler([ANGLE_35, 90, 45], degrees=True)
-        return CrystalTexture(o)
+        return DiscreteTexture(o)
 
     @classmethod
     def P(cls):
@@ -288,7 +288,7 @@ class CrystalTexture(_CrystalTextureBase):
 
         Returns
         -------
-        CrystalTexture
+        DiscreteTexture
 
         See Also
         --------
@@ -302,7 +302,7 @@ class CrystalTexture(_CrystalTextureBase):
         uniform : Create a uniform crystallographic texture over SO(3)
         """
         o = Orientation.from_euler([ANGLE_54, 90, 45], degrees=True)
-        return CrystalTexture(o)
+        return DiscreteTexture(o)
 
     @classmethod
     def CuT(cls):
@@ -311,7 +311,7 @@ class CrystalTexture(_CrystalTextureBase):
 
         Returns
         -------
-        CrystalTexture
+        DiscreteTexture
 
         See Also
         --------
@@ -325,7 +325,7 @@ class CrystalTexture(_CrystalTextureBase):
         uniform : Create a uniform crystallographic texture over SO(3)
         """
         o = Orientation.from_euler([90, ANGLE_74, 45], degrees=True)
-        return CrystalTexture(o)
+        return DiscreteTexture(o)
 
     @classmethod
     def S(cls):
@@ -334,7 +334,7 @@ class CrystalTexture(_CrystalTextureBase):
 
         Returns
         -------
-        CrystalTexture
+        DiscreteTexture
 
         See Also
         --------
@@ -348,7 +348,7 @@ class CrystalTexture(_CrystalTextureBase):
         uniform : Create a uniform crystallographic texture over SO(3)
         """
         o = Orientation.from_euler([ANGLE_59, ANGLE_37, ANGLE_63], degrees=True)
-        return CrystalTexture(o)
+        return DiscreteTexture(o)
 
     def plot_as_pole_figure(self, miller, projection='lambert', fig=None):
         """
@@ -519,7 +519,7 @@ class CrystalTextureMix:
         texture_list : list of _CrystalTextureBase
             List of crystal textures to mix
         """
-        self.texture_list = texture_list
+        self.texture_list = list(texture_list)
 
     def __mul__(self, other):
         # self * other
@@ -553,7 +553,7 @@ class CrystalTextureMix:
         sep =     ' -----------------------------------------'
         table = []
         for t in self.texture_list:
-            if isinstance(t, CrystalTexture):
+            if isinstance(t, DiscreteTexture):
                 if t.orientation is None:
                     kind = 'uniform       '
                 else:
@@ -580,9 +580,9 @@ class CrystalTextureMix:
         --------
         Let consider a mixture of Goss and fibre tensor (with phi1=0 and phi2=0):
 
-        >>> from elasticipy.crystal_texture import CrystalTexture, FibreTexture
+        >>> from elasticipy.crystal_texture import DiscreteTexture, FibreTexture
         >>> from elasticipy.tensors.elasticity import StiffnessTensor
-        >>> t = CrystalTexture.Goss() + FibreTexture.from_Euler(phi1=0.0, phi2=0.0)
+        >>> t = DiscreteTexture.Goss() + FibreTexture.from_Euler(phi1=0.0, phi2=0.0)
         >>> t
         Mixture of crystallographic textures
          Wgt.  Type            Component

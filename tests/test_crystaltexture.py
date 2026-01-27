@@ -2,7 +2,7 @@ import unittest
 
 from orix.quaternion import Orientation
 
-from elasticipy.crystal_texture import CrystalTexture, FibreTexture, CrystalTextureMix
+from elasticipy.crystal_texture import DiscreteTexture, FibreTexture, CrystalTextureMix
 from orix.vector import Miller, Vector3d
 from orix.crystal_map import Phase
 import numpy as np
@@ -33,66 +33,66 @@ def orientation_checker(texture, hkl, uvw):
 
 class TestCrystalTexture(unittest.TestCase):
     def test_uniform(self):
-        t = CrystalTexture.uniform()
+        t = DiscreteTexture.uniform()
         assert t.orientation is None
         assert C * t == C.Voigt_average()
         S = C.inv()
         assert S * t == S.Reuss_average()
 
     def test_cube(self):
-        t = CrystalTexture.cube()
+        t = DiscreteTexture.cube()
         orientation_checker(t, [0,0,1], [1,0,0])
 
     def test_Goss(self):
-        t = CrystalTexture.Goss()
+        t = DiscreteTexture.Goss()
         orientation_checker(t, [1,1,0], [1,0,0])
 
     def test_Brass(self):
-        t = CrystalTexture.brass()
+        t = DiscreteTexture.brass()
         orientation_checker(t, [1,1,0], [1,1,2])
 
     def test_GossBrass(self):
-        t = CrystalTexture.GossBrass()
+        t = DiscreteTexture.GossBrass()
         orientation_checker(t, [1,1,0], [1,1,5])
 
     def test_Copper(self):
-        t = CrystalTexture.copper()
+        t = DiscreteTexture.copper()
         orientation_checker(t, [1,1,2], [1,1,1])
 
     def test_A(self):
-        t = CrystalTexture.A()
+        t = DiscreteTexture.A()
         orientation_checker(t, [1,1,0], [1,1,1])
 
     def test_P(self):
-        t = CrystalTexture.P()
+        t = DiscreteTexture.P()
         orientation_checker(t, [0,1,1], [2,1,1])
 
     def test_CuT(self):
-        t = CrystalTexture.CuT()
+        t = DiscreteTexture.CuT()
         orientation_checker(t, [5,5,2], [1,1,5])
 
     def test_S(self):
-        t = CrystalTexture.S()
+        t = DiscreteTexture.S()
         orientation_checker(t, [1,2,3], [6,3,4])
 
     def test_repr(self):
-        t = CrystalTexture.Goss()
+        t = DiscreteTexture.Goss()
         assert t.__repr__() == 'Crystallographic texture\nφ1=0.00°, ϕ=45.00°, φ2=0.00°'
 
     def test_mult_stiffness(self):
-        t = CrystalTexture.S()
+        t = DiscreteTexture.S()
         Crot = C * t
         assert Crot == C * t.orientation
 
     def test_mult_float(self):
-        t = CrystalTexture.Goss()
+        t = DiscreteTexture.Goss()
         tm = t * 0.5
-        assert isinstance(tm, CrystalTexture)
+        assert isinstance(tm, DiscreteTexture)
         assert t.orientation == tm.orientation
         assert tm.weight == 0.5
 
         tm2 = 0.5 * t
-        assert isinstance(tm2, CrystalTexture)
+        assert isinstance(tm2, DiscreteTexture)
         assert t.orientation == tm2.orientation
 
 class TestFibreTexture(unittest.TestCase):
@@ -144,8 +144,8 @@ class TestFibreTexture(unittest.TestCase):
 
 class TestCrystalTextureMix(unittest.TestCase):
     def test_add_Textures(self):
-        tg = CrystalTexture.Goss()
-        tb = CrystalTexture.brass()
+        tg = DiscreteTexture.Goss()
+        tb = DiscreteTexture.brass()
         tm = tb + tg
         assert isinstance(tm, CrystalTextureMix)
         wgts = [t.weight for t in tm.texture_list]
@@ -154,16 +154,16 @@ class TestCrystalTextureMix(unittest.TestCase):
         assert tm.texture_list[1] == tg
 
     def test_mult(self):
-        tg = CrystalTexture.Goss()
-        tb = CrystalTexture.brass()
+        tg = DiscreteTexture.Goss()
+        tb = DiscreteTexture.brass()
         tm = 0.5 * (tb + tg)
         wgts = [t.weight for t in tm.texture_list]
         assert wgts == [0.5, 0.5]
 
     def test_add_TexturesMix(self):
-        tg = CrystalTexture.Goss()
-        tb = CrystalTexture.brass()
-        tc = CrystalTexture.cube()
+        tg = DiscreteTexture.Goss()
+        tb = DiscreteTexture.brass()
+        tc = DiscreteTexture.cube()
         tm1 = 0.5 * tg + 0.3 * tb
         tm2 = tm1 + 0.4 * tc
         assert isinstance(tm2, CrystalTextureMix)
@@ -185,11 +185,11 @@ class TestCrystalTextureMix(unittest.TestCase):
         assert orientations == [t.orientation for t in tm1.texture_list] + [t.orientation for t in tm2.texture_list]
 
     def test_repr(self):
-        t1 = CrystalTexture.Goss()
+        t1 = DiscreteTexture.Goss()
         m = Miller(uvw=[1, 0, 0], phase=PHASE)
         t2 = FibreTexture.from_Miller_axis(m, [0, 0, 1])
         t3 = FibreTexture.from_Euler(phi1=0, Phi=10)
-        t4 = CrystalTexture.uniform()
+        t4 = DiscreteTexture.uniform()
         tm = t1 + t2 + t3 + 0.5*t4
         assert isinstance(tm, CrystalTextureMix)
         expected_str = ('Mixture of crystallographic textures\n'
@@ -202,8 +202,8 @@ class TestCrystalTextureMix(unittest.TestCase):
         assert tm.__repr__() == expected_str
 
     def test_mean(self):
-        t2 = CrystalTexture.cube()
-        t1 = CrystalTexture.Goss()
+        t2 = DiscreteTexture.cube()
+        t1 = DiscreteTexture.Goss()
         tm = t1 + t2
         Cmean = C * tm
         assert isinstance(Cmean, StiffnessTensor)
@@ -218,7 +218,7 @@ class TestCrystalTextureMix(unittest.TestCase):
         np.testing.assert_almost_equal(Cmean_voigt.matrix(), Cmean.matrix())
 
     def test_uniform(self):
-        t = 0.3 * CrystalTexture.uniform() + 0.5 * CrystalTexture.uniform()
+        t = 0.3 * DiscreteTexture.uniform() + 0.5 * DiscreteTexture.uniform()
         np.testing.assert_array_almost_equal(C.Voigt_average().matrix(), (C * t).matrix())
 
 
