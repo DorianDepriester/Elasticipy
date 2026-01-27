@@ -1241,6 +1241,25 @@ class FourthOrderTensor:
         a = deepcopy(self)
         return a
 
+    def tensor_average(self, weights=None, axis=0):
+        """
+        Compute the average of a tensor array.
+
+        Parameters
+        ----------
+        weights : list of float or tuple of floats, optional
+            If provided, each tensor value is weighted accordingly
+        axis : int, optional
+            Axis to compute the average over (default: 0)
+
+        Returns
+        -------
+        FourthOrderTensor
+        """
+        t = deepcopy(self)
+        t._matrix = np.average(t._matrix, weights=weights, axis=axis)
+        return t
+
 class SymmetricFourthOrderTensor(FourthOrderTensor):
     _tensor_name = 'Symmetric 4th-order'
 

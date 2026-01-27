@@ -623,6 +623,4 @@ class CrystalTextureMix:
             ti = self.texture_list[i]
             wgt.append(ti.weight)
             t[i] = ti.mean_tensor(tensor)
-        tensor_avg = deepcopy(tensor)
-        tensor_avg._matrix = np.average(t._matrix, weights=wgt, axis=0)
-        return tensor_avg
+        return t.tensor_average(weights=wgt)
