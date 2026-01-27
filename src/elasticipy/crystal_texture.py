@@ -107,13 +107,13 @@ class DiscreteTexture(CrystalTexture):
 
     Notes
     -----
-    This class implements the crystallographic textures listed by [Lohmuller et al.]_
+    This class implements the crystallographic textures listed by [Lohmuller]_
 
     References
     ----------
-    .. [Lohmuller et al.] Lohmuller, P.; Peltier, L.; Hazotte, A.; Zollinger, J.; Laheurte, P.; Fleury, E. Variations of
-    the Elastic Properties of the CoCrFeMnNi High Entropy Alloy Deformed by Groove Cold Rolling.
-    Materials 2018, 11, 1337. https://doi.org/10.3390/ma11081337
+    .. [Lohmuller] Lohmuller, P.; Peltier, L.; Hazotte, A.; Zollinger, J.; Laheurte, P.; Fleury, E. Variations of
+       the Elastic Properties of the CoCrFeMnNi High Entropy Alloy Deformed by Groove Cold Rolling.
+       Materials 2018, 11, 1337. https://doi.org/10.3390/ma11081337
     """
     _title = "Crystallographic texture"
 
@@ -148,8 +148,8 @@ class DiscreteTexture(CrystalTexture):
         See Also
         --------
         A : Create a A single-orientation crystallographic texture
-        Brass : Create a Brass single-orientation crystallographic texture
-        Copper : Create a Copper single-orientation crystallographic texture
+        brass : Create a Brass single-orientation crystallographic texture
+        copper : Create a Copper single-orientation crystallographic texture
         CuT : Create a CuT single-orientation crystallographic texture
         Goss : Create a Goss single-orientation crystallographic texture
         GossBrass : Create a Goss-Brass single-orientation crystallographic texture
@@ -171,9 +171,9 @@ class DiscreteTexture(CrystalTexture):
         See Also
         --------
         A : Create an A single-orientation crystallographic texture
-        Brass : Create a Brass single-orientation crystallographic texture
-        Copper : Create a Copper single-orientation crystallographic texture
-        Cube : Create a Cube single-orientation crystallographic texture
+        brass : Create a Brass single-orientation crystallographic texture
+        copper : Create a Copper single-orientation crystallographic texture
+        cube : Create a Cube single-orientation crystallographic texture
         CuT : Create a CuT single-orientation crystallographic texture
         GossBrass : Create a Goss-Brass single-orientation crystallographic texture
         P : Create a P single-orientation crystallographic texture
@@ -194,8 +194,8 @@ class DiscreteTexture(CrystalTexture):
         See Also
         --------
         A : Create a A single-orientation crystallographic texture
-        Copper : Create a Copper single-orientation crystallographic texture
-        Cube : Create a Cube single-orientation crystallographic texture
+        copper : Create a Copper single-orientation crystallographic texture
+        cube : Create a Cube single-orientation crystallographic texture
         CuT : Create a CuT single-orientation crystallographic texture
         Goss : Create a Goss single-orientation crystallographic texture
         GossBrass : Create a Goss-Brass single-orientation crystallographic texture
@@ -217,8 +217,8 @@ class DiscreteTexture(CrystalTexture):
         See Also
         --------
         A : Create an A single-orientation crystallographic texture
-        Copper : Create a Copper single-orientation crystallographic texture
-        Cube : Create a Cube single-orientation crystallographic texture
+        copper : Create a Copper single-orientation crystallographic texture
+        cube : Create a Cube single-orientation crystallographic texture
         CuT : Create a CuT single-orientation crystallographic texture
         Goss : Create a Goss single-orientation crystallographic texture
         P : Create a P single-orientation crystallographic texture
@@ -239,7 +239,7 @@ class DiscreteTexture(CrystalTexture):
         See Also
         --------
         A : Create an A single-orientation crystallographic texture
-        Cube : Create a Cube single-orientation crystallographic texture
+        cube : Create a Cube single-orientation crystallographic texture
         CuT : Create a CuT single-orientation crystallographic texture
         Goss : Create a Goss single-orientation crystallographic texture
         GossBrass : Create a Goss-Brass single-orientation crystallographic texture
@@ -260,8 +260,8 @@ class DiscreteTexture(CrystalTexture):
 
         See Also
         --------
-        Copper : Create a Copper single-orientation crystallographic texture
-        Cube : Create a Cube single-orientation crystallographic texture
+        copper : Create a Copper single-orientation crystallographic texture
+        cube : Create a Cube single-orientation crystallographic texture
         CuT : Create a CuT single-orientation crystallographic texture
         Goss : Create a Goss single-orientation crystallographic texture
         GossBrass : Create a Goss-Brass single-orientation crystallographic texture
@@ -283,8 +283,8 @@ class DiscreteTexture(CrystalTexture):
         See Also
         --------
         A : Create an A single-orientation crystallographic texture
-        Copper : Create a Copper single-orientation crystallographic texture
-        Cube : Create a Cube single-orientation crystallographic texture
+        copper : Create a Copper single-orientation crystallographic texture
+        cube : Create a Cube single-orientation crystallographic texture
         CuT : Create a CuT single-orientation crystallographic texture
         Goss : Create a Goss single-orientation crystallographic texture
         GossBrass : Create a Goss-Brass single-orientation crystallographic texture
@@ -305,8 +305,8 @@ class DiscreteTexture(CrystalTexture):
         See Also
         --------
         A : Create an A single-orientation crystallographic texture
-        Copper : Create a Copper single-orientation crystallographic texture
-        Cube : Create a Cube single-orientation crystallographic texture
+        copper : Create a Copper single-orientation crystallographic texture
+        cube : Create a Cube single-orientation crystallographic texture
         Goss : Create a Goss single-orientation crystallographic texture
         GossBrass : Create a Goss-Brass single-orientation crystallographic texture
         P : Create a P single-orientation crystallographic texture
@@ -327,8 +327,8 @@ class DiscreteTexture(CrystalTexture):
         See Also
         --------
         A : Create an A single-orientation crystallographic texture
-        Copper : Create a Copper single-orientation crystallographic texture
-        Cube : Create a Cube single-orientation crystallographic texture
+        copper : Create a Copper single-orientation crystallographic texture
+        cube : Create a Cube single-orientation crystallographic texture
         CuT : Create a CuT single-orientation crystallographic texture
         Goss : Create a Goss single-orientation crystallographic texture
         GossBrass : Create a Goss-Brass single-orientation crystallographic texture
