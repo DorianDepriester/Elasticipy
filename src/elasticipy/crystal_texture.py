@@ -516,7 +516,7 @@ class CrystalTextureMix:
 
         Parameters
         ----------
-        texture_list : list of _CrystalTextureBase or tuple of _CrystalTextureBase
+        texture_list : list of _CrystalTextureBase
             List of crystal textures to mix
         """
         self.texture_list = texture_list
@@ -575,6 +575,46 @@ class CrystalTextureMix:
         Returns
         -------
         FourthOrderTensor
+
+        Examples
+        --------
+        Let consider a mixture of Goss and fibre tensor (with phi1=0 and phi2=0):
+
+        >>> from elasticipy.crystal_texture import CrystalTexture, FibreTexture
+        >>> from elasticipy.tensors.elasticity import StiffnessTensor
+        >>> t = CrystalTexture.Goss() + FibreTexture.from_Euler(phi1=0.0, phi2=0.0)
+        >>> t
+        Mixture of crystallographic textures
+         Wgt.  Type            Component
+         -----------------------------------------
+         1.00  single-orient.  φ1=0.00°, ϕ=45.00°, φ2=0.00°
+         1.00  fibre           φ1= 0.0°, φ2= 0.0°
+
+        Then, assume that the stiffness tensor is defined as follows:
+
+        >>> C = StiffnessTensor.cubic(C11=186, C12=134, C44=77) # mp-30
+
+        The ODF-weighted Voigt average can be computed as follows:
+
+        >>> Cvoigt = t.mean_tensor(C)
+        >>> Cvoigt
+        Stiffness tensor (in Voigt mapping):
+        [[ 1.86000000e+02  1.34000000e+02  1.34000000e+02  0.00000000e+00
+           0.00000000e+00  0.00000000e+00]
+         [ 1.34000000e+02  2.24250000e+02  9.57500000e+01  6.96664948e-15
+           0.00000000e+00  0.00000000e+00]
+         [ 1.34000000e+02  9.57500000e+01  2.24250000e+02 -2.83236976e-15
+           0.00000000e+00  0.00000000e+00]
+         [ 0.00000000e+00  2.85362012e-16  8.15320034e-17  2.58750000e+01
+           0.00000000e+00  0.00000000e+00]
+         [ 0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00
+           5.77500000e+01 -5.48414542e-17]
+         [ 0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00
+           5.48414542e-17  5.77500000e+01]]
+
+        Alternatively, on can directly use the following syntax:
+
+        >>> Cvoigt = C * t
         """
         n = len(self)
         t = tensor.__class__.eye(shape=(n,))
