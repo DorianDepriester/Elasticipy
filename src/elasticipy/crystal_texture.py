@@ -511,14 +511,25 @@ class FibreTexture(_CrystalTextureBase):
 
 class CrystalTextureMix:
     def __init__(self, texture_list):
+        """
+        Create a mix of crystal textures
+
+        Parameters
+        ----------
+        texture_list : list of _CrystalTextureBase or tuple of _CrystalTextureBase
+            List of crystal textures to mix
+        """
         self.texture_list = texture_list
 
     def __mul__(self, other):
         # self * other
-        tm = deepcopy(self)
-        for t in tm.texture_list:
-            t.weight *= other
-        return tm
+        if isinstance(other, (float, int)):
+            tm = deepcopy(self)
+            for t in tm.texture_list:
+                t.weight *= other
+            return tm
+        elif isinstance(other, FourthOrderTensor):
+            return self.mean_tensor(other)
 
     def __rmul__(self, other):
         # other * self
@@ -553,6 +564,18 @@ class CrystalTextureMix:
         return '\n'.join([title, heading, sep] + table)
 
     def mean_tensor(self, tensor):
+        """
+        Compute the weighted average of a tensor, considering each texture component separately.
+
+        Parameters
+        ----------
+        tensor : FourthOrderTensor
+            Reference tensor (unrotated)
+
+        Returns
+        -------
+        FourthOrderTensor
+        """
         n = len(self)
         average = FourthOrderTensor.zeros()
         tensor2 = FourthOrderTensor(tensor)
