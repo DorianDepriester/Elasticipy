@@ -375,7 +375,7 @@ class FibreTexture(_CrystalTextureBase):
         self.point_group = point_group
 
     @classmethod
-    def from_euler(cls, phi1=None, Phi=None, phi2=None, degrees=True):
+    def from_Euler(cls, phi1=None, Phi=None, phi2=None, degrees=True):
         """
         Create a fibre texture by providing two fixed Bunge-Euler values
 
@@ -403,7 +403,7 @@ class FibreTexture(_CrystalTextureBase):
         A fibre texture corresponding to constant values for phi1 and phi2 (and uniform distribution of Phi on [0,2π[)
         can be defined as follows:
         >>> from elasticipy.crystal_texture import FibreTexture
-        >>> t1 = FibreTexture.from_euler(phi1=0., phi2=0.)
+        >>> t1 = FibreTexture.from_Euler(phi1=0., phi2=0.)
         >>> t1
         Fibre texture
         φ1= 0.0°, φ2= 0.0°

@@ -94,23 +94,23 @@ class TestCrystalTexture(unittest.TestCase):
 
 class TestFibreTexture(unittest.TestCase):
     def test_from_Euler(self):
-        t = FibreTexture.from_euler(phi1=0, Phi=10)
+        t = FibreTexture.from_Euler(phi1=0, Phi=10)
         assert t.__repr__() == 'Fibre texture\nφ1= 0°, ϕ= 10°'
 
-        t = FibreTexture.from_euler(phi1=0, phi2=10)
+        t = FibreTexture.from_Euler(phi1=0, phi2=10)
         assert t.__repr__() == 'Fibre texture\nφ1= 0°, φ2= 10°'
 
-        t = FibreTexture.from_euler(Phi=0, phi2=10)
+        t = FibreTexture.from_Euler(Phi=0, phi2=10)
         assert t.__repr__() == 'Fibre texture\nϕ= 0°, φ2= 10°'
 
-        t = FibreTexture.from_euler(Phi=0, phi2=10 * np.pi / 180, degrees=False)
+        t = FibreTexture.from_Euler(Phi=0, phi2=10 * np.pi / 180, degrees=False)
         assert t.__repr__() == 'Fibre texture\nϕ= 0.0°, φ2= 10.0°'
 
     def test_from_Euler_axis(self):
-        t = FibreTexture.from_euler(Phi=0, phi2=0)
+        t = FibreTexture.from_Euler(Phi=0, phi2=0)
         assert t.axis.dot(Vector3d([0,0,1])) == 1. or t.axis.dot(Vector3d([0,0,1])) == -1.
 
-        t = FibreTexture.from_euler(phi1=0, phi2=0)
+        t = FibreTexture.from_Euler(phi1=0, phi2=0)
         assert t.axis.dot(Vector3d([0,0,1])) == 1. or t.axis.dot(Vector3d([1,0,0])) == -1.
 
     def test_from_Miller_axis(self):
@@ -185,7 +185,7 @@ class TestCrystalTextureMix(unittest.TestCase):
         t1 = CrystalTexture.Goss()
         m = Miller(uvw=[1, 0, 0], phase=PHASE)
         t2 = FibreTexture.from_Miller_axis(m, [0, 0, 1])
-        t3 = FibreTexture.from_euler(phi1=0, Phi=10)
+        t3 = FibreTexture.from_Euler(phi1=0, Phi=10)
         t4 = CrystalTexture.uniform()
         tm = t1 + t2 + t3 + 0.5*t4
         assert isinstance(tm, CrystalTextureMix)
