@@ -400,13 +400,22 @@ class FibreTexture(_CrystalTextureBase):
 
         Examples
         --------
-        A fibre texture corresponding to constant values for phi1 and phi2 (and uniform distribution of Phi on [0,2π[)
-        can be defined as follows:
+        A fibre texture corresponding to constant (e.g. zero) values for phi1 and phi2, and uniform distribution of Phi
+        on [0,2π[, can be defined as follows:
+
         >>> from elasticipy.crystal_texture import FibreTexture
         >>> t1 = FibreTexture.from_Euler(phi1=0., phi2=0.)
         >>> t1
         Fibre texture
         φ1= 0.0°, φ2= 0.0°
+
+        Similarly, the following returns a fibre texture for phi1=0 and Phi=0, and uniform distribution of phi2 on
+        [0,2π[:
+
+        >>> t2 = FibreTexture.from_Euler(phi1=0., Phi=0.)
+        >>> t2
+        Fibre texture
+        φ1= 0.0°, ϕ= 0.0°
         """
         if phi1 is None:
             orient1 = Orientation.from_euler([0., Phi, phi2] , degrees=degrees)
