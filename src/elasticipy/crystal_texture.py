@@ -55,12 +55,12 @@ class _CrystalTextureBase:
 
         Parameters
         ----------
-        tensor : FourthOrderTensor
+        tensor : SymmetricFourthOrderTensor
             Reference tensor (unrotated)
 
         Returns
         -------
-        FourthOrderTensor
+        SymmetricFourthOrderTensor
             mean value of the rotated tensor
         """
         if self.orientation is None:
