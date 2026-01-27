@@ -7,6 +7,7 @@ from scipy.integrate import quad_vec
 import numpy as np
 from elasticipy.polefigure import add_polefigure
 from elasticipy.tensors.fourth_order import FourthOrderTensor
+from abc import ABC
 
 ANGLE_35 = 35.26438968
 ANGLE_37 = 36.6992252
@@ -33,7 +34,7 @@ def _plot_as_pf(orientations, miller, fig, projection, plot_type='plot'):
     ax.set_ylim([0, np.pi / 2])
     return fig, ax
 
-class _CrystalTextureBase:
+class CrystalTexture(ABC):
     _title = 'Template class for crystallographic texture'
 
     def __init__(self, orientation):
@@ -81,7 +82,7 @@ class _CrystalTextureBase:
 
     def __add__(self, other):
         # self + other
-        if isinstance(other, _CrystalTextureBase):
+        if isinstance(other, CrystalTexture):
             return CompositeTexture([self, other])
         elif isinstance(other, CompositeTexture):
             t = deepcopy(other)
@@ -94,7 +95,7 @@ class _CrystalTextureBase:
         else:
             return self._title + '\n' + self._details
 
-class DiscreteTexture(_CrystalTextureBase):
+class DiscreteTexture(CrystalTexture):
     """
     Class to handle classical crystallographic texture.
 
@@ -371,7 +372,7 @@ class DiscreteTexture(_CrystalTextureBase):
         """
         return _plot_as_pf(self.orientation, miller, fig, projection, plot_type='scatter')
 
-class FibreTexture(_CrystalTextureBase):
+class FibreTexture(CrystalTexture):
     _title = 'Fibre texture'
 
     def __init__(self, o, axis, point_group=None):
@@ -516,7 +517,7 @@ class CompositeTexture:
 
         Parameters
         ----------
-        texture_list : list of _CrystalTextureBase
+        texture_list : list of CrystalTexture
             List of crystal textures to mix
         """
         self.texture_list = list(texture_list)
@@ -537,7 +538,7 @@ class CompositeTexture:
 
     def __add__(self, other):
         # self + other
-        if isinstance(other, _CrystalTextureBase):
+        if isinstance(other, CrystalTexture):
             t = deepcopy(self)
             t.texture_list.append(other)
             return t
