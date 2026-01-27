@@ -6,6 +6,7 @@ from orix.vector import Vector3d
 from scipy.integrate import quad_vec
 import numpy as np
 from elasticipy.polefigure import add_polefigure
+from elasticipy.tensors.fourth_order import FourthOrderTensor
 
 ANGLE_35 = 35.26438968
 ANGLE_37 = 36.6992252
@@ -56,6 +57,7 @@ class _CrystalTextureBase:
         ----------
         tensor : FourthOrderTensor
             Reference tensor (unrotated)
+
         Returns
         -------
         FourthOrderTensor
@@ -67,9 +69,12 @@ class _CrystalTextureBase:
             return tensor * self.orientation
 
     def __mul__(self, other):
-        t = deepcopy(self)
-        t.weight = other
-        return t
+        if isinstance(other, FourthOrderTensor):
+            return self.mean_tensor(other)
+        else:
+            t = deepcopy(self)
+            t.weight = other
+            return t
 
     def __rmul__(self, other):
         return self * other
@@ -546,3 +551,19 @@ class CrystalTextureMix:
                 kind = 'fibre         '
             table.append(' {:.2f}  {}  {}'.format(t.weight, kind, t._details))
         return '\n'.join([title, heading, sep] + table)
+
+    def mean_tensor(self, tensor):
+        n = len(self)
+        average = FourthOrderTensor.zeros()
+        tensor2 = FourthOrderTensor(tensor)
+        weight_sum = 0.
+        for i in range(0, n):
+            ti = self.texture_list[i]
+            wgt = ti.weight
+            average += ti.mean_tensor(tensor2) * wgt
+            weight_sum += wgt
+        return tensor.__class__(average / weight_sum)
+
+    def __mult__(self, other):
+        if isinstance(other, FourthOrderTensor):
+            return self.mean_tensor(other)
