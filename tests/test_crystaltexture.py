@@ -2,7 +2,7 @@ import unittest
 
 from orix.quaternion import Orientation
 
-from elasticipy.crystal_texture import DiscreteTexture, FibreTexture, CompositeTexture
+from elasticipy.crystal_texture import DiscreteTexture, FibreTexture, CompositeTexture, UniformTexture
 from orix.vector import Miller, Vector3d
 from orix.crystal_map import Phase
 import numpy as np
@@ -33,8 +33,7 @@ def orientation_checker(texture, hkl, uvw):
 
 class TestCrystalTexture(unittest.TestCase):
     def test_uniform(self):
-        t = DiscreteTexture.uniform()
-        assert t.orientation is None
+        t = UniformTexture()
         assert C * t == C.Voigt_average()
         S = C.inv()
         assert S * t == S.Reuss_average()
@@ -189,16 +188,16 @@ class TestCrystalTextureMix(unittest.TestCase):
         m = Miller(uvw=[1, 0, 0], phase=PHASE)
         t2 = FibreTexture.from_Miller_axis(m, [0, 0, 1])
         t3 = FibreTexture.from_Euler(phi1=0, Phi=10)
-        t4 = DiscreteTexture.uniform()
+        t4 = UniformTexture()
         tm = t1 + t2 + t3 + 0.5*t4
         assert isinstance(tm, CompositeTexture)
         expected_str = ('Mixture of crystallographic textures\n'
                         ' Wgt.  Type            Component\n'
-                        ' -----------------------------------------\n')
+                        ' -------------------------------------------------------------------\n')
         expected_str += ' 1.00  single-orient.  φ1=0.00°, ϕ=45.00°, φ2=0.00°\n'
         expected_str += ' 1.00  fibre           <1. 0. 0.> || [0, 0, 1]\n'
         expected_str += ' 1.00  fibre           φ1= 0°, ϕ= 10°\n'
-        expected_str += ' 0.50  uniform         Uniform over SO(3)'
+        expected_str += ' 0.50  uniform         Uniform distribution over SO(3)'
         assert tm.__repr__() == expected_str
 
     def test_mean(self):
@@ -218,7 +217,7 @@ class TestCrystalTextureMix(unittest.TestCase):
         np.testing.assert_almost_equal(Cmean_voigt.matrix(), Cmean.matrix())
 
     def test_uniform(self):
-        t = 0.3 * DiscreteTexture.uniform() + 0.5 * DiscreteTexture.uniform()
+        t = 0.3 * UniformTexture() + 0.5 * UniformTexture()
         np.testing.assert_array_almost_equal(C.Voigt_average().matrix(), (C * t).matrix())
 
 

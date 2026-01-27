@@ -35,18 +35,9 @@ def _plot_as_pf(orientations, miller, fig, projection, plot_type='plot'):
     return fig, ax
 
 class CrystalTexture(ABC):
-    _title = 'Template class for crystallographic texture'
+    _title = 'Abstract class for crystallographic texture'
 
-    def __init__(self, orientation):
-        """
-        Create a single-orientation crystallographic texture
-
-        Parameters
-        ----------
-        orientation : orix.quaternion.orientation.Orientation or None
-            Orientation of the crystallographic texture
-        """
-        self.orientation = orientation
+    def __init__(self):
         self.weight = 1.
         self._details = None
 
@@ -64,10 +55,7 @@ class CrystalTexture(ABC):
         SymmetricFourthOrderTensor
             mean value of the rotated tensor
         """
-        if self.orientation is None:
-            return tensor.infinite_random_average()
-        else:
-            return tensor * self.orientation
+        pass
 
     def __mul__(self, other):
         if isinstance(other, FourthOrderTensor):
@@ -95,6 +83,24 @@ class CrystalTexture(ABC):
         else:
             return self._title + '\n' + self._details
 
+
+class UniformTexture(CrystalTexture):
+    """
+    Simple class to define the uniform texture over SO(3)
+    """
+    _title = 'Uniform texture'
+
+    def __init__(self):
+        """
+        Create a uniform texture over SO(3)
+        """
+        super().__init__()
+        self._details = 'Uniform distribution over SO(3)'
+
+    def mean_tensor(self, tensor):
+        return tensor.infinite_random_average()
+
+
 class DiscreteTexture(CrystalTexture):
     """
     Class to handle classical crystallographic texture.
@@ -112,34 +118,23 @@ class DiscreteTexture(CrystalTexture):
     _title = "Crystallographic texture"
 
     def __init__(self, orientation):
-        super().__init__(orientation)
+        """
+        Create a single-orientation crystallographic texture.
+
+        Parameters
+        ----------
+        orientation : orix.quaternion.orientation.Orientation
+            Orientation of the crystals
+        """
+        super().__init__()
+        self.orientation = orientation
         if orientation is None:
             self._details = 'Uniform over SO(3)'
         else:
             self._details = 'φ1={:.2f}°, ϕ={:.2f}°, φ2={:.2f}°'.format(*self.orientation.to_euler(degrees=True)[0])
 
-    @classmethod
-    def uniform(cls):
-        """
-        Create a uniform crystallographic texture
-
-        Returns
-        -------
-        DiscreteTexture
-
-        See Also
-        --------
-        A : Create a A single-orientation crystallographic texture
-        Brass : Create a Brass single-orientation crystallographic texture
-        Copper : Create a Copper single-orientation crystallographic texture
-        Cube : Create a Cube single-orientation crystallographic texture
-        CuT : Create a CuT single-orientation crystallographic texture
-        Goss : Create a Goss single-orientation crystallographic texture
-        GossBrass : Create a Goss-Brass single-orientation crystallographic texture
-        P : Create a P single-orientation crystallographic texture
-        S : Create an S single-orientation crystallographic texture
-        """
-        return cls(None)
+    def mean_tensor(self, tensor):
+        return tensor * self.orientation
 
     @classmethod
     def cube(cls):
@@ -160,7 +155,6 @@ class DiscreteTexture(CrystalTexture):
         GossBrass : Create a Goss-Brass single-orientation crystallographic texture
         P : Create a P single-orientation crystallographic texture
         S : Create an S single-orientation crystallographic texture
-        uniform : Create a uniform crystallographic texture over SO(3)
         """
         o = Orientation.from_euler([0, 0, 0], degrees=True)
         return DiscreteTexture(o)
@@ -184,7 +178,6 @@ class DiscreteTexture(CrystalTexture):
         GossBrass : Create a Goss-Brass single-orientation crystallographic texture
         P : Create a P single-orientation crystallographic texture
         S : Create an S single-orientation crystallographic texture
-        uniform : Create a uniform crystallographic texture over SO(3)
         """
         o = Orientation.from_euler([0, 45, 0], degrees=True)
         return DiscreteTexture(o)
@@ -208,7 +201,6 @@ class DiscreteTexture(CrystalTexture):
         GossBrass : Create a Goss-Brass single-orientation crystallographic texture
         P : Create a P single-orientation crystallographic texture
         S : Create an S single-orientation crystallographic texture
-        uniform : Create a uniform crystallographic texture over SO(3)
         """
         o = Orientation.from_euler([ANGLE_35, 45, 0], degrees=True)
         return DiscreteTexture(o)
@@ -231,7 +223,6 @@ class DiscreteTexture(CrystalTexture):
         Goss : Create a Goss single-orientation crystallographic texture
         P : Create a P single-orientation crystallographic texture
         S : Create an S single-orientation crystallographic texture
-        uniform : Create a uniform crystallographic texture over SO(3)
         """
         o = Orientation.from_euler([ANGLE_74, 90, 45], degrees=True)
         return DiscreteTexture(o)
@@ -254,7 +245,6 @@ class DiscreteTexture(CrystalTexture):
         GossBrass : Create a Goss-Brass single-orientation crystallographic texture
         P : Create a P single-orientation crystallographic texture
         S : Create an S single-orientation crystallographic texture
-        uniform : Create a uniform crystallographic texture over SO(3)
         """
         o = Orientation.from_euler([90, ANGLE_35, 45], degrees=True)
         return DiscreteTexture(o)
@@ -277,7 +267,6 @@ class DiscreteTexture(CrystalTexture):
         GossBrass : Create a Goss-Brass single-orientation crystallographic texture
         P : Create a P single-orientation crystallographic texture
         S : Create an S single-orientation crystallographic texture
-        uniform : Create a uniform crystallographic texture over SO(3)
         """
         o = Orientation.from_euler([ANGLE_35, 90, 45], degrees=True)
         return DiscreteTexture(o)
@@ -300,7 +289,6 @@ class DiscreteTexture(CrystalTexture):
         Goss : Create a Goss single-orientation crystallographic texture
         GossBrass : Create a Goss-Brass single-orientation crystallographic texture
         S : Create an S single-orientation crystallographic texture
-        uniform : Create a uniform crystallographic texture over SO(3)
         """
         o = Orientation.from_euler([ANGLE_54, 90, 45], degrees=True)
         return DiscreteTexture(o)
@@ -323,7 +311,6 @@ class DiscreteTexture(CrystalTexture):
         GossBrass : Create a Goss-Brass single-orientation crystallographic texture
         P : Create a P single-orientation crystallographic texture
         S : Create an S single-orientation crystallographic texture
-        uniform : Create a uniform crystallographic texture over SO(3)
         """
         o = Orientation.from_euler([90, ANGLE_74, 45], degrees=True)
         return DiscreteTexture(o)
@@ -346,7 +333,6 @@ class DiscreteTexture(CrystalTexture):
         Goss : Create a Goss single-orientation crystallographic texture
         GossBrass : Create a Goss-Brass single-orientation crystallographic texture
         P : Create a P single-orientation crystallographic texture
-        uniform : Create a uniform crystallographic texture over SO(3)
         """
         o = Orientation.from_euler([ANGLE_59, ANGLE_37, ANGLE_63], degrees=True)
         return DiscreteTexture(o)
@@ -375,8 +361,21 @@ class DiscreteTexture(CrystalTexture):
 class FibreTexture(CrystalTexture):
     _title = 'Fibre texture'
 
-    def __init__(self, o, axis, point_group=None):
-        super().__init__(o)
+    def __init__(self, orientation, axis, point_group=None):
+        """
+        Create a fibre-type crystallographic texture
+
+        Parameters
+        ----------
+        orientation : orix.quaternion.orientation.Orientation
+            Reference orientation
+        axis : list or tuple of numpy.ndarray
+            Axis of rotation (in sample CS)
+        point_group : orix.phase.point_group.PointGroup, optional
+            Point group to use
+        """
+        super().__init__()
+        self.orientation = orientation
         self.axis = Vector3d(axis)
         self.point_group = point_group
 
@@ -551,14 +550,13 @@ class CompositeTexture:
     def __repr__(self):
         title = 'Mixture of crystallographic textures'
         heading = ' Wgt.  Type            Component'
-        sep =     ' -----------------------------------------'
+        sep =     ' -------------------------------------------------------------------'
         table = []
         for t in self.texture_list:
             if isinstance(t, DiscreteTexture):
-                if t.orientation is None:
-                    kind = 'uniform       '
-                else:
-                    kind = 'single-orient.'
+                kind = 'single-orient.'
+            elif isinstance(t, UniformTexture):
+                kind = 'uniform       '
             else:
                 kind = 'fibre         '
             table.append(' {:.2f}  {}  {}'.format(t.weight, kind, t._details))
