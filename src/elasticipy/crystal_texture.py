@@ -451,6 +451,30 @@ class FibreTexture(_CrystalTextureBase):
             Crystal plane or direction to align with the axis
         axis : tuple or list
             Axis (in sample CS) to align with
+
+        Returns
+        -------
+        FibreTexture
+
+        See Also
+        --------
+        from_Euler : define a fibre texture from two Euler angles
+
+        Examples
+        --------
+        Let's consider a cubic poly-crystal (point group: m-3m), whose orientations are defined by a perfect alignment
+        of direction <100> with the Z axis of a sample (therefore a uniform distribution around the Z axis). This
+        texture can be defined as:
+
+        >>> from orix.crystal_map import Phase
+        >>> from orix.vector.miller import Miller
+        >>> from elasticipy.crystal_texture import FibreTexture
+        >>> phase = Phase(point_group='m-3m')
+        >>> m = Miller(uvw=[1,0,0], phase=phase)
+        >>> t = FibreTexture.from_Miller_axis(m, [0,0,1])
+        >>> t
+        Fibre texture
+        <1. 0. 0.> || [0, 0, 1]
         """
         ref_orient = Orientation.from_align_vectors(miller, Vector3d(axis))
         a = cls(ref_orient, axis, point_group=miller.phase.point_group.name)
