@@ -98,6 +98,8 @@ class CrystalTexture(ABC):
             Handle to existing figure, if needed
         ax : matplotlib.projections.polar.PolarAxes, optional
             Axes to plot on
+        kwargs
+            Keyword arguments to pass to matplotlib's scatter/plot functions
 
         Returns
         -------
