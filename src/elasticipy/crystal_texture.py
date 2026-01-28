@@ -16,7 +16,7 @@ ANGLE_59 = 58.97991646
 ANGLE_63 = 63.43494882
 ANGLE_74 = 74.20683095
 
-def _plot_as_pf(orientations, miller, fig, projection, plot_type='plot', ax=None):
+def _plot_as_pf(orientations, miller, fig, projection, plot_type='plot', ax=None, **kwargs):
     if fig is None:
         fig = plt.figure()
     if ax is None:
@@ -29,9 +29,9 @@ def _plot_as_pf(orientations, miller, fig, projection, plot_type='plot', ax=None
         phi[phi < 0] += 2 * np.pi
         theta = np.arccos(xyz[:, 2] / r)
         if plot_type == 'scatter':
-            ax.scatter(phi, theta)
+            ax.scatter(phi, theta, **kwargs)
         else:
-            ax.plot(phi, theta)
+            ax.plot(phi, theta, **kwargs)
     ax.set_ylim([0, np.pi / 2])
     return fig, ax
 
