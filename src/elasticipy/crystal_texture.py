@@ -84,7 +84,7 @@ class CrystalTexture(ABC):
         else:
             return self._title + '\n' + self._details
 
-    def plot_as_pole_figure(self, miller, projection='lambert', fig=None, ax=None):
+    def plot_as_pole_figure(self, miller, projection='lambert', fig=None, ax=None, **kwargs):
         """
         Plot the pole figure of the crystallographic texture
 
@@ -376,8 +376,8 @@ class DiscreteTexture(CrystalTexture):
         o = Orientation.from_euler([ANGLE_59, ANGLE_37, ANGLE_63], degrees=True)
         return DiscreteTexture(o)
 
-    def plot_as_pole_figure(self, miller, projection='lambert', fig=None, ax=None):
-        return _plot_as_pf(self.orientation, miller, fig, projection, ax=ax, plot_type='scatter')
+    def plot_as_pole_figure(self, miller, projection='lambert', fig=None, ax=None, **kwargs):
+        return _plot_as_pf(self.orientation, miller, fig, projection, ax=ax, plot_type='scatter', **kwargs)
 
 class FibreTexture(CrystalTexture):
     _title = 'Fibre texture'
@@ -527,7 +527,7 @@ class FibreTexture(CrystalTexture):
     def plot_as_pole_figure(self, miller, n_orientations=100, fig=None, ax=None, projection='lambert', **kwargs):
         theta = np.linspace(0, 2 * np.pi, n_orientations)
         orientations = self.orientation * Orientation.from_axes_angles(self.axis, theta)
-        return _plot_as_pf(orientations, miller, fig, projection, ax=ax)
+        return _plot_as_pf(orientations, miller, fig, projection, ax=ax, **kwargs)
 
 
 class CompositeTexture:
