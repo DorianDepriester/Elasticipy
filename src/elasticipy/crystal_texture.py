@@ -390,7 +390,7 @@ class FibreTexture(CrystalTexture):
         ----------
         orientation : orix.quaternion.orientation.Orientation
             Reference orientation
-        axis : list or tuple of numpy.ndarray
+        axis : list or tuple or numpy.ndarray or orix.vector.Vector3D
             Axis of rotation (in sample CS)
         point_group : orix.phase.point_group.PointGroup, optional
             Point group to use
