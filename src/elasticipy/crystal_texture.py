@@ -125,6 +125,18 @@ class UniformTexture(CrystalTexture):
     def mean_tensor(self, tensor):
         return tensor.infinite_random_average()
 
+    def plot_as_pole_figure(self, miller, projection='lambert', fig=None, ax=None, **kwargs):
+        if fig is None:
+            fig = plt.figure()
+        if ax is None:
+            ax = add_polefigure(fig, projection=projection)
+        phi = np.linspace(0,2*np.pi)
+        theta = np.linspace(0,np.pi)
+        phi, theta = np.meshgrid(phi, theta)
+        r = np.ones_like(phi)
+        ax.contourf(phi, theta, r, **kwargs)
+        ax.set_ylim([0, np.pi / 2])
+        return fig, ax
 
 class DiscreteTexture(CrystalTexture):
     """
