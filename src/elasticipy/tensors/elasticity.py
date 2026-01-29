@@ -850,7 +850,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         else:
             return np.nan
 
-    def Voigt_average(self, axis=None):
+    def Voigt_average(self, axis=None, orientations=None):
         """
         Compute the Voigt average (from the mean of stiffness tensors).
 
@@ -861,6 +861,9 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         ----------
         axis : int, optional
             If provided, the average is computed along this axis. Otherwise, the mean is computed on the flattened array.
+        orientations : scipy.spatial.transform.Rotation or orix.quaternion.orientation.Orientation or crystal_texture.CrystalTexture or crystal_texture.CompositeTexture, optional
+            Orientation to use to compute the average. If the object is a single tensor, all the rotated tensor will be
+            computed accordingly, before computed the mean.
 
         Returns
         -------
@@ -924,10 +927,13 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         """
         if self.ndim:
             return self.mean(axis=axis)
+        elif orientations is not None:
+            C_rotated = self * orientations
+            return C_rotated.Voigt_average()
         else:
             return self.infinite_random_average()
 
-    def Reuss_average(self, axis=None):
+    def Reuss_average(self, axis=None, orientations=None):
         """
         Compute the Reuss average (from the mean of compliance tensors).
 
@@ -938,6 +944,9 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         ----------
         axis : int, optional
             If provided, axis to compute the average along with. If none, the average is computed on the flattened array
+        orientations : scipy.spatial.transform.Rotation or orix.quaternion.orientation.Orientation or crystal_texture.CrystalTexture or crystal_texture.CompositeTexture, optional
+            Orientation to use to compute the average. If the object is a single tensor, all the rotated tensor will be
+            computed accordingly, before computed the mean.
 
         Returns
         -------
@@ -1005,9 +1014,9 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
          [ 0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00
            7.54674101e-17  7.70000000e+01]]
         """
-        return self.inv().Reuss_average(axis=axis).inv()
+        return self.inv().Reuss_average(axis=axis, orientations=orientations).inv()
 
-    def Hill_average(self, axis=None):
+    def Hill_average(self, axis=None, orientations=None):
         """
         Compute the Voigt-Reuss-Hill average (mean of Voigt and Reuss averages for stiffness tensors).
 
@@ -1018,6 +1027,9 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         ----------
         axis : int, optional
             If provided, axis to compute the average along with. If none, the average is computed on the flattened array
+        orientations : scipy.spatial.transform.Rotation or orix.quaternion.orientation.Orientation or crystal_texture.CrystalTexture or crystal_texture.CompositeTexture, optional
+            Orientation to use to compute the average. If the object is a single tensor, all the rotated tensor will be
+            computed accordingly, before computed the mean.
 
         Returns
         -------
@@ -1085,11 +1097,11 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
          [ 0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00
            7.54674101e-17  7.70000000e+01]]
         """
-        Reuss = self.Reuss_average(axis=axis)
-        Voigt = self.Voigt_average(axis=axis)
+        Reuss = self.Reuss_average(axis=axis, orientations=orientations)
+        Voigt = self.Voigt_average(axis=axis, orientations=orientations)
         return (Reuss + Voigt) * 0.5
 
-    def average(self, method, axis=None):
+    def average(self, method, axis=None, orientations=None):
         """
         Compute either the Voigt, Reuss, or Hill average of the stiffness tensor.
 
@@ -1115,7 +1127,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         method = method.capitalize()
         if method in ('Voigt', 'Reuss', 'Hill'):
             fun = getattr(self, method + '_average')
-            return fun(axis=axis)
+            return fun(axis=axis, orientations=orientations)
         else:
             raise NotImplementedError('Only Voigt, Reus, and Hill are implemented.')
 
@@ -2141,17 +2153,20 @@ class ComplianceTensor(StiffnessTensor):
         t.mapping = self.mapping.mapping_inverse
         return t
 
-    def Reuss_average(self, axis=None):
+    def Reuss_average(self, axis=None, orientations=None):
         if self.ndim:
             return self.mean(axis=axis)
+        elif orientations is not None:
+            S_rotated = self * orientations
+            return S_rotated.Reuss_average()
         else:
             return self.infinite_random_average()
 
-    def Voigt_average(self, axis=None):
-        return self.inv().Voigt_average(axis=axis).inv()
+    def Voigt_average(self, axis=None, orientations=None):
+        return self.inv().Voigt_average(axis=axis, orientations=orientations).inv()
 
-    def Hill_average(self, axis=None):
-        return self.inv().Hill_average(axis=axis).inv()
+    def Hill_average(self, axis=None, orientations=None):
+        return self.inv().Hill_average(axis=axis, orientations=orientations).inv()
 
     @classmethod
     def isotropic(cls, E=None, nu=None, G=None, lame1=None, lame2=None, K=None, phase_name=None):
