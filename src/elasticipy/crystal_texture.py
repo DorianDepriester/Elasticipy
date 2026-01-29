@@ -8,6 +8,7 @@ import numpy as np
 from elasticipy.polefigure import add_polefigure
 from elasticipy.tensors.fourth_order import FourthOrderTensor
 from abc import ABC
+from scipy.spatial.transform.rotation import Rotation
 
 ANGLE_35 = 35.26438968
 ANGLE_37 = 36.6992252
@@ -114,6 +115,8 @@ class CrystalTexture(ABC):
         """
         pass
 
+    def random(self, num=50, seed=None):
+        pass
 
 class UniformTexture(CrystalTexture):
     """
@@ -143,6 +146,10 @@ class UniformTexture(CrystalTexture):
         ax.contourf(phi, theta, r, **kwargs)
         ax.set_ylim([0, np.pi / 2])
         return fig, ax
+
+    def random(self, num=50, seed=None):
+        rand = Rotation.random(num=num, rng=seed)
+        return Orientation.from_scipy_rotation(rand)
 
 class DiscreteTexture(CrystalTexture):
     """
@@ -383,6 +390,9 @@ class DiscreteTexture(CrystalTexture):
     def plot_as_pole_figure(self, miller, projection='lambert', fig=None, ax=None, **kwargs):
         return _plot_as_pf(self.orientation, miller, fig, projection, ax=ax, plot_type='scatter', **kwargs)
 
+    def random(self, num=50, seed=None):
+        return Orientation(np.repeat(self.orientation.data, num, axis=0))
+
 class FibreTexture(CrystalTexture):
     _title = 'Fibre texture'
 
@@ -533,6 +543,11 @@ class FibreTexture(CrystalTexture):
         orientations = self.orientation * Orientation.from_axes_angles(self.axis, theta)
         return _plot_as_pf(orientations, miller, fig, projection, ax=ax, **kwargs)
 
+    def random(self, num=50, seed=None):
+        rng = np.random.default_rng(seed)
+        theta = rng.uniform(0.0, 2.0 * np.pi, size=num)
+        random_rot = Orientation.from_axes_angles(self.axis, theta)
+        return random_rot * self.orientation
 
 class CompositeTexture:
     def __init__(self, texture_list):
