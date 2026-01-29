@@ -63,7 +63,6 @@ def crystal_symmetry_tester(symmetry_name, cls='stiffness', variant=None):
         assert np.all(C.matrix() == approx(matrix, rel=0.5))
         return C
 
-
 class TestComplianceTensor(unittest.TestCase):
     def test_young_modulus_eval(self):
         E = S.Young_modulus
@@ -296,6 +295,12 @@ class TestComplianceTensor(unittest.TestCase):
             from elasticipy.FourthOrderTensor import ComplianceTensor, StiffnessTensor
         self.assertEqual(str(context.warning), expected_warn)
 
+    def test_VRH_short_syntaxes(self):
+        rotations = Rotation.random(10)
+        S1 = S * rotations
+        assert S1.Reuss_average() == S.Reuss_average(orientations=rotations)
+        np.testing.assert_array_almost_equal(S1.Voigt_average().matrix(), S.Voigt_average(orientations=rotations).matrix())
+        np.testing.assert_array_almost_equal(S1.Hill_average().matrix(), S.Hill_average(orientations=rotations).matrix())
 
 class TestStiffnessConstructor(unittest.TestCase):
     def test_averages(self):
@@ -1003,6 +1008,14 @@ class TestStiffnessConstructor(unittest.TestCase):
         C_rotated = C * rotations
         for i, inv_rotated_i in enumerate(C_rotated.quadratic_invariants()):
             np.testing.assert_array_almost_equal(inv_rotated_i, quad_inv[i])
+
+    def test_VRH_short_syntaxes(self):
+        rotations = Rotation.random(10)
+        C = S.inv()
+        C1 = C * rotations
+        assert C1.Voigt_average() == C.Voigt_average(orientations=rotations)
+        np.testing.assert_array_almost_equal(C1.Reuss_average().matrix(), C.Reuss_average(orientations=rotations).matrix())
+        np.testing.assert_array_almost_equal(C1.Hill_average().matrix(), C.Hill_average(orientations=rotations).matrix())
 
 if __name__ == '__main__':
     unittest.main()
