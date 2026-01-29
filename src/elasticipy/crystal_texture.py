@@ -671,3 +671,14 @@ class CompositeTexture:
         for t in self.texture_list:
             t.plot_as_pole_figure(miller, fig=fig, projection=projection, ax=ax)
         return fig, ax
+
+    def sample(self, num=50, seed=None):
+        weights = np.array([w.weight for w in self.texture_list])
+        weights = weights / weights.sum()
+        counts = np.random.multinomial(num, weights)
+        sample = Orientation(np.zeros((0,4)))
+        for tex, ni in zip(self.texture_list, counts):
+            if ni > 0:
+                sub_sample = tex.random(ni, seed=seed)
+                sample = Orientation.stack((sample, sub_sample))
+        return sample
