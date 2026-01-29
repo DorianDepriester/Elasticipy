@@ -863,7 +863,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
             If provided, the average is computed along this axis. Otherwise, the mean is computed on the flattened array.
         orientations : scipy.spatial.transform.Rotation or orix.quaternion.orientation.Orientation or crystal_texture.CrystalTexture or crystal_texture.CompositeTexture, optional
             Orientation to use to compute the average. If the object is a single tensor, all the rotated tensor will be
-            computed accordingly, before computed the mean.
+            computed accordingly, before computing the mean.
 
         Returns
         -------
@@ -963,7 +963,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
             If provided, axis to compute the average along with. If none, the average is computed on the flattened array
         orientations : scipy.spatial.transform.Rotation or orix.quaternion.orientation.Orientation or crystal_texture.CrystalTexture or crystal_texture.CompositeTexture, optional
             Orientation to use to compute the average. If the object is a single tensor, all the rotated tensor will be
-            computed accordingly, before computed the mean.
+            computed accordingly, before computing the mean.
 
         Returns
         -------
@@ -1063,7 +1063,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
             If provided, axis to compute the average along with. If none, the average is computed on the flattened array
         orientations : scipy.spatial.transform.Rotation or orix.quaternion.orientation.Orientation or crystal_texture.CrystalTexture or crystal_texture.CompositeTexture, optional
             Orientation to use to compute the average. If the object is a single tensor, all the rotated tensor will be
-            computed accordingly, before computed the mean.
+            computed accordingly, before computing the mean.
 
         Returns
         -------
@@ -1164,6 +1164,9 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
             If provided, axis to compute the average along with. If none, the average is computed on the flattened array
         method : str {'Voigt', 'Reuss', 'Hill'}
             Method to use to compute the average.
+        orientations : scipy.spatial.transform.Rotation or orix.quaternion.orientation.Orientation or crystal_texture.CrystalTexture or crystal_texture.CompositeTexture, optional
+            Orientation to use to compute the average. If the object is a single tensor, all the rotated tensor will be
+            computed accordingly, before computing the mean.
 
         Returns
         -------
