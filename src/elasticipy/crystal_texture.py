@@ -547,7 +547,7 @@ class FibreTexture(CrystalTexture):
         rng = np.random.default_rng(seed)
         theta = rng.uniform(0.0, 2.0 * np.pi, size=num)
         random_rot = Orientation.from_axes_angles(self.axis, theta)
-        return random_rot * self.orientation
+        return self.orientation * random_rot
 
 class CompositeTexture:
     def __init__(self, texture_list):
