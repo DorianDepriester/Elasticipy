@@ -1130,6 +1130,23 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
            7.70000000e+01 -7.54674101e-17]
          [ 0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00
            7.54674101e-17  7.70000000e+01]]
+
+        A shorter way to do that is to pass the rotations to the function:
+
+        >>> C.Hill_average(orientations=g)
+        Stiffness tensor (in Voigt mapping):
+        [[ 1.86000000e+02  1.34000000e+02  1.34000000e+02  3.42205120e-16
+           0.00000000e+00  0.00000000e+00]
+         [ 1.34000000e+02  2.05164524e+02  1.14835476e+02 -5.12702777e-16
+           0.00000000e+00  0.00000000e+00]
+         [ 1.34000000e+02  1.14835476e+02  2.05164524e+02 -5.12702777e-16
+           0.00000000e+00  0.00000000e+00]
+         [ 5.25483573e-15  5.33589076e-15  5.33589076e-15  4.52092721e+01
+           0.00000000e+00  0.00000000e+00]
+         [ 0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00
+           7.70000000e+01  1.60826722e-17]
+         [ 0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00
+          -1.60826722e-17  7.70000000e+01]]
         """
         Reuss = self.Reuss_average(axis=axis, orientations=orientations)
         Voigt = self.Voigt_average(axis=axis, orientations=orientations)
