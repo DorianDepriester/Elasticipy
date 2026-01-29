@@ -21,17 +21,21 @@ def _plot_as_pf(orientations, miller, fig, projection, plot_type='plot', ax=None
         fig = plt.figure()
     if ax is None:
         ax = add_polefigure(fig, projection=projection)
-    for m in miller:
-        t = Vector3d(~orientations * m)
-        xyz = t.data
-        r = np.linalg.norm(xyz, axis=1)
-        phi = np.arctan2(xyz[:, 1], xyz[:, 0])
-        phi[phi < 0] += 2 * np.pi
-        theta = np.arccos(xyz[:, 2] / r)
-        if plot_type == 'scatter':
-            ax.scatter(phi, theta, **kwargs)
-        else:
-            ax.plot(phi, theta, **kwargs)
+    m = orientations.shape[0]
+    n = miller.shape[0]
+    phi = np.zeros((m, n))
+    theta = np.zeros((m, n))
+    for i in range(0, n):
+        mi = miller[i]
+        t = Vector3d(~orientations * mi)
+        phi[:,i] = t.azimuth
+        theta[:,i] = t.polar
+    if plot_type == 'scatter':
+        ax.scatter(phi, theta, **kwargs)
+    else:
+        line, = ax.plot(phi[:, 0], theta[:, 0], **kwargs)
+        color = line.get_color()
+        ax.plot(phi[:, 1:], theta[:, 1:], color=color)
     ax.set_ylim([0, np.pi / 2])
     return fig, ax
 
