@@ -14,3 +14,4 @@ Tutorials
     ./Tutorials/Tutorial_ReadWriteFiles.rst
     ./Tutorials/Plasticity.rst
     ./Tutorials/FourthOrderTensors.rst
+    ./Tutorials/texture.rst
