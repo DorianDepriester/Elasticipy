@@ -944,11 +944,14 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         """
         if self.ndim:
             return self.mean(axis=axis)
-        elif orientations is not None:
-            C_rotated = self * orientations
-            return C_rotated.Voigt_average()
-        else:
+        elif orientations is None:
             return self.infinite_random_average()
+        else:
+            C_rotated = self * orientations
+            if C_rotated.ndim:
+                return C_rotated.Voigt_average()
+            else:
+                return C_rotated
 
     def Reuss_average(self, axis=None, orientations=None):
         """
