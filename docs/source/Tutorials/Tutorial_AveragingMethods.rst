@@ -59,6 +59,7 @@ As a comparison, let's see how the underlying assumption impair the Young moduli
     >>> print(E_Voigt.mean(), E_Reuss.mean(), E_Hill.mean())
     145.66862361382908 76.13802022165395 111.67690532486962
 
+.. _rotations:
 
 Finite number of orientations
 =============================
