@@ -2213,11 +2213,14 @@ class ComplianceTensor(StiffnessTensor):
     def Reuss_average(self, axis=None, orientations=None):
         if self.ndim:
             return self.mean(axis=axis)
-        elif orientations is not None:
-            S_rotated = self * orientations
-            return S_rotated.Reuss_average()
-        else:
+        elif orientations is None:
             return self.infinite_random_average()
+        else:
+            C_rotated = self * orientations
+            if C_rotated.ndim:
+                return C_rotated.Reuss_average()
+            else:
+                return C_rotated
 
     def Voigt_average(self, axis=None, orientations=None):
         return self.inv().Voigt_average(axis=axis, orientations=orientations).inv()
