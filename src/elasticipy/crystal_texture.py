@@ -116,6 +116,20 @@ class CrystalTexture(ABC):
         pass
 
     def random(self, num=50, seed=None):
+        """Generate a random sample from the texture component
+
+        Parameters
+        ----------
+        num : int, optional
+            Number of samples to generate. Default is 50.
+        seed : int, optional
+            Seed to use for generating random numbers. Default is None.
+
+        Returns
+        -------
+        orix.quaternion.Orientation
+            Random orientations from the given texture
+        """
         pass
 
 class UniformTexture(CrystalTexture):
