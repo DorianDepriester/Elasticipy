@@ -689,10 +689,12 @@ class CompositeTexture:
     def sample(self, num=50, seed=None):
         weights = np.array([w.weight for w in self.texture_list])
         weights = weights / weights.sum()
-        counts = np.random.multinomial(num, weights)
-        sample = Orientation(np.zeros((0,4)))
+        rng = np.random.default_rng(seed)
+        counts = rng.multinomial(num, weights)
+        quat = np.zeros((num,4))
+        start_index = 0
         for tex, ni in zip(self.texture_list, counts):
-            if ni > 0:
-                sub_sample = tex.random(ni, seed=seed)
-                sample = Orientation.stack((sample, sub_sample))
-        return sample
+            sub_sample = tex.random(ni, seed=seed)
+            quat[start_index:start_index+ni] = sub_sample.data
+            start_index += ni
+        return Orientation(quat)
