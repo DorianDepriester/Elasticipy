@@ -254,5 +254,21 @@ class TestCompositeTexture(unittest.TestCase):
         t = 0.3 * UniformTexture() + 0.5 * UniformTexture()
         np.testing.assert_array_almost_equal(C.Voigt_average().matrix(), (C * t).matrix())
 
+    def test_random_sampling(self):
+        w = [0.2, 0.3, 0.5]
+        cube = DiscreteTexture.cube()
+        goss = DiscreteTexture.Goss()
+        brass = DiscreteTexture.brass()
+        n = 100000
+        tm = w[0] *cube + w[1] * goss + w[2] * brass
+        sample = tm.sample(n, seed=123)
+        n_cube = np.count_nonzero(sample.angle==cube.orientation.angle)
+        assert approx(n_cube, rel=0.02) == w[0] * n
+        n_goss = np.count_nonzero(sample.angle == goss.orientation.angle)
+        assert approx(n_goss, rel=0.02) == w[1] * n
+        n_brass = np.count_nonzero(sample.angle == brass.orientation.angle)
+        assert approx(n_brass, rel=0.02) == w[2] * n
+
+
 if __name__ == '__main__':
     unittest.main()
