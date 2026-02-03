@@ -314,7 +314,7 @@ class TestStiffnessConstructor(unittest.TestCase):
                 if method == 'dummy':
                     with self.assertRaises(NotImplementedError) as context:
                         _ = C_rotated.average(method)
-                    self.assertEqual(str(context.exception), 'Only Voigt, Reus, and Hill are implemented.')
+                    self.assertEqual(str(context.exception), 'Only Voigt, Reuss, and Hill are implemented.')
                 else:
                     Gavg = C.average(method).shear_modulus.mean(n_evals=10000)
                     assert row['G' + method] == approx(Gavg, rel=rel)
