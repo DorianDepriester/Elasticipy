@@ -48,7 +48,7 @@ class TestUniformTexture(unittest.TestCase):
         assert 0.05 < ks1[1] < 0.95 # Use p-value
         assert 0.05 < ks2[1] < 0.95  # Use p-value
 
-class TestCrystalTexture(unittest.TestCase):
+class TestDiscreteTexture(unittest.TestCase):
     def test_cube(self):
         t = DiscreteTexture.cube()
         orientation_checker(t, [0,0,1], [1,0,0])
