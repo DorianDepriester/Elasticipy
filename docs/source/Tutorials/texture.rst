@@ -72,10 +72,20 @@ method by integration over the all possible rotations. E.g.:
 
     >>> Chill = C.Hill_average(orientations=fibre_phi2)
 
-One can check that this results in a transversely isotropic behaviour:
+One can check that this results in a transversely isotropic behaviour by plotting the values of the Young modulus in
+planar sections. The full code is:
 
-    >>> Chill.Young_modulus.eval([[1,0,0],[1,1,0],[0,1,0],[0,0,1]])
-    array([118.66103047, 118.66103047, 118.66103047,  96.38022391])
+.. plot::
+
+    >>> from elasticipy.tensors.elasticity import StiffnessTensor
+    >>> from elasticipy.crystal_texture import FibreTexture
+    >>>
+    >>> C = StiffnessTensor.cubic(C11=186, C12=134, C44=77)
+    >>> fibre_phi2 = FibreTexture.from_Euler(phi1=0., Phi=0.)
+    >>> Chill = C.Hill_average(orientations=fibre_phi2)
+    >>> E = Chill.Young_modulus
+    >>> fig, ax = E.plot_xyz_sections()
+    >>> fig.show()
 
 Composite textures
 ==================
