@@ -627,6 +627,7 @@ class SphericalFunction:
             r = self.eval_spherical(angles)
             ax.plot(theta_polar, r, **kwargs)
             axs_new.append(ax)
+        new_fig.tight_layout()
         return new_fig, axs_new
 
     def plot_as_pole_figure(self, n_theta=50, n_phi=200, projection='lambert',
@@ -981,6 +982,7 @@ class HyperSphericalFunction(SphericalFunction):
         handles.extend([line, area])
         labels.extend([line.get_label(), area.get_label()])
         new_fig.legend(handles, labels, loc='upper center', ncol=2, bbox_to_anchor=(0.5, 0.95))
+        new_fig.tight_layout()
         return new_fig, axs
 
     def plot_as_pole_figure(self, n_theta=50, n_phi=200, n_psi=50, which='mean', projection='lambert', fig=None,
