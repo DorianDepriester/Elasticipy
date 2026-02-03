@@ -1186,7 +1186,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
             fun = getattr(self, method + '_average')
             return fun(axis=axis, orientations=orientations)
         else:
-            raise NotImplementedError('Only Voigt, Reus, and Hill are implemented.')
+            raise NotImplementedError('Only Voigt, Reuss, and Hill are implemented.')
 
     @classmethod
     def isotropic(cls, E=None, nu=None, G=None, lame1=None, lame2=None, K=None, phase_name=None):
