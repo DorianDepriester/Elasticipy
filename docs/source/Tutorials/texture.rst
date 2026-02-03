@@ -86,8 +86,7 @@ planar sections. The full code is:
     >>> fibre_phi2 = FibreTexture.from_Euler(phi1=0., Phi=0.)
     >>> Chill = C.Hill_average(orientations=fibre_phi2)
     >>> E = Chill.Young_modulus
-    >>> fig, ax = E.plot_xyz_sections()
-    >>> fig.show()
+    >>> E.plot_xyz_sections()
 
 Composite textures
 ==================
