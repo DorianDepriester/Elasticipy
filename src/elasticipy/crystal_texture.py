@@ -9,6 +9,7 @@ from elasticipy.polefigure import add_polefigure
 from elasticipy.tensors.fourth_order import FourthOrderTensor
 from abc import ABC
 from scipy.spatial.transform.rotation import Rotation
+from scipy import __version__ as scipy_version
 
 ANGLE_35 = 35.26438968
 ANGLE_37 = 36.6992252
@@ -162,7 +163,10 @@ class UniformTexture(CrystalTexture):
         return fig, ax
 
     def random(self, num=50, seed=None):
-        rand = Rotation.random(num=num, rng=seed)
+        if scipy_version >= "1.15.0":
+            rand = Rotation.random(num=num, rng=seed)
+        else:
+            rand = Rotation.random(num=num, random_state=seed)
         return Orientation.from_scipy_rotation(rand)
 
 class DiscreteTexture(CrystalTexture):
