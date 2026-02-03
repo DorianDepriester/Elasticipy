@@ -1,3 +1,5 @@
+.. _textures:
+
 Working with crystallographic textures
 ---------------------------------------
 
