@@ -32,13 +32,23 @@ def orientation_checker(texture, hkl, uvw):
     assert np.any(np.isclose(cos_uvw, 1))
 
 
-class TestCrystalTexture(unittest.TestCase):
+class TestUniformTexture(unittest.TestCase):
     def test_uniform(self):
         t = UniformTexture()
         assert C * t == C.Voigt_average()
         S = C.inv()
         assert S * t == S.Reuss_average()
 
+    def test_uniform_random(self):
+        t = UniformTexture()
+        o = t.random(10000, seed=132)
+        v = Vector3d(~o * Vector3d([0,0,1]))
+        ks1 = kstest(v.data[:, 2], 'uniform', args=(-1, 2))
+        ks2 = kstest(v.azimuth, 'uniform', args=(0, 2*np.pi))
+        assert 0.05 < ks1[1] < 0.95 # Use p-value
+        assert 0.05 < ks2[1] < 0.95  # Use p-value
+
+class TestCrystalTexture(unittest.TestCase):
     def test_cube(self):
         t = DiscreteTexture.cube()
         orientation_checker(t, [0,0,1], [1,0,0])
@@ -226,15 +236,6 @@ class TestCrystalTextureMix(unittest.TestCase):
         o = t.random(10)
         for oi in o:
             assert oi == t.orientation
-
-    def test_uniform_random(self):
-        t = UniformTexture()
-        o = t.random(10000, seed=132)
-        v = Vector3d(~o * Vector3d([0,0,1]))
-        ks1 = kstest(v.data[:, 2], 'uniform', args=(-1, 2))
-        ks2 = kstest(v.azimuth, 'uniform', args=(0, 2*np.pi))
-        assert 0.05 < ks1[1] < 0.95 # Use p-value
-        assert 0.05 < ks2[1] < 0.95  # Use p-value
 
     def test_fibre_random(self):
         t = FibreTexture.from_Euler(Phi=0, phi2=0)
