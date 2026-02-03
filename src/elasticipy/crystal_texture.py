@@ -196,10 +196,7 @@ class DiscreteTexture(CrystalTexture):
         """
         super().__init__()
         self.orientation = orientation
-        if orientation is None:
-            self._details = 'Uniform over SO(3)'
-        else:
-            self._details = 'φ1={:.2f}°, ϕ={:.2f}°, φ2={:.2f}°'.format(*self.orientation.to_euler(degrees=True)[0])
+        self._details = 'φ1={:.2f}°, ϕ={:.2f}°, φ2={:.2f}°'.format(*orientation.to_euler(degrees=True)[0])
 
     def mean_tensor(self, tensor):
         return tensor * self.orientation
