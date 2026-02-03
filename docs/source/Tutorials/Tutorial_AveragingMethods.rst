@@ -67,6 +67,11 @@ If one wants to consider a finite set of orientations, or consider that these or
 over the SO3 (i.e. if we have a crystallographic texture), the first steps consists in estimating the mean of all the
 rotated stiffnesses/compliances (depending on the model).
 
+.. note::
+
+    Elasticipy now handles *textures* to compute the "exact" averages (i.e. based on sampling). See :ref:`textures`.
+
+
 As an example, we assume that the material displays a perfect fiber texture along **z**. In terms of Bunge-Euler angles,
 it means that we have Phi=0 for each orientation:
 
@@ -93,6 +98,11 @@ Let's see how the Young modulus is distributed over space:
     :width: 400
 
 It is thus clear that the fiber along the *z* axis results in a transverse-isotropic behavior in the X-Y plane.
+
+Actually, a quicker way to compute the average from a finite set of orientations is to pass them as the averaging
+function, e.g.:
+
+    >>> Chill = C.Hill_average(C, orientations=rotations)
 
 Plotting Voigt, Reuss and Hill averages at once
 ===============================================
