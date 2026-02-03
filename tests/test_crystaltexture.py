@@ -105,6 +105,12 @@ class TestCrystalTexture(unittest.TestCase):
         assert isinstance(tm2, DiscreteTexture)
         assert t.orientation == tm2.orientation
 
+    def test_discrete_random(self):
+        t = DiscreteTexture.Goss()
+        o = t.random(10)
+        for oi in o:
+            assert oi == t.orientation
+
 class TestFibreTexture(unittest.TestCase):
     def test_from_Euler(self):
         t = FibreTexture.from_Euler(phi1=0, Phi=10)
@@ -247,12 +253,6 @@ class TestCompositeTexture(unittest.TestCase):
     def test_uniform(self):
         t = 0.3 * UniformTexture() + 0.5 * UniformTexture()
         np.testing.assert_array_almost_equal(C.Voigt_average().matrix(), (C * t).matrix())
-
-    def test_discrete_random(self):
-        t = DiscreteTexture.Goss()
-        o = t.random(10)
-        for oi in o:
-            assert oi == t.orientation
 
 if __name__ == '__main__':
     unittest.main()
