@@ -116,22 +116,19 @@ sections (see :ref:`here<plotting>` for details) for each of the aforementioned 
     from scipy.spatial.transform import Rotation
     import numpy as np
     from elasticipy.tensors.elasticity import StiffnessTensor
+    from elasticipy.crystal_texture import FibreTexture
+
     C = StiffnessTensor.monoclinic(phase_name='TiNi',
                                     C11=231, C12=127, C13=104,
                                     C22=240, C23=131, C33=175,
                                     C44=81, C55=11, C66=85,
                                     C15=-18, C25=1, C35=-3, C46=3)
-    phi1 = np.random.random(10000)*2*np.pi # Random sampling from 0 to 2pi
-    Phi = phi2 = np.zeros(10000)
-    Euler_angles = np.array([phi1, Phi, phi2]).T
-    rotations = Rotation.from_euler('ZXZ', Euler_angles)    # Bunge-Euler angles
-    C_rotated = C * rotations
+    texture = FibreTexture.from_Euler(Phi=0, phi2=0)
     for method in ['Reuss', 'Hill', 'Voigt']:
-         C_avg = C_rotated.average(method)
+         C_avg = C.average(method, orientations = texture)
          if method == 'Reuss':
              fig, axs = C_avg.Young_modulus.plot_xyz_sections(label='Reuss') # Create fig and axes (sections)
          else:
              fig, axs = C_avg.Young_modulus.plot_xyz_sections(fig=fig, axs=axs, label=method) # Use existing axes
     axs[-1].legend()
-    fig.tight_layout()
     fig.show()
