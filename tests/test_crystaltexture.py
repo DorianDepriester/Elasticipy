@@ -151,8 +151,25 @@ class TestFibreTexture(unittest.TestCase):
         assert isinstance(tm2, FibreTexture)
         assert t.orientation == tm2.orientation
 
+    def test_fibre_random(self):
+        t = FibreTexture.from_Euler(Phi=0, phi2=0)
+        o = t.random(1000, seed=123)
+        v = Vector3d(~o * Vector3d([1,0,0]))
+        ks = kstest(v.azimuth, 'uniform', args=(0, 2*np.pi))
+        assert 0.05 < ks[1] < 0.95  # Use p-value
+        v = Vector3d(~o * Vector3d([0,0,1]))
+        np.testing.assert_array_almost_equal(v.data[:,0], np.zeros(1000))
+        np.testing.assert_array_almost_equal(v.data[:, 1], np.zeros(1000))
 
-class TestCrystalTextureMix(unittest.TestCase):
+        m = Miller(uvw=[1, 1, 1], phase=PHASE)
+        t = FibreTexture.from_Miller_axis(m, [0, 0, 1])
+        o = t.random(1000)
+        v = Vector3d(~o * m)
+        np.testing.assert_array_almost_equal(v.data[:,0], np.zeros(1000))
+        np.testing.assert_array_almost_equal(v.data[:, 1], np.zeros(1000))
+
+
+class TestCompositeTexture(unittest.TestCase):
     def test_add_Textures(self):
         tg = DiscreteTexture.Goss()
         tb = DiscreteTexture.brass()
@@ -236,23 +253,6 @@ class TestCrystalTextureMix(unittest.TestCase):
         o = t.random(10)
         for oi in o:
             assert oi == t.orientation
-
-    def test_fibre_random(self):
-        t = FibreTexture.from_Euler(Phi=0, phi2=0)
-        o = t.random(1000, seed=123)
-        v = Vector3d(~o * Vector3d([1,0,0]))
-        ks = kstest(v.azimuth, 'uniform', args=(0, 2*np.pi))
-        assert 0.05 < ks[1] < 0.95  # Use p-value
-        v = Vector3d(~o * Vector3d([0,0,1]))
-        np.testing.assert_array_almost_equal(v.data[:,0], np.zeros(1000))
-        np.testing.assert_array_almost_equal(v.data[:, 1], np.zeros(1000))
-
-        m = Miller(uvw=[1, 1, 1], phase=PHASE)
-        t = FibreTexture.from_Miller_axis(m, [0, 0, 1])
-        o = t.random(1000)
-        v = Vector3d(~o * m)
-        np.testing.assert_array_almost_equal(v.data[:,0], np.zeros(1000))
-        np.testing.assert_array_almost_equal(v.data[:, 1], np.zeros(1000))
 
 if __name__ == '__main__':
     unittest.main()
