@@ -1,15 +1,15 @@
 Working with crystallographic textures
 ---------------------------------------
 
-With the help of `orix <https://orix.readthedocs.io/en/stable/index.html>`_, Elasticipy allows to compute averages based on crystallographic texture (in addition to single
-orientations; see :ref:`rotations`).
+With the help of `orix <https://orix.readthedocs.io/en/stable/index.html>`_, Elasticipy allows to compute averages based
+on crystallographic texture (in addition to single orientations; see :ref:`rotations`).
 
 Define and compose textures
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Discrete textures
 =================
-A series of "classical" texture components (e.g. Goss, cube, Brass etc.) are already implemented in Elasticipy:
+A series of "usual" texture components (e.g. Goss, cube, Brass etc.) are already implemented in Elasticipy:
 
 .. doctest::
 
@@ -19,7 +19,7 @@ A series of "classical" texture components (e.g. Goss, cube, Brass etc.) are alr
     Crystallographic texture
     φ1=0.00°, ϕ=45.00°, φ2=0.00°
 
-This texture actually consists in a single orientation (as opposed to fibre textures, seed below). It can be used to
+This texture actually consists in a single orientation (as opposed to fibre textures, see below). It can be used to
 rotate a stiffness tensor as follows:
 
     >>> from elasticipy.tensors.elasticity import StiffnessTensor
@@ -60,7 +60,7 @@ system). For instance, let's consider the texture such that the <111> direction 
     <1. 1. 1.> || [0, 0, 1]
 
 The other way is to use two (out the the three) Bunge-Euler angles to define the possible orientations (assuming that
-orientations are uniformly distributed over the angle left). E.g.:
+orientations are uniformly distributed over the remaining angle). E.g.:
 
     >>> fibre_phi2 = FibreTexture.from_Euler(phi1=0., Phi=0.)
     >>> fibre_phi2
@@ -113,8 +113,9 @@ Again, the Hill average can be computed as follows:
 Random sampling
 ~~~~~~~~~~~~~~
 Sample of orientations can be drawn from all kind of textures. While a "random" sample from a single discrete texture
-does not make any sense, it can be of great interest for fibres or composite textures. For instance,
-a sample of 100 orientations can be drawn from the composite texture defined above as follows:
+does not make any sense, it can be of great interest for fibres or composite textures.
+
+For instance, a sample of 10 orientations can be drawn from the composite texture defined above as follows:
 
     >>> sample = t.sample(num=10, seed=123) # Seed here is used to ensure reproducibility
     >>> sample
@@ -130,7 +131,7 @@ a sample of 100 orientations can be drawn from the composite texture defined abo
      [ 0.3647 -0.2798 -0.1159 -0.8805]
      [ 0.3647 -0.2798 -0.1159 -0.8805]]
 
-One may note that here, the 4 last orientations are the same here. This is because it relates to the copper texture:
+One may note that here, the 4 last orientations are the same. This is because it relates to the copper texture:
 
     >>> DiscreteTexture.copper().orientation
     Orientation (1,) 1
