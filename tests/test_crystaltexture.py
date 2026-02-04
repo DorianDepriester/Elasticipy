@@ -41,7 +41,7 @@ class TestUniformTexture(unittest.TestCase):
 
     def test_uniform_random(self):
         t = UniformTexture()
-        o = t.random(10000, seed=132)
+        o = t.sample(10000, seed=132)
         v = Vector3d(~o * Vector3d([0,0,1]))
         ks1 = kstest(v.data[:, 2], 'uniform', args=(-1, 2))
         ks2 = kstest(v.azimuth, 'uniform', args=(0, 2*np.pi))
@@ -107,7 +107,7 @@ class TestDiscreteTexture(unittest.TestCase):
 
     def test_discrete_random(self):
         t = DiscreteTexture.Goss()
-        o = t.random(10)
+        o = t.sample(10)
         for oi in o:
             assert oi == t.orientation
 
@@ -159,7 +159,7 @@ class TestFibreTexture(unittest.TestCase):
 
     def test_fibre_random(self):
         t = FibreTexture.from_Euler(Phi=0, phi2=0)
-        o = t.random(1000, seed=123)
+        o = t.sample(1000, seed=123)
         v = Vector3d(~o * Vector3d([1,0,0]))
         ks = kstest(v.azimuth, 'uniform', args=(0, 2*np.pi))
         assert 0.05 < ks[1] < 0.95  # Use p-value
@@ -169,7 +169,7 @@ class TestFibreTexture(unittest.TestCase):
 
         m = Miller(uvw=[1, 1, 1], phase=PHASE)
         t = FibreTexture.from_Miller_axis(m, [0, 0, 1])
-        o = t.random(1000)
+        o = t.sample(1000)
         v = Vector3d(~o * m)
         np.testing.assert_array_almost_equal(v.data[:,0], np.zeros(1000))
         np.testing.assert_array_almost_equal(v.data[:, 1], np.zeros(1000))

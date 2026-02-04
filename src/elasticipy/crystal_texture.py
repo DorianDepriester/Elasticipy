@@ -116,13 +116,13 @@ class CrystalTexture(ABC):
         """
         pass
 
-    def random(self, num=50, seed=None):
+    def sample(self, num=50, seed=None):
         """Generate a random sample from the texture component
 
         Parameters
         ----------
         num : int, optional
-            Number of samples to generate. Default is 50.
+            Number of random orientations to generate. Default is 50.
         seed : int, optional
             Seed to use for generating random numbers. Default is None.
 
@@ -162,7 +162,7 @@ class UniformTexture(CrystalTexture):
         ax.set_ylim([0, np.pi / 2])
         return fig, ax
 
-    def random(self, num=50, seed=None):
+    def sample(self, num=50, seed=None):
         if scipy_version >= "1.15.0":
             rand = Rotation.random(num=num, rng=seed)
         else:
@@ -405,7 +405,7 @@ class DiscreteTexture(CrystalTexture):
     def plot_as_pole_figure(self, miller, projection='lambert', fig=None, ax=None, **kwargs):
         return _plot_as_pf(self.orientation, miller, fig, projection, ax=ax, plot_type='scatter', **kwargs)
 
-    def random(self, num=50, seed=None):
+    def sample(self, num=50, seed=None):
         return Orientation(np.repeat(self.orientation.data, num, axis=0))
 
 class FibreTexture(CrystalTexture):
@@ -558,7 +558,7 @@ class FibreTexture(CrystalTexture):
         orientations = self.orientation * Orientation.from_axes_angles(self.axis, theta)
         return _plot_as_pf(orientations, miller, fig, projection, ax=ax, **kwargs)
 
-    def random(self, num=50, seed=None):
+    def sample(self, num=50, seed=None):
         rng = np.random.default_rng(seed)
         theta = rng.uniform(0.0, 2.0 * np.pi, size=num)
         random_rot = Orientation.from_axes_angles(self.axis, theta)
@@ -695,7 +695,7 @@ class CompositeTexture:
         quat = np.zeros((num,4))
         start_index = 0
         for tex, ni in zip(self.texture_list, counts):
-            sub_sample = tex.random(ni, seed=seed)
+            sub_sample = tex.sample(ni, seed=seed)
             quat[start_index:start_index+ni] = sub_sample.data
             start_index += ni
         return Orientation(quat)
