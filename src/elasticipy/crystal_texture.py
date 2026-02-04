@@ -2,7 +2,8 @@ from copy import deepcopy
 
 from matplotlib import pyplot as plt
 from orix.quaternion import Orientation
-from orix.vector import Vector3d
+from orix.vector import Vector3d, Miller
+from orix.crystal_map import Phase
 from scipy.integrate import quad_vec
 import numpy as np
 from elasticipy.polefigure import add_polefigure
@@ -130,6 +131,15 @@ class CrystalTexture(ABC):
         -------
         orix.quaternion.Orientation
             Random orientations from the given texture
+
+        Examples
+        --------
+        Generate 50 orientations from uniform distribution:
+
+        >>> from elasticipy.crystal_texture import UniformTexture
+        >>> o = UniformTexture().sample()
+
+        Generate 10 orientations from gamma-fibre
         """
         pass
 
@@ -563,6 +573,45 @@ class FibreTexture(CrystalTexture):
         theta = rng.uniform(0.0, 2.0 * np.pi, size=num)
         random_rot = Orientation.from_axes_angles(self.axis, theta)
         return self.orientation * random_rot
+
+    @classmethod
+    def gamma(cls):
+        """
+        Create a gamma fibre-texture: <111> || ND
+
+        Returns
+        -------
+        FibreTexture
+        """
+        phase = Phase(point_group='m3m')
+        m = Miller(uvw=[1,1,1], phase=phase)
+        return FibreTexture.from_Miller_axis(m, [0,0,1])
+
+    @classmethod
+    def alpha(cls):
+        """
+        Create a alpha fibre-texture: <110> || RD
+
+        Returns
+        -------
+        FibreTexture
+        """
+        phase = Phase(point_group='m3m')
+        m = Miller(uvw=[1,1,0], phase=phase)
+        return FibreTexture.from_Miller_axis(m, [1,0,0])
+
+    @classmethod
+    def epsilon(cls):
+        """
+        Create an epsilon fibre-texture: <110> || TD
+
+        Returns
+        -------
+        FibreTexture
+        """
+        phase = Phase(point_group='m3m')
+        m = Miller(uvw=[1,1,0], phase=phase)
+        return FibreTexture.from_Miller_axis(m, [0,1,0])
 
 class CompositeTexture:
     def __init__(self, texture_list):
