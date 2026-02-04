@@ -174,6 +174,26 @@ class TestFibreTexture(unittest.TestCase):
         np.testing.assert_array_almost_equal(v.data[:,0], np.zeros(1000))
         np.testing.assert_array_almost_equal(v.data[:, 1], np.zeros(1000))
 
+    def test_alpha(self):
+        alpha = FibreTexture.alpha()
+        o = alpha.sample()
+        phi1, Phi, phi2 = o.in_euler_fundamental_region().T
+        assert np.allclose(np.mod(phi1, np.pi), 0.)
+        assert np.allclose(np.mod(phi2, np.pi/2), np.pi/4)
+
+    def test_gamma(self):
+        gamma = FibreTexture.gamma()
+        o = gamma.sample()
+        phi1, Phi, phi2 = o.in_euler_fundamental_region().T
+        assert np.allclose(np.mod(Phi, np.pi/2), np.radians(54.73561032))
+        assert np.allclose(np.mod(phi2, np.pi/2), np.pi/4)
+
+    def test_epsilon(self):
+        epsilon = FibreTexture.epsilon()
+        o = epsilon.sample()
+        phi1, Phi, phi2 = o.in_euler_fundamental_region().T
+        assert np.allclose(np.mod(phi1, np.pi), np.pi/2)
+        assert np.allclose(np.mod(phi2, np.pi/2), np.pi/4)
 
 class TestCompositeTexture(unittest.TestCase):
     def test_add_Textures(self):
