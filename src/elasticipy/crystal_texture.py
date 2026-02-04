@@ -582,6 +582,11 @@ class FibreTexture(CrystalTexture):
         Returns
         -------
         FibreTexture
+
+        See Also
+        --------
+        alpha : create an alpha fibre texture
+        epsilon : create an epsilon fibre texture
         """
         phase = Phase(point_group='m3m')
         m = Miller(uvw=[1,1,1], phase=phase)
@@ -590,11 +595,16 @@ class FibreTexture(CrystalTexture):
     @classmethod
     def alpha(cls):
         """
-        Create a alpha fibre-texture: <110> || RD
+        Create an alpha fibre-texture: <110> || RD
 
         Returns
         -------
         FibreTexture
+
+        See Also
+        --------
+        gamma : create an gamma fibre texture
+        epsilon : create an epsilon fibre texture
         """
         phase = Phase(point_group='m3m')
         m = Miller(uvw=[1,1,0], phase=phase)
@@ -608,6 +618,11 @@ class FibreTexture(CrystalTexture):
         Returns
         -------
         FibreTexture
+
+        See Also
+        --------
+        gamma : create an gamma fibre texture
+        alpha : create an alpha fibre texture
         """
         phase = Phase(point_group='m3m')
         m = Miller(uvw=[1,1,0], phase=phase)
