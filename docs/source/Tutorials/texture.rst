@@ -44,7 +44,7 @@ rotate a stiffness tensor as follows:
 Fibre textures
 ==============
 Fibre textures are defined as uniformly distributed orientations around a given axis, leading to a single line when
-plotting an Orientation Distribution Function (ODF), hence the name. Therefore, there are two ways to define such
+plotting an Orientation Distribution Function (ODF), hence the name. Therefore, there are three ways to define such
 textures.
 
 The first one consists in defining the *uvw* direction to align with a given axis (related to the sample coordinate
@@ -61,7 +61,14 @@ system). For instance, let's consider the texture such that the <111> direction 
     Fibre texture
     <1. 1. 1.> || [0, 0, 1]
 
-The other way is to use two (out the the three) Bunge-Euler angles to define the possible orientations (assuming that
+Actually, this texture is usually referred to as the γ fibre; therefore, a quicker way to define it is to use:
+
+    >>> gamma = FibreTexture.gamma()
+
+This kind of shortcut also exists for alpha and epsilon textures
+(see `here <http://pajarito.materials.cmu.edu/lectures/L23-Metal_Textures-Torsion_BCC-part2.pdf>`_) for details).
+
+The third way is to use two (out of the three) Bunge-Euler angles to define the fix angles (assuming that the
 orientations are uniformly distributed over the remaining angle). E.g.:
 
     >>> fibre_phi2 = FibreTexture.from_Euler(phi1=0., Phi=0.)
@@ -165,7 +172,7 @@ following pole figure:
     >>> fig, ax = Goss.plot_as_pole_figure(m.symmetrise(unique=True))
     >>> fig.show()
 
-Fibre texture can be drawn in a simular way. E.g.:
+Fibre textures can be drawn in a simular way. E.g.:
 
 .. plot::
 
@@ -173,8 +180,8 @@ Fibre texture can be drawn in a simular way. E.g.:
     >>> from orix.crystal_map import Phase
     >>> from orix.vector.miller import Miller
     >>>
-    >>> phase = Phase(point_group='m-3m')   # Cubic symmetry
-    >>> m = Miller(uvw=[1,1,1], phase=phase)
-    >>> fibre_111 = FibreTexture.from_Miller_axis(m, [1,0,0])
-    >>> fig, ax = fibre_111.plot_as_pole_figure(m.symmetrise(unique=True))
+    >>> gamma = FibreTexture.gamma()
+    >>> point_group = 'm3m' # BCC symmetry
+    >>> m = Miller(uvw=[1,0,0], phase=Phase(point_group=point_group))
+    >>> fig, ax = gamma.plot_as_pole_figure(m.symmetrise(unique=True))
     >>> fig.show()
