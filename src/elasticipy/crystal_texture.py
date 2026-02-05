@@ -156,6 +156,9 @@ class CrystalTexture(ABC):
         >>> o = UniformTexture().sample()
 
         Generate 10 orientations from gamma-fibre
+
+        >>> from elasticipy.crystal_texture import FibreTexture
+        >>> o = FibreTexture.gamma().sample(num=10)
         """
         pass
 
