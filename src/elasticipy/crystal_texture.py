@@ -114,6 +114,22 @@ class CrystalTexture(ABC):
             Handle to figure
         matplotlib.projections.polar.PolarAxes
             Axes where the pole figure is plotted
+
+        Examples
+        --------
+        Plot the [111] pole figure of Goss texture:
+
+        .. plot::
+
+            from elasticipy.crystal_texture import DiscreteTexture
+            from orix.vector import Miller
+            from orix.crystal_map import Phase
+
+            goss = DiscreteTexture.Goss()
+            phase = Phase(point_group='m-3m')
+            miller = Miller([1,0,0], phase=phase)
+            fig, ax = goss.plot_as_pole_figure(miller.symmetrise(unique=True))
+            fig.show()
         """
         pass
 
