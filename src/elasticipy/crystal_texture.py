@@ -117,7 +117,7 @@ class CrystalTexture(ABC):
 
         Examples
         --------
-        Plot the [111] pole figure of Goss texture:
+        Plot the [100] pole figure of Goss texture:
 
         .. plot::
 
@@ -126,10 +126,22 @@ class CrystalTexture(ABC):
             from orix.crystal_map import Phase
 
             goss = DiscreteTexture.Goss()
-            phase = Phase(point_group='m-3m')
+            phase = Phase(point_group='m3m') # BCC symmetry
             miller = Miller([1,0,0], phase=phase)
-            fig, ax = goss.plot_as_pole_figure(miller.symmetrise(unique=True))
-            fig.show()
+            goss.plot_as_pole_figure(miller.symmetrise(unique=True))
+
+        Plot the [110] pole figure of the gamma fibre texture:
+
+        .. plot::
+
+            from elasticipy.crystal_texture import FibreTexture
+            from orix.vector import Miller
+            from orix.crystal_map import Phase
+
+            gamma = FibreTexture.gamma()
+            phase = Phase(point_group='m3m') # BCC symmetry
+            miller = Miller([1,1,0], phase=phase)
+            gamma.plot_as_pole_figure(miller.symmetrise(unique=True))
         """
         pass
 
