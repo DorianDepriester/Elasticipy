@@ -40,7 +40,7 @@ shear and bulk moduli
     Hyperspherical function
     Min=83999.99999999991, Max=84000.00000000007
 
-    >>> C.bulk_modulus
+    >>> print(C.bulk_modulus)
     140000.0
 
 .. note::
@@ -51,7 +51,7 @@ shear and bulk moduli
 One can check that both approaches yield the same tensor:
 
     >>> C2 = StiffnessTensor.isotropic(G=84e3, K=140e3)
-    >>> C2 == C
+    >>> print(C2 == C)
     True
 
 
@@ -84,7 +84,7 @@ let's see its value along the x, y and z directions:
     >>> Ey = E.eval([0,1,0])
     >>> Ez = E.eval([0,0,1])
     >>> print((Ex, Ey, Ez))
-    (124.52232440357189, 120.92120854784433, 96.13750721721384)
+    (np.float64(124.52232440357189), np.float64(120.92120854784433), np.float64(96.13750721721384))
 
 .. note::
 
@@ -113,7 +113,7 @@ deviation of the Young modulus:
 
 Another way to evidence anisotropy is to use the universal anisotropy factor [Ranganathan]_:
 
-    >>> C.universal_anisotropy
+    >>> print(C.universal_anisotropy)
     5.141009551641412
 
 Shear moduli and Poisson ratios

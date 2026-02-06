@@ -63,7 +63,7 @@ class IsotropicHardening:
          criterion: von Mises
          current strain: 0.0
 
-        >>> JC.flow_stress(0.0) # Check that the yield stress = A
+        >>> print(JC.flow_stress(0.0)) # Check that the yield stress = A
         792.0
 
         In order to get the full tensile curve in 0 to 10% strain range:

@@ -247,7 +247,7 @@ class SphericalFunction:
 
         The Young modulus along x direction is:
 
-        >>> E.eval([1,0,0])
+        >>> print(E.eval([1,0,0]))
         74.4390243902439
 
         The Young moduli along a set a directions can be evaluated at once. E.g. along x, y and z:
@@ -305,7 +305,7 @@ class SphericalFunction:
         In spherical coordinates, the x direction is defined by theta=90° and phi=0. Therefore, the Young modulus along
         x direction is:
 
-        >>> E.eval_spherical([0, 90], degrees=True)
+        >>> print(E.eval_spherical([0, 90], degrees=True))
         74.4390243902439
         """
         angles = np.atleast_2d(args)

@@ -572,12 +572,12 @@ class SecondOrderTensor:
 
         We can for instance check that:
 
-        >>> AB_pair[5] == A[5].dot(B[5])
+        >>> print(AB_pair[5] == A[5].dot(B[5]))
         True
 
         and:
 
-        >>> AB_cross[0,1] == A[0].dot(B[1])
+        >>> print(AB_cross[0,1] == A[0].dot(B[1]))
         True
 
         See Also
@@ -1559,9 +1559,9 @@ class SecondOrderTensor:
         >>> c.shape
         (2, 3)
         >>> np.all(c[0] == a)
-        True
+        np.True_
         >>> np.all(c[1] == b)
-        True
+        np.True_
 
         >>> a = SecondOrderTensor.rand(shape=(3, 4))
         >>> b = SecondOrderTensor.rand(shape=(3, 4))
@@ -1569,9 +1569,9 @@ class SecondOrderTensor:
         >>> c.shape
         (3, 2, 4)
         >>> np.all(c[:,0,:] == a)
-        True
+        np.True_
         >>> np.all(c[:,1,:] == b)
-        True
+        np.True_
         """
         mat_array = [a.matrix for a in arrays]
         if axis<0:
@@ -1617,7 +1617,7 @@ class SymmetricSecondOrderTensor(SecondOrderTensor):
 
         and check that a==b:
 
-        >>> a==b
+        >>> print(a==b)
         True
         """
         if isinstance(mat, SecondOrderTensor):
@@ -1834,7 +1834,7 @@ class SkewSymmetricSecondOrderTensor(SecondOrderTensor):
 
         and check that a==b:
 
-        >>> a==b
+        >>> print(a==b)
         True
 
         """

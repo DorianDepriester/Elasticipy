@@ -189,7 +189,7 @@ representation. Indeed, one can check that their components as full representati
 
 Actually, a more direct way to check this equality is:
 
-    >>> I_kelvin == I_voigt
+    >>> print(I_kelvin == I_voigt)
     True
 
 As said above, the two tensors above can `mixed`, although they are not represented the same way. E.g.:

@@ -143,12 +143,12 @@ class FourthOrderTensor:
 
         For instance:
 
-        >>> T_array[0,0,0,0]
+        >>> print(T_array[0,0,0,0])
         100.0
 
         whereas
 
-        >>> T_array[0,1,0,1] # Corresponds to T_{66}/2
+        >>> print(T_array[0,1,0,1]) # Corresponds to T_{66}/2
         75.0
 
         The half factor comes from the Kelvin mapping convention (see Notes). One can also use the Voigt mapping to
@@ -168,17 +168,17 @@ class FourthOrderTensor:
         Although T and T_voigt appear to be the same, note that they are not expressed using the same mapping
         convention. Indeed:
 
-        >>> T_voigt.full_tensor[0,0,0,0]
+        >>> print(T_voigt.full_tensor[0,0,0,0])
         100.0
 
         whereas
 
-        >>> T_voigt.full_tensor[0,1,0,1]
+        >>> print(T_voigt.full_tensor[0,1,0,1])
         150.0
 
         Alternatively, the differences can be checked with:
 
-        >>> T == T_voigt
+        >>> print(T == T_voigt)
         False
 
         Conversely, let consider the following Voigt matrix:
@@ -201,12 +201,12 @@ class FourthOrderTensor:
 
         Although T and T_voigt2 are not written using the same mapping, we can compare them:
 
-        >>> T == T_voigt2 # Same tensors, but different mapping
+        >>> print(T == T_voigt2) # Same tensors, but different mapping
         True
 
         whereas
 
-        >>> T == T_voigt  # Different tensors, but same mapping
+        >>> print(T == T_voigt)  # Different tensors, but same mapping
         False
 
         This property comes from the fact that the comparison is made independently of the underlying mapping convention.
@@ -813,7 +813,7 @@ class FourthOrderTensor:
 
         Still, we have:
 
-        >>> I == Iv
+        >>> print(I == Iv)
         True
 
         as they correspond to the same tensor, but expressed as a matrix with different mapping conventions. Indeed,
@@ -857,7 +857,7 @@ class FourthOrderTensor:
         mapping convention. Indeed, one can check that the full tensor is actually full of ones. E.g.:
 
         >>> tensor_of_ones.full_tensor[0,1,0,2]
-        1.0
+        np.float64(1.0)
 
         Alternatively, the Voigt mapping convention may help figuring it out:
 
@@ -874,7 +874,7 @@ class FourthOrderTensor:
 
         although both tensors are actually the same:
 
-        >>> tensor_of_ones == tensor_of_ones_voigt
+        >>> print(tensor_of_ones == tensor_of_ones_voigt)
         True
         """
         return cls._broadcast_matrix(kelvin_mapping.matrix, shape=shape, **kwargs)

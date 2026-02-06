@@ -1737,7 +1737,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         --------
         >>> from elasticipy.tensors.elasticity import StiffnessTensor
         >>> C = StiffnessTensor.cubic(C11=200, C12=40, C44=20)
-        >>> C.Zener_ratio()
+        >>> print(C.Zener_ratio())
         0.25
 
         which obvisouly corresponds to 2.C44/(C11-C12).
@@ -2084,7 +2084,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
         Once rotated, it is not clear if the stiffness tensors has cubic symmetry on sight. Yet:
 
-        >>> C_rotated.is_cubic()
+        >>> print(C_rotated.is_cubic())
         True
 
         """

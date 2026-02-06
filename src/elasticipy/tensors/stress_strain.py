@@ -56,7 +56,7 @@ class StrainTensor(SymmetricSecondOrderTensor):
 
         >>> from elasticipy.tensors.stress_strain import StrainTensor
         >>> eps = StrainTensor.shear([1,0,0],[0,1,0],1e-3)
-        >>> eps.volumetric_strain()
+        >>> print(eps.volumetric_strain())
         0.0
 
         Now try with hydrastatic straining:
@@ -68,7 +68,7 @@ class StrainTensor(SymmetricSecondOrderTensor):
         [[-0.001 -0.    -0.   ]
          [-0.    -0.001 -0.   ]
          [-0.    -0.    -0.001]]
-        >>> eps_hydro.volumetric_strain()
+        >>> print(eps_hydro.volumetric_strain())
         -0.003
         """
         return self.I1
@@ -92,9 +92,11 @@ class StrainTensor(SymmetricSecondOrderTensor):
         Examples
         --------
         >>> from elasticipy.tensors.stress_strain import StrainTensor
-        >>> StrainTensor.tensile([1,0,0], 1e-3).eq_strain()
+        >>> eps_eq = StrainTensor.tensile([1,0,0], 1e-3).eq_strain()
+        >>> print(eps_eq)
         0.000816496580927726
-        >>> StrainTensor.shear([1,0,0],[0,1,0], 1e-3).eq_strain()
+        >>> eps_eq = StrainTensor.shear([1,0,0],[0,1,0], 1e-3).eq_strain()
+        >>> print(eps_eq)
         0.0011547005383792514
         """
         return np.sqrt(2/3 * self.ddot(self))
@@ -134,7 +136,8 @@ class StrainTensor(SymmetricSecondOrderTensor):
 
         Then, the volumetric elastic energy is:
 
-        >>> eps.elastic_energy(sigma)
+        >>> e = eps.elastic_energy(sigma)
+        >>> print(e)
         0.13423295454545456
         """
         return 0.5 * self.ddot(stress, mode=mode)
@@ -191,13 +194,13 @@ class StressTensor(SymmetricSecondOrderTensor):
 
         >>> from elasticipy.tensors.stress_strain import StressTensor
         >>> sigma = StressTensor.tensile([1,0,0],1)
-        >>> sigma.vonMises()
+        >>> print(sigma.vonMises())
         1.0
 
         For (single-valued) shear stress:
 
         >>> sigma = StressTensor.shear([1,0,0],[0,1,0],1)
-        >>> sigma.vonMises()
+        >>> print(sigma.vonMises())
         1.7320508075688772
 
         For arrays of stresses :
@@ -230,13 +233,13 @@ class StressTensor(SymmetricSecondOrderTensor):
 
         >>> from elasticipy.tensors.stress_strain import StressTensor
         >>> sigma = StressTensor.tensile([1,0,0],1)
-        >>> sigma.Tresca()
+        >>> print(sigma.Tresca())
         1.0
 
         For (single-valued) shear stress:
 
         >>> sigma = StressTensor.shear([1,0,0],[0,1,0],1)
-        >>> sigma.Tresca()
+        >>> print(sigma.Tresca())
         2.0
 
         For arrays of stresses :
@@ -347,7 +350,7 @@ class StressTensor(SymmetricSecondOrderTensor):
 
         >>> from elasticipy.tensors.stress_strain import StressTensor
         >>> s1 = StressTensor.tensile([1,0,0],1.)
-        >>> s1.triaxiality()
+        >>> print(s1.triaxiality())
         0.3333333333333333
 
         For a stress array (e.g. for biaxial tensile stress):
