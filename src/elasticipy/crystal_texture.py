@@ -774,7 +774,45 @@ class CompositeTexture:
             t[i] = ti.mean_tensor(tensor)
         return t.tensor_average(weights=wgt)
 
-    def plot_as_pole_figure(self, miller, fig=None, projection='lambert'):
+    def plot_as_pole_figure(self, miller, fig=None, ax=None, projection='lambert'):
+        """
+        Plot the pole figure of the composite texture, given a set of Miller indices
+
+        Parameters
+        ----------
+        miller : orix.vector.miller.Miller
+            Miller indices of directions/planes to plot
+        projection : str, optional
+            Type of projection to use, it can be either stereographic or Lambert
+        fig : matplotlib.figure.Figure, optional
+            Handle to existing figure, if needed
+        ax : matplotlib.projections.polar.PolarAxes, optional
+            Axes to plot on
+        kwargs
+            Keyword arguments to pass to matplotlib's scatter/plot functions
+
+        Returns
+        -------
+        matplotlib.figure.Figure
+            Handle to figure
+        matplotlib.projections.polar.PolarAxes
+            Axes where the pole figure is plotted
+
+        Examples
+        --------
+        Create a mixture of uniform of gamma and alpha fibre texture, and plot the corresponding [1,0,0] pole figure:
+
+        .. plot::
+
+            from elasticipy.crystal_texture import FibreTexture
+            from orix.vector import Miller
+            from orix.crystal_map import Phase
+
+            texture = FibreTexture.alpha() + FibreTexture.gamma()
+            phase = Phase(point_group='m3m')
+            miller = Miller([1,1,0], phase=phase)
+            texture.plot_as_pole_figure(miller)
+        """
         if fig is None:
             fig = plt.figure(tight_layout=True)
         ax = add_polefigure(fig, projection=projection)
