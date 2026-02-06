@@ -725,6 +725,34 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         -------
         HyperSphericalFunction
             Shear modulus
+
+        Examples
+        --------
+        Let's compute the shear modulus of an isotropic material, defined by its Young modulus and Poisson ratio:
+
+        >>> from elasticipy.tensors.elasticity import StiffnessTensor
+        >>> C = StiffnessTensor.isotropic(E=210, nu=0.27)
+        >>> C.shear_modulus
+        Hyperspherical function
+        Min=82.67716535433061, Max=82.67716535433077
+
+        For a cubic material (e.g. copper):
+
+        >>> C = StiffnessTensor.cubic(C11=186, C12=134, C44=77)
+        >>> G = C.shear_modulus
+        >>> G
+        Hyperspherical function
+        Min=26.000000000000007, Max=77.00000000000001
+
+        In details, the Poisson ratio between [1,0,0] and [0,1,0] directions is:
+
+        >>> print(G.eval([1,0,0],[0,1,0]))
+        77.0
+
+        whereas:
+
+        >>> print(G.eval([1,1,0],[-1,1,0]))
+        26.000000000000007
         """
         if isinstance(self, ComplianceTensor):
             S = self
