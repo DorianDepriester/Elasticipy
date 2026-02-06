@@ -821,6 +821,50 @@ class CompositeTexture:
         return fig, ax
 
     def sample(self, num=50, seed=None):
+        """
+        Generate a random sample of orientations from the composite texture.
+
+        Parameters
+        ----------
+        num : int, optional
+            Number of orientations to generate
+        seed : int, optional
+            Seed for random number generator
+
+        Returns
+        -------
+        orix.quaternion.Orientation
+            Random orientations from the given texture
+
+        Examples
+        --------
+        Create a balanced mixture of Goss and Brass texture:
+
+        >>> from elasticipy.crystal_texture import DiscreteTexture
+        >>> goss = DiscreteTexture.Goss()
+        >>> brass = DiscreteTexture.brass()
+        >>> texture = goss + brass
+        >>> print(texture)
+        Mixture of crystallographic textures
+         Wgt.  Type      Component
+         ------------------------------------------------------------
+         1.00  discrete  φ1=0.00°, ϕ=45.00°, φ2=0.00°
+         1.00  discrete  φ1=35.26°, ϕ=45.00°, φ2=0.00°
+
+        Now generate a set of 1000 orientations from this texture:
+
+        >>> o = texture.sample(num=1000, seed=123) # Use seed to ensure reproducibility
+
+        One can check that around 50% of these orientations correspond to that of Goss:
+
+        >>> np.count_nonzero((o * ~goss.orientation).angle == 0.)
+        530
+
+        whereas all the other orientations correspond to brass:
+
+        >>> np.count_nonzero((o * ~brass.orientation).angle == 0.)
+        470
+        """
         weights = np.array([w.weight for w in self.texture_list])
         weights = weights / weights.sum()
         rng = np.random.default_rng(seed)
