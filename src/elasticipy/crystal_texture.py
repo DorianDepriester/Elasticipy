@@ -734,10 +734,10 @@ class CompositeTexture:
         >>> t = DiscreteTexture.Goss() + FibreTexture.from_Euler(phi1=0.0, phi2=0.0)
         >>> t
         Mixture of crystallographic textures
-         Wgt.  Type            Component
-         -----------------------------------------
-         1.00  single-orient.  φ1=0.00°, ϕ=45.00°, φ2=0.00°
-         1.00  fibre           φ1= 0.0°, φ2= 0.0°
+         Wgt.  Type      Component
+         ------------------------------------------------------------
+         1.00  discrete  φ1=0.00°, ϕ=45.00°, φ2=0.00°
+         1.00  fibre     φ1= 0.0°, φ2= 0.0°
 
         Then, assume that the stiffness tensor is defined as follows:
 

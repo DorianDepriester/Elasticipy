@@ -141,7 +141,7 @@ that the maximum shear stress is around 0.849. Those can be checked by:
 
     >>> s.principal_stresses()
     array([ 1.51167769,  0.3519979 , -0.18566326])
-    >>> s.Tresca() / 2
+    >>> print(s.Tresca() / 2)
     0.848670477704235
 
 
