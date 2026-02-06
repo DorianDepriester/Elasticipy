@@ -299,14 +299,9 @@ class DiscreteTexture(CrystalTexture):
 
         See Also
         --------
-        A : Create a A single-orientation crystallographic texture
         copper : Create a Copper single-orientation crystallographic texture
         cube : Create a Cube single-orientation crystallographic texture
-        CuT : Create a CuT single-orientation crystallographic texture
-        Goss : Create a Goss single-orientation crystallographic texture
         GossBrass : Create a Goss-Brass single-orientation crystallographic texture
-        P : Create a P single-orientation crystallographic texture
-        S : Create an S single-orientation crystallographic texture
         """
         o = Orientation.from_euler([ANGLE_35, 45, 0], degrees=True)
         return DiscreteTexture(o)
@@ -322,13 +317,9 @@ class DiscreteTexture(CrystalTexture):
 
         See Also
         --------
-        A : Create an A single-orientation crystallographic texture
+        brass : Create a Brass single-orientation crystallographic texture
         copper : Create a Copper single-orientation crystallographic texture
-        cube : Create a Cube single-orientation crystallographic texture
-        CuT : Create a CuT single-orientation crystallographic texture
         Goss : Create a Goss single-orientation crystallographic texture
-        P : Create a P single-orientation crystallographic texture
-        S : Create an S single-orientation crystallographic texture
         """
         o = Orientation.from_euler([ANGLE_74, 90, 45], degrees=True)
         return DiscreteTexture(o)
@@ -344,13 +335,9 @@ class DiscreteTexture(CrystalTexture):
 
         See Also
         --------
-        A : Create an A single-orientation crystallographic texture
-        cube : Create a Cube single-orientation crystallographic texture
-        CuT : Create a CuT single-orientation crystallographic texture
+        brass : Create a Brass single-orientation crystallographic texture
         Goss : Create a Goss single-orientation crystallographic texture
         GossBrass : Create a Goss-Brass single-orientation crystallographic texture
-        P : Create a P single-orientation crystallographic texture
-        S : Create an S single-orientation crystallographic texture
         """
         o = Orientation.from_euler([90, ANGLE_35, 45], degrees=True)
         return DiscreteTexture(o)
@@ -366,11 +353,7 @@ class DiscreteTexture(CrystalTexture):
 
         See Also
         --------
-        copper : Create a Copper single-orientation crystallographic texture
         cube : Create a Cube single-orientation crystallographic texture
-        CuT : Create a CuT single-orientation crystallographic texture
-        Goss : Create a Goss single-orientation crystallographic texture
-        GossBrass : Create a Goss-Brass single-orientation crystallographic texture
         P : Create a P single-orientation crystallographic texture
         S : Create an S single-orientation crystallographic texture
         """
@@ -389,11 +372,7 @@ class DiscreteTexture(CrystalTexture):
         See Also
         --------
         A : Create an A single-orientation crystallographic texture
-        copper : Create a Copper single-orientation crystallographic texture
         cube : Create a Cube single-orientation crystallographic texture
-        CuT : Create a CuT single-orientation crystallographic texture
-        Goss : Create a Goss single-orientation crystallographic texture
-        GossBrass : Create a Goss-Brass single-orientation crystallographic texture
         S : Create an S single-orientation crystallographic texture
         """
         o = Orientation.from_euler([ANGLE_54, 90, 45], degrees=True)
@@ -411,10 +390,6 @@ class DiscreteTexture(CrystalTexture):
         See Also
         --------
         A : Create an A single-orientation crystallographic texture
-        copper : Create a Copper single-orientation crystallographic texture
-        cube : Create a Cube single-orientation crystallographic texture
-        Goss : Create a Goss single-orientation crystallographic texture
-        GossBrass : Create a Goss-Brass single-orientation crystallographic texture
         P : Create a P single-orientation crystallographic texture
         S : Create an S single-orientation crystallographic texture
         """
@@ -433,11 +408,7 @@ class DiscreteTexture(CrystalTexture):
         See Also
         --------
         A : Create an A single-orientation crystallographic texture
-        copper : Create a Copper single-orientation crystallographic texture
-        cube : Create a Cube single-orientation crystallographic texture
         CuT : Create a CuT single-orientation crystallographic texture
-        Goss : Create a Goss single-orientation crystallographic texture
-        GossBrass : Create a Goss-Brass single-orientation crystallographic texture
         P : Create a P single-orientation crystallographic texture
         """
         o = Orientation.from_euler([ANGLE_59, ANGLE_37, ANGLE_63], degrees=True)
