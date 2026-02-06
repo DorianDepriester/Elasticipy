@@ -299,20 +299,13 @@ class StressTensor(SymmetricSecondOrderTensor):
 
         Examples
         --------
-        In order to illustrate this function, we consider a triaxial tensile stress:
+        Consider the biaxial stress-state:
 
-        >>> from elasticipy.tensors.stress_strain import StressTensor
-        >>> sigma = StressTensor.tensile([1,0,0],1) + StressTensor.tensile([0,1,0],3)
+        .. plot::
 
-        The princiapl stresses are obviously 0, 1 and 2:
-
-        >>> sigma.principal_stresses()
-        array([3., 1., 0.])
-
-        These principal stresses can be directly plotted with:
-
-        >>> fig, ax = sigma.draw_Mohr_circles()
-        >>> fig.show()
+            from elasticipy.tensors.stress_strain import StressTensor
+            sigma = StressTensor.tensile([1,0,0],1) + StressTensor.tensile([0,1,0],3)
+            sigma.draw_Mohr_circles()
         """
         fig, ax = super().draw_Mohr_circles()
         ax.set_xlabel(ax.get_xlabel() + ' stress')
