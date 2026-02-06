@@ -756,6 +756,34 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
             \\nu_{ij}=-\\frac{\\partial \\varepsilon_{jj}}{\\partial \\varepsilon_{ii}}
 
         where :math:`\\varepsilon_{jj}` denotes the (compressive) longitudinal strain along the j-th direction.
+
+        Examples
+        --------
+        Let's compute the Poisson ratio of an isotropic material, defined by its Young and shear moduli:
+
+        >>> from elasticipy.tensors.elasticity import StiffnessTensor
+        >>> C = StiffnessTensor.isotropic(E=210, G=83)
+        >>> C.Poisson_ratio
+        Hyperspherical function
+        Min=0.2650602409638549, Max=0.2650602409638558
+
+        For a cubic material (e.g. copper):
+
+        >>> C = StiffnessTensor.cubic(C11=186, C12=134, C44=77)
+        >>> nu = C.Poisson_ratio
+        >>> nu
+        Hyperspherical function
+        Min=-0.09637908596800088, Max=0.789864502792421
+
+        In details, the Poisson ratio between [1,0,0] and [0,1,0] directions is:
+
+        >>> print(nu.eval([1,0,0],[0,1,0]))
+        0.41875000000000007
+
+        whereas:
+
+        >>> print(nu.eval([1,1,0],[-1,1,0]))
+        -0.09637908596800099
         """
         if isinstance(self, ComplianceTensor):
             Sfull = self.full_tensor
