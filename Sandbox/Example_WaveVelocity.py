@@ -1,3 +1,12 @@
+"""
+===========================================================
+Plot directional dependence of elastic moduli
+===========================================================
+
+This example shows different ways to plot the directional dependence of elastic moduli,
+such as Young's modulus, Poisson's ratio, and shear modulus.
+"""
+
 from elasticipy.tensors.elasticity import StiffnessTensor
 from matplotlib import pyplot as plt
 
