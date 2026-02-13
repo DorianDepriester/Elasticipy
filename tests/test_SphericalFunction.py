@@ -34,11 +34,9 @@ def template_test_repr(result, class_name, expected_min, expected_max):
 
 class TestSphericalFunction(unittest.TestCase):
     def test_plot3D(self):
-        fig = plt.figure()
-        _, ax = E.plot3D(fig=fig)
-        np.testing.assert_allclose(ax.xaxis.v_interval, [-174.66981, 175.43156])
-        np.testing.assert_allclose(ax.yaxis.v_interval, [-175.05069, 175.05069])
-        np.testing.assert_allclose(ax.zaxis.v_interval, [-131.28802, 131.28802])
+        fig = E.plot3D()
+        assert fig.data[0].cmin == approx(E.min()[0], rel=1e-3)
+        assert fig.data[0].cmax == approx(E.max()[0], rel=1e-3)
 
     def test_plot_xyz_section(self):
         fig = plt.figure()
@@ -113,11 +111,11 @@ class TestSphericalFunction(unittest.TestCase):
 
 class TestHyperSphericalFunction(unittest.TestCase):
     def test_plot3D(self):
-        fig = plt.figure()
-        _, ax = G.plot3D(fig=fig)
-        np.testing.assert_allclose(ax.xaxis.v_interval, [-86.363067,  87.737754])
-        np.testing.assert_allclose(ax.yaxis.v_interval, [-87.435894,  87.435894])
-        np.testing.assert_allclose(ax.zaxis.v_interval, [-80.208333,  80.208333])
+        fig = G.plot3D(which='max')
+        assert fig.data[0].cmax == approx(G.max()[0], rel=2e-3)
+        fig = G.plot3D(which='min')
+        assert fig.data[0].cmin == approx(G.min()[0], rel=2e-3)
+
 
     def test_plot_xyz_section(self):
         fig = plt.figure()
