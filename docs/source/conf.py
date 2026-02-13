@@ -34,7 +34,9 @@ extensions = [
    'sphinx.ext.mathjax',
    'sphinx.ext.linkcode',
    'sphinx_copybutton',
-   'matplotlib.sphinxext.plot_directive']
+   'matplotlib.sphinxext.plot_directive',
+   'sphinx_gallery.gen_gallery',
+]
 
 templates_path = ['_templates']
 exclude_patterns = []
@@ -55,6 +57,21 @@ html_logo = "logo/logo_text_whitebg.png"
 html_favicon = 'logo/favicon.png'
 numpydoc_class_members_toctree = False
 autoclass_content = 'both'
+
+sphinx_gallery_conf = {
+    'examples_dirs': ['examples'],  # Dossier source des exemples
+    'gallery_dirs': ['auto_examples'],  # Dossier de sortie
+    'filename_pattern': r'\.py',  # Inclut tous les fichiers .py
+    'ignore_pattern': r'_template\.py',  # Exclut les fichiers template
+    'plot_gallery': True,  # Affiche les figures
+    'reference_url': {
+        'elasticipy': None,  # Désactive les liens vers la doc API si non configuré
+    },
+    'capture_repr': ('_repr_html_', '__repr__'),  # Capture les sorties textuelles
+    'show_memory': False,  # Désactive l'affichage de la mémoire (optionnel)
+}
+
+
 
 def linkcode_resolve(domain, info):
     if domain != 'py':

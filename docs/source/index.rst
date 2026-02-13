@@ -179,6 +179,7 @@ Take a 5-minute tour through Elasticipy's main features by running the online Ju
    :caption: Table of Contents
 
    install.rst
+   Example Gallery <auto_examples/index>
    Tutorials.rst
    API/API.rst
    citation.rst
