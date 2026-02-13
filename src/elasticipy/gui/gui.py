@@ -310,7 +310,7 @@ class ElasticityGUI(QMainWindow):
                 value = stiff.Poisson_ratio
             plot_kwargs = {'which': WHICH_OPTIONS[self.which_selector.currentText()]}
         if self.plot_style_selector.currentIndex() == 0:
-            value.plot3D(fig=self.figure, **plot_kwargs)
+            value.plot3D(fig=self.figure, backend='matplotlib', **plot_kwargs)
         elif self.plot_style_selector.currentIndex() == 1:
             value.plot_xyz_sections(fig=self.figure)
         else:

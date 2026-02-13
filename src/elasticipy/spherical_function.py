@@ -1,11 +1,11 @@
 import numpy as np
-from matplotlib import pyplot as plt, cm
-import plotly.graph_objects as go
-from plotly.colors import n_colors
+from matplotlib import pyplot as plt
 from numpy import cos, sin
 from scipy import integrate as integrate
 from scipy import optimize
 from elasticipy.polefigure import add_polefigure
+from elasticipy._plotting_tools import _plot3D_matplotlib, _plot3D_plotly
+
 
 
 def sph2cart(*args):
@@ -42,36 +42,6 @@ def sph2cart(*args):
         e_theta = np.array([cos(theta_vec) * cos(phi_vec), cos(theta_vec) * sin(phi_vec), -sin(theta_vec)])
         v = cos(psi_vec) * e_phi + sin(psi_vec) * e_theta
         return u, v.T
-
-
-def _plot3D(u, r, **kwargs):
-    fig = go.Figure()
-    xyz = (u.T * r.T).T
-    fig.add_trace(go.Surface(
-        x=xyz[:, :, 0],
-        y=xyz[:, :, 1],
-        z=xyz[:, :, 2],
-        surfacecolor=r,
-        colorscale='Viridis',
-        cmin=r.min(),
-        cmax=r.max(),
-        **kwargs
-    ))
-    fig.update_layout(
-        scene=dict(
-            xaxis_title='X',
-            yaxis_title='Y',
-            zaxis_title='Z',
-        ),
-        coloraxis=dict(
-            colorscale='Viridis',
-            cmin=r.min(),
-            cmax=r.max(),
-            colorbar=dict(title='Valeurs')
-        ),
-    )
-    return fig
-
 
 def _create_xyz_section(ax, section_name, polar_angle):
     ax.title.set_text('{}-{} plane'.format(*section_name))
@@ -560,7 +530,7 @@ class SphericalFunction:
         else:
             return u.reshape((n_phi, n_theta, 3)), evals_grid
 
-    def plot3D(self, n_phi=50, n_theta=50, fig=None, **kwargs):
+    def plot3D(self, n_phi=50, n_theta=50, backend='plotly', fig=None, **kwargs):
         """
         3D plotting of a spherical function
 
@@ -570,9 +540,8 @@ class SphericalFunction:
             Number of azimuth angles (phi) to use for plotting. Default is 50.
         n_theta : int, default 50
             Number of latitude angles (theta) to use for plotting. Default is 50.
-        fig : matplotlib.figure.Figure, default None
-            handle to existing figure object. If None, a new figure will be created. If passed, the figure is not shown,
-            (one should use plt.show() afterward).
+        backend : {'plotly', 'matplotlib'}
+            Backend to use for plotting. Plotly allows interactive plotting.
         **kwargs
             These parameters will be passed to matplotlib plot_surface() function.
 
@@ -586,7 +555,10 @@ class SphericalFunction:
         plot_xyz_sections : plot values of the function in X-Y, X-Z an Y-Z planes.
         """
         u, evals = self.evaluate_on_spherical_grid((n_phi, n_theta), return_in_spherical=False, use_symmetry=False)
-        fig = _plot3D(u, evals, **kwargs)
+        if backend == 'plotly':
+            fig = _plot3D_plotly(u, evals, fig=fig, **kwargs)
+        else:
+            fig = _plot3D_matplotlib(u, evals, fig=fig, **kwargs)
         return fig
 
     def plot_xyz_sections(self, n_theta=500, fig=None, axs=None, **kwargs):
@@ -882,7 +854,7 @@ class HyperSphericalFunction(SphericalFunction):
             v_r = v.reshape((n_phi, n_theta, n_psi, 3))
             return (u_r, v_r), evals_grid
 
-    def plot3D(self, n_phi=50, n_theta=50, n_psi=50, which='mean', fig=None, **kwargs):
+    def plot3D(self, n_phi=50, n_theta=50, n_psi=50, which='mean', backend='plotly', fig=None, **kwargs):
         """
         Generate a 3D plot representing the evaluation of spherical harmonics.
 
@@ -902,8 +874,8 @@ class HyperSphericalFunction(SphericalFunction):
         which : str, optional
             Determines which statistical measure to plot ('mean', 'std', 'min', 'max'),
             default is 'mean'.
-        fig : matplotlib.figure.Figure, optional
-            Handle to existing figure object. Default is None. If provided, it disables showing the figure.
+        backend : {'plotly', 'matplotlib'}, optional
+            Set the backend to use for plotting. plotly allows interactive plotting.
         kwargs : dict, optional
             Additional keyword arguments to customize the plot.
 
@@ -922,7 +894,10 @@ class HyperSphericalFunction(SphericalFunction):
             r_grid = np.max(values, axis=2)
         else:
             r_grid = np.mean(values, axis=2)
-        fig = _plot3D(u[:, :, 0, :], r_grid, **kwargs)
+        if backend == 'plotly':
+            fig = _plot3D_plotly(u[:, :, 0, :], r_grid, fig=fig, **kwargs)
+        else:
+            fig = _plot3D_matplotlib(u[:, :, 0, :], r_grid, fig=fig, **kwargs)
         return fig
 
     def plot_xyz_sections(self, n_theta=500, n_psi=100, color_minmax='blue', alpha_minmax=0.2, color_mean='red',
