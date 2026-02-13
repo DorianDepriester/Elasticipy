@@ -92,10 +92,9 @@ sphinx_gallery_conf = {
     },
     'capture_repr': ('_repr_html_', '__repr__'),  # Capture les sorties textuelles
     'show_memory': False,  # Désactive l'affichage de la mémoire (optionnel)
-    'image_scrapers': ('plotly.io._sg_scraper.plotly_sg_scraper',),
 }
 import plotly.io as pio
-pio.renderers.default = 'sphinx_gallery_png'
+pio.renderers.default = 'sphinx_gallery'
 
 
 def linkcode_resolve(domain, info):
