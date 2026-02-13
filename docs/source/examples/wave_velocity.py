@@ -20,12 +20,12 @@ print(C)
 
 ###############################################################################
 # Compute the velocities of primary and secondary waves
-# --------------------
+# ----------------------------------------------------------
 cp, cs_fast, cs_slow = C.wave_velocity(rho)
 
 ###############################################################################
 # Plot them as three independent pole figures:
-# --------------------
+# ---------------------------------------------
 import matplotlib.pyplot as plt
 fig = plt.figure(figsize=(20, 5))
 cp.plot_as_pole_figure(subplot_args=(131,), title='p wave', fig=fig)

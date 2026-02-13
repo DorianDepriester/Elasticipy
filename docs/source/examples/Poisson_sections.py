@@ -23,14 +23,14 @@ print("Stiffness tensor for NiTi:\n", C)
 
 ###############################################################################
 # Get the Poisson ratio from the stiffness tensor
-# --------------------
+# -----------------------------------------------------
 nu = C.Poisson_ratio
 print("Poisson ratio:")
 print(nu)
 
 ###############################################################################
 # Plot it as polar curves in planar sections
-# --------------------
+# ------------------------------------------------
 fig, ax = nu.plot_xyz_sections()
 
 

@@ -23,14 +23,14 @@ print("Stiffness tensor for NiTi:\n", C)
 
 ###############################################################################
 # Get the shear modulus from the stiffness tensor
-# --------------------
+# ------------------------------------------------------
 G = C.shear_modulus
 print("Shear modulus:")
 print(G)
 
 ###############################################################################
 # Plot it as a pole figure in Lamber (equal area) projection
-# --------------------
+# ---------------------------------------------------------------
 fig, ax = G.plot_as_pole_figure()
 
 
