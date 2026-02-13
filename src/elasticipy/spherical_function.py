@@ -1,6 +1,7 @@
 import numpy as np
 from matplotlib import pyplot as plt, cm
-from matplotlib.colors import Normalize
+import plotly.graph_objects as go
+from plotly.colors import n_colors
 from numpy import cos, sin
 from scipy import integrate as integrate
 from scipy import optimize
@@ -43,20 +44,33 @@ def sph2cart(*args):
         return u, v.T
 
 
-def _plot3D(fig, u, r, **kwargs):
-    norm = Normalize(vmin=r.min(), vmax=r.max())
-    colors = cm.viridis(norm(r))
-    ax = fig.add_subplot(1, 1, 1, projection='3d')
+def _plot3D(u, r, **kwargs):
+    fig = go.Figure()
     xyz = (u.T * r.T).T
-    ax.plot_surface(xyz[:, :, 0], xyz[:, :, 1], xyz[:, :, 2], facecolors=colors, rstride=1, cstride=1,
-                    antialiased=False, **kwargs)
-    mappable = cm.ScalarMappable(cmap='viridis', norm=norm)
-    mappable.set_array([])
-    fig.colorbar(mappable, ax=ax)
-    ax.set_xlabel('X')
-    ax.set_ylabel('Y')
-    ax.set_zlabel('Z')
-    return ax
+    fig.add_trace(go.Surface(
+        x=xyz[:, :, 0],
+        y=xyz[:, :, 1],
+        z=xyz[:, :, 2],
+        surfacecolor=r,
+        colorscale='Viridis',
+        cmin=r.min(),
+        cmax=r.max(),
+        **kwargs
+    ))
+    fig.update_layout(
+        scene=dict(
+            xaxis_title='X',
+            yaxis_title='Y',
+            zaxis_title='Z',
+        ),
+        coloraxis=dict(
+            colorscale='Viridis',
+            cmin=r.min(),
+            cmax=r.max(),
+            colorbar=dict(title='Valeurs')
+        ),
+    )
+    return fig
 
 
 def _create_xyz_section(ax, section_name, polar_angle):
@@ -573,14 +587,9 @@ class SphericalFunction:
         --------
         plot_xyz_sections : plot values of the function in X-Y, X-Z an Y-Z planes.
         """
-        if fig is None:
-            new_fig = plt.figure()
-        else:
-            new_fig = fig
         u, evals = self.evaluate_on_spherical_grid((n_phi, n_theta), return_in_spherical=False, use_symmetry=False)
-        ax = _plot3D(new_fig, u, evals, **kwargs)
-        ax.axis('equal')
-        return new_fig, ax
+        fig = _plot3D(u, evals, **kwargs)
+        return fig
 
     def plot_xyz_sections(self, n_theta=500, fig=None, axs=None, **kwargs):
         """
@@ -905,10 +914,6 @@ class HyperSphericalFunction(SphericalFunction):
         tuple
             A tuple containing the matplotlib figure and axes objects.
         """
-        if fig is None:
-            new_fig = plt.figure()
-        else:
-            new_fig = fig
         uv, values = self.evaluate_on_spherical_grid((n_phi, n_theta, n_psi), return_in_spherical=False, use_symmetry=False)
         u, _ = uv
         if which == 'std':
@@ -919,8 +924,8 @@ class HyperSphericalFunction(SphericalFunction):
             r_grid = np.max(values, axis=2)
         else:
             r_grid = np.mean(values, axis=2)
-        ax = _plot3D(new_fig, u[:, :, 0, :], r_grid, **kwargs)
-        return new_fig, ax
+        fig = _plot3D(u[:, :, 0, :], r_grid, **kwargs)
+        return fig
 
     def plot_xyz_sections(self, n_theta=500, n_psi=100, color_minmax='blue', alpha_minmax=0.2, color_mean='red',
                           fig=None):
