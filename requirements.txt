@@ -1,6 +1,7 @@
 numpy
 scipy
 matplotlib
+plotly
 setuptools
 pandas
 qtpy
@@ -8,11 +9,3 @@ PyQt5
 orix
 pytest
 pymatgen
-requests
-seaborn
-scikit-learn
-emmet-core
-ase
-matscipy
-paraqus
-sympy
