@@ -2,6 +2,29 @@
 #
 import os
 import sys
+
+from docutils import nodes
+from docutils.parsers.rst import Directive
+import plotly.io as pio
+
+class PlotlyDirective(Directive):
+    has_content = True
+
+    def run(self):
+        code = "\n".join(self.content)
+        namespace = {}
+        exec(code, namespace)
+
+        fig = namespace.get("fig")
+        if fig is None:
+            raise RuntimeError("Le bloc .. plotly:: doit définir une variable `fig`.")
+
+        html = pio.to_html(fig, include_plotlyjs="cdn", full_html=False)
+        return [nodes.raw('', html, format='html')]
+
+def setup(app):
+    app.add_directive("plotly", PlotlyDirective)
+
 src_path = os.path.abspath('../../src/')
 sys.path.insert(0, src_path)
 print(f"Chemin ajouté au PYTHONPATH : {sys.path}")
