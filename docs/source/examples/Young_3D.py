@@ -19,7 +19,7 @@ C = StiffnessTensor.monoclinic(
     C44=81, C55=11, C66=85,
     C15=-18, C25=1, C35=-3, C46=3
 )
-print("Stiffness tensor for NiTi:\n", C)
+print(C)
 
 ###############################################################################
 # Get the Young modulus from the stiffness tensor
