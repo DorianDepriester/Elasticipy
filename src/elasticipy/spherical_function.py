@@ -578,10 +578,8 @@ class SphericalFunction:
 
         Returns
         -------
-        matplotlib.figure.Figure
-            Handle to the figure
-        matplotlib.Axes3D
-            Handle to axes
+        plotly.graph_objs._figure.Figure
+            Handle to plotly figure object.
 
         See Also
         --------
@@ -911,8 +909,8 @@ class HyperSphericalFunction(SphericalFunction):
 
         Returns
         -------
-        tuple
-            A tuple containing the matplotlib figure and axes objects.
+        plotly.graph_objs._figure.Figure
+            Handle to plotly figure object.
         """
         uv, values = self.evaluate_on_spherical_grid((n_phi, n_theta, n_psi), return_in_spherical=False, use_symmetry=False)
         u, _ = uv
