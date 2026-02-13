@@ -27,7 +27,8 @@ dependencies = [
     "qtpy",
     "pyqt5",
     "pandas",
-    "orix"
+    "orix",
+    "plotly"
 ]
 requires-python = ">=3.9"
 
