@@ -1,6 +1,6 @@
 """
 ===========================================================
-Plot the Young modulus as a 3D surface
+Plot Young modulus as 3D surface
 ===========================================================
 
 This example shows how to plot the directional dependence of the Young modulus as a 3D surface.
