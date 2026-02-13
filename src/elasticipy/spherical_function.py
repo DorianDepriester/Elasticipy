@@ -542,6 +542,8 @@ class SphericalFunction:
             Number of latitude angles (theta) to use for plotting. Default is 50.
         backend : {'plotly', 'matplotlib'}
             Backend to use for plotting. Plotly allows interactive plotting.
+        fig : matplotlib.pyplot.figure, optional
+            If provided, specify the Figure to use. Default is None.
         **kwargs
             These parameters will be passed to matplotlib plot_surface() function.
 
@@ -854,7 +856,7 @@ class HyperSphericalFunction(SphericalFunction):
             v_r = v.reshape((n_phi, n_theta, n_psi, 3))
             return (u_r, v_r), evals_grid
 
-    def plot3D(self, n_phi=50, n_theta=50, n_psi=50, which='mean', backend='plotly', fig=None, **kwargs):
+    def plot3D(self, n_phi=50, n_theta=50, n_psi=50, which='mean', fig=None, backend='plotly', **kwargs):
         """
         Generate a 3D plot representing the evaluation of spherical harmonics.
 
@@ -874,6 +876,8 @@ class HyperSphericalFunction(SphericalFunction):
         which : str, optional
             Determines which statistical measure to plot ('mean', 'std', 'min', 'max'),
             default is 'mean'.
+        fig : matplotlib.pyplot.figure, optional
+            If provided, specify the Figure to use. Default is None.
         backend : {'plotly', 'matplotlib'}, optional
             Set the backend to use for plotting. plotly allows interactive plotting.
         kwargs : dict, optional
