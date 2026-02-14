@@ -10,7 +10,7 @@ This example shows how to plot the directional dependence of the Young modulus a
 # -------------------------------------
 #
 # We define the stiffness tensor for a monoclinic NiTi material using its elastic constants. They are taken from the
-# `Materials Project (mp-1048) <https://github.com/DorianDepriester/Elasticipy>`_.
+# `Materials Project (mp-1048) <https://next-gen.materialsproject.org/materials/mp-1048>`_.
 from elasticipy.tensors.elasticity import StiffnessTensor
 C = StiffnessTensor.monoclinic(
     phase_name='TiNi',
