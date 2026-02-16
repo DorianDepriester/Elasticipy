@@ -29,8 +29,9 @@ print("Shear modulus:")
 print(G)
 
 ###############################################################################
-# Plot it as a pole figure in Lamber (equal area) projection
+# Plot it as a pole figure
 # ---------------------------------------------------------------
+# The default projection is Lambert.
 fig, ax = G.plot_as_pole_figure()
 
 
