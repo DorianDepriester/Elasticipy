@@ -69,7 +69,7 @@ rotated stiffnesses/compliances (depending on the model).
 
 .. note::
 
-    Elasticipy now handles *textures* to compute the "exact" averages (i.e. based on sampling). See :ref:`textures`.
+    Elasticipy now handles *textures* to compute the "exact" averages (i.e. not based on sampling). See :ref:`textures`.
 
 
 As an example, we assume that the material displays a perfect fiber texture along **z**. In terms of Bunge-Euler angles,
