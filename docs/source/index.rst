@@ -162,6 +162,7 @@ Features of Elasticipy include:
 - Visualization and tutorials for ease of use,
 - A graphical user interface to plot the spatial dependence of engineering constants,
 - Compatibility with the `Materials Project <https://next-gen.materialsproject.org/>`_, `pymatgen <https://pymatgen.org/>`_ and `orix <https://orix.readthedocs.io/>`_.
+- Crystallographic texture -based calculations
 
 Elasticipy streamlines the exploration of linear elasticity, making it accessible for applications in materials science,
 geophysics, and mechanical engineering.
