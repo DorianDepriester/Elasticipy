@@ -172,6 +172,10 @@ Try it online!
 Take a 5-minute tour through Elasticipy's main features by running the online Jupyter Notebook, hosted on binder:
 |binder|.
 
+Example gallery
+---------------
+Check out the :ref:`example gallery <example_gallery>` to get a quick overview of the plotting features.
+
 ----
 
 .. toctree::
