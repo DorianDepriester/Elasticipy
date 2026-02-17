@@ -1,6 +1,6 @@
 """
 ===========================================================
-Apply a rotation to a stiffness tensor
+Apply a rotation to stiffness tensors
 ===========================================================
 
 This example shows how to apply a rotation to a stiffness tensor.
