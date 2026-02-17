@@ -797,7 +797,10 @@ class CompositeTexture:
             t[i] = ti.mean_tensor(tensor)
         return t.tensor_average(weights=wgt)
 
-    def plot_as_pole_figure(self, miller, fig=None, symmetrise=False, projection='lambert', **kwargs):
+    def plot_as_pole_figure(self,
+                            uvw=None, hkl=None, UVTW=None, hkil=None,
+                            fig=None, symmetrise=False, projection='lambert',
+                            labels=None, **kwargs):
         """
         Plot the pole figure of the composite texture, given a set of Miller indices
 
@@ -811,6 +814,9 @@ class CompositeTexture:
             Handle to existing figure, if needed
         symmetrise : bool
             Whether the symmetrise the miller indices
+        labels : list of str or tuple of str, optional
+            List of labels to use in the legend for each texture component. If not provided, they are automatically
+            inferred from each texture component.
         kwargs
             Keyword arguments to pass to matplotlib's scatter/plot functions
 
@@ -837,8 +843,14 @@ class CompositeTexture:
         if fig is None:
             fig = plt.figure(tight_layout=True)
         ax = add_polefigure(fig, projection=projection)
-        for t in self.texture_list:
-            t.plot_as_pole_figure(miller, fig=fig, projection=projection, ax=ax, symmetrise=symmetrise, **kwargs)
+        for i, t in enumerate(self.texture_list):
+            if labels is None:
+                label = t._details
+            else:
+                label = labels[i]
+            t.plot_as_pole_figure(uvw=uvw, hkl=hkl, UVTW=UVTW, hkil=hkil,
+                                  fig=fig, projection=projection, ax=ax, symmetrise=symmetrise,
+                                  label=label, **kwargs)
         return fig, ax
 
     def sample(self, num=50, seed=None):
