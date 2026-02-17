@@ -164,13 +164,9 @@ following pole figure:
 .. plot::
 
     >>> from elasticipy.crystal_texture import DiscreteTexture
-    >>> from orix.crystal_map import Phase
-    >>> from orix.vector.miller import Miller
-    >>>
-    >>> phase = Phase(point_group='m-3m')   # Cubic symmetry
-    >>> m = Miller(uvw=[1,0,0], phase=phase)
+
     >>> Goss = DiscreteTexture.Goss()
-    >>> fig, ax = Goss.plot_as_pole_figure(m.symmetrise(unique=True))
+    >>> fig, ax = Goss.plot_as_pole_figure(uvw=[1,0,0], symmetrise=True)
     >>> fig.show()
 
 Fibre textures can be drawn in a simular way. E.g.:
@@ -178,11 +174,7 @@ Fibre textures can be drawn in a simular way. E.g.:
 .. plot::
 
     >>> from elasticipy.crystal_texture import FibreTexture
-    >>> from orix.crystal_map import Phase
-    >>> from orix.vector.miller import Miller
     >>>
     >>> gamma = FibreTexture.gamma()
-    >>> point_group = 'm3m' # BCC symmetry
-    >>> m = Miller(uvw=[1,0,0], phase=Phase(point_group=point_group))
-    >>> fig, ax = gamma.plot_as_pole_figure(m.symmetrise(unique=True))
+    >>> fig, ax = gamma.plot_as_pole_figure(uvw=[1,0,0], symmetrise=True)
     >>> fig.show()
