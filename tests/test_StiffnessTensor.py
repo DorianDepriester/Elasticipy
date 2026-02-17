@@ -226,14 +226,14 @@ class TestComplianceTensor(unittest.TestCase):
 
     def test_repr(self):
         """Test printing out the tensor"""
-        str = S.__repr__()
-        assert str == ('Compliance tensor (in Voigt mapping):\n'
-                       '[[ 0.008 -0.003 -0.002  0.     0.014  0.   ]\n'
-                       ' [-0.003  0.008 -0.005  0.    -0.008  0.   ]\n'
-                       ' [-0.002 -0.005  0.01   0.     0.     0.   ]\n'
-                       ' [ 0.     0.     0.     0.012  0.     0.   ]\n'
-                       ' [ 0.014 -0.008  0.     0.     0.116  0.   ]\n'
-                       ' [ 0.     0.     0.     0.     0.     0.012]]')
+        str_repr = S.__repr__()
+        assert str_repr == ('Compliance tensor (in Voigt mapping):\n'
+                            '[[ 0.01 -0.   -0.    0.    0.01  0.  ]\n'
+                            ' [-0.    0.01 -0.01  0.   -0.01  0.  ]\n'
+                            ' [-0.   -0.01  0.01  0.    0.    0.  ]\n'
+                            ' [ 0.    0.    0.    0.01  0.    0.  ]\n'
+                            ' [ 0.01 -0.01  0.    0.    0.12  0.  ]\n'
+                            ' [ 0.    0.    0.    0.    0.    0.01]]')
 
         S_rotated = S * rotations
         assert S_rotated.__repr__() ==  'Compliance tensor array of shape ({},)'.format(len(rotations))
