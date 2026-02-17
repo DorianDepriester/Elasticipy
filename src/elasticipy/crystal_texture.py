@@ -45,9 +45,11 @@ def _plot_as_pf(orientations, miller, fig, projection, plot_type='plot', ax=None
 class CrystalTexture(ABC):
     _title = 'Abstract class for crystallographic texture'
 
-    def __init__(self):
+    def __init__(self, phase=None):
         self.weight = 1.
         self._details = None
+        self.phase = phase
+        self.orientation = None
 
     def mean_tensor(self, tensor):
         """
@@ -91,14 +93,22 @@ class CrystalTexture(ABC):
         else:
             return self._title + '\n' + self._details
 
-    def plot_as_pole_figure(self, miller, projection='lambert', fig=None, ax=None, **kwargs):
+    def plot_as_pole_figure(self, uvw=None, hkl=None, UVTW=None, hkil=None, symmetrise=False, projection='lambert', fig=None, ax=None, **kwargs):
         """
         Plot the pole figure of the crystallographic texture
 
         Parameters
         ----------
-        miller : orix.vector.miller.Miller
-            Miller indices of directions/planes to plot
+        uvw : list
+            Miller indices of directions to plot
+        hkl : list
+            Miller indices of plane normal to plot
+        UVTW : list
+            Miller-Bravais indices of directions to plot
+        hkil : list
+            Miller-Bravais indices of plane normal to plot
+        symmetrise : bool, optional
+            Symmetrise the direction/plane to plot the family
         projection : str, optional
             Type of projection to use, it can be either stereographic or Lambert
         fig : matplotlib.figure.Figure, optional
@@ -117,31 +127,23 @@ class CrystalTexture(ABC):
 
         Examples
         --------
-        Plot the [100] pole figure of Goss texture:
+        Plot the <100> pole figure of Goss texture:
 
         .. plot::
 
             from elasticipy.crystal_texture import DiscreteTexture
-            from orix.vector import Miller
-            from orix.crystal_map import Phase
 
             goss = DiscreteTexture.Goss()
-            phase = Phase(point_group='m3m') # BCC symmetry
-            miller = Miller([1,0,0], phase=phase)
-            goss.plot_as_pole_figure(miller.symmetrise(unique=True))
+            goss.plot_as_pole_figure(uvw=[1,0,0], symmetrise=True)
 
-        Plot the [110] pole figure of the gamma fibre texture:
+        Plot the <110> pole figure of the gamma fibre texture:
 
         .. plot::
 
             from elasticipy.crystal_texture import FibreTexture
-            from orix.vector import Miller
-            from orix.crystal_map import Phase
 
             gamma = FibreTexture.gamma()
-            phase = Phase(point_group='m3m') # BCC symmetry
-            miller = Miller([1,1,0], phase=phase)
-            gamma.plot_as_pole_figure(miller.symmetrise(unique=True))
+            gamma.plot_as_pole_figure(uvw=[1,1,0], symmetrise=True)
         """
         pass
 
@@ -226,7 +228,7 @@ class DiscreteTexture(CrystalTexture):
     """
     _title = "Crystallographic texture"
 
-    def __init__(self, orientation):
+    def __init__(self, orientation, phase=None):
         """
         Create a single-orientation crystallographic texture.
 
@@ -234,8 +236,10 @@ class DiscreteTexture(CrystalTexture):
         ----------
         orientation : orix.quaternion.orientation.Orientation
             Orientation of the crystals
+        phase : orix.crystal_map.phase_list.Phase
+            Phase of the crystal
         """
-        super().__init__()
+        super().__init__(phase=phase)
         self.orientation = orientation
         self._details = 'φ1={:.2f}°, ϕ={:.2f}°, φ2={:.2f}°'.format(*orientation.to_euler(degrees=True)[0])
 
@@ -243,9 +247,14 @@ class DiscreteTexture(CrystalTexture):
         return tensor * self.orientation
 
     @classmethod
-    def cube(cls):
+    def cube(cls, phase=Phase(point_group='m-3m')):
         """
         Create a Cube crystallographic texture: {100}<100>
+
+        Parameters
+        ----------
+        phase : Phase, optional
+            Structure of the crystal. By default, cubic (point group: m-3m) is used.
 
         Returns
         -------
@@ -263,12 +272,17 @@ class DiscreteTexture(CrystalTexture):
         S : Create an S single-orientation crystallographic texture
         """
         o = Orientation.from_euler([0, 0, 0], degrees=True)
-        return DiscreteTexture(o)
+        return DiscreteTexture(o, phase=phase)
 
     @classmethod
-    def Goss(cls):
+    def Goss(cls, phase=Phase(point_group='m-3m')):
         """
         Create a Goss crystallographic texture: {110}<100>
+
+        Parameters
+        ----------
+        phase : Phase, optional
+            Structure of the crystal. By default, cubic (point group: m-3m) is used.
 
         Returns
         -------
@@ -286,12 +300,17 @@ class DiscreteTexture(CrystalTexture):
         S : Create an S single-orientation crystallographic texture
         """
         o = Orientation.from_euler([0, 45, 0], degrees=True)
-        return DiscreteTexture(o)
+        return DiscreteTexture(o, phase=phase)
 
     @classmethod
-    def brass(cls):
+    def brass(cls, phase=Phase(point_group='m-3m')):
         """
         Create a Brass crystallographic texture: {110}<112>
+
+        Parameters
+        ----------
+        phase : Phase, optional
+            Structure of the crystal. By default, cubic (point group: m-3m) is used.
 
         Returns
         -------
@@ -304,10 +323,10 @@ class DiscreteTexture(CrystalTexture):
         GossBrass : Create a Goss-Brass single-orientation crystallographic texture
         """
         o = Orientation.from_euler([ANGLE_35, 45, 0], degrees=True)
-        return DiscreteTexture(o)
+        return DiscreteTexture(o, phase=phase)
 
     @classmethod
-    def GossBrass(cls):
+    def GossBrass(cls, phase=Phase(point_group='m-3m')):
         """
         Create a Goss/Brass crystallographic texture: {110}<115>
 
@@ -322,12 +341,17 @@ class DiscreteTexture(CrystalTexture):
         Goss : Create a Goss single-orientation crystallographic texture
         """
         o = Orientation.from_euler([ANGLE_74, 90, 45], degrees=True)
-        return DiscreteTexture(o)
+        return DiscreteTexture(o, phase=phase)
 
     @classmethod
-    def copper(cls):
+    def copper(cls, phase=Phase(point_group='m-3m')):
         """
         Create a copper crystallographic texture: {112}<111>
+
+        Parameters
+        ----------
+        phase : Phase, optional
+            Structure of the crystal. By default, cubic (point group: m-3m) is used.
 
         Returns
         -------
@@ -340,12 +364,17 @@ class DiscreteTexture(CrystalTexture):
         GossBrass : Create a Goss-Brass single-orientation crystallographic texture
         """
         o = Orientation.from_euler([90, ANGLE_35, 45], degrees=True)
-        return DiscreteTexture(o)
+        return DiscreteTexture(o, phase=phase)
 
     @classmethod
-    def A(cls):
+    def A(cls, phase=Phase(point_group='m-3m')):
         """
         Create an "A" crystallographic texture: {110}<111>
+
+        Parameters
+        ----------
+        phase : Phase, optional
+            Structure of the crystal. By default, cubic (point group: m-3m) is used.
 
         Returns
         -------
@@ -358,12 +387,17 @@ class DiscreteTexture(CrystalTexture):
         S : Create an S single-orientation crystallographic texture
         """
         o = Orientation.from_euler([ANGLE_35, 90, 45], degrees=True)
-        return DiscreteTexture(o)
+        return DiscreteTexture(o, phase=phase)
 
     @classmethod
-    def P(cls):
+    def P(cls, phase=Phase(point_group='m-3m')):
         """
         Create a "P"" crystallographic texture: {011}<211>
+
+        Parameters
+        ----------
+        phase : Phase, optional
+            Structure of the crystal. By default, cubic (point group: m-3m) is used.
 
         Returns
         -------
@@ -376,12 +410,17 @@ class DiscreteTexture(CrystalTexture):
         S : Create an S single-orientation crystallographic texture
         """
         o = Orientation.from_euler([ANGLE_54, 90, 45], degrees=True)
-        return DiscreteTexture(o)
+        return DiscreteTexture(o, phase=phase)
 
     @classmethod
-    def CuT(cls):
+    def CuT(cls, phase=Phase(point_group='m-3m')):
         """
         Create a CuT crystallographic texture: {552}<115>
+
+        Parameters
+        ----------
+        phase : Phase, optional
+            Structure of the crystal. By default, cubic (point group: m-3m) is used.
 
         Returns
         -------
@@ -394,12 +433,17 @@ class DiscreteTexture(CrystalTexture):
         S : Create an S single-orientation crystallographic texture
         """
         o = Orientation.from_euler([90, ANGLE_74, 45], degrees=True)
-        return DiscreteTexture(o)
+        return DiscreteTexture(o, phase=phase)
 
     @classmethod
-    def S(cls):
+    def S(cls, phase=Phase(point_group='m-3m')):
         """
         Create an "S" crystallographic texture: {123}<634>
+
+        Parameters
+        ----------
+        phase : Phase, optional
+            Structure of the crystal. By default, cubic (point group: m-3m) is used.
 
         Returns
         -------
@@ -412,9 +456,12 @@ class DiscreteTexture(CrystalTexture):
         P : Create a P single-orientation crystallographic texture
         """
         o = Orientation.from_euler([ANGLE_59, ANGLE_37, ANGLE_63], degrees=True)
-        return DiscreteTexture(o)
+        return DiscreteTexture(o, phase=phase)
 
-    def plot_as_pole_figure(self, miller, projection='lambert', fig=None, ax=None, **kwargs):
+    def plot_as_pole_figure(self, uvw=None, hkl=None, UVTW=None, hkil=None, symmetrise=False, projection='lambert', fig=None, ax=None, **kwargs):
+        miller = Miller(uvw=uvw, hkl=hkl, UVTW=UVTW, hkil=hkil, phase=self.phase)
+        if symmetrise:
+            miller = miller.symmetrise(unique=True)
         return _plot_as_pf(self.orientation, miller, fig, projection, ax=ax, plot_type='scatter', **kwargs)
 
     def sample(self, num=50, seed=None):
@@ -423,7 +470,7 @@ class DiscreteTexture(CrystalTexture):
 class FibreTexture(CrystalTexture):
     _title = 'Fibre texture'
 
-    def __init__(self, orientation, axis, point_group=None):
+    def __init__(self, orientation, axis, phase=None):
         """
         Create a fibre-type crystallographic texture
 
@@ -439,10 +486,10 @@ class FibreTexture(CrystalTexture):
         super().__init__()
         self.orientation = orientation
         self.axis = Vector3d(axis)
-        self.point_group = point_group
+        self.phase = phase
 
     @classmethod
-    def from_Euler(cls, phi1=None, Phi=None, phi2=None, degrees=True):
+    def from_Euler(cls, phi1=None, Phi=None, phi2=None, degrees=True, phase=None):
         """
         Create a fibre texture by providing two fixed Bunge-Euler values
 
@@ -499,7 +546,7 @@ class FibreTexture(CrystalTexture):
         else:
             raise ValueError("Exactly two Euler angles are required.")
         axis = (~orient1 * orient2).axis
-        a = cls(orient2, axis)
+        a = cls(orient2, axis, phase=phase)
         (k1, v1), (k2, v2) = angle_list.items()
         if not degrees:
             v1 = v1 * 180 / np.pi
@@ -544,13 +591,12 @@ class FibreTexture(CrystalTexture):
         <1. 0. 0.> || [0, 0, 1]
         """
         ref_orient = Orientation.from_align_vectors(miller, Vector3d(axis))
-        a = cls(ref_orient, axis, point_group=miller.phase.point_group.name)
+        a = cls(ref_orient, axis, phase=miller.phase)
         if miller.coordinate_format == 'uvw' or miller.coordinate_format == 'UVTW':
             miller_str = str(miller.uvw[0])
             miller_str = miller_str.replace('[', '<').replace(']', '>')
         else:
             miller_str = str(miller.hkl[0])
-        a.point_group = miller.phase.point_group.name
         row_0 = "{miller} || {axis}".format(miller=miller_str, axis=axis)
         a._details = row_0
         return a
@@ -565,7 +611,11 @@ class FibreTexture(CrystalTexture):
         res, *_ = quad_vec(fun, 0, circle)
         return tensor.__class__.from_Kelvin(res / circle)
 
-    def plot_as_pole_figure(self, miller, n_orientations=100, fig=None, ax=None, projection='lambert', **kwargs):
+    def plot_as_pole_figure(self, uvw=None, hkl=None, UVTW=None, hkil=None, projection='lambert', fig=None, ax=None,
+                            n_orientations=100, symmetrise=False, **kwargs):
+        miller = Miller(uvw=uvw, hkl=hkl, UVTW=UVTW, hkil=hkil, phase=self.phase)
+        if symmetrise:
+            miller = miller.symmetrise(unique=True)
         theta = np.linspace(0, 2 * np.pi, n_orientations)
         orientations = self.orientation * Orientation.from_axes_angles(self.axis, theta)
         return _plot_as_pf(orientations, miller, fig, projection, ax=ax, **kwargs)
@@ -745,7 +795,7 @@ class CompositeTexture:
             t[i] = ti.mean_tensor(tensor)
         return t.tensor_average(weights=wgt)
 
-    def plot_as_pole_figure(self, miller, fig=None, ax=None, projection='lambert'):
+    def plot_as_pole_figure(self, miller, fig=None, symmetrise=False, projection='lambert', **kwargs):
         """
         Plot the pole figure of the composite texture, given a set of Miller indices
 
@@ -757,8 +807,8 @@ class CompositeTexture:
             Type of projection to use, it can be either stereographic or Lambert
         fig : matplotlib.figure.Figure, optional
             Handle to existing figure, if needed
-        ax : matplotlib.projections.polar.PolarAxes, optional
-            Axes to plot on
+        symmetrise : bool
+            Whether the symmetrise the miller indices
         kwargs
             Keyword arguments to pass to matplotlib's scatter/plot functions
 
@@ -771,7 +821,7 @@ class CompositeTexture:
 
         Examples
         --------
-        Create a mixture of uniform of gamma and alpha fibre texture, and plot the corresponding [1,0,0] pole figure:
+        Create a mixture of gamma and alpha fibre texture, and plot the corresponding [1,0,0] pole figure:
 
         .. plot::
 
@@ -780,15 +830,13 @@ class CompositeTexture:
             from orix.crystal_map import Phase
 
             texture = FibreTexture.alpha() + FibreTexture.gamma()
-            phase = Phase(point_group='m3m')
-            miller = Miller([1,1,0], phase=phase)
-            texture.plot_as_pole_figure(miller)
+            texture.plot_as_pole_figure(uvw=[1,1,0], symmetrise=True)
         """
         if fig is None:
             fig = plt.figure(tight_layout=True)
         ax = add_polefigure(fig, projection=projection)
         for t in self.texture_list:
-            t.plot_as_pole_figure(miller, fig=fig, projection=projection, ax=ax)
+            t.plot_as_pole_figure(miller, fig=fig, projection=projection, ax=ax, symmetrise=symmetrise, **kwargs)
         return fig, ax
 
     def sample(self, num=50, seed=None):

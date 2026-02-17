@@ -27,17 +27,13 @@ print(gamma)
 # ------------------------------------
 # The pole figure of uvw directions, defined with the help of
 # `orix <https://orix.readthedocs.io/en/stable/index.html>`_, as pole figures. Eg.:
-from orix.crystal_map import Phase
-from orix.vector.miller import Miller
-phase = Phase(point_group='m-3m')   # BCC
-miller = Miller(uvw=[1,0,0], phase=phase)
-fig, ax = gamma.plot_as_pole_figure(miller.symmetrise(unique=True))
+fig, ax = gamma.plot_as_pole_figure(uvw=[1,0,0])
 
 ###############################################################################
 # Compute the Hill average
 # --------------------------
 # The Voigt-Reuss-Hill average of the polycrystal is:
-Chill = C.Voigt_average(orientations=gamma)
+Chill = C.Hill_average(orientations=gamma)
 print(Chill)
 
 ###############################################################################
