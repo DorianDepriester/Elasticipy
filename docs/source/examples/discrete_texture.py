@@ -34,7 +34,8 @@ print(texture)
 ###############################################################################
 # Plot the pole figures
 # --------------------------
-fig, ax = texture.plot_as_pole_figure([1,0,0], symmetrise=True)
+fig, ax = texture.plot_as_pole_figure([1,0,0], symmetrise=True, labels=['brass', 'copper'])
+ax.legend()
 
 ###############################################################################
 # Compute the Voigt average
