@@ -19,29 +19,6 @@ ANGLE_59 = 58.97991646
 ANGLE_63 = 63.43494882
 ANGLE_74 = 74.20683095
 
-def _plot_as_pf(orientations, miller, fig, projection, plot_type='plot', ax=None, **kwargs):
-    if fig is None:
-        fig = plt.figure()
-    if ax is None:
-        ax = add_polefigure(fig, projection=projection)
-    m = orientations.shape[0]
-    n = miller.shape[0]
-    phi = np.zeros((m, n))
-    theta = np.zeros((m, n))
-    for i in range(0, n):
-        mi = miller[i]
-        t = Vector3d(~orientations * mi)
-        phi[:,i] = t.azimuth
-        theta[:,i] = t.polar
-    if plot_type == 'scatter':
-        ax.scatter(phi, theta, **kwargs)
-    else:
-        line, = ax.plot(phi[:, 0], theta[:, 0], **kwargs)
-        color = line.get_color()
-        ax.plot(phi[:, 1:], theta[:, 1:], color=color)
-    ax.set_ylim([0, np.pi / 2])
-    return fig, ax
-
 class CrystalTexture(ABC):
     _title = 'Abstract class for crystallographic texture'
 
@@ -92,6 +69,34 @@ class CrystalTexture(ABC):
             return self._title
         else:
             return self._title + '\n' + self._details
+
+    def _plot_as_pf(self, orientations,
+                    uvw=None, UVTW=None, hkl=None, hkil=None,
+                    fig=None, projection='lambert', plot_type='plot', ax=None, symmetrise=False, **kwargs):
+        miller = Miller(uvw=uvw, hkl=hkl, UVTW=UVTW, hkil=hkil, phase=self.phase)
+        if symmetrise:
+            miller = miller.symmetrise(unique=True)
+        if fig is None:
+            fig = plt.figure()
+        if ax is None:
+            ax = add_polefigure(fig, projection=projection)
+        m = orientations.shape[0]
+        n = miller.shape[0]
+        phi = np.zeros((m, n))
+        theta = np.zeros((m, n))
+        for i in range(0, n):
+            mi = miller[i]
+            t = Vector3d(~orientations * mi)
+            phi[:, i] = t.azimuth
+            theta[:, i] = t.polar
+        if plot_type == 'scatter':
+            ax.scatter(phi, theta, **kwargs)
+        else:
+            line, = ax.plot(phi[:, 0], theta[:, 0], **kwargs)
+            color = line.get_color()
+            ax.plot(phi[:, 1:], theta[:, 1:], color=color)
+        ax.set_ylim([0, np.pi / 2])
+        return fig, ax
 
     def plot_as_pole_figure(self, uvw=None, hkl=None, UVTW=None, hkil=None, symmetrise=False, projection='lambert', fig=None, ax=None, **kwargs):
         """
@@ -145,7 +150,10 @@ class CrystalTexture(ABC):
             gamma = FibreTexture.gamma()
             gamma.plot_as_pole_figure(uvw=[1,1,0], symmetrise=True)
         """
-        pass
+        return self._plot_as_pf(self.orientation,
+                                uvw=uvw, hkl=hkl, UVTW=UVTW, hkil=hkil,
+                                symmetrise=symmetrise,
+                                fig=fig, projection=projection, ax=ax, plot_type='scatter', **kwargs)
 
     def sample(self, num=50, seed=None):
         """Generate a random sample from the texture component
@@ -458,12 +466,6 @@ class DiscreteTexture(CrystalTexture):
         o = Orientation.from_euler([ANGLE_59, ANGLE_37, ANGLE_63], degrees=True)
         return DiscreteTexture(o, phase=phase)
 
-    def plot_as_pole_figure(self, uvw=None, hkl=None, UVTW=None, hkil=None, symmetrise=False, projection='lambert', fig=None, ax=None, **kwargs):
-        miller = Miller(uvw=uvw, hkl=hkl, UVTW=UVTW, hkil=hkil, phase=self.phase)
-        if symmetrise:
-            miller = miller.symmetrise(unique=True)
-        return _plot_as_pf(self.orientation, miller, fig, projection, ax=ax, plot_type='scatter', **kwargs)
-
     def sample(self, num=50, seed=None):
         return Orientation(np.repeat(self.orientation.data, num, axis=0))
 
@@ -613,12 +615,12 @@ class FibreTexture(CrystalTexture):
 
     def plot_as_pole_figure(self, uvw=None, hkl=None, UVTW=None, hkil=None, projection='lambert', fig=None, ax=None,
                             n_orientations=100, symmetrise=False, **kwargs):
-        miller = Miller(uvw=uvw, hkl=hkl, UVTW=UVTW, hkil=hkil, phase=self.phase)
-        if symmetrise:
-            miller = miller.symmetrise(unique=True)
         theta = np.linspace(0, 2 * np.pi, n_orientations)
         orientations = self.orientation * Orientation.from_axes_angles(self.axis, theta)
-        return _plot_as_pf(orientations, miller, fig, projection, ax=ax, **kwargs)
+        return self._plot_as_pf(orientations,
+                                uvw=uvw, hkl=hkl, UVTW=UVTW, hkil=hkil,
+                                symmetrise=symmetrise,
+                                fig=fig, ax=ax, projection=projection, **kwargs)
 
     def sample(self, num=50, seed=None):
         rng = np.random.default_rng(seed)
