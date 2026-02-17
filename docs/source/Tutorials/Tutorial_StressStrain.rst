@@ -33,47 +33,12 @@ As an example, create a stiffness tensor corresponding to steel:
     >>> C = StiffnessTensor.isotropic(E=210e3, nu=0.28)
     >>> print(C)
     Stiffness tensor (in Voigt mapping):
-    [[268465.90909091 104403.40909091 104403.40909091      0.
-           0.              0.        ]
-     [104403.40909091 268465.90909091 104403.40909091      0.
-           0.              0.        ]
-     [104403.40909091 104403.40909091 268465.90909091      0.
-           0.              0.        ]
-     [     0.              0.              0.          82031.25
-           0.              0.        ]
-     [     0.              0.              0.              0.
-       82031.25            0.        ]
-     [     0.              0.              0.              0.
-           0.          82031.25      ]]
-
-
-Considering the previous strain, evaluate the corresponding stress:
-
-    >>> sigma = C * strain
-    >>> print(sigma)
-    Stress tensor
-    [[  0.     164.0625   0.    ]
-     [164.0625   0.       0.    ]
-     [  0.       0.       0.    ]]
-
-As an example, create a stiffness tensor corresponding to steel:
-
-    >>> from elasticipy.tensors.elasticity import StiffnessTensor
-    >>> C = StiffnessTensor.isotropic(E=210e3, nu=0.28)
-    >>> print(C)
-    Stiffness tensor (in Voigt mapping):
-    [[268465.90909091 104403.40909091 104403.40909091      0.
-           0.              0.        ]
-     [104403.40909091 268465.90909091 104403.40909091      0.
-           0.              0.        ]
-     [104403.40909091 104403.40909091 268465.90909091      0.
-           0.              0.        ]
-     [     0.              0.              0.          82031.25
-           0.              0.        ]
-     [     0.              0.              0.              0.
-       82031.25            0.        ]
-     [     0.              0.              0.              0.
-           0.          82031.25      ]]
+    [[268465.91 104403.41 104403.41      0.        0.        0.  ]
+     [104403.41 268465.91 104403.41      0.        0.        0.  ]
+     [104403.41 104403.41 268465.91      0.        0.        0.  ]
+     [     0.        0.        0.    82031.25      0.        0.  ]
+     [     0.        0.        0.        0.    82031.25      0.  ]
+     [     0.        0.        0.        0.        0.    82031.25]]
 
 
 Considering the previous strain, evaluate the corresponding stress:
@@ -92,20 +57,14 @@ Considering the previous strain, evaluate the corresponding stress:
 Conversely, one can compute the compliance tensor:
 
     >>> S = C.inv()
-    >>> print(S)
+    >>> print(S * 1e6)  # Compliance in /TPa
     Compliance tensor (in Voigt mapping):
-    [[ 4.76190476e-06 -1.33333333e-06 -1.33333333e-06  0.00000000e+00
-       0.00000000e+00  0.00000000e+00]
-     [-1.33333333e-06  4.76190476e-06 -1.33333333e-06  0.00000000e+00
-       0.00000000e+00  0.00000000e+00]
-     [-1.33333333e-06 -1.33333333e-06  4.76190476e-06  0.00000000e+00
-       0.00000000e+00  0.00000000e+00]
-     [ 0.00000000e+00  0.00000000e+00  0.00000000e+00  1.21904762e-05
-       0.00000000e+00  0.00000000e+00]
-     [ 0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00
-       1.21904762e-05  0.00000000e+00]
-     [ 0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00
-       0.00000000e+00  1.21904762e-05]]
+    [[ 4.76 -1.33 -1.33  0.    0.    0.  ]
+     [-1.33  4.76 -1.33  0.    0.    0.  ]
+     [-1.33 -1.33  4.76  0.    0.    0.  ]
+     [ 0.    0.    0.   12.19  0.    0.  ]
+     [ 0.    0.    0.    0.   12.19  0.  ]
+     [ 0.    0.    0.    0.    0.   12.19]]
 
 and check that we retrieve the correct (initial) strain:
 
