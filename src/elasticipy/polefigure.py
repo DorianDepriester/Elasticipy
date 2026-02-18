@@ -4,12 +4,7 @@ from matplotlib import scale as mscale
 from matplotlib.ticker import FixedLocator
 from matplotlib.projections.polar import ThetaFormatter
 
-def format_coord(phi, theta):
-    """
-    Format the coordinates as follows: 'phi=val, theta=val', where vals are in degrees
-    :param phi: azimuth
-    :param theta: colatitude
-    """
+def _format_coord(phi, theta):
     return ('azimuth=%0.1f\N{DEGREE SIGN}, '
             'colatitude=%0.1f\N{DEGREE SIGN}'
             % (np.degrees(phi) % 360, np.degrees(theta)))
@@ -114,7 +109,7 @@ def add_polefigure(fig, *args, projection='stereographic', **kwargs):
         Projection to use. It can be 'stereographic' (default), 'equal area' or 'lambert' (which is equivalent to equal
         area).
 
-    kwargs : dict
+    kwargs
         Keyword arguments to pass to the subplot constructor
 
     Returns
@@ -128,5 +123,5 @@ def add_polefigure(fig, *args, projection='stereographic', **kwargs):
     ax.set_rlim(0.0, np.pi / 2)
     ax.set_ylim(0.0, 2*np.pi)
     ax.set_rscale(projection)
-    ax.format_coord = format_coord
+    ax.format_coord = _format_coord
     return ax
