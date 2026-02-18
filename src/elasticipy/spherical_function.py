@@ -555,6 +555,26 @@ class SphericalFunction:
         See Also
         --------
         plot_xyz_sections : plot values of the function in X-Y, X-Z an Y-Z planes.
+
+        Examples
+        --------
+        Plot the Young modulus of copper single-crystal in interactive mode (with plotly):
+
+        .. plotly::
+
+            from elasticipy.tensors.elasticity import StiffnessTensor
+            C = StiffnessTensor.cubic(C11=186, C12=134, C44=77)
+            E = C.Young_modulus
+            fig = E.plot3D()
+
+        To render this plot with matplotlib:
+
+        .. plot::
+
+            from elasticipy.tensors.elasticity import StiffnessTensor
+            C = StiffnessTensor.cubic(C11=186, C12=134, C44=77)
+            E = C.Young_modulus
+            fig = E.plot3D(backend='matplotlib')
         """
         u, evals = self.evaluate_on_spherical_grid((n_phi, n_theta), return_in_spherical=False, use_symmetry=False)
         if backend == 'plotly':
@@ -588,6 +608,17 @@ class SphericalFunction:
             The figure object containing the polar plots.
         axs : list of matplotlib.axes._subplots.PolarAxesSubplot
             List of axes objects for each plot.
+
+        Examples
+        --------
+        Plot the Young modulus of copper single-crystal:
+
+        .. plot::
+
+            from elasticipy.tensors.elasticity import StiffnessTensor
+            C = StiffnessTensor.cubic(C11=186, C12=134, C44=77)
+            E = C.Young_modulus
+            fig = E.plot_xyz_sections()
         """
         if fig is None:
             new_fig = plt.figure()
@@ -648,6 +679,26 @@ class SphericalFunction:
             The Matplotlib figure containing the plot.
         ax : matplotlib.axes._axes.Axes
             The Matplotlib axes of the plot.
+
+        Examples
+        --------
+        Plot the Young modulus of copper single-crystal:
+
+        .. plot::
+
+            from elasticipy.tensors.elasticity import StiffnessTensor
+            C = StiffnessTensor.cubic(C11=186, C12=134, C44=77)
+            E = C.Young_modulus
+            fig = E.plot_as_pole_figure()
+
+        By default, the pole figure is made in Lambert projection (a.k.a equal area). It can changed to stereographic:
+
+        .. plot::
+
+            from elasticipy.tensors.elasticity import StiffnessTensor
+            C = StiffnessTensor.cubic(C11=186, C12=134, C44=77)
+            E = C.Young_modulus
+            fig = E.plot_as_pole_figure(projection='Lambert')
         """
         if subplot_kwargs is None:
             subplot_kwargs = {}
