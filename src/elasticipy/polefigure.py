@@ -6,7 +6,7 @@ from matplotlib.projections.polar import ThetaFormatter
 
 def format_coord(phi, theta):
     """
-    Format the coordinates as follows: 'phi=val, theta=val', wheres vals are in degrees
+    Format the coordinates as follows: 'phi=val, theta=val', where vals are in degrees
     :param phi: azimuth
     :param theta: colatitude
     """
@@ -111,7 +111,7 @@ def add_polefigure(fig, *args, projection='stereographic', **kwargs):
     args : list
         Positional arguments to pass to the subplot constructor
     projection : str, optional
-        Projection to use. I can be 'stereographic' (default), 'equal area' or 'lambert' (which is equivalent to equal
+        Projection to use. It can be 'stereographic' (default), 'equal area' or 'lambert' (which is equivalent to equal
         area).
 
     kwargs : dict
