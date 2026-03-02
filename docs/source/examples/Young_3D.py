@@ -33,4 +33,11 @@ print(E)
 # --------------------------
 E.plot3D()
 
+###############################################################################
+# Use Matplotlib instead of Plotly
+# --------------------------------
+# By default, elasticipy uses `Plotly <https://plotly.com/python/>`_ to render the surface, allowing interactive plot
+# (see above). Matplolib can be used instead:
+E.plot3D(backend='matplotlib')
+
 
