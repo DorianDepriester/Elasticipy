@@ -1,4 +1,4 @@
-Elasticipy.tensors.mapping
+elasticipy.tensors.mapping
 ====================================
 
 .. automodule:: elasticipy.tensors.mapping

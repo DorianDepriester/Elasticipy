@@ -1,4 +1,4 @@
-Elasticipy.polefigure
+elasticipy.polefigure
 ======================================
 
 .. automodule:: elasticipy.polefigure

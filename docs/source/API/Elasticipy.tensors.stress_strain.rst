@@ -1,4 +1,4 @@
-Elasticipy.tensors.stress_strain
+elasticipy.tensors.stress_strain
 =======================================
 
 .. automodule:: elasticipy.tensors.stress_strain

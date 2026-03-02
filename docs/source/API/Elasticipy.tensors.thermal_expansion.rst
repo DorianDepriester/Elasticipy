@@ -1,4 +1,4 @@
-Elasticipy.tensors.thermal_expansion
+elasticipy.tensors.thermal_expansion
 ============================================
 
 .. automodule:: elasticipy.tensors.thermal_expansion

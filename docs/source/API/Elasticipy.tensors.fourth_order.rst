@@ -1,4 +1,4 @@
-Elasticipy.tensors.fourth_order
+elasticipy.tensors.fourth_order
 ======================================
 
 .. automodule:: elasticipy.tensors.fourth_order

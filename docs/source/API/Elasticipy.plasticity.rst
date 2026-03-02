@@ -1,4 +1,4 @@
-Elasticipy.plasticity
+elasticipy.plasticity
 ============================
 
 .. automodule:: elasticipy.plasticity

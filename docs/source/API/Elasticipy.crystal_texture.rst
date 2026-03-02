@@ -1,4 +1,4 @@
-Elasticipy.crystal_texture
+elasticipy.crystal_texture
 ======================================
 
 .. automodule:: elasticipy.crystal_texture
