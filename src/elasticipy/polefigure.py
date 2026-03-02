@@ -129,13 +129,13 @@ def add_polefigure(fig, *args, projection='stereographic', **kwargs):
 
         coords = np.random.normal(size=(100, 3))   # Random point in 3D space
         r = np.linalg.norm(coords, axis=1)  # Convert cartesian to polar coordinates
-        theta = np.arccos(coords[:,2] / r)
-        phi = np.arctan2(coords[:,1], coords[:, 0])
+        theta = np.arccos(coords[:,2] / r)  # colatitude
+        phi = np.arctan2(coords[:,1], coords[:, 0]) # azimuth
 
         fig = plt.figure()
         ax = add_polefigure(fig)
         ax.scatter(phi, theta)
-        ax.set_rlim(0,1)    # Ensure that the scaling is appropriate
+        ax.set_rlim(0.0, np.pi / 2)    # Ensure that the scaling is appropriate
         fig.show()
     """
     if projection.lower() == 'equal area':
