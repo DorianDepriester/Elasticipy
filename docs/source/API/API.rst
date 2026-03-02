@@ -7,6 +7,7 @@ API documentation
    Elasticipy.crystal_texture
    Elasticipy.interfaces.PRISMS
    Elasticipy.interfaces.FEPX
+   Elasticipy.pole_figure
    Elasticipy.plasticity
    Elasticipy.spherical_function
    Elasticipy.tensors.elasticity
