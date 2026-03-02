@@ -137,6 +137,25 @@ def add_polefigure(fig, *args, projection='stereographic', **kwargs):
         ax.scatter(phi, theta)
         ax.set_rlim(0.0, np.pi / 2)    # Ensure that the scaling is appropriate
         fig.show()
+
+    Make the Lambert projection of random points on the unit sphere:
+
+    .. plot::
+
+        import numpy as np
+        from elasticipy.polefigure import add_polefigure
+        from matplotlib import pyplot as plt
+
+        coords = np.random.normal(size=(100, 3))   # Random point in 3D space
+        r = np.linalg.norm(coords, axis=1)  # Convert cartesian to polar coordinates
+        theta = np.arccos(coords[:,2] / r)  # colatitude
+        phi = np.arctan2(coords[:,1], coords[:, 0]) # azimuth
+
+        fig = plt.figure()
+        ax = add_polefigure(fig, projection='lambert')
+        ax.scatter(phi, theta)
+        ax.set_rlim(0.0, np.pi / 2)    # Ensure that the scaling is appropriate
+        fig.show()
     """
     if projection.lower() == 'equal area':
         projection = 'lambert'
