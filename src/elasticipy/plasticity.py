@@ -1,5 +1,6 @@
 import numpy as np
 from elasticipy.tensors.stress_strain import StrainTensor, StressTensor
+from abc import ABC
 
 
 class IsotropicHardening:
@@ -388,9 +389,9 @@ class JohnsonCook(IsotropicHardening):
         self.plastic_strain = 0.0
 
 
-class PlasticityCriterion:
+class PlasticityCriterion(ABC):
     """
-    Template class for plasticity criteria
+    Abstract class for plasticity criteria
     """
     name = 'generic'
 
