@@ -175,7 +175,7 @@ Take a 5-minute tour through Elasticipy's main features by running the online Ju
 
 Example gallery
 ---------------
-Check out the :ref:`example gallery <example_gallery>` to get a quick overview of the plotting features.
+Check out the `example gallery <auto_examples/index.html>`_ to get a quick overview of the plotting features.
 
 ----
 
