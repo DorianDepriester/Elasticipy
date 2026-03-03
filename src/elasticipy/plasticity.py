@@ -455,6 +455,16 @@ class PlasticityCriterion(ABC):
             Figure where the plot is drawn.
         ax : matplotlib.axes.Axes
             Axes where the plot is drawn.
+
+        Examples
+        --------
+        Plot the von Mises yield surface:
+
+        .. plot::
+
+            from elasticipy.plasticity import VonMisesPlasticity
+            fig, ax = VonMisesPlasticity().plot_2D()
+            fig.show()
         """
         sigma_max = yield_stress * 1.16
         sigma1 = np.linspace(-sigma_max, sigma_max, 400)
