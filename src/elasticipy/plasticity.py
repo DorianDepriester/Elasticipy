@@ -1,6 +1,8 @@
 import numpy as np
 from elasticipy.tensors.stress_strain import StrainTensor, StressTensor
 from abc import ABC
+import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
 
 
 class IsotropicHardening:
@@ -429,6 +431,58 @@ class PlasticityCriterion(ABC):
             Normalized direction of plastic flow
         """
         pass
+
+    def plot_2D(self, yield_stress=1.0, color='red', fig=None, ax=None, alpha=0.3):
+        """
+        Plot the elastic domain in the biaxial tensile space.
+
+        Parameters
+        ----------
+        yield_stress : float, optional
+            Yield stress to consider. The default value is 1.
+        color : str, optional
+            Color to use for the plot.
+        fig : matplotlib.figure.Figure, optional
+            Figure to plot on. If not provided, a new figure will be created.
+        ax : matplotlib.axes.Axes, optional
+            Axes to plot on.
+        alpha : float, optional
+            Transparency of the inside of the yield surface.
+
+        Returns
+        -------
+        fig : matplotlib.figure.Figure
+            Figure where the plot is drawn.
+        ax : matplotlib.axes.Axes
+            Axes where the plot is drawn.
+        """
+        sigma_max = yield_stress * 1.16
+        sigma1 = np.linspace(-sigma_max, sigma_max, 400)
+        sigma2 = np.linspace(-sigma_max, sigma_max, 400)
+        Sigma1, Sigma2 = np.meshgrid(sigma1, sigma2)
+        sigma = StressTensor.tensile([1, 0, 0], Sigma1) + StressTensor.tensile([0, 1, 0], Sigma2)
+        sigma_eq = self.eq_stress(sigma)
+
+        if ax is None or fig is None:
+            fig, ax = plt.subplots()
+
+        # Tracer la zone remplie et le contour
+        ax.contourf(Sigma1, Sigma2, sigma_eq, levels=[0, yield_stress], colors=[color], alpha=alpha)
+        ax.contour(Sigma1, Sigma2, sigma_eq, levels=[yield_stress], colors=color, linewidths=2)
+
+        proxy = Line2D([0], [0], color=color, lw=2, label=self.name)
+        ax.add_line(proxy)
+
+        # Configuration de l'axe
+        ax.set_xlabel(r'$\sigma_1$')
+        ax.set_ylabel(r'$\sigma_2$')
+        ax.axhline(0, color='black', linewidth=0.5)
+        ax.axvline(0, color='black', linewidth=0.5)
+        ax.grid(True)
+        ax.axis('equal')
+
+        return fig, ax
+
 
 class VonMisesPlasticity(PlasticityCriterion):
     """
