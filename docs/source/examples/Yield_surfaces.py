@@ -3,7 +3,8 @@
 Plot the Tresca hexagon and the von Mises ellipse
 ===========================================================
 This example shows how to plot the elastic domain, with respect to the von Mises and Tresca criteria, on one single
-Matplotlib axis.
+Matplotlib axis. This somehow replicates the figure shown on wikipedia to illustrate the difference between those
+criteria (see `here <https://en.wikipedia.org/wiki/Yield_surface#von_Mises_yield_surface>`_).
 """
 from elasticipy.plasticity import VonMisesPlasticity, TrescaPlasticity
 sigma_y = 100 # yield stress
