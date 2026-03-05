@@ -3,6 +3,7 @@ from elasticipy.tensors.stress_strain import StrainTensor, StressTensor
 from abc import ABC
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
+import plotly.graph_objects as go
 
 
 class IsotropicHardening:
@@ -521,6 +522,47 @@ class YieldCriterion(ABC):
         ax.axis('equal')
 
         return fig, ax
+
+    def plot_3D(self, xmin=-1, xmax=1, ymin=-1, ymax=1, zmin=-1, zmax=1, color='red', opacity=0.3, npt=100):
+        sigma_1=np.linspace(xmin, xmax, npt)
+        sigma_2=np.linspace(ymin, ymax, npt)
+        sigma_3=np.linspace(zmin, zmax, npt)
+        s1, s2, s3 = np.meshgrid(sigma_1, sigma_2, sigma_3, indexing='ij')
+        s = (StressTensor.tensile([1,0,0], s1)
+             + StressTensor.tensile([0,1,0], s2)
+             + StressTensor.tensile([0,0,1], s3))
+        f = self.yield_function(s)
+        fig = go.Figure(data=go.Isosurface(
+            x=s1.flatten(),
+            y=s2.flatten(),
+            z=s3.flatten(),
+            value=f.flatten(),
+            isomin=0,
+            isomax=0,
+            caps=dict(x_show=False, y_show=False),
+            colorscale=[[0, color], [1, color]],
+            showscale=False,
+            opacity=opacity,
+            ))
+        fig.update_layout(scene=dict(
+            xaxis=dict(
+                title=dict(
+                    text=r'σ₁'
+                )
+            ),
+            yaxis=dict(
+                title=dict(
+                    text=r'σ₂'
+                )
+            ),
+            zaxis=dict(
+                title=dict(
+                    text=r'σ₃'
+                )
+            ),
+        ),)
+        return fig
+
 
 
 class VonMisesPlasticity(YieldCriterion):
