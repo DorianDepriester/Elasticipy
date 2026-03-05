@@ -453,7 +453,7 @@ class YieldCriterion(ABC):
     def _plot_bounds(self):
         return (0.0, 1.0), (0.0, 1.0)
 
-    def plot_2D(self, color='red', fig=None, ax=None, alpha=0.3):
+    def plot_2D(self, color='red', fig=None, ax=None, alpha=0.3, xrange=None, yrange=None, npt=400):
         """
         Plot the elastic domain in the biaxial tensile space.
 
@@ -467,6 +467,12 @@ class YieldCriterion(ABC):
             Axes to plot on.
         alpha : float, optional
             Transparency of the inside of the yield surface.
+        xrange : tuple, optional
+            Set the x-range of the plot. If not provided, it will be set automatically.
+        yrange : tuple, optional
+            Set the y-range of the plot. If not provided, it will be set automatically.
+        npt : int, optional
+            Number of points along each direction to use for the plot.
 
         Returns
         -------
@@ -485,8 +491,13 @@ class YieldCriterion(ABC):
             fig, ax = VonMisesPlasticity().plot_2D()
             fig.show()
         """
-        sigma1 = np.linspace(*self._plot_bounds[0], 400)
-        sigma2 = np.linspace(*self._plot_bounds[1], 400)
+        margin = 1.05
+        if xrange is None:
+            xrange = self._plot_bounds[0]
+        if yrange is None:
+            yrange = self._plot_bounds[1]
+        sigma1 = np.linspace(xrange[0] * margin, xrange[1] * margin , npt)
+        sigma2 = np.linspace(yrange[0] * margin, yrange[1] * margin , npt)
         Sigma1, Sigma2 = np.meshgrid(sigma1, sigma2)
         sigma = StressTensor.tensile([1, 0, 0], Sigma1) + StressTensor.tensile([0, 1, 0], Sigma2)
         f = self.yield_function(sigma)
@@ -531,7 +542,7 @@ class VonMisesPlasticity(YieldCriterion):
 
     @property
     def _plot_bounds(self):
-        sigma_max = self.yield_stress * 1.2
+        sigma_max = self.yield_stress * 2 / np.sqrt(3)
         return (-sigma_max, sigma_max), (-sigma_max, sigma_max)
 
     @staticmethod
@@ -556,7 +567,7 @@ class TrescaPlasticity(VonMisesPlasticity):
 
     @property
     def _plot_bounds(self):
-        sigma_max = self.yield_stress * 1.05
+        sigma_max = self.yield_stress
         return (-sigma_max, sigma_max), (-sigma_max, sigma_max)
 
     @staticmethod
