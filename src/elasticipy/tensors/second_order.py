@@ -347,7 +347,8 @@ class SecondOrderTensor:
         float or np.ndarray
             J2 invariant
         """
-        return -self.deviatoric_part().I2
+        j2 = -self.deviatoric_part().I2
+        return np.clip(j2, 0, np.inf)
 
     @property
     def J3(self):
