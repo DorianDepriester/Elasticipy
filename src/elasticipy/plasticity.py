@@ -18,7 +18,7 @@ class IsotropicHardening:
 
         Parameters
         ----------
-        criterion : str or PlasticityCriterion
+        criterion : str or YieldCriterion
             Plasticity criterion to use. Can be 'von Mises', 'Tresca' or 'J2'. J2 is the same as von Mises.
         """
         if isinstance(criterion, str):
@@ -391,7 +391,7 @@ class JohnsonCook(IsotropicHardening):
         self.plastic_strain = 0.0
 
 
-class PlasticityCriterion(ABC):
+class YieldCriterion(ABC):
     """
     Abstract class for plasticity criteria
     """
@@ -512,7 +512,7 @@ class PlasticityCriterion(ABC):
         return fig, ax
 
 
-class VonMisesPlasticity(PlasticityCriterion):
+class VonMisesPlasticity(YieldCriterion):
     """
     von Mises plasticity criterion, with associated normality rule
     """
@@ -580,7 +580,7 @@ class TrescaPlasticity(VonMisesPlasticity):
         strain = StrainTensor(normal)
         return strain / strain.eq_strain()
 
-class DruckerPrager(PlasticityCriterion):
+class DruckerPrager(YieldCriterion):
     """
     Drucker-Prager pressure-dependent plasticity criterion, with associated normality rule
     """
