@@ -142,7 +142,7 @@ class TestJohnsonCook(unittest.TestCase):
         assert eq_stress_tr == approx(stress.Tresca())
 
     def test_DruckerPrager(self):
-        dp = DruckerPrager(0.2)
+        dp = DruckerPrager(alpha=0.2, k=100)
         JC_pg = JohnsonCook(A=A, B=B, n=n, criterion=dp)
         shear_stress = StressTensor.shear([1, 0, 0], [0, 1, 0], 1000)
         tens_shear_stress = shear_stress + StressTensor.eye() * 100
@@ -153,7 +153,7 @@ class TestJohnsonCook(unittest.TestCase):
         assert strain_m.eq_strain() < strain_0.eq_strain() < strain_p.eq_strain()
 
         # Now investigate the special case alpha=0 (== von Mises)
-        JC_pg0 = JohnsonCook(A=A, B=B, n=n, criterion=DruckerPrager(0.))
+        JC_pg0 = JohnsonCook(A=A, B=B, n=n, criterion=DruckerPrager(alpha=0., k=100))
         JC.reset_strain()
         strain_0 = JC_pg0.compute_strain_increment(shear_stress, apply_strain=False)
         strain_p = JC_pg0.compute_strain_increment(tens_shear_stress, apply_strain=False)
