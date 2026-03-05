@@ -408,9 +408,26 @@ class PlasticityCriterion(ABC):
             Stress to compute the equivalent stress from
         kwargs : dict
             keyword arguments passed to the function
+
         Returns
         -------
         float or numpy.ndarray
+        """
+        return 0.0
+
+    def yield_function(self, stress):
+        """
+        Return the yield function, with respect to the plasticity criterion.
+
+        Parameters
+        ----------
+        stress : StressTensor
+            Stress tensor to compute the yield function from.
+
+        Returns
+        -------
+        float or numpy.ndarray
+            Negative if, and only if, the elasticity criterion is met
         """
         pass
 
@@ -432,14 +449,16 @@ class PlasticityCriterion(ABC):
         """
         pass
 
-    def plot_2D(self, yield_stress=1.0, color='red', fig=None, ax=None, alpha=0.3):
+    @property
+    def _plot_bounds(self):
+        return (0.0, 1.0), (0.0, 1.0)
+
+    def plot_2D(self, color='red', fig=None, ax=None, alpha=0.3):
         """
         Plot the elastic domain in the biaxial tensile space.
 
         Parameters
         ----------
-        yield_stress : float, optional
-            Yield stress to consider. The default value is 1.
         color : str, optional
             Color to use for the plot.
         fig : matplotlib.figure.Figure, optional
@@ -466,19 +485,18 @@ class PlasticityCriterion(ABC):
             fig, ax = VonMisesPlasticity().plot_2D()
             fig.show()
         """
-        sigma_max = yield_stress * 1.16
-        sigma1 = np.linspace(-sigma_max, sigma_max, 400)
-        sigma2 = np.linspace(-sigma_max, sigma_max, 400)
+        sigma1 = np.linspace(*self._plot_bounds[0], 400)
+        sigma2 = np.linspace(*self._plot_bounds[1], 400)
         Sigma1, Sigma2 = np.meshgrid(sigma1, sigma2)
         sigma = StressTensor.tensile([1, 0, 0], Sigma1) + StressTensor.tensile([0, 1, 0], Sigma2)
-        sigma_eq = self.eq_stress(sigma)
+        f = self.yield_function(sigma)
 
         if ax is None or fig is None:
             fig, ax = plt.subplots()
 
         # Tracer la zone remplie et le contour
-        ax.contourf(Sigma1, Sigma2, sigma_eq, levels=[0, yield_stress], colors=[color], alpha=alpha)
-        ax.contour(Sigma1, Sigma2, sigma_eq, levels=[yield_stress], colors=color, linewidths=2)
+        ax.contourf(Sigma1, Sigma2, f, levels=[-np.inf, 0], colors=[color], alpha=alpha)
+        ax.contour(Sigma1, Sigma2, f, levels=[0], colors=color, linewidths=2)
 
         proxy = Line2D([0], [0], color=color, lw=2, label=self.name)
         ax.add_line(proxy)
@@ -499,9 +517,29 @@ class VonMisesPlasticity(PlasticityCriterion):
     von Mises plasticity criterion, with associated normality rule
     """
     name = 'von Mises'
+
+    def __init__(self, yield_stress=1.0):
+        """
+        Create a plasticity criterion
+
+        Parameters
+        ----------
+        yield_stress : float
+            Tensile yield stress
+        """
+        self.yield_stress = yield_stress
+
+    @property
+    def _plot_bounds(self):
+        sigma_max = self.yield_stress * 1.2
+        return (-sigma_max, sigma_max), (-sigma_max, sigma_max)
+
     @staticmethod
     def eq_stress(stress, **kwargs):
         return stress.vonMises()
+
+    def yield_function(self, stress):
+        return self.eq_stress(stress) - self.yield_stress
 
     @staticmethod
     def normal(stress, **kwargs):
@@ -510,11 +548,16 @@ class VonMisesPlasticity(PlasticityCriterion):
         gradient_tensor = dev_stress / eq_stress
         return StrainTensor(3 / 2 * gradient_tensor.matrix)
 
-class TrescaPlasticity(PlasticityCriterion):
+class TrescaPlasticity(VonMisesPlasticity):
     """
     Tresca plasticity criterion, with associated normality rule
     """
     name = 'Tresca'
+
+    @property
+    def _plot_bounds(self):
+        sigma_max = self.yield_stress * 1.05
+        return (-sigma_max, sigma_max), (-sigma_max, sigma_max)
 
     @staticmethod
     def eq_stress(stress, **kwargs):
@@ -543,27 +586,56 @@ class DruckerPrager(PlasticityCriterion):
     """
     name = 'Drucker-Prager'
 
-    def __init__(self, alpha):
+    def __init__(self, *, alpha=None, k=None, c=None, phi=None):
         """
-        Create a Drucker-Prager (DG) plasticity criterion.
+        Create a Drucker-Prager (DP) plasticity criterion.
+
+        The DG criterion can be defined by the pai values alpha and c, or c and phi (see notes).
 
         Parameters
         ----------
-        alpha : float
+        alpha : float, optional
             Pressure dependence parameters (see notes for details)
+        k : float, optional
+            Constant component of the yield surface (see below)
+        c : float, optional
+            cohesion factor
+        phi : float, optional
+            cone angle, in degrees
 
         Notes
         -----
-        The pressure-dependent DG plasticity criterion assumes that the equivalent stress is defined as:
+        The pressure-dependent DP plasticity criterion assumes that the yield surface is defined as:
 
         .. math::
 
-            \\alpha I_1 + \\sqrt{J_2}
+            \\alpha I_1 + \\sqrt{J_2} - k
 
         where :math:`I_1` is the first invariant of the stress tensor, and :math:`J_2` is the second invariant of the
         deviatoric stress tensor.
+
+        If the cohesion (c) and friction angle (phi) are provided, the following conversion is made:
+
+        .. math::
+
+            \\alpha = \\frac{-2\\sin\\phi}{\\sqrt{3}(3-\\sin\\phi)}
+
+            k = \\frac{6c\\cos\\phi}{\\sqrt{3}(3-\\sin\\phi)}
         """
+        if (alpha is None) and (k is None):
+            phi = np.radians(phi)
+            denom = 3**0.5 * (3 - np.sin(phi))
+            k = 6 * c * np.cos(phi) / denom
+            alpha = -2 * np.sin(phi) / denom
         self.alpha = alpha
+        self.k = k
+
+    @property
+    def _plot_bounds(self):
+        bounds = (self.k / (2 * self.alpha - 3**(-0.5)), self.k / (2 * self.alpha + 3**(-0.5)))
+        s_max = np.max(bounds)
+        s_min = np.min(bounds)
+        return (1.5*s_min, 1.5*s_max), (1.5*s_min, 1.5*s_max)
 
     def eq_stress(self, stress, **kwargs):
         return (stress.J2**0.5 + self.alpha * stress.I1) / (1/3**0.5 + self.alpha)
@@ -573,3 +645,6 @@ class DruckerPrager(PlasticityCriterion):
         gradient = stress.deviatoric_part() / (2 * J2**0.5) + self.alpha * StressTensor.eye(stress.shape)
         strain = StrainTensor(gradient.matrix)
         return strain / strain.eq_strain()
+
+    def yield_function(self, stress):
+        return stress.J2**0.5 + self.alpha * stress.I1 - self.k
