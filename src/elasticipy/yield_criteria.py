@@ -280,7 +280,7 @@ class DruckerPrager(YieldCriterion):
             of the DP cone in the principal stress space with respect to that of the MC criterion:
               - inside : the DP cone is inside that of MC (tangent to the faces of the MC cone)
               - outside : the DP cone is outside that of MC
-              - middle : the DP cone is middle or outside of the MC cone
+              - middle : the DP cone is of intermediate shape of inside and outside.
 
 
         Notes
