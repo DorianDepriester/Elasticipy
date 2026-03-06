@@ -11,11 +11,11 @@ Matplotlib axis.
     This somehow replicates the figure shown on wikipedia to illustrate the difference between those
     criteria (see `here <https://en.wikipedia.org/wiki/Yield_surface#von_Mises_yield_surface>`_).
 """
-from elasticipy.yield_criteria import VonMisesPlasticity, TrescaPlasticity
+from elasticipy.yield_criteria import VonMisesCriterion, TrescaCriterion
 
 sigma_y = 100 # yield stress
-mises = VonMisesPlasticity(yield_stress=sigma_y)
-tresca = TrescaPlasticity(yield_stress=sigma_y)
+mises = VonMisesCriterion(yield_stress=sigma_y)
+tresca = TrescaCriterion(yield_stress=sigma_y)
 fig, ax = mises.plot_2D()
 fig, ax = tresca.plot_2D(fig=fig, ax=ax, color='blue')
 ax.legend()

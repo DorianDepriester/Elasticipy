@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 from elasticipy.plasticity import JohnsonCook
-from elasticipy.yield_criteria import VonMisesPlasticity, TrescaPlasticity, DruckerPrager
+from elasticipy.yield_criteria import VonMisesCriterion, TrescaCriterion, DruckerPrager
 from pytest import approx
 
 from elasticipy.tensors.stress_strain import StressTensor, StrainTensor
@@ -95,11 +95,11 @@ class TestJohnsonCook(unittest.TestCase):
 
     def test_normality_J2(self):
         tensile_stress = StressTensor.tensile([1,0,0], 1)
-        normal = VonMisesPlasticity.normal(tensile_stress)
+        normal = VonMisesCriterion.normal(tensile_stress)
         assert normal == np.diag([1., -0.5, -0.5])
 
         shear_stress = StressTensor.shear([1, 0, 0], [0, 1, 0], 1)
-        normal = VonMisesPlasticity.normal(shear_stress)
+        normal = VonMisesCriterion.normal(shear_stress)
         normal_th = K * np.array([[0, 1, 0],
                                   [1, 0, 0],
                                   [0, 0, 0]])
@@ -108,19 +108,19 @@ class TestJohnsonCook(unittest.TestCase):
     def test_normality_Tresca(self):
         biaxial = (StressTensor.tensile([1,0,0],[0, 1, 1, 1, 1, 1, 0]) +
                    StressTensor.tensile([0,1,0],[-1, -1, -0.5, 0, 0.5, 1, 1]))
-        n = TrescaPlasticity.normal(biaxial)
-        assert n[0] == VonMisesPlasticity.normal(biaxial[0])
+        n = TrescaCriterion.normal(biaxial)
+        assert n[0] == VonMisesCriterion.normal(biaxial[0])
         assert n[2] == K * np.diag([1, -1, 0])
         assert n[2] == K * np.diag([1, -1, 0])
-        assert n[3] == VonMisesPlasticity.normal(biaxial[3])
+        assert n[3] == VonMisesCriterion.normal(biaxial[3])
         assert n[4] == K * np.diag([1, 0, -1])
-        assert n[5] == VonMisesPlasticity.normal(biaxial[5])
-        assert n[6] == VonMisesPlasticity.normal(biaxial[6])
+        assert n[5] == VonMisesCriterion.normal(biaxial[5])
+        assert n[6] == VonMisesCriterion.normal(biaxial[6])
 
         # Check that the magnitude of the normal is 1
         np.testing.assert_array_equal(n.eq_strain(), np.ones(biaxial.shape))
         triaxial = StressTensor(np.diag([1,2,4]))
-        n = TrescaPlasticity.normal(triaxial)
+        n = TrescaCriterion.normal(triaxial)
         assert n == K * np.diag([-1, 0, 1])
         assert n.eq_strain() == 1.0
 

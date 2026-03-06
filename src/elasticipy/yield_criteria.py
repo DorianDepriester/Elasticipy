@@ -218,7 +218,7 @@ class YieldCriterion(ABC):
         return fig
 
 
-class VonMisesPlasticity(YieldCriterion):
+class VonMisesCriterion(YieldCriterion):
     """
     von Mises plasticity criterion, with associated normality rule
     """
@@ -255,7 +255,7 @@ class VonMisesPlasticity(YieldCriterion):
         return StrainTensor(3 / 2 * gradient_tensor.matrix)
 
 
-class TrescaPlasticity(VonMisesPlasticity):
+class TrescaCriterion(VonMisesCriterion):
     """
     Tresca plasticity criterion, with associated normality rule
     """
@@ -282,7 +282,7 @@ class TrescaPlasticity(VonMisesPlasticity):
         b = np.einsum('...i,...j->...ij', u3, u3)
         normal = a - b
         singular_points = np.logical_or(s2 == s1, s2 == s3)
-        normal[singular_points] = VonMisesPlasticity().normal(stress[singular_points]).matrix
+        normal[singular_points] = VonMisesCriterion().normal(stress[singular_points]).matrix
         normal[np.logical_and(s2 == s1, s2 == s3)] = 0.0
         strain = StrainTensor(normal)
         return strain / strain.eq_strain()
