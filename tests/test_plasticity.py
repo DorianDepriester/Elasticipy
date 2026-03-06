@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 from elasticipy.plasticity import JohnsonCook
-from elasticipy.plasticity import TrescaPlasticity, VonMisesPlasticity, DruckerPrager
+from elasticipy.yield_criteria import VonMisesPlasticity, TrescaPlasticity, DruckerPrager
 from pytest import approx
 
 from elasticipy.tensors.stress_strain import StressTensor, StrainTensor
