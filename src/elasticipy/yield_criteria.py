@@ -139,17 +139,55 @@ class YieldCriterion(ABC):
 
         return fig, ax
 
-    def plot_3D(self, xmin=-1, xmax=1, ymin=-1, ymax=1, zmin=-1, zmax=1, color='red', opacity=0.3, npt=100, fig=None):
-        sigma_1=np.linspace(xmin, xmax, npt)
-        sigma_2=np.linspace(ymin, ymax, npt)
-        sigma_3=np.linspace(zmin, zmax, npt)
+    def plot_3D(self, xrange=None, yrange=None, zrange=None, color='red', opacity=0.3, npt=100, fig=None):
+        """
+        Plot the yield surface in the principal stress space
+
+        Parameters
+        ----------
+        xrange : tuple, optional
+            range for the first principal stress
+        yrange : tuple, optional
+            range for the first second stress
+        zrange : tuple, optional
+            range for the third principal stress
+        color : str, optional
+            colro to use for plotting the surface
+        opacity : float, optional
+            opacity of the surface
+        npt : int, optional
+            number of points along each direction to use for the plot.
+        fig : plotly.graph_objs._figure.Figure
+            handle to existing plotly figure. This is used when one want to plot multiple surfaces on the same graph.
+
+        Returns
+        -------
+        fig : plotly.graph_objs._figure.Figure
+            Figure where the plot is drawn
+        """
+        if fig is None:
+            fig = go.Figure()
+        else:
+            if xrange is None:
+                xrange = (np.min(fig.data[0].x), np.max(fig.data[0].x))
+            if yrange is None:
+                yrange = (np.min(fig.data[0].y), np.max(fig.data[0].y))
+            if zrange is None:
+                zrange = (np.min(fig.data[0].z), np.max(fig.data[0].z))
+        if xrange is None:
+            xrange = (-1, 1)
+        if yrange is None:
+            yrange = (-1, 1)
+        if zrange is None:
+            zrange = (-1, 1)
+        sigma_1=np.linspace(*xrange, npt)
+        sigma_2=np.linspace(*yrange, npt)
+        sigma_3=np.linspace(*zrange, npt)
         s1, s2, s3 = np.meshgrid(sigma_1, sigma_2, sigma_3, indexing='ij')
         s = (StressTensor.tensile([1,0,0], s1)
              + StressTensor.tensile([0,1,0], s2)
              + StressTensor.tensile([0,0,1], s3))
         f = self.yield_function(s)
-        if fig is None:
-            fig = go.Figure()
         fig.add_trace(go.Isosurface(
             x=s1.flatten(),
             y=s2.flatten(),
@@ -259,7 +297,7 @@ class DruckerPrager(YieldCriterion):
     """
     name = 'Drucker-Prager'
 
-    def __init__(self, *, alpha=None, k=None, c=None, phi=None, fit='inside'):
+    def __init__(self, *, alpha=None, k=None, c=None, phi=None, fit='middle'):
         """
         Create a Drucker-Prager (DP) plasticity criterion.
 
@@ -280,7 +318,7 @@ class DruckerPrager(YieldCriterion):
             of the DP cone in the principal stress space with respect to that of the MC criterion:
               - inside : the DP cone is inside that of MC (tangent to the faces of the MC cone)
               - outside : the DP cone is outside that of MC
-              - middle : the DP cone is of intermediate shape of inside and outside.
+              - middle : the DP cone is of intermediate shape between inside and outside.
 
 
         Notes
@@ -294,13 +332,8 @@ class DruckerPrager(YieldCriterion):
         where :math:`I_1` is the first invariant of the stress tensor, and :math:`J_2` is the second invariant of the
         deviatoric stress tensor.
 
-        If the cohesion (c) and friction angle (phi) are provided, the following conversion is made:
-
-        .. math::
-
-            \\alpha = \\frac{-2\\sin\\phi}{\\sqrt{3}(3-\\sin\\phi)}
-
-            k = \\frac{6c\\cos\\phi}{\\sqrt{3}(3-\\sin\\phi)}
+        If the cohesion (c) and friction angle (phi) are provided, the conversion is made with respect to the formula
+        given `here <https://en.wikipedia.org/wiki/Drucker%E2%80%93Prager_yield_criterion#Expressions_in_terms_of_cohesion_and_friction_angle>`_.
         """
         if (alpha is None) and (k is None):
             phi = np.radians(phi)
