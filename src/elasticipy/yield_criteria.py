@@ -145,12 +145,9 @@ class YieldCriterion(ABC):
 
         Parameters
         ----------
-        xrange : tuple, optional
-            range for the first principal stress
-        yrange : tuple, optional
-            range for the first second stress
-        zrange : tuple, optional
-            range for the third principal stress
+        xrange, yrange, zrange : tuple, optional
+            range for the first principal stress. If not provided, (-1,1) will be used, except if the figure already
+            contains data; in this case, the same ranges will be reused.
         color : str, optional
             colro to use for plotting the surface
         opacity : float, optional
@@ -167,7 +164,7 @@ class YieldCriterion(ABC):
         """
         if fig is None:
             fig = go.Figure()
-        else:
+        elif len(fig.data):
             if xrange is None:
                 xrange = (np.min(fig.data[0].x), np.max(fig.data[0].x))
             if yrange is None:
