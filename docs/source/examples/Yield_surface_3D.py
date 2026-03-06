@@ -1,21 +1,19 @@
 """
-===========================================================
-Plot in 3D the Drucker-Prager yield surface
-===========================================================
+============================================================
+3D plot the Drucker-Prager and Mohr-Coulomb yield surface
+============================================================
 
-We plot the Drucker-Prager yield surface in the 3D principal stresse space
+We plot the Drucker-Prager and Mohr-coulomb yield surfaces in the 3D principal stresses space.
 
 .. note::
 
-    This replicates the figure shown on wikipedia to illustrate the DP yield criterion  (see
+    This example is inspired by the figure shown on wikipedia to illustrate the DP yield criterion (see
     `here <https://en.wikipedia.org/wiki/Drucker%E2%80%93Prager_yield_criterion>`_).
 """
 from elasticipy.yield_criteria import DruckerPrager, MohrCoulomb
 
-pg = DruckerPrager(c=2, phi=-20, fit='inside')
-fig=pg.plot_3D(xmin=-6, xmax=6, ymin=-6, ymax=6, zmin=-6, zmax=6)
-
+pg = DruckerPrager(c=2, phi=-20)
+fig=pg.plot_3D(xrange=(-6, 6), yrange=(-6, 6), zrange=(-6, 6))
 
 mc = MohrCoulomb(c=2, phi=-20)
-fig=mc.plot_3D(xmin=-6, xmax=6, ymin=-6, ymax=6, zmin=-6, zmax=6, fig=fig, color='blue')
-fig.show(renderer='browser')
+mc.plot_3D(fig=fig, color='blue')
