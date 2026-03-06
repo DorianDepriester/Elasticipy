@@ -701,3 +701,15 @@ class DruckerPrager(YieldCriterion):
 
     def yield_function(self, stress):
         return stress.J2**0.5 + self.alpha * stress.I1 - self.k
+
+class MohrCoulomb(YieldCriterion):
+    def __init__(self, c=1.0, phi=0.):
+        self.c = c
+        self.phi = phi
+
+    def yield_function(self, stress):
+        phi = np.radians(self.phi)
+        sigma_p = stress.principal_stresses()
+        c1 = sigma_p[...,0]
+        c3 = sigma_p[...,2]
+        return c1 - c3 - (c1 + c3) * np.sin(phi) - 2 * self.c * np.cos(phi)
