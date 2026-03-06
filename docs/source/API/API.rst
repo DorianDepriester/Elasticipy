@@ -15,3 +15,4 @@ API documentation
    Elasticipy.tensors.second_order
    Elasticipy.tensors.stress_strain
    Elasticipy.tensors.thermal_expansion
+   Elasticipy.yield_criteria
