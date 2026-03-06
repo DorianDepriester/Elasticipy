@@ -11,7 +11,5 @@ We plot the Drucker-Prager yield surface in the 3D principal stresse space
     `here <https://en.wikipedia.org/wiki/Drucker%E2%80%93Prager_yield_criterion>`_).
 """
 from elasticipy.plasticity import DruckerPrager
-mises = DruckerPrager(c=2, phi=-20)
-mises.plot_3D(xmin=-6, xmax=6, ymin=-6, ymax=6, zmin=-6, zmax=6)
-
-
+pg = DruckerPrager(c=2, phi=-20)
+pg.plot_3D(xmin=-6, xmax=6, ymin=-6, ymax=6, zmin=-6, zmax=6)
