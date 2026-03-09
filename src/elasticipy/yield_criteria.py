@@ -407,20 +407,18 @@ class MohrCoulomb(YieldCriterion):
 
         """
         self.c = c
-        self.phi = phi
+        self.phi = np.radians(phi)
 
     def yield_function(self, stress):
-        phi = np.radians(self.phi)
         sigma_p = stress.principal_stresses()
         c1 = sigma_p[...,0]
         c3 = sigma_p[...,2]
-        return c1 - c3 - (c1 + c3) * np.sin(phi) - 2 * self.c * np.cos(phi)
+        return c1 - c3 - (c1 + c3) * np.sin(self.phi) - 2 * self.c * np.cos(self.phi)
 
     @property
     def _plot_bounds(self):
-        phi = np.radians(self.phi)
-        s_min = -2 * self.c * np.cos(phi) / (1 + np.sin(phi))
-        s_max = 2 * self.c * np.cos(phi) / (1 - np.sin(phi))
+        s_min = -2 * self.c * np.cos(self.phi) / (1 + np.sin(self.phi))
+        s_max = 2 * self.c * np.cos(self.phi) / (1 - np.sin(self.phi))
         return (s_min, s_max), (s_min, s_max)
 
     def normal(self, stress, **kwargs):
@@ -429,8 +427,7 @@ class MohrCoulomb(YieldCriterion):
         u3 = dirs[..., 2]
         t1 = np.einsum('ij,ij->i', u1, u1)
         t3 = np.einsum('ij,ij->i', u3, u3)
-        phi = np.radians(self.phi)
-        normal = ( 1 - np.sin(phi)) * t1 - (1 + np.sin(phi)) * t3
+        normal = ( 1 - np.sin(self.phi)) * t1 - (1 + np.sin(self.phi)) * t3
         strain = StrainTensor(normal)
         return strain / strain.eq_strain()
 
