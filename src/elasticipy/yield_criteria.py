@@ -123,8 +123,9 @@ class YieldCriterion(ABC):
             fig, ax = plt.subplots()
 
         # Tracer la zone remplie et le contour
-        ax.contourf(Sigma1, Sigma2, f, levels=[-np.inf, 0], colors=[color], alpha=alpha)
-        ax.contour(Sigma1, Sigma2, f, levels=[0], colors=color, linewidths=2)
+        if alpha != 0.:
+            ax.contourf(Sigma1, Sigma2, f, levels=[-np.inf, 0], colors=[color], alpha=alpha)
+        ax.contour(Sigma1, Sigma2, f, levels=[0], colors=color, linewidths=1)
 
         proxy = Line2D([0], [0], color=color, lw=2, label=self.name)
         ax.add_line(proxy)
