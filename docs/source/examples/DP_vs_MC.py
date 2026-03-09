@@ -21,9 +21,9 @@ pg2 = DruckerPrager(c=2, phi=-20, fit='middle')
 pg3 = DruckerPrager(c=2, phi=-20, fit='outside')
 
 fig, ax = mc.plot_2D()
-fig, ax = pg1.plot_2D(fig=fig, ax=ax, color='blue', alpha=0., label='DP (inside)')
-fig, ax = pg2.plot_2D(fig=fig, ax=ax, color='green', alpha=0., label='DP (middle)')
-fig, ax = pg3.plot_2D(fig=fig, ax=ax, color='pink', alpha=0., label='DP (outside)')
+fig, ax = pg1.plot_2D(fig=fig, ax=ax, label='DP (inside)', color='green', alpha=0., linestyle='dashed')
+fig, ax = pg2.plot_2D(fig=fig, ax=ax, label='DP (middle)', color='blue', alpha=0., linestyle='dotted')
+fig, ax = pg3.plot_2D(fig=fig, ax=ax, label='DP (outside)', color='black', alpha=0., linestyle='dashdot')
 ax.legend()
 fig.show()
 
