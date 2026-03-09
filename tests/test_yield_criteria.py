@@ -25,6 +25,18 @@ class TestDruckerPrager(unittest.TestCase):
         assert pg.yield_function(tensile_x * sy_tensile) == 0.0
         assert pg.yield_function(tensile_x * sy_compres) == 0.0
 
+    def test_inequality_fit(self):
+        c, phi = 2, -10
+        dp_1 = DruckerPrager.from_cohesion_friction_angle(c, phi, fit='inside')
+        dp_2 = DruckerPrager.from_cohesion_friction_angle(c, phi, fit='middle')
+        dp_3 = DruckerPrager.from_cohesion_friction_angle(c, phi, fit='outside')
+        rand_stress = StressTensor.rand(shape=1000, seed=123)
+        f1 = dp_1.yield_function(rand_stress)
+        f2 = dp_2.yield_function(rand_stress)
+        f3 = dp_3.yield_function(rand_stress)
+        assert np.all(np.logical_and(f1 > f2, f2 > f3))
+
+
 
 
 
