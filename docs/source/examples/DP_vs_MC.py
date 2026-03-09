@@ -7,8 +7,6 @@ The example illustrates in 2D the differences between the Mohr-Coulomb and the D
 
 """
 from elasticipy.yield_criteria import DruckerPrager, MohrCoulomb
-
-sigma_y = 100 # yield stress
 mc = MohrCoulomb(c=2, phi=-20)
 
 #####################################################################################
