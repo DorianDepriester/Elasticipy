@@ -70,7 +70,8 @@ class YieldCriterion(ABC):
     def _plot_bounds(self):
         return (0.0, 1.0), (0.0, 1.0)
 
-    def plot_2D(self, color='red', fig=None, ax=None, alpha=0.3, xrange=None, yrange=None, npt=400, label=None):
+    def plot_2D(self, color='red', fig=None, ax=None, alpha=0.3,
+                xrange=None, yrange=None, npt=400, label=None, linewidth=1., linestyle='solid'):
         """
         Plot the elastic domain in the biaxial tensile space.
 
@@ -92,6 +93,10 @@ class YieldCriterion(ABC):
             Number of points along each direction to use for the plot.
         label : str, optional
             Label for the plot. If not provided, the name of the yield criterion constructor will be used.
+        linewidth : float, optional
+            Width of the lines in the plot. Default is 1.
+        linestyle : str, optional
+            Style of the lines in the plot. Default is 'solid'.
 
         Returns
         -------
@@ -127,11 +132,11 @@ class YieldCriterion(ABC):
         # Tracer la zone remplie et le contour
         if alpha != 0.:
             ax.contourf(Sigma1, Sigma2, f, levels=[-np.inf, 0], colors=[color], alpha=alpha)
-        ax.contour(Sigma1, Sigma2, f, levels=[0], colors=color, linewidths=1)
+        ax.contour(Sigma1, Sigma2, f, levels=[0], colors=color, linewidths=linewidth, linestyles=linestyle)
 
         if label is None:
             label = self.name
-        proxy = Line2D([0], [0], color=color, lw=2, label=label)
+        proxy = Line2D([0], [0], color=color, label=label, linewidth=linewidth, linestyle=linestyle)
         ax.add_line(proxy)
 
         # Configuration de l'axe
