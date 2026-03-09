@@ -14,7 +14,7 @@ mc = MohrCoulomb(c=2, phi=-20)
 #####################################################################################
 # When expressed in terms of cohesion (c) and friction angle (phi), there are three ways to 'fit' the Drucker-Prager
 # (DP) yield criterion with that of Mohr-Coulomb
-# (see `here <https://en.wikipedia.org/wiki/Drucker%E2%80%93Prager_yield_criterion#Expressions_in_terms_of_cohesion_and_friction_angle>`_:
+# (see `here <https://en.wikipedia.org/wiki/Drucker%E2%80%93Prager_yield_criterion#Expressions_in_terms_of_cohesion_and_friction_angle>`_):
 
 pg1 = DruckerPrager(c=2, phi=-20, fit='inside')
 pg2 = DruckerPrager(c=2, phi=-20, fit='middle')
