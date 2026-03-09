@@ -304,7 +304,7 @@ class DruckerPrager(YieldCriterion):
     """
     name = 'Drucker-Prager'
 
-    def __init__(self, *, alpha=None, k=None, c=None, phi=None, fit='middle'):
+    def __init__(self, alpha, k):
         """
         Create a Drucker-Prager (DP) plasticity criterion.
 
@@ -312,21 +312,10 @@ class DruckerPrager(YieldCriterion):
 
         Parameters
         ----------
-        alpha : float, optional
+        alpha : float
             Pressure dependence parameters (see notes for details)
-        k : float, optional
+        k : float
             Constant component of the yield surface (see below)
-        c : float, optional
-            cohesion factor
-        phi : float, optional
-            cone angle, in degrees
-        fit : str ['inside', 'middle', 'outside'], optional
-            How to treat c and phi, as they usually refer to the Mohr-Coulomb (MC) yield criterion. It relates the shape
-            of the DP cone in the principal stress space with respect to that of the MC criterion:
-              - inside : the DP cone is inside that of MC (tangent to the faces of the MC cone)
-              - outside : the DP cone is outside that of MC
-              - middle : the DP cone is of intermediate shape between inside and outside.
-
 
         Notes
         -----
@@ -338,26 +327,73 @@ class DruckerPrager(YieldCriterion):
 
         where :math:`I_1` is the first invariant of the stress tensor, and :math:`J_2` is the second invariant of the
         deviatoric stress tensor.
-
-        If the cohesion (c) and friction angle (phi) are provided, the conversion is made with respect to the formula
-        given `here <https://en.wikipedia.org/wiki/Drucker%E2%80%93Prager_yield_criterion#Expressions_in_terms_of_cohesion_and_friction_angle>`_.
         """
-        if (alpha is None) and (k is None):
-            phi = np.radians(phi)
-            if fit == 'middle':
-                denom = 3**0.5 * (3 - np.sin(phi))
-                k = 6 * c * np.cos(phi) / denom
-                alpha = -2 * np.sin(phi) / denom
-            elif fit == 'outside':
-                denom = 3**0.5 * (3 + np.sin(phi))
-                k = 6 * c * np.cos(phi) / denom
-                alpha = -2 * np.sin(phi) / denom
-            elif fit == 'inside':
-                d = (9 + 3 * np.sin(phi)**2)**0.5
-                k = 3 * c * np.cos(phi) / d
-                alpha = -np.sin(phi) / d
         self.alpha = alpha
         self.k = k
+
+    @classmethod
+    def from_cohesion_friction_angle(cls, c, phi, fit='middle'):
+        """
+        Define a Drucker-Prager yield criterion from the cohesion factor and friction angle
+
+        Parameters
+        ----------
+        c : float
+            cohesion factor
+        phi : float
+            cone angle, in degrees
+        fit : str ['inside', 'middle', 'outside'], optional
+            How to treat c and phi, as they usually refer to the Mohr-Coulomb (MC) yield criterion. It relates the shape
+            of the DP cone in the principal stress space with respect to that of the MC criterion:
+              - inside : the DP cone is inside that of MC (tangent to the faces of the MC cone)
+              - outside : the DP cone is outside that of MC
+              - middle : the DP cone is of intermediate shape between inside and outside.
+
+        Notes
+        -----
+        if fit=='outside':
+
+        .. math::
+
+            k = \\frac{ 6c\\cos\\phi }{ \\sqrt{3}\\left(3+\\sin\phi\\right) }
+
+            \\alpha = \\frac{-2\\sin\phi}{ \\sqrt{3}\\left(3+\\sin\phi\\right) }
+
+        if fit=='inside':
+
+        .. math::
+
+            k = \\frac{ 3c\\cos\\phi }{ \\sqrt{\\left(9+3\\sin^2\phi\\right)} }
+
+            \\alpha = \\frac{-\\sin\phi}{ \\sqrt{\\left(9+3\\sin^2\phi\\right)} }
+
+        if fit=='middle':
+
+        .. math::
+
+            k = \\frac{ 6c\\cos\\phi }{ \\sqrt{3}\\left(3-\\sin\phi\\right) }
+
+            \\alpha = \\frac{-2\\sin\phi}{ \\sqrt{3}\\left(3-\\sin\phi\\right) }
+
+        Returns
+        -------
+        DruckerPrager
+            DP yield criterion
+        """
+        phi = np.radians(phi)
+        if fit == 'outside':
+            d = 3 ** 0.5 * (3 + np.sin(phi))
+            k = 6 * c * np.cos(phi) / d
+            alpha = -2 * np.sin(phi) / d
+        elif fit == 'inside':
+            d = (9 + 3 * np.sin(phi) ** 2) ** 0.5
+            k = 3 * c * np.cos(phi) / d
+            alpha = -np.sin(phi) / d
+        else:
+            d = 3 ** 0.5 * (3 - np.sin(phi))
+            k = 6 * c * np.cos(phi) / d
+            alpha = -2 * np.sin(phi) / d
+        return cls(alpha, k)
 
     @property
     def _plot_bounds(self):

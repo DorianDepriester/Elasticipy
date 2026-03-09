@@ -7,16 +7,18 @@ The example illustrates in 2D the differences between the Mohr-Coulomb and the D
 
 """
 from elasticipy.yield_criteria import DruckerPrager, MohrCoulomb
-mc = MohrCoulomb(c=2, phi=-20)
+c   = 2
+phi = -20
+mc = MohrCoulomb(c, phi)
 
 #####################################################################################
 # When expressed in terms of cohesion (c) and friction angle (phi), there are three ways to 'fit' the Drucker-Prager
 # (DP) yield criterion with that of Mohr-Coulomb
 # (see `here <https://en.wikipedia.org/wiki/Drucker%E2%80%93Prager_yield_criterion#Expressions_in_terms_of_cohesion_and_friction_angle>`_):
 
-pg1 = DruckerPrager(c=2, phi=-20, fit='inside')
-pg2 = DruckerPrager(c=2, phi=-20, fit='middle')
-pg3 = DruckerPrager(c=2, phi=-20, fit='outside')
+pg1 = DruckerPrager.from_cohesion_friction_angle(c, phi, fit='inside')
+pg2 = DruckerPrager.from_cohesion_friction_angle(c, phi, fit='middle')
+pg3 = DruckerPrager.from_cohesion_friction_angle(c, phi, fit='outside')
 
 fig, ax = mc.plot_2D()
 fig, ax = pg1.plot_2D(fig=fig, ax=ax, label='DP (inside)', color='green', alpha=0., linestyle='dashed')
