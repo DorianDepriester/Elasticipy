@@ -17,6 +17,17 @@ class TestDruckerPrager(unittest.TestCase):
             mises_crit = VonMisesCriterion()
             np.testing.assert_array_almost_equal(pg_vm.normal(stress).matrix, mises_crit.normal(stress).matrix)
 
+    def test_yield_function(self):
+        k, alpha = 2, 0.1
+        pg = DruckerPrager(k=k, alpha=alpha)
+        sy_tensile = k/(alpha + 3**(-0.5))
+        sy_compres = k / (alpha - 3 ** (-0.5))
+        assert pg.yield_function(tensile_x * sy_tensile) == 0.0
+        assert pg.yield_function(tensile_x * sy_compres) == 0.0
+
+
+
+
 
 class TestMohrCoulomb(unittest.TestCase):
     def test_Tresca(self):
