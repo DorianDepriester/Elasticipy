@@ -70,7 +70,7 @@ class YieldCriterion(ABC):
     def _plot_bounds(self):
         return (0.0, 1.0), (0.0, 1.0)
 
-    def plot_2D(self, color='red', fig=None, ax=None, alpha=0.3, xrange=None, yrange=None, npt=400):
+    def plot_2D(self, color='red', fig=None, ax=None, alpha=0.3, xrange=None, yrange=None, npt=400, label=None):
         """
         Plot the elastic domain in the biaxial tensile space.
 
@@ -90,6 +90,8 @@ class YieldCriterion(ABC):
             Set the y-range of the plot. If not provided, it will be set automatically.
         npt : int, optional
             Number of points along each direction to use for the plot.
+        label : str, optional
+            Label for the plot. If not provided, the name of the yield criterion constructor will be used.
 
         Returns
         -------
@@ -127,7 +129,9 @@ class YieldCriterion(ABC):
             ax.contourf(Sigma1, Sigma2, f, levels=[-np.inf, 0], colors=[color], alpha=alpha)
         ax.contour(Sigma1, Sigma2, f, levels=[0], colors=color, linewidths=1)
 
-        proxy = Line2D([0], [0], color=color, lw=2, label=self.name)
+        if label is None:
+            label = self.name
+        proxy = Line2D([0], [0], color=color, lw=2, label=label)
         ax.add_line(proxy)
 
         # Configuration de l'axe
@@ -383,3 +387,11 @@ class MohrCoulomb(YieldCriterion):
         c1 = sigma_p[...,0]
         c3 = sigma_p[...,2]
         return c1 - c3 - (c1 + c3) * np.sin(phi) - 2 * self.c * np.cos(phi)
+
+    @property
+    def _plot_bounds(self):
+        phi = np.radians(self.phi)
+        s_min = -2 * self.c * np.cos(phi) / (1 + np.sin(phi))
+        s_max = 2 * self.c * np.cos(phi) / (1 - np.sin(phi))
+        return (s_min, s_max), (s_min, s_max)
+
