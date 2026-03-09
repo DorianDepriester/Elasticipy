@@ -422,12 +422,23 @@ class MohrCoulomb(YieldCriterion):
         return (s_min, s_max), (s_min, s_max)
 
     def normal(self, stress, **kwargs):
-        _, dirs = stress.eig()
+        s, dirs = stress.eig()
         u1 = dirs[..., 0]
+        u2 = dirs[..., 1]
         u3 = dirs[..., 2]
-        t1 = np.einsum('ij,ij->i', u1, u1)
-        t3 = np.einsum('ij,ij->i', u3, u3)
-        normal = ( 1 - np.sin(self.phi)) * t1 - (1 + np.sin(self.phi)) * t3
+        s1 = s[..., 0]
+        s2 = s[..., 1]
+        s3 = s[..., 2]
+        t1 = np.einsum('...i,...j->...ij', u1, u1)
+        t2 = np.einsum('...i,...j->...ij', u2, u2)
+        t3 = np.einsum('...i,...j->...ij', u3, u3)
+        singular_point_12 = s1 == s2
+        singular_point_23 = s2 == s3
+        a = t1
+        b = t3
+        a[singular_point_12] = 0.5 * t1 + 0.5 * t2
+        b[singular_point_23] = 0.5 * t2 + 0.5 * t3
+        normal = ( 1 - np.sin(self.phi)) * a - (1 + np.sin(self.phi)) * b
         strain = StrainTensor(normal)
         return strain / strain.eq_strain()
 
