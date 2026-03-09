@@ -380,9 +380,32 @@ class DruckerPrager(YieldCriterion):
 
 
 class MohrCoulomb(YieldCriterion):
+    """
+    Mohr-Coulomb pressure-dependent plasticity criterion, with associated normality rule
+    """
     name = 'Mohr-Coulomb'
 
     def __init__(self, c=1.0, phi=0.):
+        """
+        Create a Mohr-Coulomb (MC) yield criterion.
+
+        Parameters
+        ----------
+        c : float
+            Cohesion factor
+        phi : float
+            Friction angle (in degrees)
+
+        Notes
+        -----
+        Given the principal stresses :math:`\\sigma_{I}\\geq \\sigma_{II}\\geq \\sigma_{III}`, the MC yield function is
+        defined as:
+
+        .. math::
+
+            \\sigma_{I} - \\sigma_{III} + \\left(\\sigma_{I} + \\sigma_{III}\\right)\\sin\\phi - 2c\\cos\\phi
+
+        """
         self.c = c
         self.phi = phi
 
@@ -399,4 +422,15 @@ class MohrCoulomb(YieldCriterion):
         s_min = -2 * self.c * np.cos(phi) / (1 + np.sin(phi))
         s_max = 2 * self.c * np.cos(phi) / (1 - np.sin(phi))
         return (s_min, s_max), (s_min, s_max)
+
+    def normal(self, stress, **kwargs):
+        _, dirs = stress.eig()
+        u1 = dirs[..., 0]
+        u3 = dirs[..., 2]
+        t1 = np.einsum('ij,ij->i', u1, u1)
+        t3 = np.einsum('ij,ij->i', u3, u3)
+        phi = np.radians(self.phi)
+        normal = ( 1 - np.sin(phi)) * t1 - (1 + np.sin(phi)) * t3
+        strain = StrainTensor(normal)
+        return strain / strain.eq_strain()
 
