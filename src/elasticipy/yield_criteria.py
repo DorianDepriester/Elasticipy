@@ -332,7 +332,7 @@ class DruckerPrager(YieldCriterion):
         self.k = k
 
     @classmethod
-    def from_cohesion_friction_angle(cls, c, phi, fit='middle'):
+    def from_cohesion_friction_angle(cls, c, phi, fit='middle', degrees=True):
         """
         Define a Drucker-Prager yield criterion from the cohesion factor and friction angle
 
