@@ -145,7 +145,7 @@ class YieldCriterion(ABC):
             range for the first principal stress. If not provided, (-1,1) will be used, except if the figure already
             contains data; in this case, the same ranges will be reused.
         color : str, optional
-            colro to use for plotting the surface
+            color to use for plotting the surface
         opacity : float, optional
             opacity of the surface
         npt : int, optional
