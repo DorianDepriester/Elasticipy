@@ -251,12 +251,39 @@ class YieldCriterion(ABC):
         m = minimize(fun, 1.)
         return m.x[0] * stress
 
-    def plot_surface_normal(self, fig, stress, length=1.0, color='red', cone_scale=0.2, auto_scale=False):
+    def plot_surface_normal(self, fig, stress, length=1.0, color='red', cone_scale=0.2, auto_scale=False, label=None):
+        """
+        Plot the normal to the yield surface in the principal stress space
+
+        Parameters
+        ----------
+        fig : plotly.graph_objs._figure.Figure
+            Figure where the plot is drawn
+        stress : StressTensor
+            Location of the surface normal to plot
+        length : float, optional
+            Lenght of the normal arrow
+        color : str, optional
+            Color of the gliph used to show the normal
+        cone_scale : float, optional
+            Size of the cone used to show the normal
+        auto_scale : bool, optional
+            If true, the stress will be scaled automatically so that the normal will appear on the yield surface
+        label : str, optional
+            Name to display in legend
+
+        Returns
+        -------
+        plotly.graph_objs._figure.Figure
+            Handle to the figure
+        """
         if auto_scale:
             stress = self.scale_stress_to_yield_surface(stress)
-        point = stress.eigvals()
+        point = np.diagonal(stress.matrix)
+        if not np.array_equal(stress.matrix, np.diag(point)):
+            raise ValueError('The stress tensor must be diagonal.')
         normal = self.normal(stress)
-        dir = normal.eigvals()
+        dir = np.diagonal(normal.matrix)
 
         # Coordonnées de la ligne (tige de la flèche)
         x_line = [point[0], point[0] + length * dir[0]]
@@ -270,7 +297,7 @@ class YieldCriterion(ABC):
             z=z_line,
             mode='lines',
             line=dict(color=color, width=4),
-            name='Normale'
+            name=label
         ))
 
         # Coordonnées du cône (pointe de la flèche)
@@ -439,25 +466,25 @@ class DruckerPrager(YieldCriterion):
 
         .. math::
 
-            k = \\frac{ 6c\\cos\\phi }{ \\sqrt{3}\\left(3+\\sin\phi\\right) }
+            k = \\frac{ 6c\\cos\\phi }{ \\sqrt{3}\\left(3+\\sin\\phi\\right) }
 
-            \\alpha = \\frac{-2\\sin\phi}{ \\sqrt{3}\\left(3+\\sin\phi\\right) }
+            \\alpha = \\frac{-2\\sin\\phi}{ \\sqrt{3}\\left(3+\\sin\\phi\\right) }
 
         if fit=='inside':
 
         .. math::
 
-            k = \\frac{ 3c\\cos\\phi }{ \\sqrt{\\left(9+3\\sin^2\phi\\right)} }
+            k = \\frac{ 3c\\cos\\phi }{ \\sqrt{\\left(9+3\\sin^2\\phi\\right)} }
 
-            \\alpha = \\frac{-\\sin\phi}{ \\sqrt{\\left(9+3\\sin^2\phi\\right)} }
+            \\alpha = \\frac{-\\sin\\phi}{ \\sqrt{\\left(9+3\\sin^2\\phi\\right)} }
 
         if fit=='middle':
 
         .. math::
 
-            k = \\frac{ 6c\\cos\\phi }{ \\sqrt{3}\\left(3-\\sin\phi\\right) }
+            k = \\frac{ 6c\\cos\\phi }{ \\sqrt{3}\\left(3-\\sin\\phi\\right) }
 
-            \\alpha = \\frac{-2\\sin\phi}{ \\sqrt{3}\\left(3-\\sin\phi\\right) }
+            \\alpha = \\frac{-2\\sin\\phi}{ \\sqrt{3}\\left(3-\\sin\\phi\\right) }
 
         Returns
         -------
