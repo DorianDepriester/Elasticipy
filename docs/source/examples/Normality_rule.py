@@ -31,6 +31,6 @@ mc.plot_surface_normal(fig, tension_compress, color='green', auto_scale=True, la
 ########################
 # .. Notes::
 #
-# The `auto_scale=True` option automatically scales the provided stress so that the yield surface is reached.
+#     The `auto_scale=True` option automatically scales the provided stress so that the yield surface is reached.
 
 
