@@ -36,11 +36,6 @@ class TestDruckerPrager(unittest.TestCase):
         f3 = dp_3.yield_function(rand_stress)
         assert np.all(np.logical_and(f1 > f2, f2 > f3))
 
-
-
-
-
-
 class TestMohrCoulomb(unittest.TestCase):
     def test_Tresca(self):
         mv_tr = MohrCoulomb(c=1, phi=0)
@@ -50,6 +45,11 @@ class TestMohrCoulomb(unittest.TestCase):
             tresca_crit = TrescaCriterion()
             np.testing.assert_array_almost_equal(mv_tr.normal(stress).matrix, tresca_crit.normal(stress).matrix)
 
+class TestVonMisesCriterion(unittest.TestCase):
+    def test_scale_stress(self):
+        vm = VonMisesCriterion(yield_stress=100)
+        stress = vm.scale_stress_to_yield_surface(tensile_x)
+        np.testing.assert_array_almost_equal(stress.matrix, tensile_x.matrix * 100)
 
 if __name__ == '__main__':
     unittest.main()
