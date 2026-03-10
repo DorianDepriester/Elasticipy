@@ -5,6 +5,7 @@ from matplotlib import pyplot as plt
 from matplotlib.lines import Line2D
 from plotly import graph_objects as go
 
+from scipy.optimize import minimize
 from elasticipy.tensors.stress_strain import StressTensor, StrainTensor
 
 
@@ -208,6 +209,71 @@ class YieldCriterion(ABC):
             ),
         ),)
         return fig
+
+    def scale_stress_to_yield_surface(self, stress):
+        """
+        Automatically scale the stress to reach the yield surface.
+
+        For a given stress tensor :math:`\\sigma`, find k such that :math:`f(k\\sigma)=0`.
+
+        Parameters
+        ----------
+        stress : StressTensor
+            stress to scale
+
+        Returns
+        -------
+        float
+            scale factor
+        """
+        def fun(a):
+            return self.yield_function(stress * a[0]) ** 2
+        m = minimize(fun, 1.)
+        return m.x[0] * stress
+
+    def plot_surface_normal(self, fig, stress, length=1.0, color='red', cone_scale=0.2, auto_scale=False):
+        if auto_scale:
+            stress = self.scale_stress_to_yield_surface(stress)
+        point = stress.eigvals()
+        normal = self.normal(stress)
+        dir = normal.eigvals()
+
+        # Coordonnées de la ligne (tige de la flèche)
+        x_line = [point[0], point[0] + length * dir[0]]
+        y_line = [point[1], point[1] + length * dir[1]]
+        z_line = [point[2], point[2] + length * dir[2]]
+
+        # Ajouter la ligne (tige de la flèche)
+        fig.add_trace(go.Scatter3d(
+            x=x_line,
+            y=y_line,
+            z=z_line,
+            mode='lines',
+            line=dict(color=color, width=4),
+            name='Normale'
+        ))
+
+        # Coordonnées du cône (pointe de la flèche)
+        x_cone = point[0] + length * dir[0]
+        y_cone = point[1] + length * dir[1]
+        z_cone = point[2] + length * dir[2]
+
+        # Ajouter le cône (pointe de la flèche)
+        fig.add_trace(go.Cone(
+            x=[x_cone],
+            y=[y_cone],
+            z=[z_cone],
+            u=[cone_scale * dir[0]],
+            v=[cone_scale * dir[1]],
+            w=[cone_scale * dir[2]],
+            colorscale=[[0, color], [1, color]],
+            showscale=False,
+            sizemode='absolute',
+            sizeref=1.0
+        ))
+
+        return fig
+
 
 
 class VonMisesCriterion(YieldCriterion):
