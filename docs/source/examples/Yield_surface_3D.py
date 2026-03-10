@@ -12,7 +12,7 @@ We plot the Drucker-Prager and Mohr-coulomb yield surfaces in the 3D principal s
 """
 from elasticipy.yield_criteria import DruckerPrager, MohrCoulomb
 
-pg = DruckerPrager(2, -20)
+pg = DruckerPrager.from_cohesion_friction_angle(2, -20)
 fig=pg.plot_3D(xrange=(-6, 6), yrange=(-6, 6), zrange=(-6, 6))
 
 mc = MohrCoulomb(2, -20)
