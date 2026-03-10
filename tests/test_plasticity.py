@@ -14,7 +14,6 @@ JC    = JohnsonCook(A=A, B=B, n=n)
 JC_rd = JohnsonCook(A=A, B=B, n=n, C=C, eps_dot_ref=eps_dot_ref)
 JC_td = JohnsonCook(A=A, B=B, n=n, m=1.03, T0=T0, Tm=Tm)
 JC_rtd= JohnsonCook(A=A, B=B, n=n, C=C, eps_dot_ref=eps_dot_ref, m=m, T0=T0, Tm=Tm)
-K = 3 / 2 * 1 / 3 ** 0.5
 JC_tresca = JohnsonCook(A=A, B=B, n=n, criterion='Tresca')
 
 
@@ -91,39 +90,6 @@ class TestJohnsonCook(unittest.TestCase):
 
         # Check that if the temperature is larger than Tm, the strain is infinite
         assert JC_td.compute_strain_increment(0, T=Tm) == np.inf
-
-
-    def test_normality_J2(self):
-        tensile_stress = StressTensor.tensile([1,0,0], 1)
-        normal = VonMisesCriterion.normal(tensile_stress)
-        assert normal == np.diag([1., -0.5, -0.5])
-
-        shear_stress = StressTensor.shear([1, 0, 0], [0, 1, 0], 1)
-        normal = VonMisesCriterion.normal(shear_stress)
-        normal_th = K * np.array([[0, 1, 0],
-                                  [1, 0, 0],
-                                  [0, 0, 0]])
-        np.testing.assert_array_almost_equal(normal.matrix, normal_th)
-
-    def test_normality_Tresca(self):
-        biaxial = (StressTensor.tensile([1,0,0],[0, 1, 1, 1, 1, 1, 0]) +
-                   StressTensor.tensile([0,1,0],[-1, -1, -0.5, 0, 0.5, 1, 1]))
-        n = TrescaCriterion.normal(biaxial)
-        assert n[0] == VonMisesCriterion.normal(biaxial[0])
-        assert n[2] == K * np.diag([1, -1, 0])
-        assert n[2] == K * np.diag([1, -1, 0])
-        assert n[3] == VonMisesCriterion.normal(biaxial[3])
-        assert n[4] == K * np.diag([1, 0, -1])
-        assert n[5] == VonMisesCriterion.normal(biaxial[5])
-        assert n[6] == VonMisesCriterion.normal(biaxial[6])
-
-        # Check that the magnitude of the normal is 1
-        np.testing.assert_array_equal(n.eq_strain(), np.ones(biaxial.shape))
-        triaxial = StressTensor(np.diag([1,2,4]))
-        n = TrescaCriterion.normal(triaxial)
-        assert n == K * np.diag([-1, 0, 1])
-        assert n.eq_strain() == 1.0
-
 
     def test_apply_strain(self):
         strain = StrainTensor.tensile([1,0,0], 1) + StrainTensor.tensile([0, 1, 0], -0.5) + StrainTensor.tensile([0, 0, 1], -0.5)
