@@ -89,7 +89,7 @@ Due to symmetries in stress, strain, and material response, :math:`\boldsymbol{C
 the number of independent constants: from 2 (for isotropic materials), to 21 (for triclinic materials).
 
 In isotropic materials, the elasticity tensor can be expressed in terms of two constants: the **Lamé parameters**
-:math:`\lambda` :math:`\mu` (the shear modulus):
+:math:`\lambda` and :math:`\mu` (the shear modulus):
 
 .. math::
 
