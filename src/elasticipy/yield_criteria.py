@@ -268,11 +268,12 @@ class YieldCriterion(ABC):
         fig : plotly.graph_objs._figure.Figure
             Figure where the plot is drawn
         stress : StressTensor
-            Location of the surface normal to plot
+            Location of the surface normal to plot. If the stress tensor is not diagonal, the corresponding
+            eigenstresses are used instead.
         length : float, optional
-            Lenght of the normal arrow
+            Length of the normal arrow
         color : str, optional
-            Color of the gliph used to show the normal
+            Color of the glyph used to show the normal
         cone_scale : float, optional
             Size of the cone used to show the normal
         auto_scale : bool, optional
