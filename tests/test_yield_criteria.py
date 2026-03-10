@@ -10,7 +10,7 @@ biaxial = tensile_x + 2 *tensile_y
 
 class TestDruckerPrager(unittest.TestCase):
     def test_vonMises(self):
-        pg_vm = DruckerPrager(k=1, alpha=0)
+        pg_vm = DruckerPrager(0, 1)
         for stress in [tensile_x, tensile_y, shear, biaxial]:
             assert pg_vm.yield_function(stress) == stress.vonMises() / np.sqrt(3) - 1
 
@@ -19,7 +19,7 @@ class TestDruckerPrager(unittest.TestCase):
 
     def test_yield_function(self):
         k, alpha = 2, 0.1
-        pg = DruckerPrager(k=k, alpha=alpha)
+        pg = DruckerPrager(alpha, k)
         sy_tensile = k/(alpha + 3**(-0.5))
         sy_compres = k / (alpha - 3 ** (-0.5))
         assert pg.yield_function(tensile_x * sy_tensile) == 0.0
@@ -38,7 +38,7 @@ class TestDruckerPrager(unittest.TestCase):
 
 class TestMohrCoulomb(unittest.TestCase):
     def test_Tresca(self):
-        mv_tr = MohrCoulomb(c=1, phi=0)
+        mv_tr = MohrCoulomb(1, 0)
         for stress in [tensile_x, tensile_y, shear, biaxial]:
             assert mv_tr.yield_function(stress) == stress.Tresca() - 2
 

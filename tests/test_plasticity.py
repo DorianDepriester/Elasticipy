@@ -142,7 +142,7 @@ class TestJohnsonCook(unittest.TestCase):
         assert eq_stress_tr == approx(stress.Tresca())
 
     def test_DruckerPrager(self):
-        dp = DruckerPrager(alpha=0.2, k=100)
+        dp = DruckerPrager(0.2, 100)
         JC_pg = JohnsonCook(A=A, B=B, n=n, criterion=dp)
         shear_stress = StressTensor.shear([1, 0, 0], [0, 1, 0], 1000)
         tens_shear_stress = shear_stress + StressTensor.eye() * 100

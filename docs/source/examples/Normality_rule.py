@@ -12,7 +12,7 @@ The example illustrates in 2D the differences between the Mohr-Coulomb and the D
 # Plot the yield surface
 #----------------------------------
 from elasticipy.yield_criteria import MohrCoulomb
-mc = MohrCoulomb(c=2, phi=-20)
+mc = MohrCoulomb(c, -20)
 fig=mc.plot_3D(xrange=(-6, 6), yrange=(-6, 6), zrange=(-6, 6))
 
 ###################################################
