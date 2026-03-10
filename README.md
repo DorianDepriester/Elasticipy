@@ -30,6 +30,7 @@ Among other features, this package implements:
 - A graphical user interface to plot the spatial dependence of engineering constants,
 - Compatibility with the [Materials Project](https://next-gen.materialsproject.org/) API, [pymatgen](https://pymatgen.org/) and 
 [orix](https://orix.readthedocs.io/),
+- Crystallographic texture -based calculations,
 - Implementation of common yield criteria, such as von Mises, Tresca, Drucker-Prager and Mohr-Coulomb.
 
 ## 🐍 Installation
