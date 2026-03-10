@@ -14,24 +14,6 @@ class YieldCriterion(ABC):
     """
     name = 'generic'
 
-    @staticmethod
-    def eq_stress(stress, **kwargs):
-        """
-        Return the equivalent stress, with respect to the plasticity criterion.
-
-        Parameters
-        ----------
-        stress : StressTensor
-            Stress to compute the equivalent stress from
-        kwargs : dict
-            keyword arguments passed to the function
-
-        Returns
-        -------
-        float or numpy.ndarray
-        """
-        return 0.0
-
     def yield_function(self, stress):
         """
         Return the yield function, with respect to the plasticity criterion.
@@ -252,6 +234,20 @@ class VonMisesCriterion(YieldCriterion):
 
     @staticmethod
     def eq_stress(stress, **kwargs):
+        """
+        Return the equivalent stress, with respect to the plasticity criterion.
+
+        Parameters
+        ----------
+        stress : StressTensor
+            Stress to compute the equivalent stress from
+        kwargs : dict
+            keyword arguments passed to the function
+
+        Returns
+        -------
+        float or numpy.ndarray
+        """
         return stress.vonMises()
 
     def yield_function(self, stress):
