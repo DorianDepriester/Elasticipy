@@ -99,8 +99,7 @@ class YieldCriterion(ABC):
         .. plot::
 
             from elasticipy.plasticity import VonMisesPlasticity
-            fig, ax = VonMisesPlasticity().plot_2D()
-            fig.show()
+            VonMisesPlasticity().plot_2D()
         """
         margin = 1.05
         if xrange is None:
