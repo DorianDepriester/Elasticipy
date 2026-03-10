@@ -47,3 +47,36 @@ def _plot3D_matplotlib(u, r, fig=None, **kwargs):
     ax.set_ylabel('Y')
     ax.set_zlabel('Z')
     return ax
+
+def _draw_plotly_arrow(fig, point, dir, length=1., color='black', cone_scale=2., label=None):
+    x_line = [point[0], point[0] + length * dir[0]]
+    y_line = [point[1], point[1] + length * dir[1]]
+    z_line = [point[2], point[2] + length * dir[2]]
+
+    fig.add_trace(go.Scatter3d(
+        x=x_line,
+        y=y_line,
+        z=z_line,
+        mode='lines',
+        line=dict(color=color, width=4),
+        name=label
+    ))
+
+    x_cone = point[0] + length * dir[0]
+    y_cone = point[1] + length * dir[1]
+    z_cone = point[2] + length * dir[2]
+
+    fig.add_trace(go.Cone(
+        x=[x_cone],
+        y=[y_cone],
+        z=[z_cone],
+        u=[cone_scale * dir[0]],
+        v=[cone_scale * dir[1]],
+        w=[cone_scale * dir[2]],
+        colorscale=[[0, color], [1, color]],
+        showscale=False,
+        sizemode='absolute',
+        sizeref=1.0
+    ))
+
+    return fig

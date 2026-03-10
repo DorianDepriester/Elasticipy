@@ -7,6 +7,7 @@ from plotly import graph_objects as go
 
 from scipy.optimize import minimize
 from elasticipy.tensors.stress_strain import StressTensor, StrainTensor
+from elasticipy._plotting_tools import _draw_plotly_arrow
 
 
 class YieldCriterion(ABC):
@@ -299,44 +300,9 @@ class YieldCriterion(ABC):
             point = stress.eigvals()
             stress = StressTensor(np.diag(point))
         normal = self.normal(stress)
-        dir = np.diagonal(normal.matrix)
-
-        # Coordonnées de la ligne (tige de la flèche)
-        x_line = [point[0], point[0] + length * dir[0]]
-        y_line = [point[1], point[1] + length * dir[1]]
-        z_line = [point[2], point[2] + length * dir[2]]
-
-        # Ajouter la ligne (tige de la flèche)
-        fig.add_trace(go.Scatter3d(
-            x=x_line,
-            y=y_line,
-            z=z_line,
-            mode='lines',
-            line=dict(color=color, width=4),
-            name=label
-        ))
-
-        # Coordonnées du cône (pointe de la flèche)
-        x_cone = point[0] + length * dir[0]
-        y_cone = point[1] + length * dir[1]
-        z_cone = point[2] + length * dir[2]
-
-        # Ajouter le cône (pointe de la flèche)
-        fig.add_trace(go.Cone(
-            x=[x_cone],
-            y=[y_cone],
-            z=[z_cone],
-            u=[cone_scale * dir[0]],
-            v=[cone_scale * dir[1]],
-            w=[cone_scale * dir[2]],
-            colorscale=[[0, color], [1, color]],
-            showscale=False,
-            sizemode='absolute',
-            sizeref=1.0
-        ))
-
-        return fig
-
+        direction = np.diagonal(normal.matrix)
+        return _draw_plotly_arrow(fig, point=point, dir=direction,
+                                  length=length, color=color, cone_scale=cone_scale, label=label)
 
 
 class VonMisesCriterion(YieldCriterion):
