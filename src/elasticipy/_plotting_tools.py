@@ -80,3 +80,36 @@ def _draw_plotly_arrow(fig, point, dir, length=1., color='black', cone_scale=2.,
     ))
 
     return fig
+
+def _draw_plotly_isosurface(fig, x, y, z, f, label=None, opacity=1.0, color='black'):
+    fig.add_trace(go.Isosurface(
+        x=x.flatten(),
+        y=y.flatten(),
+        z=z.flatten(),
+        value=f.flatten(),
+        isomin=0,
+        isomax=0,
+        caps=dict(x_show=False, y_show=False),
+        colorscale=[[0, color], [1, color]],
+        showscale=False,
+        opacity=opacity,
+        name=label,
+    ))
+    fig.update_layout(scene=dict(
+        xaxis=dict(
+            title=dict(
+                text=r'σ₁'
+            )
+        ),
+        yaxis=dict(
+            title=dict(
+                text=r'σ₂'
+            )
+        ),
+        zaxis=dict(
+            title=dict(
+                text=r'σ₃'
+            )
+        ),
+    ), )
+    return fig

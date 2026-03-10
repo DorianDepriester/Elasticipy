@@ -7,7 +7,7 @@ from plotly import graph_objects as go
 
 from scipy.optimize import minimize
 from elasticipy.tensors.stress_strain import StressTensor, StrainTensor
-from elasticipy._plotting_tools import _draw_plotly_arrow
+from elasticipy._plotting_tools import _draw_plotly_arrow, _draw_plotly_isosurface
 
 
 class YieldCriterion(ABC):
@@ -179,45 +179,15 @@ class YieldCriterion(ABC):
             yrange = (-1, 1)
         if zrange is None:
             zrange = (-1, 1)
-        sigma_1=np.linspace(*xrange, npt)
-        sigma_2=np.linspace(*yrange, npt)
-        sigma_3=np.linspace(*zrange, npt)
+        sigma_1 = np.linspace(*xrange, npt)
+        sigma_2 = np.linspace(*yrange, npt)
+        sigma_3 = np.linspace(*zrange, npt)
         s1, s2, s3 = np.meshgrid(sigma_1, sigma_2, sigma_3, indexing='ij')
-        s = (StressTensor.tensile([1,0,0], s1)
-             + StressTensor.tensile([0,1,0], s2)
-             + StressTensor.tensile([0,0,1], s3))
+        s = (StressTensor.tensile([1, 0, 0], s1)
+             + StressTensor.tensile([0, 1, 0], s2)
+             + StressTensor.tensile([0, 0, 1], s3))
         f = self.yield_function(s)
-        fig.add_trace(go.Isosurface(
-            x=s1.flatten(),
-            y=s2.flatten(),
-            z=s3.flatten(),
-            value=f.flatten(),
-            isomin=0,
-            isomax=0,
-            caps=dict(x_show=False, y_show=False),
-            colorscale=[[0, color], [1, color]],
-            showscale=False,
-            opacity=opacity,
-            name=self.name,
-            ))
-        fig.update_layout(scene=dict(
-            xaxis=dict(
-                title=dict(
-                    text=r'σ₁'
-                )
-            ),
-            yaxis=dict(
-                title=dict(
-                    text=r'σ₂'
-                )
-            ),
-            zaxis=dict(
-                title=dict(
-                    text=r'σ₃'
-                )
-            ),
-        ),)
-        return fig
+        return _draw_plotly_isosurface(fig, s1, s2, s3, f, opacity=opacity, color=color, label=self.name)
 
     def scale_stress_to_yield_surface(self, stress):
         """
