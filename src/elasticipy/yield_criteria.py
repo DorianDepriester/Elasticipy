@@ -88,6 +88,10 @@ class YieldCriterion(ABC):
         ax : matplotlib.axes.Axes
             Axes where the plot is drawn.
 
+        See Also
+        --------
+        plot_3D : plot the yield surface in the principal stress space
+
         Examples
         --------
         Plot the von Mises yield surface:
@@ -154,6 +158,11 @@ class YieldCriterion(ABC):
         -------
         fig : plotly.graph_objs._figure.Figure
             Figure where the plot is drawn
+
+        See Also
+        --------
+        plot_2D : plot the yield surface in the biaxial stress space
+        plot_surface_normal : show the surface normal at a given location in the principal stress space
         """
         if fig is None:
             fig = go.Figure()
@@ -276,6 +285,12 @@ class YieldCriterion(ABC):
         -------
         plotly.graph_objs._figure.Figure
             Handle to the figure
+
+        See Also
+        --------
+        plot_3D : plot the yield surface in the 3D principal stress space
+        plot_2D : plot the yield surface in the biaxial tensile stress space
+        scale_stress_to_yield_surface : scale the stress to reach the yield surface
         """
         if auto_scale:
             stress = self.scale_stress_to_yield_surface(stress)
