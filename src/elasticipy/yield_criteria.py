@@ -295,7 +295,8 @@ class YieldCriterion(ABC):
             stress = self.scale_stress_to_yield_surface(stress)
         point = np.diagonal(stress.matrix)
         if not np.array_equal(stress.matrix, np.diag(point)):
-            raise ValueError('The stress tensor must be diagonal.')
+            point = stress.eigvals()
+            stress = StressTensor(np.diag(point))
         normal = self.normal(stress)
         dir = np.diagonal(normal.matrix)
 
