@@ -62,9 +62,10 @@ The project uses unit tests with `pytest` and coverage reports generated using `
 
 ### **Coverage Exclusions**
 Certain parts of the code, particularly those related to graphical user interfaces (GUIs) or visual plotting, are 
-**excluded from code coverage analysis**. This includes the following file:
+**excluded from code coverage analysis**. This includes the following files:
 
 - **`src/Elasticipy/gui.py`**
+- **`src/Elasticipy/_plotting_tools.py`**
 
 ## 🎓 Cite this package
 If you use Elasticipy, please cite [![DOI](https://joss.theoj.org/papers/10.21105/joss.07940/status.svg)](https://doi.org/10.21105/joss.07940)

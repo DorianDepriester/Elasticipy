@@ -59,6 +59,7 @@ addopts = "--cov=src/Elasticipy --cov-report=xml"
 [tool.coverage.run]
 omit = [
     "src/elasticipy/gui/*",
+    "src/elasticipy/_plotting_tools.py"
 ]
 
 [project.gui-scripts]
