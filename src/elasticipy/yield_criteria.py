@@ -223,8 +223,8 @@ class YieldCriterion(ABC):
 
         Returns
         -------
-        float
-            scale factor
+        StressTensor
+            scaled stress tensor
 
         Examples
         --------
@@ -533,7 +533,7 @@ class MohrCoulomb(YieldCriterion):
     """
     name = 'Mohr-Coulomb'
 
-    def __init__(self, c=1.0, phi=0.):
+    def __init__(self, c, phi):
         """
         Create a Mohr-Coulomb (MC) yield criterion.
 
