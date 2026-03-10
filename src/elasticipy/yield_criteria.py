@@ -161,7 +161,7 @@ class YieldCriterion(ABC):
         See Also
         --------
         plot_2D : plot the yield surface in the biaxial stress space
-        plot_surface_normal : show the surface normal at a given location in the principal stress space
+        draw_surface_normal : show the surface normal at a given location in the principal stress space
         """
         if fig is None:
             fig = go.Figure()
@@ -259,7 +259,7 @@ class YieldCriterion(ABC):
         m = minimize(fun, 1.)
         return m.x[0] * stress
 
-    def plot_surface_normal(self, fig, stress, length=1.0, color='red', cone_scale=0.2, auto_scale=False, label=None):
+    def draw_surface_normal(self, fig, stress, length=1.0, color='red', cone_scale=0.2, auto_scale=False, label=None):
         """
         Plot the normal to the yield surface in the principal stress space
 

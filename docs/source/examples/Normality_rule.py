@@ -23,10 +23,10 @@ tensile_stress_y = StressTensor.tensile([0,1,0], 1)
 biaxial_tension  = tensile_stress_x + tensile_stress_y
 tension_compress = tensile_stress_x - tensile_stress_y
 
-fig = mc.plot_surface_normal(fig, tensile_stress_x, color='black', auto_scale=True, label='Tensile x')
-fig = mc.plot_surface_normal(fig, tensile_stress_y, color='gray', auto_scale=True, label='Tensile y')
-fig = mc.plot_surface_normal(fig, biaxial_tension, color='blue', auto_scale=True, label='Biaxial tension')
-mc.plot_surface_normal(fig, tension_compress, color='green', auto_scale=True, label='Tensile/compression')
+fig = mc.draw_surface_normal(fig, tensile_stress_x, color='black', auto_scale=True, label='Tensile x')
+fig = mc.draw_surface_normal(fig, tensile_stress_y, color='gray', auto_scale=True, label='Tensile y')
+fig = mc.draw_surface_normal(fig, biaxial_tension, color='blue', auto_scale=True, label='Biaxial tension')
+mc.draw_surface_normal(fig, tension_compress, color='green', auto_scale=True, label='Tensile/compression')
 
 ########################
 # .. Notes::
