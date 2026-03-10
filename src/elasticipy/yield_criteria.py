@@ -601,11 +601,13 @@ class MohrCoulomb(YieldCriterion):
         t3 = np.einsum('...i,...j->...ij', u3, u3)
         singular_point_12 = s1 == s2
         singular_point_23 = s2 == s3
+        hydrostatic_stress = np.logical_and(singular_point_12, singular_point_23)
         a = t1
         b = t3
         a[singular_point_12] = 0.5 * t1 + 0.5 * t2
         b[singular_point_23] = 0.5 * t2 + 0.5 * t3
         normal = ( 1 - np.sin(self.phi)) * a - (1 + np.sin(self.phi)) * b
+        normal[hydrostatic_stress,:,:] = np.eye(3)
         strain = StrainTensor(normal)
         return strain / strain.eq_strain()
 
