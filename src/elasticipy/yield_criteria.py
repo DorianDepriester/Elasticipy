@@ -225,6 +225,26 @@ class YieldCriterion(ABC):
         -------
         float
             scale factor
+
+        Examples
+        --------
+        Find the tensile yield stress for von Mises criterion:
+
+        >>> from elasticipy.tensors.stress_strain import StressTensor
+        >>> from elasticipy.yield_criteria import VonMisesCriterion
+        >>> vm = VonMisesCriterion(yield_stress=100)
+
+        Define a reference stress:
+
+        >>> stress = StressTensor.tensile([1,0,0], 1)
+
+        Find where the yield surface is reached along the path given by the reference stress:
+
+        >>> vm.scale_stress_to_yield_surface(stress)
+        Stress tensor
+        [[99.99999999  0.          0.        ]
+         [ 0.          0.          0.        ]
+         [ 0.          0.          0.        ]]
         """
         def fun(a):
             return self.yield_function(stress * a[0]) ** 2
