@@ -1,10 +1,8 @@
 """
-=============================================================
-Plot the
-=============================================================
-
-The example illustrates in 2D the differences between the Mohr-Coulomb and the Drucker-Prager yield criteria.
-
+==============================================================
+Illustrate the normality rule in the principle stresses space
+==============================================================
+The example shows how to illustrate the normality rule based on the 3D representation the yield surface
 """
 
 
@@ -12,7 +10,7 @@ The example illustrates in 2D the differences between the Mohr-Coulomb and the D
 # Plot the yield surface
 #----------------------------------
 from elasticipy.yield_criteria import MohrCoulomb
-mc = MohrCoulomb(c, -20)
+mc = MohrCoulomb(2, -20)
 fig=mc.plot_3D(xrange=(-6, 6), yrange=(-6, 6), zrange=(-6, 6))
 
 ###################################################
@@ -28,7 +26,7 @@ tension_compress = tensile_stress_x - tensile_stress_y
 fig = mc.plot_surface_normal(fig, tensile_stress_x, color='black', auto_scale=True, label='Tensile x')
 fig = mc.plot_surface_normal(fig, tensile_stress_y, color='gray', auto_scale=True, label='Tensile y')
 fig = mc.plot_surface_normal(fig, biaxial_tension, color='blue', auto_scale=True, label='Biaxial tension')
-fig = mc.plot_surface_normal(fig, tension_compress, color='green', auto_scale=True, label='Tensile/compression')
+mc.plot_surface_normal(fig, tension_compress, color='green', auto_scale=True, label='Tensile/compression')
 
 ########################
 # .. Notes::
