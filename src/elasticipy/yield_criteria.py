@@ -548,7 +548,7 @@ class MohrCoulomb(YieldCriterion):
     """
     name = 'Mohr-Coulomb'
 
-    def __init__(self, c, phi):
+    def __init__(self, c, phi, degrees=True):
         """
         Create a Mohr-Coulomb (MC) yield criterion.
 
@@ -557,7 +557,9 @@ class MohrCoulomb(YieldCriterion):
         c : float
             Cohesion factor
         phi : float
-            Friction angle (in degrees)
+            Friction angle
+        degrees : bool, optional
+            If true (default), the friction angle must be in degrees. Otherwise, it must be in radians.
 
         Notes
         -----
@@ -570,7 +572,10 @@ class MohrCoulomb(YieldCriterion):
 
         """
         self.c = c
-        self.phi = np.radians(phi)
+        if degrees:
+            self.phi = np.radians(phi)
+        else:
+            self.phi = phi
 
     def yield_function(self, stress):
         sigma_p = stress.principal_stresses()
