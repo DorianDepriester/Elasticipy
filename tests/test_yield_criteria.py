@@ -1,6 +1,6 @@
 import unittest
 from elasticipy.yield_criteria import DruckerPrager, MohrCoulomb, TrescaCriterion, VonMisesCriterion
-from elasticipy.tensors.stress_strain import StressTensor
+from elasticipy.tensors.stress_strain import StressTensor, StrainTensor
 import numpy as np
 
 tensile_x = StressTensor.tensile([1, 0, 0], 1)
@@ -36,6 +36,13 @@ class TestDruckerPrager(unittest.TestCase):
         f3 = dp_3.yield_function(rand_stress)
         assert np.all(np.logical_and(f1 > f2, f2 > f3))
 
+    def test_normality(self):
+        k, alpha = 2, 0.1
+        dp = DruckerPrager(alpha, k)
+        stress = StressTensor.eye()
+        unit_strain = StrainTensor.eye()
+        assert dp.normal(stress) == unit_strain/unit_strain.eq_strain()
+
 class TestMohrCoulomb(unittest.TestCase):
     def test_Tresca(self):
         mv_tr = MohrCoulomb(1, 0)
@@ -44,6 +51,12 @@ class TestMohrCoulomb(unittest.TestCase):
 
             tresca_crit = TrescaCriterion()
             np.testing.assert_array_almost_equal(mv_tr.normal(stress).matrix, tresca_crit.normal(stress).matrix)
+
+    def test_normality(self):
+        mv_tr = MohrCoulomb(1, 0)
+        stress = StressTensor.eye()
+        unit_strain = StrainTensor.eye()
+        assert mv_tr.normal(stress) == unit_strain/unit_strain.eq_strain()
 
 class TestVonMisesCriterion(unittest.TestCase):
     def test_scale_stress(self):
