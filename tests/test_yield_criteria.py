@@ -59,6 +59,13 @@ class TestMohrCoulomb(unittest.TestCase):
         unit_strain = StrainTensor.eye()
         assert mv_tr.normal(stress) == unit_strain/unit_strain.eq_strain()
 
+    def test_from_tensile_compression_stress(self):
+        s_t = 100
+        s_c = -150
+        mc = MohrCoulomb.from_tensile_compression_stress(s_t, s_c)
+        assert mc.yield_function(tensile_x * s_t) == 0.
+        assert mc.yield_function(tensile_x * s_c) == 0.
+
 class TestTrescaCriterion(unittest.TestCase):
     def test_normality_Tresca(self):
         biaxial = (StressTensor.tensile([1,0,0],[0, 1, 1, 1, 1, 1, 0]) +
