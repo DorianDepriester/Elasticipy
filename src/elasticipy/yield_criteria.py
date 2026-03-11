@@ -507,12 +507,58 @@ class MohrCoulomb(YieldCriterion):
 
             \\sigma_{I} - \\sigma_{III} - \\left(\\sigma_{I} + \\sigma_{III}\\right)\\sin\\phi - 2c\\cos\\phi
 
+        See Also
+        --------
+        from_tensile_compression_stress : construct a MC yield criterion from tensile compression stresses
         """
         self.c = c
         if degrees:
             self.phi = np.radians(phi)
         else:
             self.phi = phi
+
+    @classmethod
+    def from_tensile_compression_stress(cls, tensile_stress, compression_stress):
+        """
+        Create a Mohr-Coulomb yield criterion from a tensile and compression yield stresses.
+
+        Parameters
+        ----------
+        tensile_stress : float
+            Yield stress in tension. This value may be positive.
+        compression_stress : float
+            Yield stress in compression. This value may be negative.
+
+        Returns
+        -------
+        MohrCoulomb
+
+        Notes
+        -----
+        The compression and tensile stress values passed to the constructor can be switched, as they are automatically
+        sorted in descending order.
+
+        Examples
+        --------
+        Consider a material whose yield stresses in tension and compression are 100 and -150, respectively:
+
+        >>> from elasticipy.yield_criteria import MohrCoulomb
+        >>> s_c, s_t = 100, -150
+        >>> mc = MohrCoulomb.from_tensile_compression_stress(s_t, s_c)
+
+        One can check that the yield function vanishes for these stress values:
+
+        >>> from elasticipy.tensors.stress_strain import StressTensor
+        >>> stress = StressTensor.tensile([1,0,0], [s_c, s_t])
+        >>> mc.yield_function(stress)
+        array([0., 0.])
+        """
+        s = (tensile_stress, compression_stress)
+        s3, s1 = min(s), max(s)
+        sin = (s3 + s1) /  (s1 - s3)
+        phi = np.arcsin(sin)
+        c = s1 * (1 - sin) / (np.cos(phi)) / 2
+        return cls(c, phi, degrees=False)
 
     def yield_function(self, stress):
         sigma_p = stress.principal_stresses()
