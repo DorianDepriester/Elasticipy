@@ -505,7 +505,7 @@ class MohrCoulomb(YieldCriterion):
 
         .. math::
 
-            \\sigma_{I} - \\sigma_{III} + \\left(\\sigma_{I} + \\sigma_{III}\\right)\\sin\\phi - 2c\\cos\\phi
+            \\sigma_{I} - \\sigma_{III} - \\left(\\sigma_{I} + \\sigma_{III}\\right)\\sin\\phi - 2c\\cos\\phi
 
         """
         self.c = c
