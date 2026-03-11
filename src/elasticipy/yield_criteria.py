@@ -525,9 +525,9 @@ class MohrCoulomb(YieldCriterion):
         Parameters
         ----------
         tensile_stress : float
-            Yield stress in tension. This value may be positive.
+            Yield stress in tension. This value must be positive.
         compression_stress : float
-            Yield stress in compression. This value may be negative.
+            Yield stress in compression. This value must be negative.
 
         Returns
         -------
@@ -555,6 +555,10 @@ class MohrCoulomb(YieldCriterion):
         """
         s = (tensile_stress, compression_stress)
         s3, s1 = min(s), max(s)
+        if s1 < 0.:
+            raise ValueError('The tensile yield stress must be positive.')
+        if s3 > 0:
+            raise ValueError('The compression yield stress must be negative.')
         sin = (s3 + s1) /  (s1 - s3)
         phi = np.arcsin(sin)
         c = s1 * (1 - sin) / (np.cos(phi)) / 2
