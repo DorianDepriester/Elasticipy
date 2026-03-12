@@ -16,8 +16,8 @@ from elasticipy.yield_criteria import VonMisesCriterion, TrescaCriterion
 sigma_y = 100 # yield stress
 mises = VonMisesCriterion(yield_stress=sigma_y)
 tresca = TrescaCriterion(yield_stress=sigma_y)
-fig, ax = mises.plot_2D()
-fig, ax = tresca.plot_2D(fig=fig, ax=ax, color='blue')
+fig, ax = mises.plot2D()
+fig, ax = tresca.plot2D(fig=fig, ax=ax, color='blue')
 ax.legend()
 fig.show()
 

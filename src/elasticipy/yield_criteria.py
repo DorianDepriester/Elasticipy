@@ -62,8 +62,8 @@ class YieldCriterion(ABC):
     def _plot_bounds(self):
         return (0.0, 1.0), (0.0, 1.0)
 
-    def plot_2D(self, color='red', fig=None, ax=None, alpha=0.3,
-                xrange=None, yrange=None, npt=400, label=None, linewidth=1., linestyle='solid'):
+    def plot2D(self, color='red', fig=None, ax=None, alpha=0.3,
+               xrange=None, yrange=None, npt=400, label=None, linewidth=1., linestyle='solid'):
         """
         Plot the elastic domain in the biaxial tensile space.
 
@@ -99,7 +99,7 @@ class YieldCriterion(ABC):
 
         See Also
         --------
-        plot_3D : plot the yield surface in the principal stress space
+        plot3D : plot the yield surface in the principal stress space
 
         Examples
         --------
@@ -108,7 +108,8 @@ class YieldCriterion(ABC):
         .. plot::
 
             from elasticipy.plasticity import VonMisesPlasticity
-            VonMisesPlasticity().plot_2D()
+            VonMisesPlasticity().plot2D()
+
         """
         margin = 1.05
         if xrange is None:
@@ -144,7 +145,7 @@ class YieldCriterion(ABC):
 
         return fig, ax
 
-    def plot_3D(self, xrange=None, yrange=None, zrange=None, color='red', opacity=0.3, npt=100, fig=None):
+    def plot3D(self, xrange=None, yrange=None, zrange=None, color='red', opacity=0.3, npt=100, fig=None):
         """
         Plot the yield surface in the principal stress space
 
@@ -169,7 +170,7 @@ class YieldCriterion(ABC):
 
         See Also
         --------
-        plot_2D : plot the yield surface in the biaxial stress space
+        plot2D : plot the yield surface in the biaxial stress space
         draw_surface_normal : show the surface normal at a given location in the principal stress space
         """
         if fig is None:
@@ -267,8 +268,8 @@ class YieldCriterion(ABC):
 
         See Also
         --------
-        plot_3D : plot the yield surface in the 3D principal stress space
-        plot_2D : plot the yield surface in the biaxial tensile stress space
+        plot3D : plot the yield surface in the 3D principal stress space
+        plot2D : plot the yield surface in the biaxial tensile stress space
         scale_stress_to_yield_surface : scale the stress to reach the yield surface
         """
         if auto_scale:

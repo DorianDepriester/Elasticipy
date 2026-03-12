@@ -11,7 +11,7 @@ The example shows how to illustrate the normality rule based on the 3D represent
 #----------------------------------
 from elasticipy.yield_criteria import MohrCoulomb
 mc = MohrCoulomb(2, -20)
-fig=mc.plot_3D(xrange=(-6, 6), yrange=(-6, 6), zrange=(-6, 6))
+fig=mc.plot3D(xrange=(-6, 6), yrange=(-6, 6), zrange=(-6, 6))
 
 ###################################################
 # Plot the surface normals
