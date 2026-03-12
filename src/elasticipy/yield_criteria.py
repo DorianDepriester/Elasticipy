@@ -9,6 +9,14 @@ from scipy.optimize import minimize
 from elasticipy.tensors.stress_strain import StressTensor, StrainTensor
 from elasticipy._plotting_tools import _draw_plotly_arrow, _draw_plotly_isosurface
 
+def _sort_yield_stresses(s):
+    s3, s1 = min(s), max(s)
+    if s1 < 0.:
+        raise ValueError('The tensile yield stress must be positive.')
+    if s3 > 0:
+        raise ValueError('The compression yield stress must be negative.')
+    return s1, s3
+
 
 class YieldCriterion(ABC):
     """
@@ -459,6 +467,47 @@ class DruckerPrager(YieldCriterion):
             alpha = -2 * np.sin(phi) / d
         return cls(alpha, k)
 
+    @classmethod
+    def from_tensile_compression_stress(cls, tensile_stress, compressive_stress):
+        """
+        Create a Drucker-Prager yield criterion from tensile and compression yield stresses.
+
+        Parameters
+        ----------
+        tensile_stress : float
+            Yield stress in tension. This value must be positive.
+        compressive_stress : float
+            Yield stress in compression. This value must be negative.
+
+        Returns
+        -------
+        DruckerPrager
+
+        Notes
+        -----
+        The compression and tensile stress values passed to the constructor can be switched, as they are automatically
+        sorted in descending order.
+
+        Examples
+        --------
+        Consider a material whose yield stresses in tension and compression are 100 and -150, respectively:
+
+        >>> from elasticipy.yield_criteria import DruckerPrager
+        >>> s_c, s_t = -100, 150
+        >>> dp = DruckerPrager.from_tensile_compression_stress(s_t, s_c)
+
+        One can check that the yield function vanishes for these stress values:
+
+        >>> from elasticipy.tensors.stress_strain import StressTensor
+        >>> stress = StressTensor.tensile([1,0,0], [s_c, s_t])
+        >>> dp.yield_function(stress)
+        array([0., 0.])
+        """
+        s1, s3 = _sort_yield_stresses((tensile_stress, compressive_stress))
+        alpha = (s1 + s3) / (s3 - s1) / 3**0.5
+        k = (alpha + 3**(-0.5)) * s1
+        return cls(alpha, k)
+
     @property
     def _plot_bounds(self):
         bounds = (self.k / (2 * self.alpha - 3**(-0.5)), self.k / (2 * self.alpha + 3**(-0.5)))
@@ -518,15 +567,15 @@ class MohrCoulomb(YieldCriterion):
             self.phi = phi
 
     @classmethod
-    def from_tensile_compression_stress(cls, tensile_stress, compression_stress):
+    def from_tensile_compression_stress(cls, tensile_stress, compressive_stress):
         """
-        Create a Mohr-Coulomb yield criterion from a tensile and compression yield stresses.
+        Create a Mohr-Coulomb yield criterion from tensile and compression yield stresses.
 
         Parameters
         ----------
         tensile_stress : float
             Yield stress in tension. This value must be positive.
-        compression_stress : float
+        compressive_stress : float
             Yield stress in compression. This value must be negative.
 
         Returns
@@ -543,7 +592,7 @@ class MohrCoulomb(YieldCriterion):
         Consider a material whose yield stresses in tension and compression are 100 and -150, respectively:
 
         >>> from elasticipy.yield_criteria import MohrCoulomb
-        >>> s_c, s_t = 100, -150
+        >>> s_c, s_t = -150, 100
         >>> mc = MohrCoulomb.from_tensile_compression_stress(s_t, s_c)
 
         One can check that the yield function vanishes for these stress values:
@@ -553,12 +602,7 @@ class MohrCoulomb(YieldCriterion):
         >>> mc.yield_function(stress)
         array([0., 0.])
         """
-        s = (tensile_stress, compression_stress)
-        s3, s1 = min(s), max(s)
-        if s1 < 0.:
-            raise ValueError('The tensile yield stress must be positive.')
-        if s3 > 0:
-            raise ValueError('The compression yield stress must be negative.')
+        s1, s3 = _sort_yield_stresses((tensile_stress, compressive_stress))
         sin = (s3 + s1) /  (s1 - s3)
         phi = np.arcsin(sin)
         c = s1 * (1 - sin) / (np.cos(phi)) / 2
