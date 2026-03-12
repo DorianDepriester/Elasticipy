@@ -2,12 +2,21 @@ import unittest
 from elasticipy.yield_criteria import DruckerPrager, MohrCoulomb, TrescaCriterion, VonMisesCriterion
 from elasticipy.tensors.stress_strain import StressTensor, StrainTensor
 import numpy as np
+from pytest import approx
 
 tensile_x = StressTensor.tensile([1, 0, 0], 1)
 tensile_y = StressTensor.tensile([0, 1, 0], 1)
 shear = StressTensor.shear([1, 0, 0], [0, 1, 0], 1)
 biaxial = tensile_x + 2 *tensile_y
 K = 3 / 2 * 1 / 3 ** 0.5
+
+def generic_test_from_tensile_compression_stresses(obj, criterion):
+    with obj.assertRaises(ValueError) as context:
+        criterion.from_tensile_compression_stress(100, 100)
+    obj.assertEqual(str(context.exception), 'The compression yield stress must be negative.')
+    with obj.assertRaises(ValueError) as context:
+        criterion.from_tensile_compression_stress(-100, -150)
+    obj.assertEqual(str(context.exception), 'The tensile yield stress must be positive.')
 
 class TestDruckerPrager(unittest.TestCase):
     def test_vonMises(self):
@@ -44,6 +53,17 @@ class TestDruckerPrager(unittest.TestCase):
         unit_strain = StrainTensor.eye()
         assert dp.normal(stress) == unit_strain/unit_strain.eq_strain()
 
+    def test_from_tensile_compression_stress(self):
+        s_t = 100
+        s_c = -150
+        mc = DruckerPrager.from_tensile_compression_stress(s_t, s_c)
+        assert mc.yield_function(tensile_x * s_t) == approx(0.)
+        assert mc.yield_function(tensile_x * s_c) == approx(0.)
+
+    def test_from_tensile_compression_stress_valid_args(self):
+        generic_test_from_tensile_compression_stresses(self, DruckerPrager)
+
+
 class TestMohrCoulomb(unittest.TestCase):
     def test_Tresca(self):
         mv_tr = MohrCoulomb(1, 0)
@@ -67,12 +87,7 @@ class TestMohrCoulomb(unittest.TestCase):
         assert mc.yield_function(tensile_x * s_c) == 0.
 
     def test_from_tensile_compression_stress_valid_args(self):
-        with self.assertRaises(ValueError) as context:
-            MohrCoulomb.from_tensile_compression_stress(100,100)
-        self.assertEqual(str(context.exception), 'The compression yield stress must be negative.')
-        with self.assertRaises(ValueError) as context:
-            MohrCoulomb.from_tensile_compression_stress(-100,-150)
-        self.assertEqual(str(context.exception), 'The tensile yield stress must be positive.')
+        generic_test_from_tensile_compression_stresses(self, MohrCoulomb)
 
 class TestTrescaCriterion(unittest.TestCase):
     def test_normality_Tresca(self):
