@@ -2,9 +2,11 @@ from matplotlib.colors import Normalize
 from matplotlib import pyplot as plt, cm
 import plotly.graph_objects as go
 
-def _plot3D_plotly(u, r, fig=None, **kwargs):
+def _plot3D_plotly(u, r, fig=None, r_range=None, **kwargs):
     if fig is None:
         fig = go.Figure()
+    if r_range is None:
+        r_range = (r.min(), r.max())
     xyz = (u.T * r.T).T
     fig.add_trace(go.Surface(
         x=xyz[:, :, 0],
@@ -12,8 +14,8 @@ def _plot3D_plotly(u, r, fig=None, **kwargs):
         z=xyz[:, :, 2],
         surfacecolor=r,
         colorscale='Viridis',
-        cmin=r.min(),
-        cmax=r.max(),
+        cmin=r_range[0],
+        cmax=r_range[1],
         **kwargs
     ))
     fig.update_layout(
@@ -24,9 +26,9 @@ def _plot3D_plotly(u, r, fig=None, **kwargs):
         ),
         coloraxis=dict(
             colorscale='Viridis',
-            cmin=r.min(),
-            cmax=r.max(),
-            colorbar=dict(title='Valeurs')
+            cmin=r_range[0],
+            cmax=r_range[1],
+            colorbar=dict(title='Values')
         ),
     )
     return fig

@@ -907,7 +907,7 @@ class HyperSphericalFunction(SphericalFunction):
             v_r = v.reshape((n_phi, n_theta, n_psi, 3))
             return (u_r, v_r), evals_grid
 
-    def plot3D(self, n_phi=50, n_theta=50, n_psi=50, which='mean', fig=None, backend='plotly', **kwargs):
+    def plot3D(self, n_phi=50, n_theta=50, n_psi=50, which='mean', fig=None, backend='plotly', opacity=1., **kwargs):
         """
         Generate a 3D plot representing the evaluation of spherical harmonics.
 
@@ -924,23 +924,33 @@ class HyperSphericalFunction(SphericalFunction):
             Number of divisions along the theta axis, default is 50.
         n_psi : int, optional
             Number of divisions along the psi axis, default is 50.
-        which : str, optional
-            Determines which statistical measure to plot ('mean', 'std', 'min', 'max'),
-            default is 'mean'.
-        fig : matplotlib.pyplot.figure, optional
+        which : ['mean', 'min', 'max', 'minmax', 'std'], optional
+            Determines which statistical measure to plot. If 'minmax' is used, the surface corresponding to min values
+            will be plotted along with that of max values (with transparency applied to the latter). This only works
+            with plotly's backend.
+        fig : matplotlib.pyplot.figure or matplotlib.pyplot.figure, optional
             If provided, specify the Figure to use. Default is None.
         backend : {'plotly', 'matplotlib'}, optional
             Set the backend to use for plotting. plotly allows interactive plotting.
-        kwargs : dict, optional
+        opacity : float, optional
+            Opacity of the surface. Only works with plotly backend.
+        kwargs :
             Additional keyword arguments to customize the plot.
 
         Returns
         -------
-        plotly.graph_objs._figure.Figure
+        matplotlib.pyplot.figure or plotly.graph_objs._figure.Figure
             Handle to plotly figure object.
         """
         uv, values = self.evaluate_on_spherical_grid((n_phi, n_theta, n_psi), return_in_spherical=False, use_symmetry=False)
         u, _ = uv
+        if which == 'minmax':
+            if backend != 'plotly':
+                raise NotImplementedError('Option which="minmax" is only implemented for plotly backend.')
+            valmin, _ = self.min()
+            valmax, _ = self.max()
+            fig =  self.plot3D(n_phi=n_phi,n_theta=n_theta, n_psi=n_psi, which='min', backend='plotly', r_range=(valmin, valmax), **kwargs)
+            return self.plot3D(n_phi=n_phi, n_theta=n_theta, n_psi=n_psi, which='max', backend='plotly', opacity=0.4, fig=fig, r_range=(valmin, valmax), **kwargs)
         if which == 'std':
             r_grid = np.std(values, axis=2)
         elif which == 'min':
@@ -950,7 +960,7 @@ class HyperSphericalFunction(SphericalFunction):
         else:
             r_grid = np.mean(values, axis=2)
         if backend == 'plotly':
-            fig = _plot3D_plotly(u[:, :, 0, :], r_grid, fig=fig, **kwargs)
+            fig = _plot3D_plotly(u[:, :, 0, :], r_grid, fig=fig, opacity=opacity, name=which, **kwargs)
         else:
             fig = _plot3D_matplotlib(u[:, :, 0, :], r_grid, fig=fig, **kwargs)
         return fig
