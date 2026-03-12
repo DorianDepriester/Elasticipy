@@ -9,18 +9,35 @@ import plotly.io as pio
 
 class PlotlyDirective(Directive):
     has_content = True
+    option_spec = {
+        'show-code': bool,
+    }
 
     def run(self):
+        show_code = self.options.get('show-code', True)
         code = "\n".join(self.content)
+
+        # Exécuter le code pour obtenir la figure
         namespace = {}
         exec(code, namespace)
-
         fig = namespace.get("fig")
         if fig is None:
             raise RuntimeError("Le bloc .. plotly:: doit définir une variable `fig`.")
 
+        # Générer le HTML de la figure
         html = pio.to_html(fig, include_plotlyjs="cdn", full_html=False)
-        return [nodes.raw('', html, format='html')]
+
+        # Créer les nœuds pour le code et la figure
+        nodes_list = []
+        if show_code:
+            code_node = nodes.literal_block(code, code)
+            code_node['language'] = 'python'
+            nodes_list.append(code_node)
+
+        raw_node = nodes.raw('', html, format='html')
+        nodes_list.append(raw_node)
+
+        return nodes_list
 
 def setup(app):
     app.add_directive("plotly", PlotlyDirective)

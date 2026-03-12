@@ -195,7 +195,15 @@ Instead of the mean value, we can consider other statistics, e.g.:
     G = C.shear_modulus
     fig = G.plot3D(which='min')
 
-This also works for ``max`` and ``std``. These parameters also apply for pole figures (see above).
+This also works for ``max`` and ``std``. These parameters also apply for pole figures (see above). Actually, the min and
+max values can also be plotted in the same figure, with the help of transparency:
+
+.. plotly::
+
+    from elasticipy.tensors.elasticity import StiffnessTensor
+    C = StiffnessTensor.cubic(C11=186, C12=134, C44=77)
+    G = C.shear_modulus
+    fig = G.plot3D(which='minmax')
 
 When plotting the X-Y, X-Z and Y-Z sections, the min, max and mean values are plotted at once:
 
