@@ -1054,7 +1054,7 @@ class HyperSphericalFunction(SphericalFunction):
         fig : matplotlib.figure.Figure, optional
             Pre-existing figure to use for plotting. If None, a new figure is created.
             Default is None.
-        plot_type : str, optional
+        plot_type : ['imshow', 'contourf', 'contour'], optional
             Type of plot to generate. Can be 'imshow', 'contourf', or 'contour'.
             Default is 'imshow'.
         show : bool, optional
