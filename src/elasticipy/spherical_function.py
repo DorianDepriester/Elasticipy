@@ -691,14 +691,14 @@ class SphericalFunction:
             E = C.Young_modulus
             fig = E.plot_as_pole_figure()
 
-        By default, the pole figure is made in Lambert projection (a.k.a equal area). It can changed to stereographic:
+        By default, the pole figure is made in Lambert projection (aka. equal area). It can be changed to stereographic:
 
         .. plot::
 
             from elasticipy.tensors.elasticity import StiffnessTensor
             C = StiffnessTensor.cubic(C11=186, C12=134, C44=77)
             E = C.Young_modulus
-            fig = E.plot_as_pole_figure(projection='Lambert')
+            fig = E.plot_as_pole_figure(projection='stereographic')
         """
         if subplot_kwargs is None:
             subplot_kwargs = {}
