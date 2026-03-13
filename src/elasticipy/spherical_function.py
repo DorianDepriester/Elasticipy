@@ -662,7 +662,7 @@ class SphericalFunction:
             The type of projection to use for the plot, by default 'Lambert'.
         fig : matplotlib.figure.Figure, optional
             A Matplotlib figure object. If None, a new figure will be created, by default None.
-        plot_type : str, optional
+        plot_type : ['imshow', 'contourf', 'contour'], optional
             The type of plot to generate: 'imshow', 'contourf', or 'contour', by default 'imshow'.
         title : str, optional
             Title to add to the current axis. Default is None.
