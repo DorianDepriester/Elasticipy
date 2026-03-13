@@ -98,7 +98,8 @@ class CrystalTexture(ABC):
         ax.set_ylim([0, np.pi / 2])
         return fig, ax
 
-    def plot_as_pole_figure(self, uvw=None, hkl=None, UVTW=None, hkil=None, symmetrise=False, projection='lambert', fig=None, ax=None, **kwargs):
+    def plot_as_pole_figure(self, uvw=None, hkl=None, UVTW=None, hkil=None,
+                            symmetrise=False, projection='lambert', fig=None, ax=None, **kwargs):
         """
         Plot the pole figure of the crystallographic texture
 
