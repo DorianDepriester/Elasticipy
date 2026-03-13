@@ -1,21 +1,37 @@
 from matplotlib.colors import Normalize
 from matplotlib import pyplot as plt, cm
 import plotly.graph_objects as go
+import numpy as np
 
-def _plot3D_plotly(u, r, fig=None, r_range=None, **kwargs):
+def cart2sph(u):
+    x = u[:, :, 0],
+    y = u[:, :, 1],
+    z = u[:, :, 2],
+    phi = np.arctan2(y,x)
+    theta = np.arccos(z)
+    return np.squeeze(phi), np.squeeze(theta)
+
+def _plot3D_plotly(u, r, fig=None, r_range=None, name='', **kwargs):
     if fig is None:
         fig = go.Figure()
     if r_range is None:
         r_range = (r.min(), r.max())
     xyz = (u.T * r.T).T
+    phi, theta = cart2sph(u)
+    custom_data = np.stack((r.T, np.degrees(theta.T), np.degrees(phi.T)), axis=-1)
     fig.add_trace(go.Surface(
-        x=xyz[:, :, 0],
-        y=xyz[:, :, 1],
-        z=xyz[:, :, 2],
+        x=xyz[:, :, 0], y=xyz[:, :, 1], z=xyz[:, :, 2],
         surfacecolor=r,
         colorscale='Viridis',
         cmin=r_range[0],
         cmax=r_range[1],
+        customdata=custom_data,
+        name=name,
+        hovertemplate=(
+            "φ: %{customdata[2]:.2f}°<br>"
+            "θ: %{customdata[1]:.2f}°<br>"
+            "Value: %{customdata[0]:.2f}<br>"
+             ),
         **kwargs
     ))
     fig.update_layout(
