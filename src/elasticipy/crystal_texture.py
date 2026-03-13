@@ -793,26 +793,29 @@ class CompositeTexture:
             t[i] = ti.mean_tensor(tensor)
         return t.tensor_average(weights=wgt)
 
-    def plot_as_pole_figure(self,
-                            uvw=None, hkl=None, UVTW=None, hkil=None,
-                            fig=None, symmetrise=False, projection='lambert',
-                            labels=None, **kwargs):
+    def plot_as_pole_figure(self, uvw=None, hkl=None, UVTW=None, hkil=None,
+                            symmetrise=False, projection='lambert', fig=None, ax=None, **kwargs):
         """
         Plot the pole figure of the composite texture, given a set of Miller indices
 
         Parameters
         ----------
-        miller : orix.vector.miller.Miller
-            Miller indices of directions/planes to plot
+        uvw : list
+            Miller indices of directions to plot
+        hkl : list
+            Miller indices of plane normal to plot
+        UVTW : list
+            Miller-Bravais indices of directions to plot
+        hkil : list
+            Miller-Bravais indices of plane normal to plot
+        symmetrise : bool, optional
+            Symmetrise the direction/plane to plot the family
         projection : str, optional
             Type of projection to use, it can be either stereographic or Lambert
         fig : matplotlib.figure.Figure, optional
             Handle to existing figure, if needed
-        symmetrise : bool
-            Whether the symmetrise the miller indices
-        labels : list of str or tuple of str, optional
-            List of labels to use in the legend for each texture component. If not provided, they are automatically
-            inferred from each texture component.
+        ax : matplotlib.projections.polar.PolarAxes, optional
+            Axes to plot on
         kwargs
             Keyword arguments to pass to matplotlib's scatter/plot functions
 
