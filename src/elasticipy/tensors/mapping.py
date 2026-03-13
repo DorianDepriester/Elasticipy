@@ -62,7 +62,7 @@ class VoigtMapping(MappingConvention):
                 1 & 1 & 1 & 1 & 1 & 1\\\\
                 1 & 1 & 1 & 1 & 1 & 1\\\\
                 1 & 1 & 1 & 1 & 1 & 1\\\\
-            \end{bmatrix}
+            \\end{bmatrix}
 
         Conversely, for compliance-like tensors (if ``tensor=compliance``), the mapping matrix will be:
 
@@ -75,7 +75,7 @@ class VoigtMapping(MappingConvention):
                 \\sqrt{2} & \\sqrt{2} & \\sqrt{2} & 2 & 2 & 2\\\\
                 \\sqrt{2} & \\sqrt{2} & \\sqrt{2} & 2 & 2 & 2\\\\
                 \\sqrt{2} & \\sqrt{2} & \\sqrt{2} & 2 & 2 & 2\\\\
-            \end{bmatrix}
+            \\end{bmatrix}
         """
         if tensor == 'Stiffness':
             self.matrix = np.ones((6,6))
