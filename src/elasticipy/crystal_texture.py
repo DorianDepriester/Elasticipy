@@ -201,7 +201,8 @@ class UniformTexture(CrystalTexture):
     def mean_tensor(self, tensor):
         return tensor.infinite_random_average()
 
-    def plot_as_pole_figure(self, miller, projection='lambert', fig=None, ax=None, **kwargs):
+    def plot_as_pole_figure(self, uvw=None, hkl=None, UVTW=None, hkil=None,
+                            symmetrise=False, projection='lambert', fig=None, ax=None, **kwargs):
         if fig is None:
             fig = plt.figure()
         if ax is None:
