@@ -112,22 +112,31 @@ def _draw_plotly_isosurface(fig, x, y, z, f, label=None, opacity=1.0, color='bla
         showscale=False,
         opacity=opacity,
         name=label,
+        lighting=dict(
+            ambient=0.3,
+            diffuse=1.0,
+            specular=1.0,
+            roughness=0.1,
+        ),
+        lightposition=dict(x=np.max(x)*10, y=np.max(y)*10, z=np.max(z)*10)
     ))
-    fig.update_layout(scene=dict(
-        xaxis=dict(
-            title=dict(
-                text=r'σ₁'
-            )
+    fig.update_layout(
+        scene=dict(
+            xaxis=dict(
+                title=dict(
+                    text=r'σ₁'
+                )
+            ),
+            yaxis=dict(
+                title=dict(
+                    text=r'σ₂'
+                )
+            ),
+            zaxis=dict(
+                title=dict(
+                    text=r'σ₃'
+                )
+            ),
         ),
-        yaxis=dict(
-            title=dict(
-                text=r'σ₂'
-            )
-        ),
-        zaxis=dict(
-            title=dict(
-                text=r'σ₃'
-            )
-        ),
-    ), )
+    )
     return fig
