@@ -794,7 +794,7 @@ class CompositeTexture:
         return t.tensor_average(weights=wgt)
 
     def plot_as_pole_figure(self, uvw=None, hkl=None, UVTW=None, hkil=None,
-                            symmetrise=False, projection='lambert', fig=None, ax=None, **kwargs):
+                            symmetrise=False, projection='lambert', fig=None, ax=None, labels=None, **kwargs):
         """
         Plot the pole figure of the composite texture, given a set of Miller indices
 
@@ -816,6 +816,8 @@ class CompositeTexture:
             Handle to existing figure, if needed
         ax : matplotlib.projections.polar.PolarAxes, optional
             Axes to plot on
+        labels : list of str, optional
+            Labels to use as legend entries
         kwargs
             Keyword arguments to pass to matplotlib's scatter/plot functions
 
