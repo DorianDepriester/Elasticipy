@@ -145,7 +145,7 @@ class YieldCriterion(ABC):
 
         return fig, ax
 
-    def plot3D(self, xrange=None, yrange=None, zrange=None, color='red', opacity=0.3, npt=100, fig=None):
+    def plot3D(self, xrange=None, yrange=None, zrange=None, color='red', opacity=1.0, npt=100, fig=None):
         """
         Plot the yield surface in the principal stress space
 
