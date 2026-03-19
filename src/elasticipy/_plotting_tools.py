@@ -94,7 +94,8 @@ def _draw_plotly_arrow(fig, point, dir, length=1., color='black', cone_scale=2.,
         colorscale=[[0, color], [1, color]],
         showscale=False,
         sizemode='absolute',
-        sizeref=1.0
+        sizeref=1.0,
+        name=label,
     ))
 
     return fig
