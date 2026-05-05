@@ -1334,7 +1334,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         Ex : float
             Young modulus along the x axis
         Ez : float
-            Young modulus along the y axis
+            Young modulus along the z axis
         Gxz : float
             Shear modulus in the x-z plane
         nu_xy, nu_yx : float, optional
