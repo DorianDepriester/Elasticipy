@@ -7,5 +7,4 @@ pandas
 qtpy
 PyQt5
 orix
-pytest
 pymatgen
