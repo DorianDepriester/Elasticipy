@@ -26,6 +26,7 @@ dependencies = [
     "matplotlib",
     "qtpy",
     "pyqt5",
+    "pymatgen",
     "pandas",
     "orix",
     "plotly"
