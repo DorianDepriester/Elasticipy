@@ -1916,3 +1916,17 @@ def is_damask_rotation(other):
     bool
     """
     return (not isinstance(other, Rotation)) and hasattr(other, "as_matrix") and callable(getattr(other, "as_matrix"))
+
+def is_rotation(a):
+    """
+    Check if the argument some kind of rotation (scipy, Orix or Damask)
+
+    Parameters
+    ----------
+    a : parameter to check
+
+    Returns
+    -------
+    bool
+    """
+    return isinstance(a, Rotation) or is_orix_rotation(a) or is_damask_rotation(a)
