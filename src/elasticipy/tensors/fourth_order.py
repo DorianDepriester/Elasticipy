@@ -239,15 +239,6 @@ class FourthOrderTensor:
             else:
                 raise ValueError('The input matrix must of shape (...,6,6) or (...,3,3,3,3)')
             self._matrix = matrix
-        for i in range(0, 6):
-            for j in range(0, 6):
-                def getter(obj, I=i, J=j):
-                    new_matrix = obj._matrix / kelvin_mapping.matrix * self.mapping.matrix
-                    return new_matrix[...,I, J]
-
-                getter.__doc__ = f"Returns the ({i + 1},{j + 1}) component of the {self._tensor_name} matrix."
-                component_name = 'C{}{}'.format(i + 1, j + 1)
-                setattr(self.__class__, component_name, property(getter))  # Dynamically create the property
 
     def __repr__(self):
         if (self.ndim == 0) or ((self.ndim==1) and self.shape[0]<5):
@@ -1248,6 +1239,404 @@ class FourthOrderTensor:
         t = deepcopy(self)
         t._matrix = np.average(t._matrix, weights=weights, axis=axis)
         return t
+
+    @property
+    def C11(self):
+        """
+        C11 component (expressed in the current mapping convention)
+
+        Returns
+        -------
+        float or np.ndarray
+        """
+        return self.matrix()[..., 0, 0]
+
+    @property
+    def C12(self):
+        """
+        C12 component (expressed in the current mapping convention)
+
+        Returns
+        -------
+        float or np.ndarray
+        """
+        return self.matrix()[..., 0, 1]
+
+    @property
+    def C13(self):
+        """
+        C13 component (expressed in the current mapping convention)
+
+        Returns
+        -------
+        float or np.ndarray
+        """
+        return self.matrix()[..., 0, 2]
+
+    @property
+    def C14(self):
+        """
+        C14 component (expressed in the current mapping convention)
+
+        Returns
+        -------
+        float or np.ndarray
+        """
+        return self.matrix()[..., 0, 3]
+
+    @property
+    def C15(self):
+        """
+        C15 component (expressed in the current mapping convention)
+
+        Returns
+        -------
+        float or np.ndarray
+        """
+        return self.matrix()[..., 0, 4]
+
+    @property
+    def C16(self):
+        """
+        C16 component (expressed in the current mapping convention)
+
+        Returns
+        -------
+        float or np.ndarray
+        """
+        return self.matrix()[..., 0, 5]
+
+    @property
+    def C21(self):
+        """
+        C21 component (expressed in the current mapping convention)
+
+        Returns
+        -------
+        float or np.ndarray
+        """
+        return self.matrix()[..., 1, 0]
+
+    @property
+    def C22(self):
+        """
+        C22 component (expressed in the current mapping convention)
+
+        Returns
+        -------
+        float or np.ndarray
+        """
+        return self.matrix()[..., 1, 1]
+
+    @property
+    def C23(self):
+        """
+        C23 component (expressed in the current mapping convention)
+
+        Returns
+        -------
+        float or np.ndarray
+        """
+        return self.matrix()[..., 1, 2]
+
+    @property
+    def C24(self):
+        """
+        C24 component (expressed in the current mapping convention)
+
+        Returns
+        -------
+        float or np.ndarray
+        """
+        return self.matrix()[..., 1, 3]
+
+    @property
+    def C25(self):
+        """
+        C25 component (expressed in the current mapping convention)
+
+        Returns
+        -------
+        float or np.ndarray
+        """
+        return self.matrix()[..., 1, 4]
+
+    @property
+    def C26(self):
+        """
+        C26 component (expressed in the current mapping convention)
+
+        Returns
+        -------
+        float or np.ndarray
+        """
+        return self.matrix()[..., 1, 5]
+
+    @property
+    def C31(self):
+        """
+        C31 component (expressed in the current mapping convention)
+
+        Returns
+        -------
+        float or np.ndarray
+        """
+        return self.matrix()[..., 2, 0]
+
+    @property
+    def C32(self):
+        """
+        C32 component (expressed in the current mapping convention)
+
+        Returns
+        -------
+        float or np.ndarray
+        """
+        return self.matrix()[..., 2, 1]
+
+    @property
+    def C33(self):
+        """
+        C33 component (expressed in the current mapping convention)
+
+        Returns
+        -------
+        float or np.ndarray
+        """
+        return self.matrix()[..., 2, 2]
+
+    @property
+    def C34(self):
+        """
+        C34 component (expressed in the current mapping convention)
+
+        Returns
+        -------
+        float or np.ndarray
+        """
+        return self.matrix()[..., 2, 3]
+
+    @property
+    def C35(self):
+        """
+        C35 component (expressed in the current mapping convention)
+
+        Returns
+        -------
+        float or np.ndarray
+        """
+        return self.matrix()[..., 2, 4]
+
+    @property
+    def C36(self):
+        """
+        C36 component (expressed in the current mapping convention)
+
+        Returns
+        -------
+        float or np.ndarray
+        """
+        return self.matrix()[..., 2, 5]
+
+    @property
+    def C41(self):
+        """
+        C41 component (expressed in the current mapping convention)
+
+        Returns
+        -------
+        float or np.ndarray
+        """
+        return self.matrix()[..., 3, 0]
+
+    @property
+    def C42(self):
+        """
+        C42 component (expressed in the current mapping convention)
+
+        Returns
+        -------
+        float or np.ndarray
+        """
+        return self.matrix()[..., 3, 1]
+
+    @property
+    def C43(self):
+        """
+        C43 component (expressed in the current mapping convention)
+
+        Returns
+        -------
+        float or np.ndarray
+        """
+        return self.matrix()[..., 3, 2]
+
+    @property
+    def C44(self):
+        """
+        C44 component (expressed in the current mapping convention)
+
+        Returns
+        -------
+        float or np.ndarray
+        """
+        return self.matrix()[..., 3, 3]
+
+    @property
+    def C45(self):
+        """
+        C45 component (expressed in the current mapping convention)
+
+        Returns
+        -------
+        float or np.ndarray
+        """
+        return self.matrix()[..., 3, 4]
+
+    @property
+    def C46(self):
+        """
+        C46 component (expressed in the current mapping convention)
+
+        Returns
+        -------
+        float or np.ndarray
+        """
+        return self.matrix()[..., 3, 5]
+
+    @property
+    def C51(self):
+        """
+        C51 component (expressed in the current mapping convention)
+
+        Returns
+        -------
+        float or np.ndarray
+        """
+        return self.matrix()[..., 4, 0]
+
+    @property
+    def C52(self):
+        """
+        C52 component (expressed in the current mapping convention)
+
+        Returns
+        -------
+        float or np.ndarray
+        """
+        return self.matrix()[..., 4, 1]
+
+    @property
+    def C53(self):
+        """
+        C53 component (expressed in the current mapping convention)
+
+        Returns
+        -------
+        float or np.ndarray
+        """
+        return self.matrix()[..., 4, 2]
+
+    @property
+    def C54(self):
+        """
+        C54 component (expressed in the current mapping convention)
+
+        Returns
+        -------
+        float or np.ndarray
+        """
+        return self.matrix()[..., 4, 3]
+
+    @property
+    def C55(self):
+        """
+        C55 component (expressed in the current mapping convention)
+
+        Returns
+        -------
+        float or np.ndarray
+        """
+        return self.matrix()[..., 4, 4]
+
+    @property
+    def C56(self):
+        """
+        C56 component (expressed in the current mapping convention)
+
+        Returns
+        -------
+        float or np.ndarray
+        """
+        return self.matrix()[..., 4, 5]
+
+    @property
+    def C61(self):
+        """
+        C61 component (expressed in the current mapping convention)
+
+        Returns
+        -------
+        float or np.ndarray
+        """
+        return self.matrix()[..., 5, 0]
+
+    @property
+    def C62(self):
+        """
+        C62 component (expressed in the current mapping convention)
+
+        Returns
+        -------
+        float or np.ndarray
+        """
+        return self.matrix()[..., 5, 1]
+
+    @property
+    def C63(self):
+        """
+        C63 component (expressed in the current mapping convention)
+
+        Returns
+        -------
+        float or np.ndarray
+        """
+        return self.matrix()[..., 5, 2]
+
+    @property
+    def C64(self):
+        """
+        C64 component (expressed in the current mapping convention)
+
+        Returns
+        -------
+        float or np.ndarray
+        """
+        return self.matrix()[..., 5, 3]
+
+    @property
+    def C65(self):
+        """
+        C65 component (expressed in the current mapping convention)
+
+        Returns
+        -------
+        float or np.ndarray
+        """
+        return self.matrix()[..., 5, 4]
+
+    @property
+    def C66(self):
+        """
+        C66 component (expressed in the current mapping convention)
+
+        Returns
+        -------
+        float or np.ndarray
+        """
+        return self.matrix()[..., 5, 5]
+
+
 
 class SymmetricFourthOrderTensor(FourthOrderTensor):
     _tensor_name = 'Symmetric 4th-order'
