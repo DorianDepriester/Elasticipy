@@ -49,6 +49,8 @@ def _is_single_rotation(rotation):
         return rotation.single
     elif is_orix_rotation(rotation):
         return rotation.size == 1
+    elif hasattr(rotation, "shape"):
+        return rotation.shape == ()
     else:
         raise TypeError('The input argument must be of class scipy.transform.Rotation or '
                         'orix.quaternion.rotation.Rotation')
@@ -1858,7 +1860,7 @@ def rotation_to_matrix(rotation, return_transpose=False):
 
     Parameters
     ----------
-    rotation : scipy.spatial.Rotation or orix.quaternion.Rotation
+    rotation : scipy.spatial.Rotation or orix.quaternion.Rotation or damask._rotation.Rotation
         Object to convert
     return_transpose : bool, optional
         If true, it will also return the transpose matrix as a 2nd output argument
@@ -1874,6 +1876,9 @@ def rotation_to_matrix(rotation, return_transpose=False):
         matrix = inv_rotation.to_matrix()
         if matrix.shape == (1,3,3):
             matrix = matrix[0]
+    elif is_damask_rotation(rotation):
+        inv_rotation = ~rotation
+        matrix = inv_rotation.as_matrix()
     else:
         raise TypeError('The input argument must be of class scipy.transform.Rotation or '
                         'orix.quaternion.rotation.Rotation')
@@ -1897,3 +1902,17 @@ def is_orix_rotation(other):
         True if other.to_matrix() exists
     """
     return hasattr(other, "to_matrix") and callable(getattr(other, "to_matrix"))
+
+def is_damask_rotation(other):
+    """
+    Check whether the argument is a rotation from Damask by looking at the existing methods.
+
+    Parameters
+    ----------
+    other : any
+        object to test
+    Returns
+    -------
+    bool
+    """
+    return (not isinstance(other, Rotation)) and hasattr(other, "as_matrix") and callable(getattr(other, "as_matrix"))
