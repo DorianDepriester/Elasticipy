@@ -161,7 +161,7 @@ Features of Elasticipy include:
 - Integration with crystal symmetry groups,
 - Visualization and tutorials for ease of use,
 - A graphical user interface to plot the spatial dependence of engineering constants,
-- Compatibility with the `Materials Project <https://next-gen.materialsproject.org/>`_, `pymatgen <https://pymatgen.org/>`_, `Orix <https://orix.readthedocs.io/>`_ and `Damask <https://damask-multiphysics.org/3.0.0-beta2/index.html>`_.
+- Compatibility with the `Materials Project <https://next-gen.materialsproject.org/>`_, `pymatgen <https://pymatgen.org/>`_, `Orix <https://orix.readthedocs.io/>`_ and `Damask <https://damask-multiphysics.org/>`_.
 - Crystallographic texture -based calculations,
 - Implementation of common yield criteria, such as von Mises, Tresca, Drucker-Prager and Mohr-Coulomb.
 
