@@ -689,6 +689,26 @@ class FourthOrderTensor:
             raise NotImplementedError('The element to compare with must be a fourth-order tensor '
                                       'or an array of shape (6,6).')
 
+    def isclose(self, other, rtol=1e-5, atol=1e-8):
+        """
+        Check if the tensors are close to other ones
+
+        Parameters
+        ----------
+        other : FourthOrderTensor
+            Tensor or tensor array to compare against
+        rtol : float, optional
+            relative tolerance
+        atol : float, optional
+            absolute tolerance
+
+        Returns
+        -------
+        np.array or bool
+
+        """
+        return np.all(np.isclose(self._matrix, other._matrix, rtol=rtol, atol=atol), axis=(-1, -2))
+
     def __getitem__(self, item):
         if self.ndim:
             sub_tensor = deepcopy(self)
