@@ -772,12 +772,14 @@ class TestStiffnessConstructor(unittest.TestCase):
         np.testing.assert_array_almost_equal(C_rotated_full_scipy, C_rotated_flat.full_tensor)
 
     def test_damask(self):
-        rot = damask_rot.from_random()
+        shape = (5,)
+        rot = damask_rot.from_random(shape=shape)
         C = S.inv()
         Crot = C * rot
+        assert Crot.shape == shape
         rot_scipy = Rotation.from_euler('ZXZ', rot.as_Euler_angles())
         Crot_scipy = C * rot_scipy
-        assert Crot.isclose(Crot_scipy)
+        assert np.all(Crot.isclose(Crot_scipy))
 
     def test_linear_compressibility(self):
         E, nu = 210, 0.3
