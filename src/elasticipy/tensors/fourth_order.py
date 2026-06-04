@@ -1,6 +1,6 @@
 import numpy as np
 from elasticipy.tensors.second_order import SymmetricSecondOrderTensor, rotation_to_matrix, is_orix_rotation, \
-    SecondOrderTensor, ALPHABET
+    SecondOrderTensor, ALPHABET, is_rotation
 from scipy.spatial.transform import Rotation
 from copy import deepcopy
 from elasticipy.tensors.mapping import KelvinMapping, VoigtMapping
@@ -633,7 +633,7 @@ class FourthOrderTensor:
                 return self.__class__(matrix)
             else:
                 raise ValueError('The arrays to multiply could not be broadcasted with shapes {} and {}'.format(self.shape, other.shape[:-2]))
-        elif isinstance(other, Rotation) or is_orix_rotation(other):
+        elif is_rotation(other):
             return self.rotate(other)
         elif isinstance(other, (float, int)):
             new_tensor = deepcopy(self)
@@ -675,7 +675,7 @@ class FourthOrderTensor:
             return new_array
 
     def __rmul__(self, other):
-        if isinstance(other, (Rotation, float, int, np.number)) or is_orix_rotation(other):
+        if isinstance(other, (float, int, np.number)) or is_rotation(other):
             return self * other
         else:
             raise NotImplementedError('A fourth order tensor can be left-multiplied by rotations or scalar only.')
