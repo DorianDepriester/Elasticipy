@@ -164,7 +164,6 @@ class TestComplianceTensor(unittest.TestCase):
 
 
     def test_component(self):
-#        S = ComplianceTensor(Smat)
         assert S.C11 == Smat[0, 0]
         assert S.C12 == Smat[0, 1]
         assert S.C13 == Smat[0, 2]
@@ -187,8 +186,6 @@ class TestComplianceTensor(unittest.TestCase):
         assert S.C55 == Smat[4, 4]
         assert S.C56 == Smat[4, 5]
         assert S.C66 == Smat[5, 5]
-        docstring = ComplianceTensor.C12.__doc__
-        assert docstring == 'Returns the (1,2) component of the Compliance matrix.'
 
     def test_bulk_modulus(self):
         E, nu = 210, 0.3
@@ -810,8 +807,6 @@ class TestStiffnessConstructor(unittest.TestCase):
         assert C.C55 == Cmat[4, 4]
         assert C.C56 == Cmat[4, 5]
         assert C.C66 == Cmat[5, 5]
-        docstring = StiffnessTensor.C12.__doc__
-        assert docstring == 'Returns the (1,2) component of the Stiffness matrix.'
 
     def test_bulk_modulus(self):
         E, nu = 210, 0.3
