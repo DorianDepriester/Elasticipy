@@ -280,8 +280,10 @@ The same applies when working with 2nd-order tensors (provided by the ``SecondOr
 
 Rotations
 ~~~~~~~~~~
-Elasticipy supports scipy's ``Rotation`` class to "rotate" tensors.
-As an example, we consider the "one" 4th-order tensor (i.e. tensor populated with 1s):
+Elasticipy supports scipy's ``Rotation`` class to "rotate" tensors
+(as well as `Orix's <https://orix.readthedocs.io/en/stable/reference/generated/orix.quaternion.Orientation.html>`__ and
+`Damask's <https://damask-multiphysics.org/3.0.0-beta2/_modules/damask/_rotation.html>`__ rotations).
+As an example, we consider the "ones" 4th-order tensor (i.e. tensor populated with 1s):
 
 
     >>> from scipy.spatial.transform import Rotation
