@@ -14,6 +14,7 @@ from pymatgen.analysis.elasticity import elastic as mg
 from orix.quaternion import Rotation as orix_rot
 from elasticipy.tensors.mapping import KelvinMapping, VoigtMapping
 import sys
+from damask import Rotation as damask_rot
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 file_path = os.path.join(current_dir, 'MaterialsProject.json')
@@ -770,6 +771,13 @@ class TestStiffnessConstructor(unittest.TestCase):
         C_rotated_full_scipy = C_rotated_scipy.full_tensor
         np.testing.assert_array_almost_equal(C_rotated_full_scipy, C_rotated_flat.full_tensor)
 
+    def test_damask(self):
+        rot = damask_rot.from_random()
+        C = S.inv()
+        Crot = C * rot
+        rot_scipy = Rotation.from_euler('ZXZ', rot.as_Euler_angles())
+        Crot_scipy = C * rot_scipy
+        assert Crot.isclose(Crot_scipy)
 
     def test_linear_compressibility(self):
         E, nu = 210, 0.3
