@@ -1784,31 +1784,6 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         """
         return self._matrix
 
-    def eig(self):
-        """
-        Compute the eigenstiffnesses and the eigenstrains.
-
-        Solve the eigenvalue problem from the Kelvin matrix of the stiffness tensor (see Notes).
-
-        Returns
-        -------
-        numpy.ndarray
-            Array of 6 eigenstiffnesses (eigenvalues of the stiffness matrix)
-        numpy.ndarray
-            (6,6) array of eigenstrains (eigenvectors of the stiffness matrix)
-
-        See Also
-        --------
-        to_Kelvin : returns the stiffness components as a (6,6) matrix, according to the Kelvin mapping convention.
-        eig_stiffnesses : returns the eigenstiffnesses only
-        eig_strains : returns the eigenstrains only
-
-        Notes
-        -----
-        The definition for eigenstiffnesses and the eigenstrains are introduced in [Helbig]_.
-        """
-        return np.linalg.eigh(self._matrix)
-
     @property
     def eig_stiffnesses(self):
         """
@@ -2332,31 +2307,6 @@ class ComplianceTensor(StiffnessTensor):
         except ImportError:
             raise ModuleNotFoundError('pymatgen module is required for this function.')
         return matgenElast.ComplianceTensor(self.full_tensor)
-
-    def eig(self):
-        """
-        Compute the eigencompliances and the eigenstresses.
-
-        Solve the eigenvalue problem from the Kelvin matrix of the compliance tensor (see Notes).
-
-        Returns
-        -------
-        numpy.ndarray
-            Array of 6 eigencompliances (eigenvalues of the stiffness matrix)
-        numpy.ndarray
-            (6,6) array of eigenstresses (eigenvectors of the stiffness matrix)
-
-        See Also
-        --------
-        Kelvin : returns the stiffness components as a (6,6) matrix, according to the Kelvin mapping convention.
-        eig_compliances : returns the eigencompliances only
-        eig_stresses : returns the eigenstresses only
-
-        Notes
-        -----
-        The definition for eigencompliances and the eigenstresses are introduced in [Helbig]_.
-        """
-        return np.linalg.eigh(self.to_Kelvin())
 
     @property
     def eig_compliances(self):
