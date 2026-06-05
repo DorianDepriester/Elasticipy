@@ -1656,6 +1656,29 @@ class FourthOrderTensor:
         """
         return self.matrix()[..., 5, 5]
 
+    def eigvals(self):
+        """
+        Compute the eigenvalues from the Kelvin matrix of the tensor
+
+        Returns
+        -------
+        np.ndarray
+            Eigenvalues of the Kelvin matrix representation of the tensor
+        """
+        return np.linalg.eigvals(self._matrix)
+
+    def eig(self):
+        """
+        Compute the eigenvalues and the associated eigendvectors of the Kelvin matrix of the tensor
+
+        Returns
+        -------
+        np.ndarray
+            eigenvalues of the Kelvin matrix representation of the tensor
+        np.ndarray
+            array of eigvectors
+        """
+        return np.linalg.eig(self._matrix)
 
 
 class SymmetricFourthOrderTensor(FourthOrderTensor):
@@ -1802,3 +1825,8 @@ class SymmetricFourthOrderTensor(FourthOrderTensor):
         t1 = super().rand(shape)
         return cls(t1, force_symmetries=True, **kwargs)
 
+    def eig(self):
+        return np.linalg.eigh(self._matrix)
+
+    def eigvals(self):
+        return np.linalg.eigvalsh(self._matrix)
