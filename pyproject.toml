@@ -36,7 +36,7 @@ requires-python = ">=3.9"
 dynamic = ["version"]
 
 [project.optional-dependencies]
-dev = ["pytest", "pytest-cov", "codecov", "emmet-core==0.85.1", "mp_api==0.45.9"]
+dev = ["pytest", "pytest-cov", "codecov", "emmet-core==0.85.1", "mp_api==0.45.9", "damask"]
 
 [project.urls]
 Homepage = "https://pypi.org/project/Elasticipy/"
