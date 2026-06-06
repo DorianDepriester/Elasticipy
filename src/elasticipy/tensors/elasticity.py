@@ -1814,7 +1814,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         These values actually correspond to 2*C44 (with multiplicity = 3), C11-C12 (with multiplicity = 2) and C11+2C12
         (no multiplicity); see [Helbig]_.
         """
-        return np.linalg.eigvalsh(self._matrix)
+        return self.eigvals()
 
     @property
     def eig_strains(self):
@@ -2323,7 +2323,7 @@ class ComplianceTensor(StiffnessTensor):
         eig : returns the eigencompliances and the eigenstresses
         eig_strains : returns the eigenstresses only
         """
-        return np.linalg.eigvalsh(self.to_Kelvin())
+        return self.eigvals()
 
     @property
     def eig_stresses(self):
