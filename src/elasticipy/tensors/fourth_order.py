@@ -1830,3 +1830,11 @@ class SymmetricFourthOrderTensor(FourthOrderTensor):
 
     def eigvals(self):
         return np.linalg.eigvalsh(self._matrix)
+
+    def __add__(self, other):
+        if isinstance(other, SymmetricFourthOrderTensor):
+            return SymmetricFourthOrderTensor(self._matrix + other._matrix, mapping=self.mapping)
+        elif isinstance(other, FourthOrderTensor):
+            return FourthOrderTensor(self._matrix, mapping=self.mapping) + other
+        else:
+            return SymmetricFourthOrderTensor(self._matrix + other, mapping=self.mapping)
