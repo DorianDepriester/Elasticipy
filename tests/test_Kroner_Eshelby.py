@@ -1,5 +1,5 @@
 import unittest
-from elasticipy.homogenization.kroner_eshelby import polarization_tensor
+from elasticipy.homogenization.kroner_eshelby import polarization_tensor, Kroner_Eshelby
 from elasticipy.tensors.elasticity import StiffnessTensor
 from elasticipy.tensors.fourth_order import SymmetricFourthOrderTensor
 import numpy as np
@@ -69,6 +69,10 @@ class TestKronerEshelby(unittest.TestCase):
         assert approx(S[2, 0, 2, 0]) == 1 / 4
         assert approx(S[1, 2, 1, 2]) == 1 / 4
         assert approx(S[0, 1, 0, 1]) ==  (3 * C11 - C12) / (8 * C11)
+
+    def test_Kroner_Eshelby_isotropic(self):
+        Cm, msg = Kroner_Eshelby((Ci, Ci))
+        np.testing.assert_array_almost_equal(Cm.matrix(), Ci.matrix())
 
 
 if __name__ == '__main__':
