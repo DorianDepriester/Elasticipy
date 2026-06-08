@@ -167,6 +167,13 @@ class TestFourthOrderTensor(unittest.TestCase):
         assert twos.shape == shape
         assert np.all(np.isclose(twos.full_tensor, 2.))
 
+    def test_stack(self):
+        A = FourthOrderTensor.rand()
+        B = FourthOrderTensor.rand()
+        AB = FourthOrderTensor.stack((A, B))
+        assert AB[0] == A
+        assert AB[1] == B
+
 
 class TestSymmetricFourthOrderTensor(unittest.TestCase):
     def test_inversion(self):
