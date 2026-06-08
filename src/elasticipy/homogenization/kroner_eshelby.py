@@ -84,6 +84,10 @@ def localization_tensor(C_macro, C_incl, a1, a2, a3, n_phi=100, n_theta=50):
 
 
 def Kroner_Eshelby(Cs, particle_sizes=None, orientations=None, max_iter=100, atol=1e-3, rtol=1e-3, display=False, n_phi=50, n_theta=100):
+    if display:
+        header = f"{'iter':<5} | {'absolute change':<16} | {'relative change':<16} | {'error':<10}"
+        print(header)
+        print("-" * len(header))
     if isinstance(Cs, (tuple, list)):
         Cs = StiffnessTensor.stack(Cs)
     if orientations is not None:
@@ -138,6 +142,7 @@ def Kroner_Eshelby(Cs, particle_sizes=None, orientations=None, max_iter=100, ato
         if k == max_iter:
             keep_on = False
         if display:
-            err = np.max(np.abs(err._matrix))
-            print('Iter #{}: abs. change={:0.5f}; rel. change={:0.5f}; error={:0.5f}'.format(k, max_abs_change, rel_change,err))
+            err = np.max(np.abs(err.matrix()))
+            row = f"#{k:<4} | {max_abs_change:<16.6f} | {rel_change:<16.6f} | {err:<10.6f}"
+            print(row)
     return C_macro, message
