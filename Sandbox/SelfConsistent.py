@@ -1,5 +1,5 @@
 import numpy as np
-from elasticipy.tensors.fourth_order import FourthOrderTensor
+from elasticipy.tensors.fourth_order import FourthOrderTensor, SymmetricFourthOrderTensor
 from elasticipy.tensors.elasticity import StiffnessTensor
 from scipy.integrate import trapezoid
 from scipy.spatial.transform import Rotation
@@ -11,30 +11,35 @@ def gamma(C_macro_local, phi, theta, a1, a2, a3):
     s2 = np.sin(theta)*np.sin(phi) / a2
     s3 = np.cos(theta) / a3
     s = np.array([s1, s2, s3])
-    D = np.einsum('lmnp,pqr,lqr->qrmn', C_macro_local.full_tensor(), s, s)
-    Dinv = np.linalg.inv(D)
-    return np.einsum('qrjk,iqr,lqr->qrijkl', Dinv, s, s) # The symmetrization is made afterward (see below)
+    C = C_macro_local.full_tensor
+    D = np.einsum('ijkl,j...,l...->ik...', C, s, s)
+    Dinv = np.linalg.inv(D.T).T
+    a1 = np.einsum('ik...,j...,l...->ijkl...', Dinv, s, s)
+    a2 = np.einsum('jk...,i...,l...->ijkl...', Dinv, s, s)
+    a3 = np.einsum('il...,j...,k...->ijkl...', Dinv, s, s)
+    a4 = np.einsum('jl...,i...,k...->ijkl...', Dinv, s, s)
+    return (a1 + a2 + a3 + a4) /4
 
 def polarization_tensor(C_macro_local, a1, a2, a3, n_phi, n_theta):
     theta = np.linspace(0, np.pi, n_theta)
     phi = np.linspace(0, 2 * np.pi, n_phi)
     phi_grid, theta_grid = np.meshgrid(phi, theta, indexing='ij')
     g = gamma(C_macro_local, phi_grid, theta_grid, a1, a2, a3)
-    gsin = (g.T*np.sin(theta_grid.T)).T
-    a = trapezoid(gsin, phi, axis=0)
-    b= trapezoid(a, theta, axis=0)/(4*np.pi)
-    return FourthOrderTensor(b, force_minor_symmetry=True) # Symmetrization here (see above)
+    gsin = g * np.sin(theta_grid)
+    a = trapezoid(gsin, theta, axis=-1)
+    b= trapezoid(a, phi, axis=-1)/(4*np.pi)
+    return FourthOrderTensor(b, force_minor_symmetry=True)
 
 def localization_tensor(C_macro_local, C_incl, n_phi, n_theta, a1, a2, a3):
     E = polarization_tensor(C_macro_local, a1, a2, a3, n_phi, n_theta)
-    delta = FourthOrderTensor(C_incl._matrix - C_macro_local._matrix)
-    Ainv = E.ddot(delta) + I
+    Ainv = E.ddot(C_incl - C_macro_local) + I
     return Ainv.inv()
 
-def Kroner_Eshelby(Ci, g, method='strain', max_iter=5, atol=1e-3, rtol=1e-3, display=False, n_phi=100, n_theta=100, particle_size=None):
+def Kroner_Eshelby(Ci, g, max_iter=100, atol=1e-3, rtol=1e-3, display=False, n_phi=50, n_theta=100, particle_size=None):
     Ci_rotated = (Ci * g)
-    C_macro = Ci_rotated.Hill_average()
-    eigen_stiff = C_macro.eig_stiffnesses
+    C_macro = Ci
+    C_macro = SymmetricFourthOrderTensor(C_macro)
+    eigen_stiff = C_macro.eigvals()
     keep_on = True
     k = 0
     message = 'Maximum number of iterations is reached'
@@ -51,19 +56,12 @@ def Kroner_Eshelby(Ci, g, method='strain', max_iter=5, atol=1e-3, rtol=1e-3, dis
             A_local[i] = localization_tensor(C_macro_local[i], Ci, n_phi, n_theta, a1, a2, a3)
         A = A_local * g
         Q = Ci_rotated.ddot(A)
-        if method=='stress':
-            CiAi_mean = Q.mean()
-            C_macro = StiffnessTensor.from_Kelvin(CiAi_mean._matrix, force_symmetries=True)
-            err = A.mean() - FourthOrderTensor.identity()
-        else:
-            B = Q.ddot(C_macro.inv())
-            R = Ci_rotated.inv().ddot(B)
-            R_mean = R.mean()
-            C_macro = StiffnessTensor.from_Kelvin(R_mean.inv()._matrix, force_symmetries=True)
-            err = B.mean() - FourthOrderTensor.identity()
+        CiAi_mean = Q.mean()
+        C_macro = SymmetricFourthOrderTensor(CiAi_mean, force_symmetries=True)
+        err = A.mean() - FourthOrderTensor.identity()
 
         # Stopping criteria
-        eigen_stiff = C_macro.eig_stiffnesses
+        eigen_stiff = C_macro.eigvals()
         abs_change = np.abs(eigen_stiff - eigen_stiff_old)
         rel_change = np.max(abs_change / eigen_stiff_old)
         max_abs_change = np.max(abs_change)
@@ -82,5 +80,5 @@ def Kroner_Eshelby(Ci, g, method='strain', max_iter=5, atol=1e-3, rtol=1e-3, dis
     return C_macro, message
 
 C=StiffnessTensor.cubic(C11=108, C44=28.3, C12=62)
-orientations = Rotation.random(100, random_state=123)
-Cmacro, msg = Kroner_Eshelby(C, orientations, method='stress', display=True)
+orientations = Rotation.random(1, random_state=123)
+Cmacro, msg = Kroner_Eshelby(C, orientations, display=True)
