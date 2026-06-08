@@ -493,10 +493,7 @@ class FourthOrderTensor:
             else:
                 raise ValueError('The input argument must be either a 6x6 matrix or a (3,3,3,3) array.')
         elif isinstance(other, FourthOrderTensor):
-            if type(other) == type(self):
                 mat = self._matrix + other._matrix
-            else:
-                raise ValueError('The two tensors to add must be of the same class.')
         elif isinstance(other, (float, int, np.float32, np.float64)):
             return self + other * self.__class__.ones(shape=self.shape)
         else:
