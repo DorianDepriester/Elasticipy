@@ -52,47 +52,73 @@ def polarization_tensor(C, a1, a2, a3, n_phi=100, n_theta=50):
     return FourthOrderTensor(b, force_minor_symmetry=True)
 
 
-def localization_tensor(C_macro_local, C_incl, n_phi, n_theta, a1, a2, a3):
-    E = polarization_tensor(C_macro_local, a1, a2, a3, n_phi, n_theta)
-    Ainv = E.ddot(C_incl - C_macro_local) + I
+def localization_tensor(C_macro, C_incl, a1, a2, a3, n_phi=100, n_theta=50):
+    """
+    Numerically compute the localization tensor of an elliptical inclusion
+
+    Parameters
+    ----------
+    C_macro : StiffnessTensor
+        Macroscopic stiffness tensor
+    C_incl : StiffnessTensor
+        Stiffness tensor of inclusion
+    a1 : float
+        first half-principal axis
+    a2 : float
+        second half-principal axis
+    a3 : float
+        third half-principal axis
+    n_phi : int, optional
+        number of integration point along azimutal plane (default 100)
+    n_theta : int, optional
+        number of integration point along theta plane (default 50)
+
+    Returns
+    -------
+    FourthOrderTensor
+        Localization tensor
+    """
+    E = polarization_tensor(C_macro, a1, a2, a3, n_phi=n_phi, n_theta=n_theta)
+    Ainv = E.ddot(C_incl - C_macro) + I
     return Ainv.inv()
 
 
-def Kroner_Eshelby(Ci, g=None, max_iter=100, atol=1e-3, rtol=1e-3, display=False, n_phi=50, n_theta=100, particle_size=None):
-    if isinstance(Ci, (tuple, list)):
-        Ci = StiffnessTensor.stack(Ci)
-    if g is not None:
-        Ci_rotated = (Ci * g)
+def Kroner_Eshelby(Cs, particle_sizes=None, orientations=None, max_iter=100, atol=1e-3, rtol=1e-3, display=False, n_phi=50, n_theta=100):
+    if isinstance(Cs, (tuple, list)):
+        Cs = StiffnessTensor.stack(Cs)
+    if orientations is not None:
+        Cs_local = (Cs * orientations.inv())        # Stiffness tensors written in the particules' frames
     else:
-        Ci_rotated = Ci
-    C_macro = Ci.Hill_average()
+        Cs_local = Cs
+    C_macro = Cs.Hill_average()                     # Initial guess
     C_macro = SymmetricFourthOrderTensor(C_macro)
     eigen_stiff = C_macro.eigvals()
     keep_on = True
     k = 0
-    message = 'Maximum number of iterations is reached'
-    m = Ci.shape[0]
+    m = Cs.shape[0]
     A_local = FourthOrderTensor.zeros(m)
-    if particle_size is None:
-        a1 = a2 = a3 = 1
+    if particle_sizes is None:
+        a1, a2, a3 = np.ones(shape=(3,m))
     else:
-        a1, a2, a3 = particle_size
+        a1, a2, a3 = np.asarray(particle_sizes).T
+    message = 'Maximum number of iterations is reached'
     while keep_on:
         eigen_stiff_old = eigen_stiff
-        if g is not None:
-            C_macro_local = C_macro * (g.inv())
+        if orientations is not None:
+            C_macro_local = C_macro * (orientations.inv())
         else:
             C_macro_local = C_macro
         for i in range(m):
             if C_macro_local.shape:
-                A_local[i] = localization_tensor(C_macro_local[i], Ci[i], n_phi, n_theta, a1, a2, a3)
+                C_macro_local_i = C_macro_local[i]  # Macroscopic stiffness written in the i-th particule's frame
             else:
-                A_local[i] = localization_tensor(C_macro_local, Ci[i], n_phi, n_theta, a1, a2, a3)
-        if g is None:
+                C_macro_local_i = C_macro_local
+            A_local[i] = localization_tensor(C_macro_local_i, Cs_local[i], a1=a1[i], a2=a2[i], a3=a3[i], n_phi=n_phi, n_theta=n_theta)
+        if orientations is None:
             A = A_local
         else:
-            A = A_local * g
-        Q = Ci_rotated.ddot(A)
+            A = A_local * orientations
+        Q = Cs.ddot(A)
         CiAi_mean = Q.mean()
         C_macro = SymmetricFourthOrderTensor(CiAi_mean, force_symmetries=True)
         err = A.mean() - FourthOrderTensor.identity()
