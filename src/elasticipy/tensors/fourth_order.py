@@ -1832,8 +1832,10 @@ class SymmetricFourthOrderTensor(FourthOrderTensor):
 
     def __add__(self, other):
         if isinstance(other, SymmetricFourthOrderTensor):
-            return SymmetricFourthOrderTensor(self._matrix + other._matrix, mapping=self.mapping)
+            new_tensor = self.copy()
+            new_tensor._matrix += other._matrix
+            return new_tensor
         elif isinstance(other, FourthOrderTensor):
             return FourthOrderTensor(self._matrix, mapping=self.mapping) + other
         else:
-            return SymmetricFourthOrderTensor(super().__add__(other), mapping=self.mapping)
+            return self.__class__(super().__add__(other), mapping=self.mapping)
