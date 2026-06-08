@@ -95,7 +95,7 @@ def Kroner_Eshelby(Cs, particle_sizes=None, orientations=None, max_iter=100, ato
     else:
         Cs_local = Cs
     C_macro = Cs.Hill_average()                     # Initial guess
-    C_macro = SymmetricFourthOrderTensor(C_macro)
+    #C_macro = SymmetricFourthOrderTensor(C_macro)
     eigen_stiff = C_macro.eigvals()
     keep_on = True
     k = 0
@@ -128,7 +128,7 @@ def Kroner_Eshelby(Cs, particle_sizes=None, orientations=None, max_iter=100, ato
             A = A_local * orientations
         Q = Cs.ddot(A)
         CiAi_mean = Q.mean()
-        C_macro = SymmetricFourthOrderTensor(CiAi_mean, force_symmetries=True)
+        C_macro = StiffnessTensor(CiAi_mean, force_symmetries=True)
         err = A.mean() - FourthOrderTensor.identity()
 
         # Stopping criteria
