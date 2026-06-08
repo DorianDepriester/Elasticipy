@@ -516,7 +516,7 @@ class FourthOrderTensor:
 
         Parameters
         ----------
-        t : FourthOrderTensor
+        t : list of FourthOrderTensor or tuple of FourthOrderTensor
         kwargs : keyword arguments passed to the constructor
 
         Returns
