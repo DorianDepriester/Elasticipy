@@ -186,6 +186,23 @@ class TestSymmetricFourthOrderTensor(unittest.TestCase):
         assert twos.shape == shape
         assert np.all(np.isclose(twos.full_tensor, 2.))
 
+    def test_add_sym_nonsym(self):
+        shape = (4, 5)
+        A = SymmetricFourthOrderTensor.rand(shape=shape)
+        B = FourthOrderTensor.rand(shape=shape)
+        AA = A + A
+        AB = A + B
+        BB = B + B
+        BA = B + A
+        assert isinstance(AA, SymmetricFourthOrderTensor)
+        np.testing.assert_array_almost_equal(AA.full_tensor, A.full_tensor + A.full_tensor)
+        assert isinstance(AB, FourthOrderTensor)
+        np.testing.assert_array_almost_equal(AB.full_tensor, A.full_tensor + B.full_tensor)
+        assert isinstance(BA, FourthOrderTensor)
+        np.testing.assert_array_almost_equal(BA.full_tensor, B.full_tensor + A.full_tensor)
+        assert isinstance(BB, FourthOrderTensor)
+        np.testing.assert_array_almost_equal(BB.full_tensor, B.full_tensor + B.full_tensor)
+
 
 
 if __name__ == '__main__':
