@@ -523,8 +523,10 @@ class FourthOrderTensor:
         -------
         FourthOrderTensor
         """
+        stack = t[0].copy()
         matrices = [ti._matrix for ti in t]
-        return cls(np.stack(matrices), **kwargs)
+        stack._matrix = np.stack(matrices)
+        return stack
 
     def ddot(self, other, mode='pair'):
         """
