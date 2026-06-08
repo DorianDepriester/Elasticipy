@@ -885,7 +885,7 @@ class FourthOrderTensor:
         mapping convention. Indeed, one can check that the full tensor is actually full of ones. E.g.:
 
         >>> tensor_of_ones.full_tensor[0,1,0,2]
-        np.float64(1.0)
+        1.0
 
         Alternatively, the Voigt mapping convention may help figuring it out:
 

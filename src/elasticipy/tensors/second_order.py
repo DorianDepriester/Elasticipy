@@ -1444,7 +1444,7 @@ class SecondOrderTensor:
 
         >>> import numpy as np
         >>> np.all(t3 == t2)
-        np.True_
+        True
         """
         if self.ndim > 1:
             raise ValueError('The array must be flatten before getting dumped to text file.')
@@ -1562,9 +1562,9 @@ class SecondOrderTensor:
         >>> c.shape
         (2, 3)
         >>> np.all(c[0] == a)
-        np.True_
+        True
         >>> np.all(c[1] == b)
-        np.True_
+        True
 
         >>> a = SecondOrderTensor.rand(shape=(3, 4))
         >>> b = SecondOrderTensor.rand(shape=(3, 4))
@@ -1572,9 +1572,9 @@ class SecondOrderTensor:
         >>> c.shape
         (3, 2, 4)
         >>> np.all(c[:,0,:] == a)
-        np.True_
+        True
         >>> np.all(c[:,1,:] == b)
-        np.True_
+        True
         """
         mat_array = [a.matrix for a in arrays]
         if axis<0:
