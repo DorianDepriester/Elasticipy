@@ -159,6 +159,12 @@ class TestFourthOrderTensor(unittest.TestCase):
         A2d = FourthOrderTensor.ones(shape=(3,4))
         np.testing.assert_array_almost_equal(A2d.full_tensor, np.ones((3,4,3, 3, 3, 3)))
 
+    def test_add(self):
+        shape = (4, 5)
+        ones = FourthOrderTensor.ones(shape=shape)
+        twos = ones + 1
+        assert np.all(np.isclose(twos.full_tensor, 2.))
+
 
 class TestSymmetricFourthOrderTensor(unittest.TestCase):
     def test_inversion(self):
