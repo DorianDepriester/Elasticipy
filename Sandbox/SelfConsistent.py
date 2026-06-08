@@ -35,15 +35,20 @@ def localization_tensor(C_macro_local, C_incl, n_phi, n_theta, a1, a2, a3):
     Ainv = E.ddot(C_incl - C_macro_local) + I
     return Ainv.inv()
 
-def Kroner_Eshelby(Ci, g, max_iter=100, atol=1e-3, rtol=1e-3, display=False, n_phi=50, n_theta=100, particle_size=None):
-    Ci_rotated = (Ci * g)
-    C_macro = Ci
+def Kroner_Eshelby(Ci, g=None, max_iter=100, atol=1e-3, rtol=1e-3, display=False, n_phi=50, n_theta=100, particle_size=None):
+    if isinstance(Ci, (tuple, list)):
+        Ci = StiffnessTensor.stack(Ci)
+    if g is not None:
+        Ci_rotated = (Ci * g)
+    else:
+        Ci_rotated = Ci
+    C_macro = Ci.Hill_average()
     C_macro = SymmetricFourthOrderTensor(C_macro)
     eigen_stiff = C_macro.eigvals()
     keep_on = True
     k = 0
     message = 'Maximum number of iterations is reached'
-    m = len(g)
+    m = Ci.shape[0]
     A_local = FourthOrderTensor.zeros(m)
     if particle_size is None:
         a1 = a2 = a3 = 1
@@ -51,10 +56,19 @@ def Kroner_Eshelby(Ci, g, max_iter=100, atol=1e-3, rtol=1e-3, display=False, n_p
         a1, a2, a3 = particle_size
     while keep_on:
         eigen_stiff_old = eigen_stiff
-        C_macro_local = C_macro * (g.inv())
+        if g is not None:
+            C_macro_local = C_macro * (g.inv())
+        else:
+            C_macro_local = C_macro
         for i in range(m):
-            A_local[i] = localization_tensor(C_macro_local[i], Ci, n_phi, n_theta, a1, a2, a3)
-        A = A_local * g
+            if C_macro_local.shape:
+                A_local[i] = localization_tensor(C_macro_local[i], Ci[i], n_phi, n_theta, a1, a2, a3)
+            else:
+                A_local[i] = localization_tensor(C_macro_local, Ci[i], n_phi, n_theta, a1, a2, a3)
+        if g is None:
+            A = A_local
+        else:
+            A = A_local * g
         Q = Ci_rotated.ddot(A)
         CiAi_mean = Q.mean()
         C_macro = SymmetricFourthOrderTensor(CiAi_mean, force_symmetries=True)
@@ -79,6 +93,6 @@ def Kroner_Eshelby(Ci, g, max_iter=100, atol=1e-3, rtol=1e-3, display=False, n_p
             print('Iter #{}: abs. change={:0.5f}; rel. change={:0.5f}; error={:0.5f}'.format(k, max_abs_change, rel_change,err))
     return C_macro, message
 
-C=StiffnessTensor.cubic(C11=108, C44=28.3, C12=62)
-orientations = Rotation.random(1, random_state=123)
-Cmacro, msg = Kroner_Eshelby(C, orientations, display=True)
+C1 = StiffnessTensor.isotropic(E=210, nu=0.25)
+C2 = StiffnessTensor.isotropic(E=70, nu=0.3)
+Cmacro, msg = Kroner_Eshelby((C1, C2), display=True, particle_size=(1000,1000,1))
