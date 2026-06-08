@@ -2017,6 +2017,13 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         """
         return np.logical_or(self._check_eig_signature([1, 1, 1, 1, 2], tol), self.is_cubic(tol=tol))
 
+    def __add__(self, other):
+        if ((self.__class__ == StiffnessTensor and isinstance(other, ComplianceTensor)) or
+                (other.__class__ == StiffnessTensor and isinstance(self, ComplianceTensor))) :
+            raise ValueError('A stiffness tensor cannot be added with a compliance tensor.')
+        else:
+            return super().__add__(other)
+
 
 class ComplianceTensor(StiffnessTensor):
     """
