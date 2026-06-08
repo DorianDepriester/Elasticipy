@@ -163,6 +163,8 @@ class TestFourthOrderTensor(unittest.TestCase):
         shape = (4, 5)
         ones = FourthOrderTensor.ones(shape=shape)
         twos = ones + 1
+        assert isinstance(twos, FourthOrderTensor)
+        assert twos.shape == shape
         assert np.all(np.isclose(twos.full_tensor, 2.))
 
 
@@ -175,6 +177,14 @@ class TestSymmetricFourthOrderTensor(unittest.TestCase):
         eye = SymmetricFourthOrderTensor.identity(shape=m)
         for i in range(m):
             np.testing.assert_array_almost_equal(TTinv[i].full_tensor, eye[i].full_tensor)
+
+    def test_add(self):
+        shape = (4, 5)
+        ones = SymmetricFourthOrderTensor.ones(shape=shape)
+        twos = ones + 1
+        assert isinstance(twos, SymmetricFourthOrderTensor)
+        assert twos.shape == shape
+        assert np.all(np.isclose(twos.full_tensor, 2.))
 
 
 
