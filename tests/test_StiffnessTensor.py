@@ -557,7 +557,7 @@ class TestStiffnessConstructor(unittest.TestCase):
 
         with self.assertRaises(ValueError) as context:
             _ = C1 + C2.inv()
-        self.assertEqual(str(context.exception), 'The two tensors to add must be of the same class.')
+        self.assertEqual(str(context.exception), 'A stiffness tensor cannot be added with a compliance tensor.')
 
     def test_mul_rmul(self):
         C = StiffnessTensor.isotropic(E=200, nu=0.3)
