@@ -509,6 +509,23 @@ class FourthOrderTensor:
         t._matrix = -t._matrix
         return t
 
+    @classmethod
+    def stack(cls, t, **kwargs):
+        """
+        Join a sequence of tensors into a single tensor array
+
+        Parameters
+        ----------
+        t : FourthOrderTensor
+        kwargs : keyword arguments passed to the constructor
+
+        Returns
+        -------
+        FourthOrderTensor
+        """
+        matrices = [ti._matrix for ti in t]
+        return cls(np.stack(matrices), **kwargs)
+
     def ddot(self, other, mode='pair'):
         """
         Perform tensor product contracted twice (":") between two fourth-order tensors
