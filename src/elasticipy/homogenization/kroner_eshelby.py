@@ -13,9 +13,9 @@ def gamma(C_macro_local, phi, theta, a1, a2, a3):
     s3 = np.cos(theta) / a3
     s = np.array([s1, s2, s3])
     C = C_macro_local.full_tensor
-    D = np.einsum('ijkl,j...,l...->ik...', C, s, s)
+    D = np.einsum('ijkl,jmn,lmn->ikmn', C, s, s)
     Dinv = np.linalg.inv(D.T).T
-    a1 = np.einsum('ik...,j...,l...->ijkl...', Dinv, s, s)
+    a1 = np.einsum('ikmn,jmn,lmn->ijklmn', Dinv, s, s)
     return a1
 
 
@@ -102,9 +102,13 @@ def Kroner_Eshelby(Cs, particle_sizes=None, orientations=None, max_iter=100, ato
     m = Cs.shape[0]
     A_local = FourthOrderTensor.zeros(m)
     if particle_sizes is None:
-        a1, a2, a3 = np.ones(shape=(3,m))
+        a1 = a2 = a3 = np.ones(m)
     else:
-        a1, a2, a3 = np.asarray(particle_sizes).T
+        particle_sizes = np.asarray(particle_sizes)
+        if particle_sizes.ndim == 1:
+            a1, a2, a3 = particle_sizes
+        elif particle_sizes.ndim == 2:
+            a1, a2, a3 = np.asarray(particle_sizes).T
     message = 'Maximum number of iterations is reached'
     while keep_on:
         eigen_stiff_old = eigen_stiff
