@@ -497,8 +497,10 @@ class FourthOrderTensor:
                 mat = self._matrix + other._matrix
             else:
                 raise ValueError('The two tensors to add must be of the same class.')
+        elif isinstance(other, (float, int, np.float32, np.float64)):
+            return self + other * self.__class__.ones(shape=self.shape)
         else:
-            raise ValueError('I don''t know how to add {} with {}.'.format(type(self), type(other)))
+            raise NotImplemented
         new_tensor._matrix = mat
         return new_tensor
 
