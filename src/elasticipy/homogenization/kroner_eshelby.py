@@ -19,14 +19,36 @@ def gamma(C_macro_local, phi, theta, a1, a2, a3):
     return a1
 
 
-def polarization_tensor(C_macro_local, a1, a2, a3, n_phi, n_theta):
+def polarization_tensor(C, a1, a2, a3, n_phi=100, n_theta=50):
+    """
+    Numerically compute the polarization tensor of an elliptical inclusion
+
+    Parameters
+    ----------
+    C : StiffnessTensor
+        macroscopic stiffness tensor
+    a1 : float
+        first half-principal axis
+    a2 : float
+        second half-principal axis
+    a3 : float
+        third half-principal axis
+    n_phi : int, optional
+        number of integration point along azimutal plane (default 100)
+    n_theta : int, optional
+        number of integration point along theta plane (default 50)
+
+    Returns
+    -------
+    FourthOrderTensor
+        Polarization tensor
+    """
     theta = np.linspace(0, np.pi, n_theta)
     phi = np.linspace(0, 2 * np.pi, n_phi)
     phi_grid, theta_grid = np.meshgrid(phi, theta, indexing='ij')
-    g = gamma(C_macro_local, phi_grid, theta_grid, a1, a2, a3)
-    gsin = g * np.sin(theta_grid)
-    a = trapezoid(gsin, theta, axis=-1)
-    b= trapezoid(a, phi, axis=-1)/(4*np.pi)
+    g = gamma(C, phi_grid, theta_grid, a1, a2, a3)
+    a = trapezoid(g * np.sin(theta_grid), theta, axis=-1)
+    b = trapezoid(a, phi, axis=-1)/(4*np.pi)
     return FourthOrderTensor(b, force_minor_symmetry=True)
 
 
