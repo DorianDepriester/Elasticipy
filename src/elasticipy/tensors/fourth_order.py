@@ -1839,4 +1839,4 @@ class SymmetricFourthOrderTensor(FourthOrderTensor):
         elif isinstance(other, FourthOrderTensor):
             return FourthOrderTensor(self._matrix, mapping=self.mapping) + other
         else:
-            return SymmetricFourthOrderTensor(self._matrix + other, mapping=self.mapping)
+            return SymmetricFourthOrderTensor(super().__add__(other), mapping=self.mapping)
