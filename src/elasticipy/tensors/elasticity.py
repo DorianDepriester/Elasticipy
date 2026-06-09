@@ -48,6 +48,20 @@ def _switch_poisson_ratios(nu_xy, nu_yx, Ex, Ey, indices):
     else:
         raise ValueError('Either nu_{0}{1} or nu_{1}{0} must be provided'.format(*indices))
 
+def _safe_inverse(matrix):
+    det = np.linalg.det(matrix)
+    singular = det == 0.
+    if matrix.ndim ==2:
+        if singular:
+            return np.full((6, 6), np.inf)
+        else:
+            return np.linalg.inv(matrix)
+    else:
+        inv_matrix = np.full_like(matrix, np.inf)
+        non_singular_mask = np.logical_not(singular)
+        inv_matrix[non_singular_mask] = np.linalg.inv(matrix[non_singular_mask])
+        return inv_matrix
+
 class StiffnessTensor(SymmetricFourthOrderTensor):
     """
     Class for manipulating fourth-order stiffness tensors.
@@ -177,6 +191,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         if check_positive_definite:
             _check_definite_positive(self._matrix)
         self.phase_name = phase_name
+        self._check_positiveness = check_positive_definite
 
     def __mul__(self, other):
         if isinstance(other, StrainTensor):
@@ -261,8 +276,8 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
           [ 0.    0.    0.    0.   25.    0.  ]
           [ 0.    0.    0.    0.    0.   25.  ]]]
         """
-        C = np.linalg.inv(self._matrix)
-        t2 = ComplianceTensor(C, mapping=kelvin_mapping, phase_name=self.phase_name)
+        C = _safe_inverse(self._matrix)
+        t2 = ComplianceTensor(C, mapping=kelvin_mapping, phase_name=self.phase_name, check_positive_definite=self._check_positiveness)
         t2.mapping = self.mapping.mapping_inverse
         return t2
 
@@ -2024,6 +2039,41 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         else:
             return super().__add__(other)
 
+    @classmethod
+    def void(cls, shape=()):
+        """
+        Create a null stiffness tensor.
+
+        The stiffness tensor of a void is populated with zeros.
+
+        Parameters
+        ----------
+        shape : tuple, optional
+            Shape of the tensor array
+
+        Returns
+        -------
+        StiffnessTensor
+        """
+        return cls.zeros(shape=shape, check_positive_definite=False)
+
+    @classmethod
+    def rigid(cls, shape=()):
+        """
+        Create an infinite stiffness tensor.
+
+        Parameters
+        ----------
+        shape : tuple, optional
+            Shape of the tensor array
+
+        Returns
+        -------
+        StiffnessTensor
+        """
+        mat = np.inf * np.ones(shape=shape + (6,6))
+        return cls(mat, check_positive_definite=False)
+
 
 class ComplianceTensor(StiffnessTensor):
     """
@@ -2171,8 +2221,8 @@ class ComplianceTensor(StiffnessTensor):
         StiffnessTensor
             Reciprocal tensor
         """
-        S = np.linalg.inv(self._matrix)
-        t = StiffnessTensor(S, mapping=kelvin_mapping, phase_name=self.phase_name)
+        S = _safe_inverse(self._matrix)
+        t = StiffnessTensor(S, mapping=kelvin_mapping, phase_name=self.phase_name, check_positive_definite=self._check_positiveness)
         t.mapping = self.mapping.mapping_inverse
         return t
 
@@ -2591,3 +2641,40 @@ class ComplianceTensor(StiffnessTensor):
                            [S15, S25, S35, S45, S55, C56],
                            [S16, S26, S36, S46, C56, S66]])
         return cls(matrix, phase_name=phase_name)
+
+    @classmethod
+    def void(cls, shape=()):
+        """
+        Create an infinite compliance tensor.
+
+        The compliance tensor of a void is populated with inf.
+
+        Parameters
+        ----------
+        shape : tuple, optional
+            Shape of the tensor array
+
+        Returns
+        -------
+        ComplianceTensor
+        """
+        mat = np.inf * np.ones(shape=shape + (6, 6))
+        return cls(mat, check_positive_definite=False)
+
+    @classmethod
+    def rigid(cls, shape=()):
+        """
+        Create a null compliance tensor.
+
+        The compliance tensor is populated with zeros.
+
+        Parameters
+        ----------
+        shape : tuple, optional
+            Shape of the tensor array
+
+        Returns
+        -------
+        ComplianceTensor
+        """
+        return cls.zeros(shape=shape, check_positive_definite=False)
