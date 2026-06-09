@@ -724,6 +724,7 @@ class TestStiffnessConstructor(unittest.TestCase):
         eig_vals = np.linalg.eigvals(S * KelvinMapping().matrix)
         expected_error = 'The input matrix is not definite positive (eigenvalues: {})'.format(eig_vals)
         self.assertEqual(str(context.exception), expected_error)
+        StiffnessTensor(S, check_positive_definite=False) # Error not raised
 
     def test_Zener_universal_anisotropy(self):
         C11, C12, C44 = 173, 33, 18
