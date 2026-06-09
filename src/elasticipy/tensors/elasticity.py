@@ -51,15 +51,19 @@ def _switch_poisson_ratios(nu_xy, nu_yx, Ex, Ey, indices):
 def _safe_inverse(matrix):
     det = np.linalg.det(matrix)
     singular = det == 0.
+    infinite = np.all(np.isinf(matrix), axis=(-1, -2))
     if matrix.ndim ==2:
         if singular:
             return np.full((6, 6), np.inf)
+        if infinite:
+            return np.zeros_like(matrix)
         else:
             return np.linalg.inv(matrix)
     else:
         inv_matrix = np.full_like(matrix, np.inf)
-        non_singular_mask = np.logical_not(singular)
+        non_singular_mask = np.logical_not(np.logical_or(singular, infinite))
         inv_matrix[non_singular_mask] = np.linalg.inv(matrix[non_singular_mask])
+        inv_matrix[infinite] = 0.
         return inv_matrix
 
 class StiffnessTensor(SymmetricFourthOrderTensor):
