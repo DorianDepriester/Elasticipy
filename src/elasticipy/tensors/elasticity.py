@@ -281,7 +281,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
           [ 0.    0.    0.    0.    0.   25.  ]]]
         """
         C = _safe_inverse(self._matrix)
-        t2 = ComplianceTensor(C, mapping=kelvin_mapping, phase_name=self.phase_name, check_positive_definite=self._check_positiveness)
+        t2 = ComplianceTensor(C, check_positive_definite=False, check_symmetries=False, mapping=kelvin_mapping, phase_name=self.phase_name)
         t2.mapping = self.mapping.mapping_inverse
         return t2
 
@@ -2226,7 +2226,8 @@ class ComplianceTensor(StiffnessTensor):
             Reciprocal tensor
         """
         S = _safe_inverse(self._matrix)
-        t = StiffnessTensor(S, mapping=kelvin_mapping, phase_name=self.phase_name, check_positive_definite=self._check_positiveness)
+        t = StiffnessTensor(S, check_symmetries=False, check_positive_definite=False,
+                            mapping=kelvin_mapping, phase_name=self.phase_name)
         t.mapping = self.mapping.mapping_inverse
         return t
 
