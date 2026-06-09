@@ -1432,8 +1432,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
          [  0.   0. 186.]]
         """
         u_vec = np.atleast_2d(u)
-        u_vec = (u_vec.T / np.linalg.norm(u_vec, axis=1)).T
-        G = np.einsum('inmj,pn,pm->pij', self.full_tensor, u_vec, u_vec)
+        G = np.einsum('inmj,...n,...m->...ij', self.full_tensor, u_vec, u_vec)
         return SymmetricSecondOrderTensor(np.squeeze(G))
 
     def wave_velocity(self, rho):
