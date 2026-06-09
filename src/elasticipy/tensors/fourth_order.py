@@ -584,7 +584,7 @@ class FourthOrderTensor:
         """
         if isinstance(other, FourthOrderTensor):
             if self.ndim == 0 and other.ndim == 0:
-                return FourthOrderTensor(np.einsum('ijmn,nmkl->ijkl', self.full_tensor, other.full_tensor))
+                return FourthOrderTensor(np.einsum('ijmn,nmkl->ijkl', self.full_tensor, other.full_tensor), check_minor_symmetry=False)
             else:
                 if mode == 'pair':
                     ein_str = '...ijmn,...nmkl->...ijkl'
@@ -596,7 +596,7 @@ class FourthOrderTensor:
                     indices_2 = indices_0 + indices_1
                     ein_str = indices_0 + 'wxXY,' + indices_1 + 'YXyz->' + indices_2 + 'wxyz'
                 matrix = np.einsum(ein_str, self.full_tensor, other.full_tensor)
-                return FourthOrderTensor(matrix)
+                return FourthOrderTensor(matrix, check_minor_symmetry=False)
         elif isinstance(other, SecondOrderTensor):
             if self.ndim == 0 and other.ndim == 0:
                 return SymmetricSecondOrderTensor(np.einsum('ijkl,kl->ij', self.full_tensor, other.matrix))
