@@ -11,11 +11,9 @@ def gamma(C_macro_local, phi, theta, a1, a2, a3):
     s1 = np.sin(theta)*np.cos(phi) / a1
     s2 = np.sin(theta)*np.sin(phi) / a2
     s3 = np.cos(theta) / a3
-    s = np.array([s1, s2, s3])
-    C = C_macro_local.full_tensor
-    D = np.einsum('ijkl,jmn,lmn->ikmn', C, s, s)
-    Dinv = np.linalg.inv(D.T).T
-    a1 = np.einsum('ikmn,jmn,lmn->ijklmn', Dinv, s, s)
+    s = np.array([s1, s2, s3]).T
+    Dinv = C_macro_local.Christoffel_tensor(s).inv()
+    a1 = np.einsum('nmik,nmj,nml->ijklmn', Dinv.matrix, s, s)
     return a1
 
 
@@ -79,8 +77,11 @@ def localization_tensor(C_macro, C_incl, a1, a2, a3, n_phi=100, n_theta=50):
         Localization tensor
     """
     E = polarization_tensor(C_macro, a1, a2, a3, n_phi=n_phi, n_theta=n_theta)
-    Ainv = E.ddot(C_incl - C_macro) + I
-    return Ainv.inv()
+    if C_incl==np.inf:
+        return I - E.ddot(C_macro)
+    else:
+        Ainv = E.ddot(C_incl - C_macro) + I
+        return Ainv.inv()
 
 
 def Kroner_Eshelby(Cs, particle_sizes=None, orientations=None, max_iter=100, atol=1e-3, rtol=1e-3, display=False, n_phi=50, n_theta=100):
@@ -94,8 +95,17 @@ def Kroner_Eshelby(Cs, particle_sizes=None, orientations=None, max_iter=100, ato
         Cs_local = (Cs * orientations.inv())        # Stiffness tensors written in the particules' frames
     else:
         Cs_local = Cs
-    C_macro = Cs.Hill_average()                     # Initial guess
-    #C_macro = SymmetricFourthOrderTensor(C_macro)
+
+    # Initial guess
+    if np.logical_not(np.any(np.logical_or(Cs == 0., Cs == np.inf))):
+        C_macro = Cs.Hill_average()
+    elif np.logical_not(np.any(Cs == np.inf)):
+        C_macro = Cs.Voigt_average()
+    elif np.logical_not(np.any(Cs == 0.)):
+        C_macro = Cs.Reuss_average()
+    else:
+        raise NotImplemented
+
     eigen_stiff = C_macro.eigvals()
     keep_on = True
     k = 0
@@ -121,7 +131,7 @@ def Kroner_Eshelby(Cs, particle_sizes=None, orientations=None, max_iter=100, ato
                 C_macro_local_i = C_macro_local[i]  # Macroscopic stiffness written in the i-th particule's frame
             else:
                 C_macro_local_i = C_macro_local
-            A_local[i] = localization_tensor(C_macro_local_i, Cs_local[i], a1=a1[i], a2=a2[i], a3=a3[i], n_phi=n_phi, n_theta=n_theta)
+            A_local[i] = localization_tensor(C_macro_local_i, Cs_local[i], a1[i], a2[i], a3[i], n_phi=n_phi, n_theta=n_theta)
         if orientations is None:
             A = A_local
         else:
