@@ -1578,19 +1578,18 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
             else:
                 return None
 
-    @classmethod
-    def weighted_average(cls, Cs, volume_fractions, method):
+    def weighted_average(self, volume_fractions=None, axis=None, method='Hill'):
         """
-        Compute the weighted average of a list of stiffness tensors, with respect to a given method (Voigt, Reuss or
+        Compute the weighted average of a tensor array, with respect to a given method (Voigt, Reuss or
         Hill).
 
         Parameters
         ----------
-        Cs : list of StiffnessTensor or list of ComplianceTensor or tuple of StiffnessTensor or tuple of ComplianceTensor
-            Series of tensors to compute the average from
         volume_fractions : iterable of floats
             Volume fractions of each phase
-        method : str, {'Voigt', 'Reuss', 'Hill'}
+        axis : int or list of int or tuple of int
+            Axis to compute the average along with
+        method : str, {'Voigt', 'Reuss', 'Hill'}, optional
             Method to use. It can be 'Voigt', 'Reuss', or 'Hill'.
 
         Returns
@@ -1598,27 +1597,17 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         StiffnessTensor
             Average tensor
         """
-        if np.all([isinstance(a, ComplianceTensor) for a in Cs]):
-            Cs = [C.inv() for C in Cs]
-        if np.all([isinstance(a, StiffnessTensor) for a in Cs]):
-            C_stack = np.array([C.matrix() for C in Cs])
-            method = method.capitalize()
-            if method == 'Voigt':
-                C_avg = np.average(C_stack, weights=volume_fractions, axis=0)
-                return StiffnessTensor(C_avg)
-            elif method == 'Reuss':
-                S_stack = np.linalg.inv(C_stack)
-                S_avg = np.average(S_stack, weights=volume_fractions, axis=0)
-                return StiffnessTensor(np.linalg.inv(S_avg))
-            elif method == 'Hill':
-                C_voigt = cls.weighted_average(Cs, volume_fractions, 'Voigt')
-                C_reuss = cls.weighted_average(Cs, volume_fractions, 'Reuss')
-                return (C_voigt + C_reuss) * 0.5
-            else:
-                raise ValueError('Method must be either Voigt, Reuss or Hill.')
+        method = method.capitalize()
+        if method == 'Voigt':
+            return super().weighted_average(weights=volume_fractions, axis=axis)
+        elif method == 'Reuss':
+            return self.inv().weighted_average(volume_fractions=volume_fractions, axis=axis, method=method).inv()
+        elif method == 'Hill':
+            C_voigt = self.weighted_average(volume_fractions=volume_fractions, axis=axis, method='Voigt')
+            C_reuss = self.weighted_average(volume_fractions=volume_fractions, axis=axis, method='Reuss')
+            return (C_voigt + C_reuss) * 0.5
         else:
-            raise ValueError('The first argument must be either a list of ComplianceTensors or '
-                             'a list of StiffnessTensor.')
+            raise ValueError('Method must be either Voigt, Reuss or Hill.')
 
     @property
     def universal_anisotropy(self):
@@ -2330,9 +2319,18 @@ class ComplianceTensor(StiffnessTensor):
     def transverse_isotropic(cls, *args, **kwargs):
         return super().transverse_isotropic(*args, **kwargs).inv()
 
-    @classmethod
-    def weighted_average(cls, *args):
-        return super().weighted_average(*args).inv()
+    def weighted_average(self, volume_fractions=None, axis=None, method='Hill'):
+        method = method.capitalize()
+        if method == 'Voigt':
+            return self.inv().weighted_average(volume_fractions=volume_fractions, axis=axis, method=method).inv()
+        elif method == 'Reuss':
+            return super(StiffnessTensor, self).weighted_average(weights=volume_fractions, axis=axis)
+        elif method == 'Hill':
+            S_voigt = self.weighted_average(volume_fractions=volume_fractions, axis=axis, method='Voigt')
+            S_reuss = self.weighted_average(volume_fractions=volume_fractions, axis=axis, method='Reuss')
+            return (S_voigt + S_reuss) * 0.5
+        else:
+            raise ValueError('Method must be either Voigt, Reuss or Hill.')
 
     @property
     def bulk_modulus(self):
