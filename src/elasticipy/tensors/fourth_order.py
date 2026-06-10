@@ -496,6 +496,12 @@ class FourthOrderTensor:
         t2._matrix = np.mean(self._matrix, axis=axis)
         return t2
 
+    def average(self, axis=None, weights=None):
+        t2 = deepcopy(self)
+        axis = self._safe_axis(axis)
+        t2._matrix = np.average(self._matrix, axis=axis, weights=weights)
+        return t2
+
     def __add__(self, other):
         new_tensor = deepcopy(self)
         if isinstance(other, np.ndarray):
