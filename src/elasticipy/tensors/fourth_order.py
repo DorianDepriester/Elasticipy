@@ -496,7 +496,7 @@ class FourthOrderTensor:
         t2._matrix = np.mean(self._matrix, axis=axis)
         return t2
 
-    def average(self, axis=None, weights=None):
+    def weighted_average(self, axis=None, weights=None):
         """
         Compute the weighted average over a specified axis
 
