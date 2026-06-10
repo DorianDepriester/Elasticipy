@@ -450,7 +450,7 @@ class FourthOrderTensor:
         Returns
         -------
         numpy.ndarray
-            If no axis is given, the result will be of shape (3,3,3,3).
+            If no axis is given, the result will be of shape ().
 
         Examples
         --------
