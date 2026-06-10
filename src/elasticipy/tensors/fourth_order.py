@@ -522,7 +522,7 @@ class FourthOrderTensor:
         >>> t = FourthOrderTensor.rand(shape=(5,6))
 
         Perform the weighted average over first axis:
-        >>> t_avg = t.average(axis=0, weights=[1,2,3,4,5])
+        >>> t_avg = t.weighted_average(axis=0, weights=[1,2,3,4,5])
         >>> t_avg.shape
         (6,)
         """
