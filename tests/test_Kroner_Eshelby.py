@@ -71,8 +71,14 @@ class TestKronerEshelby(unittest.TestCase):
         assert approx(S[0, 1, 0, 1]) ==  (3 * C11 - C12) / (8 * C11)
 
     def test_Kroner_Eshelby_single_particle(self):
-        Cm, msg = Kroner_Eshelby((Chex, Chex))
+        Cm, _ = Kroner_Eshelby((Chex, Chex))
         np.testing.assert_array_almost_equal(Cm.matrix(), Chex.matrix())
+
+    def test_Kroner_Eshelby_multi_volume_fraction(self):
+        Cmacro, _ = Kroner_Eshelby((Ci, Cm), volume_fractions=[1,0])
+        np.testing.assert_array_almost_equal(Cmacro.matrix(), Ci.matrix())
+        Cmacro, _ = Kroner_Eshelby((Ci, Cm), volume_fractions=[0, 1])
+        np.testing.assert_array_almost_equal(Cmacro.matrix(), Cm.matrix())
 
 
 if __name__ == '__main__':
