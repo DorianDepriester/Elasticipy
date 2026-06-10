@@ -440,8 +440,8 @@ class FourthOrderTensor:
 
     def _safe_axis(self, axis):
         if axis is None:
-            return tuple([i for i in range(0, self.ndim)])
-        if isinstance(axis, list):
+            axis = tuple([i for i in range(0, self.ndim)])
+        elif isinstance(axis, list):
             axis = tuple(axis)
         elif isinstance(axis, int):
             axis = (axis,)
