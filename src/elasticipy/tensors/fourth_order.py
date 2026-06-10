@@ -497,6 +497,35 @@ class FourthOrderTensor:
         return t2
 
     def average(self, axis=None, weights=None):
+        """
+        Compute the weighted average over a specified axis
+
+        Parameters
+        ----------
+        axis : int or list of int or tuple of int, optional
+            axis along which to compute the average. If None, the average is computed on the flattened tensor
+        weights : list of float or tuple of float
+            Weights to use for computing the average. The length of the weights must be consistent with the number of
+            elements along the considered axis.
+
+        Returns
+        -------
+        Weighted average
+
+        See Also
+        --------
+        mean : compute the arithemtic mean of the tensor
+
+        Examples
+        --------
+        >>> from elasticipy.tensors.fourth_order import FourthOrderTensor
+        >>> t = FourthOrderTensor.rand(shape=(5,6))
+
+        Perform the weighted average over first axis:
+        >>> t_avg = t.average(axis=0, weights=[1,2,3,4,5])
+        >>> t_avg.shape
+        (6,)
+        """
         t2 = deepcopy(self)
         axis = self._safe_axis(axis)
         t2._matrix = np.average(self._matrix, axis=axis, weights=weights)
