@@ -84,7 +84,8 @@ def localization_tensor(C_macro, C_incl, a1, a2, a3, n_phi=100, n_theta=50):
         return Ainv.inv()
 
 
-def Kroner_Eshelby(Cs, particle_sizes=None, orientations=None, max_iter=100, atol=1e-3, rtol=1e-3, display=False, n_phi=50, n_theta=100):
+def Kroner_Eshelby(Cs, particle_sizes=None, orientations=None,
+                   volume_fractions=None, max_iter=100, atol=1e-3, rtol=1e-3, display=False, n_phi=50, n_theta=100):
     if display:
         header = f"{'iter':<5} | {'absolute change':<16} | {'relative change':<16} | {'error':<10}"
         print(header)
@@ -98,13 +99,18 @@ def Kroner_Eshelby(Cs, particle_sizes=None, orientations=None, max_iter=100, ato
 
     # Initial guess
     if np.logical_not(np.any(np.logical_or(Cs == 0., Cs == np.inf))):
-        C_macro = Cs.Hill_average()
+        method = 'Hill'
     elif np.logical_not(np.any(Cs == np.inf)):
+        method = 'Voigt'
         C_macro = Cs.Voigt_average()
     elif np.logical_not(np.any(Cs == 0.)):
-        C_macro = Cs.Reuss_average()
+        method = 'Reuss'
     else:
         raise NotImplemented
+    if volume_fractions is None:
+        C_macro = StiffnessTensor.average(Cs, method=method)
+    else:
+        C_macro = StiffnessTensor.weighted_average(Cs, volume_fractions=volume_fractions, method=method)
 
     eigen_stiff = C_macro.eigvals()
     keep_on = True
@@ -137,7 +143,7 @@ def Kroner_Eshelby(Cs, particle_sizes=None, orientations=None, max_iter=100, ato
         else:
             A = A_local * orientations
         Q = Cs.ddot(A)
-        CiAi_mean = Q.mean()
+        CiAi_mean = Q.average(weights=volume_fractions)
         C_macro = StiffnessTensor(CiAi_mean, force_symmetries=True)
         err = A.mean() - FourthOrderTensor.identity()
 
