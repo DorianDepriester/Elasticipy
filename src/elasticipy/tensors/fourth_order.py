@@ -438,6 +438,20 @@ class FourthOrderTensor:
         else:
             return 0
 
+    def _safe_axis(self, axis):
+        if axis is None:
+            return tuple([i for i in range(0, self.ndim)])
+        if isinstance(axis, list):
+            axis = tuple(axis)
+        elif isinstance(axis, int):
+            axis = (axis,)
+        if isinstance(axis, tuple):
+            axis = tuple([(i-2) if i < 0 else i for i in axis])
+        if len(axis) == 1:
+            return axis[0]
+        else:
+            return axis
+
     def mean(self, axis=None):
         """
         Compute the mean value of the tensor T
@@ -478,8 +492,7 @@ class FourthOrderTensor:
          (5,)
         """
         t2 = deepcopy(self)
-        if axis is None:
-            axis = tuple([i for i in range(0,self.ndim)])
+        axis = self._safe_axis(axis)
         t2._matrix = np.mean(self._matrix, axis=axis)
         return t2
 
@@ -510,14 +523,15 @@ class FourthOrderTensor:
         return t
 
     @classmethod
-    def stack(cls, t, **kwargs):
+    def stack(cls, t):
         """
-        Join a sequence of tensors into a single tensor array
+        Join a sequence of tensors into a single tensor array.
+
+        The type of returned tensor will be the same as the fist element in the sequence.
 
         Parameters
         ----------
         t : list of FourthOrderTensor or tuple of FourthOrderTensor
-        kwargs : keyword arguments passed to the constructor
 
         Returns
         -------
