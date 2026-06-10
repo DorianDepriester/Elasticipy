@@ -174,6 +174,36 @@ class TestFourthOrderTensor(unittest.TestCase):
         assert AB[0] == A
         assert AB[1] == B
 
+    def test_average(self):
+        a = FourthOrderTensor.rand(shape=(4, 5))
+
+        # Overall mean (no axis nor weight)
+        a_overall = a.average()
+        assert a_overall.shape == ()
+        np.testing.assert_array_almost_equal(a_overall.matrix(), np.mean(a.matrix(), axis=(0, 1)))
+
+        # positive axis provided
+        a1 = a.average(axis=1)
+        assert a1.shape == (4,)
+        np.testing.assert_array_almost_equal(a1.matrix(), np.mean(a.matrix(), axis=1))
+
+        # negative axis provided
+        a_1 = a.average(axis=-1)
+        assert a_1.shape == (4,)
+        np.testing.assert_array_almost_equal(a_1.matrix(), np.mean(a.matrix(), axis=1))
+
+        # list of axes provided with weights
+        weights = (1,2,3,4)
+        a_0wgt = a.average(axis=0, weights=weights)
+        assert a_0wgt.shape == (5,)
+        np.testing.assert_array_almost_equal(a_0wgt.matrix(), np.average(a.matrix(), axis=0, weights=weights))
+
+        b = FourthOrderTensor.rand(4)
+        weights = (1,2,3,4)
+        b_wgt = b.average(weights=weights)
+        assert b_wgt.shape == ()
+        np.testing.assert_array_almost_equal(b_wgt.matrix(), np.average(b.matrix(), axis=0, weights=weights))
+
 
 class TestSymmetricFourthOrderTensor(unittest.TestCase):
     def test_inversion(self):
@@ -209,8 +239,6 @@ class TestSymmetricFourthOrderTensor(unittest.TestCase):
         np.testing.assert_array_almost_equal(BA.full_tensor, B.full_tensor + A.full_tensor)
         assert isinstance(BB, FourthOrderTensor)
         np.testing.assert_array_almost_equal(BB.full_tensor, B.full_tensor + B.full_tensor)
-
-
 
 if __name__ == '__main__':
     unittest.main()
