@@ -56,9 +56,11 @@ stiffness tensor for each phase:
     >>> C_ferrite_ravg = C_ferrite.Reuss_average()
 
 Finally, the lower bound for the stiffness tensor of the duplex steel is given by the Reuss average of the
-both the aforementioned tensors, weighted by the volume fraction of each phase (say, 40/60 here):
+both the aforementioned tensors, weighted by the volume fraction of each phase (say, 40/60 here). We start by stacking
+the two stiffness tensors, then compute the Reuss average from the stack:
 
-    >>> C_reuss = StiffnessTensor.weighted_average((C_austenite_ravg, C_ferrite_ravg), (0.4, 0.6), 'Reuss')
+    >>> stacked_tensors = StiffnessTensor.stack((C_austenite_ravg, C_ferrite_ravg))
+    >>> C_reuss = StiffnessTensor.weighted_average(stacked_tensors, volume_fractions = (0.4, 0.6), method='Reuss')
 
 Now we can check out the lower bound for the Young modulus:
 
@@ -71,7 +73,8 @@ Conversely, the upper bounds of elastic moduli is given by the Voigt averages. T
 
     >>> C_austenite_vavg = C_austenite.Voigt_average()
     >>> C_ferrite_vavg = C_ferrite.Voigt_average()
-    >>> C_voigt = StiffnessTensor.weighted_average((C_austenite_vavg, C_ferrite_vavg), (0.4, 0.6), 'Voigt')
+    >>> stacked_tensor = StiffnessTensor.stack((C_austenite_vavg, C_ferrite_vavg))
+    >>> C_voigt = stacked_tensor.weighted_average(volume_fractions = (0.4, 0.6), method='Voigt')
 
 Which leads to:
 
@@ -83,8 +86,15 @@ Plotting the averages as functions of the volume fraction
 In order to investigate the influence of austenite volume fraction on the elastic moduli, one can use the following
 commands:
 
+.. plot::
+
+    >>> from elasticipy.tensors.elasticity import StiffnessTensor
     >>> import numpy as np
     >>> from matplotlib import pyplot as plt
+    >>>
+    >>> C_austenite = StiffnessTensor.cubic(C11=204, C12=137, C44=126)
+    >>> C_ferrite = StiffnessTensor.cubic(C11=242, C12=146, C44=116)
+    >>>
     >>> n_values = 100
     >>> fraction_austenite = np.linspace(0, 1, n_values)
     >>> fig, ax = plt.subplots()
@@ -98,18 +108,15 @@ commands:
     ...     for i in range(n_values):
     ...         f1 = fraction_austenite[i]
     ...         f2 = 1 - f1
-    ...         C_tot_mean = StiffnessTensor.weighted_average((C_aust_avg, C_ferr_avg), (f1, f2), method)
-    ...         E_mean[i] = C_tot_mean.Young_modulus.mean()
-    ...         G_mean[i] = C_tot_mean.shear_modulus.mean()
+    ...         stacked_tensors = StiffnessTensor.stack((C_aust_avg, C_ferr_avg))
+    ...         C_tot_mean = StiffnessTensor.weighted_average(stacked_tensors, volume_fractions=(f1, f2), method=method)
+    ...         E_mean[i] = C_tot_mean.Young_modulus.eval([1,0,0])
+    ...         G_mean[i] = C_tot_mean.shear_modulus.eval([1,0,0], [0,1,0])
     ...     ax.plot(fraction_austenite, E_mean, label='E ({})'.format(method), color=colors[color_index]) # doctest: +SKIP
     ...     ax.plot(fraction_austenite, G_mean, label='G ({})'.format(method), color=colors[color_index], linestyle='--') # doctest: +SKIP
-    ...     color_index = color_index + 1 # doctest: +SKIP
-    >>> ax.legend() # doctest: +SKIP
-    >>> ax.set_xlim([0, 1]) # doctest: +SKIP
-    >>> ax.set_xlabel('Fraction of Austenite') # doctest: +SKIP
-    >>> ax.set_ylabel('Young/Shear Modulus (GPa)') # doctest: +SKIP
-    >>> fig.show() # doctest: +SKIP
-
-leading to:
-
-.. image:: images/plot_volumeFraction.png
+    ...     color_index = color_index + 1
+    >>> ax.legend()
+    >>> ax.set_xlim([0, 1])
+    >>> ax.set_xlabel('Fraction of Austenite')
+    >>> ax.set_ylabel('Young/Shear Modulus (GPa)')
+    >>> fig.show()
