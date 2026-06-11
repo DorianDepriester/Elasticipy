@@ -267,7 +267,8 @@ class TestCompositeTexture(unittest.TestCase):
         tm_wgt = 1.5 * t1 + 0.5 * t2
         Cmean = tm_wgt.mean_tensor(C)
         assert isinstance(Cmean, StiffnessTensor)
-        Cmean_voigt = StiffnessTensor.weighted_average((C * t1, C * t2), [1.5, 0.5], 'Voigt')
+        Cstack = StiffnessTensor.stack((C * t1, C * t2))
+        Cmean_voigt = Cstack.weighted_average([1.5, 0.5], method ='Voigt')
         np.testing.assert_almost_equal(Cmean_voigt.matrix(), Cmean.matrix())
 
     def test_uniform(self):
