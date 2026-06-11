@@ -102,15 +102,11 @@ def Kroner_Eshelby(Cs, particle_sizes=None, orientations=None,
         method = 'Hill'
     elif np.logical_not(np.any(Cs == np.inf)):
         method = 'Voigt'
-        C_macro = Cs.Voigt_average()
     elif np.logical_not(np.any(Cs == 0.)):
         method = 'Reuss'
     else:
         raise NotImplemented
-    if volume_fractions is None:
-        C_macro = StiffnessTensor.average(Cs, method=method)
-    else:
-        C_macro = StiffnessTensor.weighted_average(Cs, volume_fractions=volume_fractions, method=method)
+    C_macro = StiffnessTensor.weighted_average(Cs, volume_fractions=volume_fractions, method=method)
 
     eigen_stiff = C_macro.eigvals()
     keep_on = True
@@ -143,7 +139,7 @@ def Kroner_Eshelby(Cs, particle_sizes=None, orientations=None,
         else:
             A = A_local * orientations
         Q = Cs.ddot(A)
-        CiAi_mean = Q.average(weights=volume_fractions)
+        CiAi_mean = Q.weighted_average(weights=volume_fractions)
         C_macro = StiffnessTensor(CiAi_mean, force_symmetries=True)
         err = A.mean() - FourthOrderTensor.identity()
 
