@@ -1,4 +1,4 @@
-from elasticipy.tensors.fourth_order import SymmetricFourthOrderTensor, kelvin_mapping, _isotropic_matrix
+from elasticipy.tensors.fourth_order import FourthOrderTensor, SymmetricFourthOrderTensor, kelvin_mapping, _isotropic_matrix
 from elasticipy.spherical_function import SphericalFunction, HyperSphericalFunction
 from elasticipy.crystal_symmetries import SYMMETRIES
 from elasticipy.tensors.second_order import SymmetricSecondOrderTensor
@@ -86,9 +86,10 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
         Parameters
         ----------
-        M : list or np.ndarray
+        M : list or np.ndarray or FourthOrderTensor
             (...,6,6) matrix corresponding to the stiffness tensor, written using the Voigt notation, or array of shape
-            (...,3,3,3,3).
+            (...,3,3,3,3). If a FourthOrderTensor is provided, this tensor is simply converted into a StiffnessTensor
+            object.
         phase_name : str, optional
             Phase name to display
         check_positive_definite : bool, optional
@@ -1856,7 +1857,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         return 1/self.eig_stiffnesses
 
     @classmethod
-    def from_Kelvin(cls, matrix, **kwargs):
+    def from_Kelvin(cls, matrix, mapping=None, **kwargs):
         """
         Create a tensor from the (6,6) matrix following the Kelvin(-Mandel) mapping convention
 
@@ -1864,6 +1865,9 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         ----------
         matrix : list or numpy.ndarray
             (6,6) matrix of components
+        mapping : MappingConvention, optional
+            Sets the mapping convention to retain after creating the tensor. If not provided, the constructor default
+            mapping convention is used.
         kwargs
             keyword arguments passed to the constructor
 
@@ -1875,7 +1879,11 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         --------
         to_Kelvin : return the components as a (6,6) matrix following the Kelvin convention
         """
-        return cls(matrix, mapping=kelvin_mapping, **kwargs)
+        a = FourthOrderTensor(matrix, mapping=kelvin_mapping, **kwargs)
+        if mapping is None:
+            return cls(a, **kwargs)
+        else:
+            return cls(a, mapping=mapping, **kwargs)
 
     def eig_stiffnesses_multiplicity(self, tol=1e-4):
         """
@@ -2087,9 +2095,10 @@ class ComplianceTensor(StiffnessTensor):
 
         Parameters
         ----------
-        M : list or np.ndarray
+        M : list or np.ndarray or FourthOrderTensor.
             (...,6,6) matrix corresponding to the compliance tensor, written using the Voigt notation, or array of shape
-            (...,3,3,3,3).
+            (...,3,3,3,3). If a FourthOrderTensor is provided, this tensor is simply converted into a StiffnessTensor
+            object.
         phase_name : str, optional
             Phase name to display
         check_positive_definite : bool, optional
