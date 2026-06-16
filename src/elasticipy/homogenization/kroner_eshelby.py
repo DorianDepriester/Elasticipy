@@ -3,6 +3,9 @@ from scipy.integrate import trapezoid
 
 from elasticipy.tensors.elasticity import StiffnessTensor
 from elasticipy.tensors.fourth_order import FourthOrderTensor, SymmetricFourthOrderTensor
+from scipy.optimize import fixed_point
+
+from elasticipy.tensors.mapping import KelvinMapping
 
 I = FourthOrderTensor.identity()
 
@@ -86,10 +89,6 @@ def localization_tensor(C_macro, C_incl, a1, a2, a3, n_phi=100, n_theta=50):
 
 def Kroner_Eshelby(Cs, particle_sizes=None, orientations=None,
                    volume_fractions=None, max_iter=100, atol=1e-3, rtol=1e-3, display=False, n_phi=50, n_theta=100):
-    if display:
-        header = f"{'iter':<5} | {'absolute change':<16} | {'relative change':<16} | {'error':<10}"
-        print(header)
-        print("-" * len(header))
     if isinstance(Cs, (tuple, list)):
         Cs = StiffnessTensor.stack(Cs)
     if orientations is not None:
@@ -106,24 +105,21 @@ def Kroner_Eshelby(Cs, particle_sizes=None, orientations=None,
         method = 'Reuss'
     else:
         raise NotImplemented
-    C_macro = StiffnessTensor.weighted_average(Cs, volume_fractions=volume_fractions, method=method)
+    C_macro_0 = StiffnessTensor.weighted_average(Cs, volume_fractions=volume_fractions, method=method).to_Kelvin()
 
-    eigen_stiff = C_macro.eigvals()
-    keep_on = True
-    k = 0
-    m = Cs.shape[0]
-    A_local = FourthOrderTensor.zeros(m)
     if particle_sizes is None:
-        a1 = a2 = a3 = np.ones(m)
+        a1 = a2 = a3 = np.ones(Cs.shape[0])
     else:
         particle_sizes = np.asarray(particle_sizes)
         if particle_sizes.ndim == 1:
             a1, a2, a3 = particle_sizes
         elif particle_sizes.ndim == 2:
             a1, a2, a3 = np.asarray(particle_sizes).T
-    message = 'Maximum number of iterations is reached'
-    while keep_on:
-        eigen_stiff_old = eigen_stiff
+
+    def fun(C_macro):
+        C_macro = StiffnessTensor(C_macro, mapping=KelvinMapping, force_symmetries=True)
+        m = Cs.shape[0]
+        A_local = FourthOrderTensor.zeros(m)
         if orientations is not None:
             C_macro_local = C_macro * (orientations.inv())
         else:
@@ -140,25 +136,7 @@ def Kroner_Eshelby(Cs, particle_sizes=None, orientations=None,
             A = A_local * orientations
         Q = Cs.ddot(A)
         CiAi_mean = Q.weighted_average(weights=volume_fractions)
-        C_macro = StiffnessTensor(CiAi_mean, force_symmetries=True)
-        err = A.mean() - FourthOrderTensor.identity()
+        return CiAi_mean.matrix()
 
-        # Stopping criteria
-        eigen_stiff = C_macro.eigvals()
-        abs_change = np.abs(eigen_stiff - eigen_stiff_old)
-        rel_change = np.max(abs_change / eigen_stiff_old)
-        max_abs_change = np.max(abs_change)
-        k += 1
-        if  max_abs_change < atol:
-            keep_on = False
-            message = 'Absolute change is below threshold value'
-        if rel_change < rtol:
-            keep_on = False
-            message = 'Relative change is below threshold value'
-        if k == max_iter:
-            keep_on = False
-        if display:
-            err = np.max(np.abs(err.matrix()))
-            row = f"#{k:<4} | {max_abs_change:<16.6f} | {rel_change:<16.6f} | {err:<10.6f}"
-            print(row)
-    return C_macro, message
+    sol = fixed_point(fun, C_macro_0, xtol=1e-1)
+    return StiffnessTensor.from_Kelvin(sol)
