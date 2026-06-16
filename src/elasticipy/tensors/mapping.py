@@ -33,6 +33,9 @@ class MappingConvention:
     def mapping_inverse(self):
         return self
 
+    def __eq__(self, other):
+        return np.all(self.matrix == other.matrix)
+
 class KelvinMapping(MappingConvention):
     name = 'Kelvin'
 
