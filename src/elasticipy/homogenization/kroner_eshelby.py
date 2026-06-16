@@ -88,7 +88,7 @@ def localization_tensor(C_macro, C_incl, a1, a2, a3, n_phi=100, n_theta=50):
 
 
 def Kroner_Eshelby(Cs, particle_sizes=None, orientations=None,
-                   volume_fractions=None, max_iter=100, atol=1e-3, rtol=1e-3, display=False, n_phi=50, n_theta=100):
+                   volume_fractions=None, n_phi=50, n_theta=100, **kwargs):
     if isinstance(Cs, (tuple, list)):
         Cs = StiffnessTensor.stack(Cs)
     if orientations is not None:
@@ -138,5 +138,5 @@ def Kroner_Eshelby(Cs, particle_sizes=None, orientations=None,
         CiAi_mean = Q.weighted_average(weights=volume_fractions)
         return CiAi_mean.matrix()
 
-    sol = fixed_point(fun, C_macro_0, xtol=1e-1)
+    sol = fixed_point(fun, C_macro_0, **kwargs)
     return StiffnessTensor.from_Kelvin(sol)
