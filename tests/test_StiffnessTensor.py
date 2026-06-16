@@ -210,7 +210,14 @@ class TestComplianceTensor(unittest.TestCase):
     def test_to_from_Kelvin(self):
         matrix = S.to_Kelvin()
         S2 = ComplianceTensor.from_Kelvin(matrix)
+        assert S2.mapping == S.mapping
         np.testing.assert_array_almost_equal(S._matrix, S2._matrix)
+
+        S3 = ComplianceTensor.from_Kelvin(matrix, mapping=KelvinMapping())
+        assert S3.mapping == KelvinMapping()
+        np.testing.assert_array_almost_equal(S._matrix, S3._matrix)
+
+
 
     def test_matrix(self):
         S2 = ComplianceTensor(Smat)
@@ -938,7 +945,12 @@ class TestStiffnessConstructor(unittest.TestCase):
         C = S.inv()
         matrix = C.to_Kelvin()
         C2 = StiffnessTensor.from_Kelvin(matrix)
+        assert C2.mapping == VoigtMapping()
         np.testing.assert_array_almost_equal(C._matrix, C2._matrix)
+
+        C3 = StiffnessTensor.from_Kelvin(matrix, mapping=KelvinMapping())
+        assert C3.mapping == KelvinMapping()
+        np.testing.assert_array_almost_equal(C._matrix, C3._matrix)
 
     def test_ddot(self):
         # Check inverse
