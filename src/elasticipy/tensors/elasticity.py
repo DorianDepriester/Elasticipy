@@ -1879,7 +1879,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         --------
         to_Kelvin : return the components as a (6,6) matrix following the Kelvin convention
         """
-        a = FourthOrderTensor(matrix, mapping=kelvin_mapping, **kwargs)
+        a = FourthOrderTensor(matrix, mapping=kelvin_mapping)
         if mapping is None:
             return cls(a, **kwargs)
         else:
