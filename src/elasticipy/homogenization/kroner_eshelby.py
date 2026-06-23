@@ -14,10 +14,10 @@ def gamma(C_macro_local, phi, theta, a1, a2, a3):
     s1 = np.sin(theta)*np.cos(phi) / a1
     s2 = np.sin(theta)*np.sin(phi) / a2
     s3 = np.cos(theta) / a3
-    s = np.array([s1, s2, s3]).T
+    s = np.stack((s1,s2,s3), axis=-1)
     Dinv = C_macro_local.Christoffel_tensor(s).inv()
-    a1 = np.einsum('nmik,nmj,nml->ijklmn', Dinv.matrix, s, s)
-    return a1
+    a1 = np.einsum('mnik,mnj,mnl->mnijkl', Dinv.matrix, s, s)
+    return SymmetricFourthOrderTensor(a1, force_symmetries=True)
 
 
 def polarization_tensor(C, a1, a2, a3, n_phi=100, n_theta=50):
@@ -46,11 +46,12 @@ def polarization_tensor(C, a1, a2, a3, n_phi=100, n_theta=50):
     """
     theta = np.linspace(0, np.pi, n_theta)
     phi = np.linspace(0, 2 * np.pi, n_phi)
-    phi_grid, theta_grid = np.meshgrid(phi, theta, indexing='ij')
+    phi_grid, theta_grid = np.meshgrid(phi, theta, indexing='xy')
     g = gamma(C, phi_grid, theta_grid, a1, a2, a3)
-    a = trapezoid(g * np.sin(theta_grid), theta, axis=-1)
-    b = trapezoid(a, phi, axis=-1)/(4*np.pi)
-    return FourthOrderTensor(b, force_minor_symmetry=True)
+    integrand = g * np.sin(theta_grid)
+    a = trapezoid(integrand.full_tensor, theta, axis=0)
+    b = trapezoid(a, phi, axis=0)/(4*np.pi)
+    return SymmetricFourthOrderTensor(b)
 
 
 def localization_tensor(C_macro, C_incl, a1, a2, a3, n_phi=100, n_theta=50):
