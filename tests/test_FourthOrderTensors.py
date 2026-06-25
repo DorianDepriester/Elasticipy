@@ -1,6 +1,7 @@
 import unittest
 from elasticipy.tensors.fourth_order import FourthOrderTensor, SymmetricFourthOrderTensor
 import numpy as np
+from scipy.integrate import trapezoid
 
 from elasticipy.tensors.mapping import VoigtMapping
 from elasticipy.tensors.second_order import SecondOrderTensor
@@ -204,6 +205,18 @@ class TestFourthOrderTensor(unittest.TestCase):
         assert b_wgt.shape == ()
         np.testing.assert_array_almost_equal(b_wgt.matrix(), np.average(b.matrix(), axis=0, weights=weights))
 
+    def test_integrate(self):
+        shape = (4, 5)
+        t = FourthOrderTensor.rand(shape=shape)
+        x = np.linspace(0,1,shape[0])
+        y = np.linspace(0, 1, shape[1])
+        tx = t.integrate(x, axis=0)
+        assert tx.shape == (shape[1],)
+        np.testing.assert_array_almost_equal(tx.full_tensor, trapezoid(t.full_tensor, x, axis=0))
+
+        ty = t.integrate(y, axis=1)
+        assert ty.shape == (shape[0],)
+        assert np.all(ty == t.integrate(y))
 
 class TestSymmetricFourthOrderTensor(unittest.TestCase):
     def test_inversion(self):
