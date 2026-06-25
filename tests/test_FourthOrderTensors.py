@@ -253,5 +253,18 @@ class TestSymmetricFourthOrderTensor(unittest.TestCase):
         assert isinstance(BB, FourthOrderTensor)
         np.testing.assert_array_almost_equal(BB.full_tensor, B.full_tensor + B.full_tensor)
 
+    def test_integrate(self):
+        shape = (4, 5)
+        t = SymmetricFourthOrderTensor.rand(shape=shape)
+        x = np.linspace(0,1,shape[0])
+        y = np.linspace(0, 1, shape[1])
+        tx = t.integrate(x, axis=0)
+        assert tx.shape == (shape[1],)
+        np.testing.assert_array_almost_equal(tx.full_tensor, trapezoid(t.full_tensor, x, axis=0))
+
+        ty = t.integrate(y, axis=1)
+        assert ty.shape == (shape[0],)
+        assert np.all(ty == t.integrate(y))
+
 if __name__ == '__main__':
     unittest.main()
