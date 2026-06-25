@@ -1,4 +1,6 @@
 import numpy as np
+from scipy.integrate import trapezoid
+
 from elasticipy.tensors.second_order import SymmetricSecondOrderTensor, rotation_to_matrix, is_orix_rotation, \
     SecondOrderTensor, ALPHABET, is_rotation
 from scipy.spatial.transform import Rotation
@@ -1747,6 +1749,28 @@ class FourthOrderTensor:
         """
         return np.linalg.eig(self._matrix)
 
+    def integrate(self, x=None, dx=1.0, axis=-1):
+        """
+        Integrate the tensor array along a given axis.
+
+        Trapezoidal integration is performed.
+
+        Parameters
+        ----------
+        x : np.ndarray, optional
+            Sample point locations. If x is None, the sample points are assumed to be evenly spaced dx apart.
+        dx : float, optional
+            Spacing between sample points. Default is 1.0.
+        axis : int, optional
+            The axis along which to integrate. The default is the last axis.
+        Returns
+        -------
+
+        """
+        axis = self._safe_axis(axis)
+        t = deepcopy(self)
+        t._matrix = trapezoid(self._matrix, x, axis=axis)
+        return t
 
 class SymmetricFourthOrderTensor(FourthOrderTensor):
     _tensor_name = 'Symmetric 4th-order'
