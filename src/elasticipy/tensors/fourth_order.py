@@ -1769,7 +1769,7 @@ class FourthOrderTensor:
         """
         axis = self._safe_axis(axis)
         t = deepcopy(self)
-        t._matrix = trapezoid(self._matrix, x, axis=axis)
+        t._matrix = trapezoid(self._matrix, x=x, dx=dx, axis=axis)
         return t
 
 class SymmetricFourthOrderTensor(FourthOrderTensor):
