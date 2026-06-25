@@ -1,5 +1,4 @@
 import numpy as np
-from scipy.integrate import trapezoid
 
 from elasticipy.tensors.elasticity import StiffnessTensor
 from elasticipy.tensors.fourth_order import FourthOrderTensor, SymmetricFourthOrderTensor
@@ -49,9 +48,8 @@ def polarization_tensor(C, a1, a2, a3, n_phi=100, n_theta=50):
     phi_grid, theta_grid = np.meshgrid(phi, theta, indexing='xy')
     g = gamma(C, phi_grid, theta_grid, a1, a2, a3)
     integrand = g * np.sin(theta_grid)
-    a = trapezoid(integrand.full_tensor, theta, axis=0)
-    b = trapezoid(a, phi, axis=0)/(4*np.pi)
-    return SymmetricFourthOrderTensor(b)
+    a = integrand.integrate(theta, axis=0)
+    return a.integrate(phi, axis=0)/(4*np.pi)
 
 
 def localization_tensor(C_macro, C_incl, a1, a2, a3, n_phi=100, n_theta=50):
