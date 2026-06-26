@@ -94,6 +94,20 @@ class TestSecondOrderTensor(unittest.TestCase):
         c3 = SecondOrderTensor.stack((a,b), axis=-1)
         assert np.all(c3 == c2)
 
+    def test_skew_symmetric_parts(self):
+        t = SecondOrderTensor.rand(shape=(1))
+        sym_part = t.symmetric_part()
+        skew_part = t.skew_part()
+
+        assert isinstance(sym_part, SymmetricSecondOrderTensor)
+        assert isinstance(skew_part, SkewSymmetricSecondOrderTensor)
+
+        reconstr_t = sym_part + skew_part
+        assert isinstance(reconstr_t, SecondOrderTensor)
+        assert (not isinstance(reconstr_t, SymmetricSecondOrderTensor)) and (not isinstance(reconstr_t, SkewSymmetricSecondOrderTensor))
+        np.testing.assert_array_almost_equal(t.matrix, reconstr_t.matrix)
+
+
 class TestSymmetricSecondOrderTensor(unittest.TestCase):
     def test_constructor(self):
         """Test constructor for symmetric second Order tensors"""
