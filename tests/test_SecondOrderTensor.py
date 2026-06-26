@@ -94,6 +94,14 @@ class TestSecondOrderTensor(unittest.TestCase):
         c3 = SecondOrderTensor.stack((a,b), axis=-1)
         assert np.all(c3 == c2)
 
+class TestSymmetricSecondOrderTensor(unittest.TestCase):
+    def test_inv(self):
+        shape = (3,4)
+        t = SymmetricSecondOrderTensor.rand(shape=shape)
+        tinv = t.inv()
+        for i in range(shape[0]):
+            for j in range(shape[1]):
+                np.testing.assert_array_almost_equal(tinv[i,j].matrix, np.linalg.inv(t.matrix[i,j]))
 
 if __name__ == '__main__':
     unittest.main()
