@@ -88,24 +88,39 @@ def _filldraw_circle(ax, center, radius, color, fill=False, alpha=1.):
 
 kelvin_mapping = [1, 1, 1, np.sqrt(2), np.sqrt(2), np.sqrt(2)]
 
-def _inv_3x3(D):
-    a, b, c = D[..., 0, 0], D[..., 0, 1], D[..., 0, 2]
-    d, e, f = D[..., 1, 0], D[..., 1, 1], D[..., 1, 2]
-    g, h, i = D[..., 2, 0], D[..., 2, 1], D[..., 2, 2]
-    det = a * (e * i - f * h) - b * (d * i - f * g) + c * (d * h - e * g)
-    inv_det = 1.0 / det
+def _inv_3x3(D, sym=False):
     inv_D = np.zeros_like(D)
-    inv_D[..., 0, 0] = (e * i - f * h) * inv_det
-    inv_D[..., 0, 1] = (c * h - b * i) * inv_det
-    inv_D[..., 0, 2] = (b * f - c * e) * inv_det
-    inv_D[..., 1, 0] = (f * g - d * i) * inv_det
-    inv_D[..., 1, 1] = (a * i - c * g) * inv_det
-    inv_D[..., 1, 2] = (c * d - a * f) * inv_det
-    inv_D[..., 2, 0] = (d * h - e * g) * inv_det
-    inv_D[..., 2, 1] = (b * g - a * h) * inv_det
-    inv_D[..., 2, 2] = (a * e - b * d) * inv_det
+    if sym:
+        a, b, c = D[..., 0, 0], D[..., 0, 1], D[..., 0, 2]
+        e, f    = D[..., 1, 1], D[..., 1, 2]
+        i       = D[..., 2, 2]
+        det = a * (e * i - f**2) - b * (b * i - f * c) + c * (b * f - e * c)
+        inv_det = 1.0 / det
+        inv_D[..., 0, 0] = (e * i - f ** 2) * inv_det
+        inv_D[..., 0, 1] = (c * f - b * i) * inv_det
+        inv_D[..., 0, 2] = (b * f - c * e) * inv_det
+        inv_D[..., 1, 1] = (a * i - c ** 2) * inv_det
+        inv_D[..., 1, 2] = (c * b - a * f) * inv_det
+        inv_D[..., 2, 2] = (a * e - b ** 2) * inv_det
+        inv_D[..., 1, 0] = inv_D[..., 0, 1]
+        inv_D[..., 2, 0] = inv_D[..., 0, 2]
+        inv_D[..., 2, 1] = inv_D[..., 1, 2]
+    else:
+        a, b, c = D[..., 0, 0], D[..., 0, 1], D[..., 0, 2]
+        d, e, f = D[..., 1, 0], D[..., 1, 1], D[..., 1, 2]
+        g, h, i = D[..., 2, 0], D[..., 2, 1], D[..., 2, 2]
+        det = a * (e * i - f * h) - b * (d * i - f * g) + c * (d * h - e * g)
+        inv_det = 1.0 / det
+        inv_D[..., 0, 0] = (e * i - f * h) * inv_det
+        inv_D[..., 0, 1] = (c * h - b * i) * inv_det
+        inv_D[..., 0, 2] = (b * f - c * e) * inv_det
+        inv_D[..., 1, 1] = (a * i - c * g) * inv_det
+        inv_D[..., 1, 2] = (c * d - a * f) * inv_det
+        inv_D[..., 2, 2] = (a * e - b * d) * inv_det
+        inv_D[..., 1, 0] = (f * g - d * i) * inv_det
+        inv_D[..., 2, 0] = (d * h - e * g) * inv_det
+        inv_D[..., 2, 1] = (b * g - a * h) * inv_det
     return inv_D
-
 
 class SecondOrderTensor:
     """
@@ -1824,6 +1839,9 @@ class SymmetricSecondOrderTensor(SecondOrderTensor):
         ax.set_yticks(np.unique(yticks))
 
         return fig, ax
+
+    def inv(self):
+        return SymmetricSecondOrderTensor(_inv_3x3(self.matrix, sym=True))
 
 
 class SkewSymmetricSecondOrderTensor(SecondOrderTensor):
