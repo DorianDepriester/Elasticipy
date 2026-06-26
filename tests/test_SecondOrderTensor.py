@@ -95,6 +95,28 @@ class TestSecondOrderTensor(unittest.TestCase):
         assert np.all(c3 == c2)
 
 class TestSymmetricSecondOrderTensor(unittest.TestCase):
+    def test_constructor(self):
+        """Test constructor for symmetric second Order tensors"""
+
+        # When a symmetric matrix is passed to the constructor
+        mat = np.random.random((3,3))
+        sym_mat = mat + mat.T
+        t = SymmetricSecondOrderTensor(sym_mat)
+        np.testing.assert_array_equal(t.matrix, sym_mat)
+
+        # When an upper-diagonal matrix is passed to the constructor
+        upper_mat = sym_mat
+        upper_mat[np.tril_indices(3, -1)] = 0 # Set lower part to zero
+        t2 = SymmetricSecondOrderTensor(upper_mat)
+        assert t == t2
+
+        # Expect error in any other case
+        expected_error = ('The input array must be either slices of symmetric matrices, of slices of upper-diagonal '
+                          'matrices.')
+        with self.assertRaises(ValueError) as context:
+            _ = SymmetricSecondOrderTensor(mat)
+        self.assertEqual(str(context.exception), expected_error)
+
     def test_inv(self):
         shape = (3,4)
         t = SymmetricSecondOrderTensor.rand(shape=shape)
@@ -102,6 +124,29 @@ class TestSymmetricSecondOrderTensor(unittest.TestCase):
         for i in range(shape[0]):
             for j in range(shape[1]):
                 np.testing.assert_array_almost_equal(tinv[i,j].matrix, np.linalg.inv(t.matrix[i,j]))
+
+class TestSkewSymmetricSecondOrderTensorr(unittest.TestCase):
+    def test_constructor(self):
+        """Test constructor for symmetric second Order tensors"""
+
+        # When a symmetric matrix is passed to the constructor
+        mat = np.random.random((3,3))
+        skew_sym_mat = mat - mat.T
+        t = SkewSymmetricSecondOrderTensor(skew_sym_mat)
+        np.testing.assert_array_equal(t.matrix, skew_sym_mat)
+
+        # When an upper-diagonal matrix is passed to the constructor
+        upper_mat = skew_sym_mat
+        upper_mat[np.tril_indices(3)] = 0 # Set lower part to zero
+        t2 = SkewSymmetricSecondOrderTensor(upper_mat)
+        assert t == t2
+
+        # Expect error in any other case
+        expected_error = ('The input array must be either slices of symmetric matrices, of slices of upper-diagonal '
+                          'matrices.')
+        with self.assertRaises(ValueError) as context:
+            _ = SymmetricSecondOrderTensor(mat)
+        self.assertEqual(str(context.exception), expected_error)
 
 if __name__ == '__main__':
     unittest.main()
