@@ -38,6 +38,9 @@ def _transpose_matrix(matrix):
 def _symmetric_part(matrix):
     return 0.5 * (matrix + _transpose_matrix(matrix))
 
+def _skew_symmetric_part(matrix):
+    return 0.5 * (matrix - _transpose_matrix(matrix))
+
 def _orientation_shape(g):
     if is_orix_rotation(g):
         return g.shape
@@ -1144,6 +1147,8 @@ class SecondOrderTensor:
         a = rng.random(shape)
         if issubclass(cls, SymmetricSecondOrderTensor):
             a = _symmetric_part(a)
+        elif issubclass(cls, SkewSymmetricSecondOrderTensor):
+            a = _skew_symmetric_part(a)
         return cls(a)
 
     def inv(self):
@@ -1184,6 +1189,8 @@ class SecondOrderTensor:
                 mat[...,i,j] = rng.normal(mean[i,j], std[i,j], shape)
         if issubclass(cls, SymmetricSecondOrderTensor):
             mat = _symmetric_part(mat)
+        elif issubclass(cls, SkewSymmetricSecondOrderTensor):
+            mat = _skew_symmetric_part(mat)
         return cls(mat)
 
     @classmethod
@@ -1881,8 +1888,9 @@ class SkewSymmetricSecondOrderTensor(SecondOrderTensor):
         mat = np.asarray(mat, dtype=float)
         mat_transposed = _transpose_matrix(mat)
         if np.all(np.isclose(mat, -mat_transposed)) or force_skew_symmetry:
-            # The input matrix is symmetric
-            super().__init__(0.5 * (mat - mat_transposed))
+            # The input matrix is skew-symmetric
+            matrix = _skew_symmetric_part(mat)
+            super().__init__(matrix)
         elif np.all(mat[..., np.tril_indices(3)[0], np.tril_indices(3)[1]] == 0):
             # The input matrix is upper-diagonal
             super().__init__(mat - mat_transposed)
