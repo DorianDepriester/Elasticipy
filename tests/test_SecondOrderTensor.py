@@ -139,7 +139,7 @@ class TestSymmetricSecondOrderTensor(unittest.TestCase):
             for j in range(shape[1]):
                 np.testing.assert_array_almost_equal(tinv[i,j].matrix, np.linalg.inv(t.matrix[i,j]))
 
-class TestSkewSymmetricSecondOrderTensorr(unittest.TestCase):
+class TestSkewSymmetricSecondOrderTensor(unittest.TestCase):
     def test_constructor(self):
         """Test constructor for symmetric second Order tensors"""
 
