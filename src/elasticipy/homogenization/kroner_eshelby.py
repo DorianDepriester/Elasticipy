@@ -4,9 +4,10 @@ from elasticipy.tensors.elasticity import StiffnessTensor
 from elasticipy.tensors.fourth_order import FourthOrderTensor, SymmetricFourthOrderTensor
 from scipy.optimize import fixed_point
 
-from elasticipy.tensors.mapping import KelvinMapping
+from elasticipy.tensors.mapping import KelvinMapping, VoigtMapping
 
 I = FourthOrderTensor.identity()
+ITER = 0
 
 
 def gamma(C_macro_local, phi, theta, a1, a2, a3):
@@ -17,6 +18,15 @@ def gamma(C_macro_local, phi, theta, a1, a2, a3):
     Dinv = C_macro_local.Christoffel_tensor(s).inv()
     a1 = np.einsum('mnik,mnj,mnl->mnijkl', Dinv.matrix, s, s)
     return SymmetricFourthOrderTensor(a1, force_symmetries=True)
+
+def vec_components(C):
+    Cxx = ("C11", "C12", "C13", "C14", "C15", "C16",
+           "C22", "C23", "C24", "C25", "C26",
+           "C33", "C34", "C35", "C36",
+           "C44", "C45", "C46",
+           "C55", "C56",
+           "C66")
+    return np.array([getattr(C, Ci) for Ci in Cxx])
 
 
 def polarization_tensor(C, a1, a2, a3, n_phi=100, n_theta=50):
@@ -104,7 +114,7 @@ def Kroner_Eshelby(Cs, particle_sizes=None, orientations=None,
         method = 'Reuss'
     else:
         raise NotImplemented
-    C_macro_0 = StiffnessTensor.weighted_average(Cs, volume_fractions=volume_fractions, method=method).to_Kelvin()
+    C_macro_0 = StiffnessTensor.weighted_average(Cs, volume_fractions=volume_fractions, method=method)
 
     if particle_sizes is None:
         a1 = a2 = a3 = np.ones(Cs.shape[0])
@@ -115,8 +125,9 @@ def Kroner_Eshelby(Cs, particle_sizes=None, orientations=None,
         elif particle_sizes.ndim == 2:
             a1, a2, a3 = np.asarray(particle_sizes).T
 
-    def fun(C_macro):
-        C_macro = StiffnessTensor(C_macro, mapping=KelvinMapping, force_symmetries=True)
+    def fun(Cxx):
+        C_macro = StiffnessTensor.triclinic(*Cxx)
+        C_macro.mapping = KelvinMapping()
         m = Cs.shape[0]
         A_local = FourthOrderTensor.zeros(m)
         if orientations is not None:
@@ -135,7 +146,10 @@ def Kroner_Eshelby(Cs, particle_sizes=None, orientations=None,
             A = A_local * orientations
         Q = Cs.ddot(A)
         CiAi_mean = Q.weighted_average(weights=volume_fractions)
-        return CiAi_mean.matrix()
+        CiAi_mean.mapping = VoigtMapping()
+        vec = vec_components(CiAi_mean)
+        return vec
 
-    sol = fixed_point(fun, C_macro_0, **kwargs)
-    return StiffnessTensor.from_Kelvin(sol)
+    vec_0 = vec_components(C_macro_0)
+    sol = fixed_point(fun, vec_0, **kwargs)
+    return StiffnessTensor.triclinic(*sol)
