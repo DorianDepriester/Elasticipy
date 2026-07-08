@@ -480,13 +480,13 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
                                        prefix=prefix, **kwargs)
 
     @classmethod
-    def _fromCrystalSymmetry(cls, symmetry, phase_name, **kwargs):
+    def _fromCrystalSymmetry(cls, symmetry, phase_name=None, **kwargs):
         matrix = cls._matrixFromCrystalSymmetry(symmetry=symmetry, **kwargs)
         return cls(matrix, phase_name=phase_name)
 
 
     @classmethod
-    def hexagonal(cls, *, C11=0., C12=0., C13=0., C33=0., C44=0., phase_name=None):
+    def hexagonal(cls, *, C11=0., C12=0., C13=0., C33=0., C44=0., **kwargs):
         """
         Create a fourth-order tensor from hexagonal symmetry.
 
@@ -494,8 +494,9 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         ----------
         C11, C12 , C13, C33, C44 : float
             Components of the tensor, using the Voigt notation
-        phase_name : str, optional
-            Phase name to display
+        kwargs
+            keyword arguments passed to the tensor constructor
+
         Returns
         -------
         FourthOrderTensor
@@ -507,10 +508,10 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         tetragonal : create a tensor from tetragonal symmetry
         """
         return cls._fromCrystalSymmetry(symmetry='hexagonal', C11=C11, C12=C12, C13=C13, C33=C33, C44=C44,
-                                       phase_name=phase_name, prefix='C')
+                                       prefix='C', **kwargs)
 
     @classmethod
-    def trigonal(cls, *, C11=0., C12=0., C13=0., C14=0., C33=0., C44=0., C15=0., phase_name=None):
+    def trigonal(cls, *, C11=0., C12=0., C13=0., C14=0., C33=0., C44=0., C15=0., **kwargs):
         """
         Create a fourth-order tensor from trigonal symmetry.
 
@@ -520,8 +521,9 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
             Components of the tensor, using the Voigt notation
         C15 : float, optional
             C15 component of the tensor, only used for point groups 3 and -3.
-        phase_name : str, optional
-            Phase name to display
+        kwargs
+            keyword arguments passed to the tensor constructor
+
         Returns
         -------
         FourthOrderTensor
@@ -533,10 +535,10 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         """
         return cls._fromCrystalSymmetry(symmetry='trigonal', point_group='3',
                                         C11=C11, C12=C12, C13=C13, C14=C14, C15=C15,
-                                        C33=C33, C44=C44, phase_name=phase_name, prefix='C')
+                                        C33=C33, C44=C44, prefix='C', **kwargs)
 
     @classmethod
-    def tetragonal(cls, *, C11=0., C12=0., C13=0., C33=0., C44=0., C16=0., C66=0., phase_name=None):
+    def tetragonal(cls, *, C11=0., C12=0., C13=0., C33=0., C44=0., C16=0., C66=0., **kwargs):
         """
         Create a fourth-order tensor from tetragonal symmetry.
 
@@ -546,8 +548,8 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
             Components of the tensor, using the Voigt notation
         C16 : float, optional
             C16 component in Voigt notation (for point groups 4, -4 and 4/m only)
-        phase_name : str, optional
-            Phase name to display
+        kwargs
+            keyword arguments passed to the tensor constructor
 
         Returns
         -------
@@ -560,18 +562,18 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         """
         return cls._fromCrystalSymmetry(symmetry='tetragonal', point_group='4',
                                         C11=C11, C12=C12, C13=C13, C16=C16,
-                                        C33=C33, C44=C44, C66=C66, phase_name=phase_name, prefix='C')
+                                        C33=C33, C44=C44, C66=C66, prefix='C', **kwargs)
 
     @classmethod
-    def cubic(cls, *, C11=0., C12=0., C44=0., phase_name=None):
+    def cubic(cls, *, C11=0., C12=0., C44=0., **kwargs):
         """
         Create a fourth-order tensor from cubic symmetry.
 
         Parameters
         ----------
         C11 , C12, C44 : float
-        phase_name : str, optional
-            Phase name to display
+        kwargs
+            keyword arguments passed to the tensor constructor
 
         Returns
         -------
@@ -582,10 +584,10 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         hexagonal : create a tensor from hexagonal symmetry
         orthorhombic : create a tensor from orthorhombic symmetry
         """
-        return cls._fromCrystalSymmetry(symmetry='cubic', C11=C11, C12=C12, C44=C44, phase_name=phase_name, prefix='C')
+        return cls._fromCrystalSymmetry(symmetry='cubic', C11=C11, C12=C12, C44=C44, prefix='C', **kwargs)
 
     @classmethod
-    def orthorhombic(cls, *, C11=0., C12=0., C13=0., C22=0., C23=0., C33=0., C44=0., C55=0., C66=0., phase_name=None):
+    def orthorhombic(cls, *, C11=0., C12=0., C13=0., C22=0., C23=0., C33=0., C44=0., C55=0., C66=0., **kwargs):
         """
         Create a fourth-order tensor from orthorhombic symmetry.
 
@@ -593,8 +595,8 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         ----------
         C11, C12, C13, C22, C23, C33, C44, C55, C66 : float
             Components of the tensor, using the Voigt notation
-        phase_name : str, optional
-            Phase name to display
+        kwargs
+            keyword arguments passed to the tensor constructor
 
         Returns
         -------
@@ -607,13 +609,13 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         """
         return cls._fromCrystalSymmetry(symmetry='orthorhombic',
                                        C11=C11, C12=C12, C13=C13, C22=C22, C23=C23, C33=C33, C44=C44, C55=C55, C66=C66,
-                                       phase_name=phase_name, prefix='C')
+                                       prefix='C', **kwargs)
 
     @classmethod
     def monoclinic(cls, *, C11=0., C12=0., C13=0., C22=0., C23=0., C33=0., C44=0., C55=0., C66=0.,
                    C15=None, C25=None, C35=None, C46=None,
                    C16=None, C26=None, C36=None, C45=None,
-                   phase_name=None):
+                   **kwargs):
         """
         Create a fourth-order tensor from monoclinic symmetry. It automatically detects whether the components are given
         according to the Y or Z diad, depending on the input arguments.
@@ -641,8 +643,8 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
             C36 component of the tensor (if Diad || z)
         C45 : float, optional
             C45 component of the tensor (if Diad || z)
-        phase_name : str, optional
-            Name to display
+        kwargs
+            keyword arguments passed to the tensor constructor
 
         Returns
         -------
@@ -661,12 +663,12 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
             return cls._fromCrystalSymmetry(symmetry='monoclinic', diad='y',
                                            C11=C11, C12=C12, C13=C13, C22=C22, C23=C23, C33=C33, C44=C44, C55=C55,
                                            C66=C66,
-                                           C15=C15, C25=C25, C35=C35, C46=C46, phase_name=phase_name, prefix='C')
+                                           C15=C15, C25=C25, C35=C35, C46=C46, prefix='C', **kwargs)
         elif diad_z:
             return cls._fromCrystalSymmetry(symmetry='monoclinic', diad='z',
                                            C11=C11, C12=C12, C13=C13, C22=C22, C23=C23, C33=C33, C44=C44, C55=C55,
                                            C66=C66,
-                                           C16=C16, C26=C26, C36=C36, C45=C45, phase_name=phase_name, prefix='C')
+                                           C16=C16, C26=C26, C36=C36, C45=C45, prefix='C', **kwargs)
         else:
             raise KeyError('For monoclinic symmetry, one should provide either C15, C25, C35 and C46, '
                            'or C16, C26, C36 and C45.')
@@ -677,15 +679,15 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
                   C33=0., C34=0., C35=0., C36=0.,
                   C44=0., C45=0., C46=0.,
                   C55=0., C56=0.,
-                  C66=0., phase_name=None):
+                  C66=0., **kwargs):
         """
 
         Parameters
         ----------
         C11 , C12 , C13 , C14 , C15 , C16 , C22 , C23 , C24 , C25 , C26 , C33 , C34 , C35 , C36 , C44 , C45 , C46 , C55 , C56 , C66 : float
             Components of the tensor
-        phase_name : str, optional
-            Name to display
+        kwargs
+            keyword arguments passed to the constructor
 
         Returns
         -------
@@ -702,7 +704,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
                            [C14, C24, C34, C44, C45, C46],
                            [C15, C25, C35, C45, C55, C56],
                            [C16, C26, C36, C46, C56, C66]])
-        return cls(matrix, phase_name=phase_name)
+        return cls(matrix, **kwargs)
 
     @_elementwise_property
     def Young_modulus(self):
@@ -1205,7 +1207,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
             raise NotImplementedError('Only Voigt, Reuss, and Hill are implemented.')
 
     @classmethod
-    def isotropic(cls, E=None, nu=None, G=None, lame1=None, lame2=None, K=None, phase_name=None):
+    def isotropic(cls, E=None, nu=None, G=None, lame1=None, lame2=None, K=None, **kwargs):
         """
         Create an isotropic stiffness tensor.
 
@@ -1227,8 +1229,8 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
             Second Lamé coefficient (alias for G)
         K : float or list, None
             Bulk modulus
-        phase_name : str, None
-            Name to print
+        kwargs
+            keyword arguments passed to the tensor constructor
 
         Returns
         -------
@@ -1278,7 +1280,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         Hyperspherical function
         Min=25.925925925925895, Max=25.925925925925952
         """
-        return ComplianceTensor.isotropic(E=E, nu=nu, G=G, lame1=lame1, lame2=lame2, K=K, phase_name=phase_name).inv()
+        return ComplianceTensor.isotropic(E=E, nu=nu, G=G, lame1=lame1, lame2=lame2, K=K, **kwargs).inv()
 
     @classmethod
     def orthotropic(cls, *, Ex, Ey, Ez, Gxy, Gxz, Gyz,
@@ -1309,7 +1311,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
             Poisson ratio along x and z axes. Either nu_xz or nu_zx must be provided, not both.
         nu_yz, nu_zy : float, optional
             Poisson ratio along y and z axes. Either nu_yz or nu_zy must be provided, not both.
-        kwargs : dict, optional
+        kwargs
             Keyword arguments to pass to the StiffnessTensor constructor
 
         Returns
@@ -1339,7 +1341,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         """
         return ComplianceTensor.orthotropic(Ex=Ex, Ey=Ey, Ez=Ez, Gxy=Gxy, Gxz=Gxz, Gyz=Gyz,
                                             nu_yx=nu_yx, nu_zx=nu_zx, nu_zy=nu_zy,
-                                            nu_xy=nu_xy, nu_xz=nu_xz, nu_yz=nu_yz).inv()
+                                            nu_xy=nu_xy, nu_xz=nu_xz, nu_yz=nu_yz, **kwargs).inv()
 
     @classmethod
     def transverse_isotropic(cls, *, Ex, Ez, Gxz, nu_yx=None, nu_xy=None, nu_zx=None, nu_xz=None, **kwargs):
@@ -1361,7 +1363,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
             Poisson ratio along x and y. Either nu_xy or nu_yx must be provided, not both.
         nu_xz, nu_zx : float, optional
             Poisson ratio along x and z. Either nu_xz or nu_zx must be provided, not both.
-        kwargs : dict
+        kwargs
             Keyword arguments to pass to the StiffnessTensor constructor
 
         Returns
@@ -2247,7 +2249,7 @@ class ComplianceTensor(StiffnessTensor):
         return self.inv().Hill_average(axis=axis, orientations=orientations).inv()
 
     @classmethod
-    def isotropic(cls, E=None, nu=None, G=None, lame1=None, lame2=None, K=None, phase_name=None):
+    def isotropic(cls, E=None, nu=None, G=None, lame1=None, lame2=None, K=None, **kwargs):
         if lame2 is not None:
             if G is None:
                 G = lame2
@@ -2306,7 +2308,7 @@ class ComplianceTensor(StiffnessTensor):
         S12 = -nu/E
         S44 = 1 / G
         S_mat = _isotropic_matrix(S11, S12, S44)
-        return ComplianceTensor(S_mat, phase_name=phase_name)
+        return ComplianceTensor(S_mat, **kwargs)
 
     @classmethod
     def orthotropic(cls, *, Ex, Ey, Ez, Gxy, Gxz, Gyz,
