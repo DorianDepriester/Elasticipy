@@ -126,7 +126,7 @@ def Kroner_Eshelby(Cs, particle_sizes=None, orientations=None,
             a1, a2, a3 = np.asarray(particle_sizes).T
 
     def fun(Cxx):
-        C_macro = StiffnessTensor.triclinic(*Cxx)
+        C_macro = StiffnessTensor.triclinic(*Cxx, check_positive_definite=False)
         C_macro.mapping = KelvinMapping()
         m = Cs.shape[0]
         A_local = FourthOrderTensor.zeros(m)
