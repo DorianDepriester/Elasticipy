@@ -266,5 +266,23 @@ class TestSymmetricFourthOrderTensor(unittest.TestCase):
         assert ty.shape == (shape[0],)
         assert np.all(ty == t.integrate(y))
 
+    def test_ddot(self):
+        A = FourthOrderTensor.rand(shape=(4, 5))
+        B = FourthOrderTensor.rand(shape=5)
+        AB = A.ddot(B)
+        assert AB.shape == (4, 5)
+        for i in range(4):
+            for j in range(5):
+                np.testing.assert_array_almost_equal(AB[i,j].full_tensor, np.einsum('...ijmn, ...mnkl->...ijkl', A[i,j].full_tensor, B[j].full_tensor))
+                np.testing.assert_array_almost_equal(AB[i, j].matrix(), A[i, j].ddot(B[j]).matrix())
+
+        AB = A.ddot(B, mode='cross')
+        assert AB.shape == (4, 5, 5)
+        for i in range(4):
+            for j in range(5):
+                for k in range(5):
+                    np.testing.assert_array_almost_equal(AB[i,j,k].full_tensor, np.einsum('...ijmn, ...mnkl->...ijkl', A[i,j].full_tensor, B[k].full_tensor))
+                    np.testing.assert_array_almost_equal(AB[i, j, k].matrix(), A[i, j].ddot(B[k]).matrix())
+
 if __name__ == '__main__':
     unittest.main()
