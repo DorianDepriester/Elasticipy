@@ -635,18 +635,18 @@ class FourthOrderTensor:
         """
         if isinstance(other, FourthOrderTensor):
             if self.ndim == 0 and other.ndim == 0:
-                return FourthOrderTensor(np.einsum('ijmn,nmkl->ijkl', self.full_tensor, other.full_tensor), check_minor_symmetry=False)
+                return FourthOrderTensor(self._matrix @ other._matrix, check_minor_symmetry=False)
             else:
                 if mode == 'pair':
-                    ein_str = '...ijmn,...nmkl->...ijkl'
+                    ein_str = '...ik,...kj->...ij'
                 else:
                     ndim_0 = self.ndim
                     ndim_1 = other.ndim
                     indices_0 = ALPHABET[:ndim_0]
                     indices_1 = ALPHABET[:ndim_1].upper()
                     indices_2 = indices_0 + indices_1
-                    ein_str = indices_0 + 'wxXY,' + indices_1 + 'YXyz->' + indices_2 + 'wxyz'
-                matrix = np.einsum(ein_str, self.full_tensor, other.full_tensor)
+                    ein_str = indices_0 + 'yZ,' + indices_1 + 'Zz->' + indices_2 + 'yz'
+                matrix = np.einsum(ein_str, self._matrix, other._matrix)
                 return FourthOrderTensor(matrix, check_minor_symmetry=False)
         elif isinstance(other, SecondOrderTensor):
             if self.ndim == 0 and other.ndim == 0:
