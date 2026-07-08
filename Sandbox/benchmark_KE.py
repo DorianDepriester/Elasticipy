@@ -1,4 +1,4 @@
-from elasticipy.tensors.fourth_order import SymmetricFourthOrderTensor
+from elasticipy.tensors.fourth_order import SymmetricFourthOrderTensor, FourthOrderTensor
 from elasticipy.tensors.second_order import SymmetricSecondOrderTensor
 from elasticipy.tensors.second_order import _inv_3x3
 import time
@@ -40,3 +40,15 @@ a = trapezoid(integrand, theta, axis=0)
 t = trapezoid(a, phi, axis=0) / (4 * np.pi)
 t2 = SymmetricFourthOrderTensor(t)
 print("--- %s seconds ---" % (time.time() - start_time))
+
+A=FourthOrderTensor.rand(shape=10000)
+B=FourthOrderTensor.rand(shape=10000)
+start_time = time.time()
+AB=A.ddot(B)
+print("--- %s seconds ---" % (time.time() - start_time))
+
+start_time = time.time()
+AB_full= FourthOrderTensor(np.einsum('...ijmn,...mnkl->...ijkl', A.full_tensor, B.full_tensor))
+print("--- %s seconds ---" % (time.time() - start_time))
+
+
