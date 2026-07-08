@@ -97,7 +97,7 @@ def localization_tensor(C_macro, C_incl, a1, a2, a3, n_phi=100, n_theta=50):
 
 
 def Kroner_Eshelby(Cs, particle_sizes=None, orientations=None,
-                   volume_fractions=None, n_phi=50, n_theta=100, **kwargs):
+                   volume_fractions=None, n_phi=50, n_theta=100, method='del2', maxiter=1000):
     if isinstance(Cs, (tuple, list)):
         Cs = StiffnessTensor.stack(Cs)
     if orientations is not None:
@@ -107,14 +107,14 @@ def Kroner_Eshelby(Cs, particle_sizes=None, orientations=None,
 
     # Initial guess
     if np.logical_not(np.any(np.logical_or(Cs == 0., Cs == np.inf))):
-        method = 'Hill'
+        avg_method = 'Hill'
     elif np.logical_not(np.any(Cs == np.inf)):
-        method = 'Voigt'
+        avg_method = 'Voigt'
     elif np.logical_not(np.any(Cs == 0.)):
-        method = 'Reuss'
+        avg_method = 'Reuss'
     else:
         raise NotImplemented
-    C_macro_0 = StiffnessTensor.weighted_average(Cs, volume_fractions=volume_fractions, method=method)
+    C_macro_0 = StiffnessTensor.weighted_average(Cs, volume_fractions=volume_fractions, method=avg_method)
 
     if particle_sizes is None:
         a1 = a2 = a3 = np.ones(Cs.shape[0])
@@ -151,5 +151,5 @@ def Kroner_Eshelby(Cs, particle_sizes=None, orientations=None,
         return vec
 
     vec_0 = vec_components(C_macro_0)
-    sol = fixed_point(fun, vec_0, **kwargs)
+    sol = fixed_point(fun, vec_0, method=method, maxiter=maxiter)
     return StiffnessTensor.triclinic(*sol)
