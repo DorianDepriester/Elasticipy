@@ -146,7 +146,7 @@ class TestComplianceTensor(unittest.TestCase):
         ])
         with self.assertRaises(ValueError) as context:
             _ = ComplianceTensor(S)
-        eig_vals = np.array([3.47221969, 2.23865632, 1.46407147, 0.80765321, 0.26960962, -0.2522103])
+        eig_vals = np.array([-0.2522103, 0.26960962, 0.80765321, 1.46407147, 2.23865632, 3.47221969])
         expected_error = 'The input matrix is not definite positive (eigenvalues: {})'.format(eig_vals)
         self.assertEqual(str(context.exception), expected_error)
 
@@ -729,7 +729,7 @@ class TestStiffnessConstructor(unittest.TestCase):
         ])
         with self.assertRaises(ValueError) as context:
             _ = StiffnessTensor(S)
-        eig_vals = np.linalg.eigvals(S * KelvinMapping().matrix)
+        eig_vals = np.linalg.eigvalsh(S * KelvinMapping().matrix)
         expected_error = 'The input matrix is not definite positive (eigenvalues: {})'.format(eig_vals)
         self.assertEqual(str(context.exception), expected_error)
         StiffnessTensor(S, check_positive_definite=False) # Error not raised

@@ -37,7 +37,7 @@ def _check_definite_positive(mat):
     try:
         np.linalg.cholesky(mat)
     except np.linalg.LinAlgError:
-        eigen_val = np.linalg.eigvals(mat)
+        eigen_val = np.linalg.eigvalsh(mat)
         raise ValueError('The input matrix is not definite positive (eigenvalues: {})'.format(eigen_val))
 
 def _switch_poisson_ratios(nu_xy, nu_yx, Ex, Ey, indices):
