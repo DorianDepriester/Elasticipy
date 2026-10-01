@@ -4,7 +4,7 @@ from elasticipy.tensors.elasticity import StiffnessTensor
 from elasticipy.tensors.fourth_order import FourthOrderTensor, SymmetricFourthOrderTensor
 from scipy.optimize import fixed_point
 
-from elasticipy.tensors.mapping import KelvinMapping, VoigtMapping
+from elasticipy.tensors.mapping import VoigtMapping
 
 I = FourthOrderTensor.identity()
 ITER = 0
@@ -127,7 +127,6 @@ def Kroner_Eshelby(Cs, particle_sizes=None, orientations=None,
 
     def fun(Cxx):
         C_macro = StiffnessTensor.triclinic(*Cxx, check_positive_definite=False)
-        C_macro.mapping = KelvinMapping()
         m = Cs.shape[0]
         A_local = FourthOrderTensor.zeros(m)
         if orientations is not None:
