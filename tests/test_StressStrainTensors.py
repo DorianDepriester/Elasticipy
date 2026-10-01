@@ -63,7 +63,7 @@ class TestStressStrainTensors(unittest.TestCase):
         shape = (1, 2, 3)
         random_matrix = np.random.random(shape + (3, 3))
         random_tensor = SecondOrderTensor(random_matrix)
-        transposed_tensor = random_tensor.T
+        transposed_tensor = random_tensor.transpose_array()
         for i in range(shape[0]):
             for j in range(shape[1]):
                 for k in range(shape[2]):
@@ -79,7 +79,7 @@ class TestStressStrainTensors(unittest.TestCase):
         """
         shape = (2, 3, 4)
         tensor = SecondOrderTensor(np.random.random(shape + (3, 3)))
-        tensor_transposed = tensor.transpose_tensor()
+        tensor_transposed = tensor.T
         for i in range(shape[0]):
             for j in range(shape[1]):
                 for k in range(shape[2]):
