@@ -17,13 +17,13 @@ class TestDeformationGradient(unittest.TestCase):
         np.testing.assert_array_equal(R, F.R)
 
     def test_right_CauchyGreen(self):
-        F = DeformationGradient.rand(shape=(5,3))
+        F = DeformationGradient.rand()
         C = F.C
         U = F.U
         np.testing.assert_array_almost_equal(C.matrix, U.dot(U).matrix)
 
     def test_left_CauchyGreen(self):
-        F = DeformationGradient.rand(shape=(5,3))
+        F = DeformationGradient.rand()
         B = F.B
         V = F.V
         np.testing.assert_array_almost_equal(B.matrix, V.dot(V).matrix)
