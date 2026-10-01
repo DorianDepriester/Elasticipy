@@ -107,6 +107,18 @@ class TestSecondOrderTensor(unittest.TestCase):
         assert (not isinstance(reconstr_t, SymmetricSecondOrderTensor)) and (not isinstance(reconstr_t, SkewSymmetricSecondOrderTensor))
         np.testing.assert_array_almost_equal(t.matrix, reconstr_t.matrix)
 
+    def test_polar_decomposition(self):
+        F = SecondOrderTensor.rand()
+        R, U = F.polar()
+        assert isinstance(R, np.ndarray)
+        assert isinstance(U, SymmetricSecondOrderTensor)
+        np.testing.assert_array_almost_equal(F.matrix, np.matmul(R, U.matrix))
+
+        R, V = F.polar(side='left')
+        assert isinstance(R, np.ndarray)
+        assert isinstance(V, SymmetricSecondOrderTensor)
+        np.testing.assert_array_almost_equal(F.matrix, np.matmul(V.matrix, R))
+
 
 class TestSymmetricSecondOrderTensor(unittest.TestCase):
     def test_constructor(self):
