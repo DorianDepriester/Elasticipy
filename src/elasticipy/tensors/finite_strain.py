@@ -1,6 +1,6 @@
 from elasticipy.tensors.second_order import SecondOrderTensor, SymmetricSecondOrderTensor
 
-class GradientTensor(SecondOrderTensor):
+class DeformationGradient(SecondOrderTensor):
     @property
     def U(self):
         """
