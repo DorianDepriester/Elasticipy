@@ -27,5 +27,13 @@ class DeformationGradient(SecondOrderTensor):
 
     @property
     def R(self):
+        """
+        Rotational part of the polar decomposition
+
+        Returns
+        -------
+        numpy.ndarray
+            Orthogonal matrix corresponding to the rotation part of the polar decomposition
+        """
         R, _ = self.polar()
         return R
