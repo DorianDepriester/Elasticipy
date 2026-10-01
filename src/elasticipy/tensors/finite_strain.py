@@ -39,6 +39,20 @@ class DeformationGradient(SecondOrderTensor):
         return R
 
     @property
+    def J(self):
+        """
+        Compute the determinant of the tensor.
+
+        It is actually an alias for ``F.I3``
+
+        Returns
+        -------
+        float of numpy.ndarray
+            Determinant of the gradient tensor, or array of determinants
+        """
+        return self.I3
+
+    @property
     def C(self):
         """
         Compute the right Cauchy-Green tensor.
