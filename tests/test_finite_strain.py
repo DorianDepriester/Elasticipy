@@ -2,7 +2,7 @@ import unittest
 from elasticipy.tensors.finite_strain import DeformationGradient
 import numpy as np
 
-class TestSecondOrderTensor(unittest.TestCase):
+class TestDeformationGradient(unittest.TestCase):
     def test_polar(self):
         F = DeformationGradient.rand()
         R, U = F.polar()
