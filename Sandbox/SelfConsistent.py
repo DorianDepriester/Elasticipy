@@ -10,12 +10,12 @@ C_fibres = C_fibres * align_fibre
 C_matrix = StiffnessTensor.isotropic(E=4.5, G=1.61)
 
 start_time = time.time()
-Cmacro = Kroner_Eshelby((C_fibres, C_matrix), particle_sizes=[(1, 1, 1), (1,1,1)], xtol=0.8, n_phi=200, n_theta=100, maxiter=1000)
+Cmacro = Kroner_Eshelby((C_fibres, C_matrix), particle_sizes=[(1, 1, 1), (1,1,1)], xtol=1, n_phi=200, n_theta=100, maxiter=1000)
 print("--- %s seconds ---" % (time.time() - start_time))
 print(Cmacro)
 
 start_time = time.time()
-Cmacro = Kroner_Eshelby((C_fibres, C_matrix), particle_sizes=[(1, 1, 1), (1,1,1)], xtol=0.8, n_phi=200, n_theta=100, method='iteration', maxiter=10000)
+Cmacro = Kroner_Eshelby((C_fibres, C_matrix), particle_sizes=[(1, 1, 1), (1,1,1)], xtol=1, n_phi=200, n_theta=100, method='iteration', maxiter=10000)
 print("--- %s seconds ---" % (time.time() - start_time))
 print(Cmacro)
 
