@@ -71,3 +71,35 @@ class DeformationGradient(SecondOrderTensor):
         SymmetricSecondOrderTensor
         """
         return SymmetricSecondOrderTensor(self.dot(self.T))
+
+    def Green_Lagrangian(self):
+        """
+        Compute the Green-Lagrangian tensor from the deformation tensor F.
+
+        The Green-Lagrangian tensor is defined as:
+
+        ..math::
+
+            E = \\frac12\\left(\\mathbf{C} - \\mathbf{I}\\right)
+
+        Returns
+        -------
+        SymmetricSecondOrderTensor
+            Green-Lagrangian tensor
+        """
+        I = SymmetricSecondOrderTensor.eye(shape=self.shape)
+        return 0.5 * (self.C - I)
+
+    @property
+    def E(self):
+        """
+        Compute the Green-Lagrangian tensor.
+
+        It is actually an alias for ``F.Green_Lagrangian()``.
+
+        Returns
+        -------
+        SymmetricSecondOrderTensor
+            Green-Lagrangian tensor.
+        """
+        return self.Green_Lagrangian()
