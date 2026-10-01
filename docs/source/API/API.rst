@@ -11,6 +11,7 @@ API documentation
    Elasticipy.plasticity
    Elasticipy.spherical_function
    Elasticipy.tensors.elasticity
+   Elasticipy.tensors.finite_strain
    Elasticipy.tensors.fourth_order
    Elasticipy.tensors.second_order
    Elasticipy.tensors.stress_strain
