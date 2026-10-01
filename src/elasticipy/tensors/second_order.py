@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from scipy.spatial.transform import Rotation
+from scipy.linalg import polar
 ALPHABET = 'abcdefghijklmnopqrstuv'
 
 class _MatrixProxy:
@@ -1623,6 +1624,28 @@ class SecondOrderTensor:
         mat_stacked = np.stack(mat_array, axis=axis)
         return cls(mat_stacked)
 
+    def polar(self, side='right'):
+        """
+        Perform the polar decomposition of the tensor.
+
+        Returns the factor R and U such that T = R.P or T=P.R, where R is an orthogonal matrix and P is a positive semi-
+        definite second-order tensors.
+
+        Parameters
+        ----------
+        side : str, optional
+            If side=='right' (default), the decomposition of T is such that ``T = R.P``.
+            If side=='left', the decomposition of T is such that ``T = P.R``
+
+        Returns
+        -------
+        R : numpy.ndarray
+            Orthogonal matrix
+        P : SymmetricSecondOrderTensor
+        """
+        r, p = polar(self.matrix, side=side)
+        return r, SymmetricSecondOrderTensor(p)
+
 
 class SymmetricSecondOrderTensor(SecondOrderTensor):
     _voigt_map = [1, 1, 1, 1, 1, 1]
@@ -1849,7 +1872,6 @@ class SymmetricSecondOrderTensor(SecondOrderTensor):
 
     def inv(self):
         return SymmetricSecondOrderTensor(_inv_3x3(self.matrix, sym=True))
-
 
 class SkewSymmetricSecondOrderTensor(SecondOrderTensor):
     name = 'Skew-symmetric second-order tensor'
