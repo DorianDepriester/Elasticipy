@@ -1,10 +1,10 @@
 import unittest
-from elasticipy.tensors.finite_strain import GradientTensor
+from elasticipy.tensors.finite_strain import DeformationGradient
 import numpy as np
 
 class TestSecondOrderTensor(unittest.TestCase):
     def test_polar(self):
-        F = GradientTensor.rand()
+        F = DeformationGradient.rand()
         R, U = F.polar()
         assert U == F.U
         np.testing.assert_array_equal(R, F.R)
