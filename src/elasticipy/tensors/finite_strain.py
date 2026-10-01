@@ -37,3 +37,37 @@ class DeformationGradient(SecondOrderTensor):
         """
         R, _ = self.polar()
         return R
+
+    @property
+    def C(self):
+        """
+        Compute the right Cauchy-Green tensor.
+
+        The right Cauchy-Green tensor is defined as:
+
+        ..math::
+
+            \\mathbf{C} = \\mathbf{F}^\top\\cdot\\mathbf{F}
+
+        Returns
+        -------
+        SymmetricSecondOrderTensor
+        """
+        return SymmetricSecondOrderTensor(self.T.dot(self))
+
+    @property
+    def B(self):
+        """
+        Compute the left Cauchy-Green tensor.
+
+        The left Cauchy-Green tensor is defined as:
+
+        ..math::
+
+            \\mathbf{C} = \\mathbf{F}\\cdot\\mathbf{F}^\\top
+
+        Returns
+        -------
+        SymmetricSecondOrderTensor
+        """
+        return SymmetricSecondOrderTensor(self.dot(self.T))
