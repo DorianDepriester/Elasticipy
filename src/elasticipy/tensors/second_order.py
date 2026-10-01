@@ -710,16 +710,16 @@ class SecondOrderTensor:
     @property
     def T(self):
         """
-        Transpose the array of tensors.
+        Transpose the tensor.
 
-        It is actually an alias for transpose_array()
+        If the object is a tensor array, each tensor is transposed. It is actually an alias for transpose_tensor()
 
         Returns
         -------
         SecondOrderTensor
-            Transposed array
+            Transposed tensor(s)
         """
-        return self.transpose_array()
+        return self.transpose_tensor()
 
     def _transpose_tensor(self):
         return _transpose_matrix(self.matrix)
@@ -1659,7 +1659,7 @@ class SymmetricSecondOrderTensor(SecondOrderTensor):
 
         Parameters
         ----------
-        mat : list or numpy.ndarray
+        mat : list or numpy.ndarray or SecondOrderTensor
             matrix or array to construct the symmetric tensor. It must be symmetric with respect to the two last indices
             (mat[...,i,j]=mat[...,j,i]), or composed of slices of upper-diagonal matrices (mat[i,j]=0 for each i>j).
         force_symmetry : bool, optional
