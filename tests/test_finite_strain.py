@@ -2,6 +2,9 @@ import unittest
 from elasticipy.tensors.finite_strain import DeformationGradient
 import numpy as np
 
+from elasticipy.tensors.second_order import SymmetricSecondOrderTensor
+
+
 class TestDeformationGradient(unittest.TestCase):
     def test_polar(self):
         F = DeformationGradient.rand()
@@ -24,6 +27,18 @@ class TestDeformationGradient(unittest.TestCase):
         B = F.B
         V = F.V
         np.testing.assert_array_almost_equal(B.matrix, V.dot(V).matrix)
+
+    def test_green_lagrange(self):
+        shape = (5, 3)
+        F = DeformationGradient.rand(shape=shape)
+        E = F.E
+        assert isinstance(E, SymmetricSecondOrderTensor)
+        assert E.shape == F.shape
+        for i in range(shape[0]):
+            for j in range(shape[1]):
+                Fij = F[i,j].matrix
+                Eij = 0.5*(Fij.T @ Fij - np.eye(3))
+                np.testing.assert_array_almost_equal(E[i,j].matrix, Eij)
 
 if __name__ == '__main__':
     unittest.main()
