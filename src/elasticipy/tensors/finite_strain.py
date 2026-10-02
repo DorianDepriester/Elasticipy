@@ -9,6 +9,10 @@ class DeformationGradient(SecondOrderTensor):
         Returns
         -------
         SymmetricSecondOrderTensor
+
+        See Also
+        --------
+        V : Left stretch tensor
         """
         _, U = self.polar()
         return U
@@ -21,6 +25,10 @@ class DeformationGradient(SecondOrderTensor):
         Returns
         -------
         SymmetricSecondOrderTensor
+
+        See Also
+        --------
+        U : Right stretch tensor
         """
         _, V = self.polar(side='left')
         return V
@@ -34,6 +42,11 @@ class DeformationGradient(SecondOrderTensor):
         -------
         numpy.ndarray
             Orthogonal matrix corresponding to the rotation part of the polar decomposition
+
+        See Also
+        --------
+        U : Right stretch tensor
+        V : Left stretch tensor
         """
         R, _ = self.polar()
         return R
@@ -59,13 +72,18 @@ class DeformationGradient(SecondOrderTensor):
 
         The right Cauchy-Green tensor is defined as:
 
-        ..math::
+        .. math::
 
-            \\mathbf{C} = \\mathbf{F}^\top\\cdot\\mathbf{F}
+            \\mathbf{C} = \\mathbf{F}^\\top\\cdot\\mathbf{F}
 
         Returns
         -------
         SymmetricSecondOrderTensor
+
+        See Also
+        --------
+        E : Green-Lagrangian tensor
+        B : Left Cauchy-Green tensor
         """
         return SymmetricSecondOrderTensor(self.T.dot(self))
 
@@ -76,13 +94,18 @@ class DeformationGradient(SecondOrderTensor):
 
         The left Cauchy-Green tensor is defined as:
 
-        ..math::
+        .. math::
 
             \\mathbf{C} = \\mathbf{F}\\cdot\\mathbf{F}^\\top
 
         Returns
         -------
         SymmetricSecondOrderTensor
+
+        See Also
+        --------
+        E : Green-Lagrangian tensor
+        C : Right Cauchy-Green tensor
         """
         return SymmetricSecondOrderTensor(self.dot(self.T))
 
@@ -92,14 +115,19 @@ class DeformationGradient(SecondOrderTensor):
 
         The Green-Lagrangian tensor is defined as:
 
-        ..math::
+        .. math::
 
-            E = \\frac12\\left(\\mathbf{C} - \\mathbf{I}\\right)
+            \\mathbf{E} = \\frac12\\left(\\mathbf{C} - \\mathbf{I}\\right)
 
         Returns
         -------
         SymmetricSecondOrderTensor
             Green-Lagrangian tensor
+
+        See Also
+        --------
+        C : Right Cauchy-Green tensor
+        B : Left Cauchy-Green tensor
         """
         I = SymmetricSecondOrderTensor.eye(shape=self.shape)
         return 0.5 * (self.C - I)
