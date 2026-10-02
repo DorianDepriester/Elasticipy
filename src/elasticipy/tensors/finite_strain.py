@@ -41,7 +41,7 @@ class DeformationGradient(SecondOrderTensor):
     @property
     def J(self):
         """
-        Compute the determinant of the tensor.
+        Compute the determinant of the tensor (Jacobian).
 
         It is actually an alias for ``F.I3``
 
