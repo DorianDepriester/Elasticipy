@@ -6,6 +6,14 @@ class DeformationGradient(SecondOrderTensor):
         """
         Right stretch tensor
 
+        Returns the symmetric Second-order tensor `U` such that:
+
+        .. math::
+
+            \\mathbf{F} = \\mathbf{R}\\cdot\\mathbf{U}
+
+        where :math:`\\mathbf{R}` is the positive semi definite
+
         Returns
         -------
         SymmetricSecondOrderTensor
@@ -22,6 +30,14 @@ class DeformationGradient(SecondOrderTensor):
         """
         Left stretch tensor
 
+        Returns the symmetric Second-order tensor `U` such that:
+
+        .. math::
+
+            \\mathbf{F} = \\mathbf{V}\\cdot\\mathbf{R}
+
+        where :math:`\\mathbf{R}` is the positive semi definite
+
         Returns
         -------
         SymmetricSecondOrderTensor
@@ -37,6 +53,12 @@ class DeformationGradient(SecondOrderTensor):
     def R(self):
         """
         Rotational part of the polar decomposition
+
+        Returns the orthogonal matrix `R` such that:
+
+        .. math::
+
+            \\mathbf{F} = \\mathbf{R}\\cdot\\mathbf{U}
 
         Returns
         -------
@@ -60,7 +82,7 @@ class DeformationGradient(SecondOrderTensor):
 
         Returns
         -------
-        float of numpy.ndarray
+        float or numpy.ndarray
             Determinant of the gradient tensor, or array of determinants
         """
         return self.I3
@@ -118,6 +140,8 @@ class DeformationGradient(SecondOrderTensor):
         .. math::
 
             \\mathbf{E} = \\frac12\\left(\\mathbf{C} - \\mathbf{I}\\right)
+
+        where :math:`\\mathbf{C}` is the right Cauchy-Green tensor.
 
         Returns
         -------
