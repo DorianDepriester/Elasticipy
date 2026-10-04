@@ -5,6 +5,7 @@ API documentation
    :maxdepth: 5
 
    Elasticipy.crystal_texture
+   Elasticipy.hyperelasticity
    Elasticipy.interfaces.PRISMS
    Elasticipy.interfaces.FEPX
    Elasticipy.pole_figure
