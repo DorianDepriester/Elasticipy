@@ -54,5 +54,11 @@ class TestNeoHooke(unittest.TestCase):
         expected = 2*J*(J-1) / D * np.eye(3) / J
         np.testing.assert_array_almost_equal(sigma.matrix, expected)
 
+    def test_analytical_vs_derivative(self):
+        F = DeformationGradient.diag([1.5, 1.6, 1.7])
+        stress = nh_comp.stress_from_F(F)
+        derivative = nh_comp.stress_from_derivative(F.B, h=1e-7)
+        np.testing.assert_allclose(stress.matrix, derivative.matrix, atol=1e-4)
+
 if __name__ == '__main__':
     unittest.main()
