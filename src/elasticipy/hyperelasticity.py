@@ -115,7 +115,14 @@ class MooneyRivlin(HyperElastic):
 
         .. math::
 
-            W = \\sum_{i,j=0}^N C_{ij}(I_1-3)^i(I_2-3)^j + \\sum_{k=1}^M\\frac{(J-1)^{2k}}{D_k}
+            W = \\sum_{i,j=0}^N C_{ij}(\\bar{I}_1-3)^i(\\bar{I}_2-3)^j + \\sum_{k=1}^M\\frac{(J-1)^{2k}}{D_k}
+
+        with
+
+        .. math::
+
+            \\bar{I}_1 = I_1J^{-2/3}
+            \\bar{I}_2 = I_2J^{-4/3}
         """
         self.C = np.asarray(C)
         self.D = D
