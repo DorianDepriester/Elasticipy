@@ -1,6 +1,6 @@
 import numpy as np
-
 from elasticipy.tensors.second_order import SecondOrderTensor, SymmetricSecondOrderTensor
+from elasticipy.tensors.stress_strain import StrainTensor
 
 class DeformationGradient(SecondOrderTensor):
     def __init__(self, mat):
@@ -188,6 +188,30 @@ class DeformationGradient(SecondOrderTensor):
         B : Left Cauchy-Green tensor
         """
         return self.Green_Lagrangian()
+
+    def small_strain(self):
+        """
+        Under the small strain assumption, make first order approximation to compute the small strain tensor.
+
+        Under the small strain assumption, we have:
+
+        .. math::
+
+            \\mathbf{\\epsilon} = \\frac12 (\\nabla\\mathbf{U} + \\nabla^\\top\\mathbf{U})
+
+        with
+
+        .. math::
+
+            \\nabla\\mathbf{U} = \\mathbf{F} - \\mathbf{I}
+
+        Returns
+        -------
+        StrainTensor
+            Small strain tensor
+        """
+        gradU = self - SymmetricSecondOrderTensor.eye(shape=self.shape)
+        return StrainTensor(gradU, force_symmetry=True)
 
 class CauchyGreenTensor(SymmetricSecondOrderTensor):
     @property
