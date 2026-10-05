@@ -1045,6 +1045,7 @@ class SecondOrderTensor:
         --------
         eye : creates an array of identity tensors
         zeros : creates an array full of zero tensors
+        diag : create a diagonal tensor from its diagonal components
         """
         if isinstance(shape, int):
             matrix_shape = (shape, 3, 3)
@@ -1073,6 +1074,7 @@ class SecondOrderTensor:
         --------
         eye : creates an array of identity tensors
         ones : creates an array of tensors full of ones
+        diag : create a diagonal tensor from its diagonal components
         """
         if isinstance(shape, int):
             matrix_shape = (shape, 3, 3)
@@ -1659,6 +1661,11 @@ class SecondOrderTensor:
         Returns
         -------
         SecondOrderTensor
+
+        See Also
+        --------
+        ones : create a second-order tensor populated with ones
+        zeros : create a second-order tensor populated with zeros
 
         Examples
         --------
