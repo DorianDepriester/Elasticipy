@@ -1,3 +1,4 @@
+from elasticipy.tensors.finite_strain import CauchyGreenTensor
 from elasticipy.tensors.stress_strain import StressTensor
 from elasticipy.tensors.second_order import SymmetricSecondOrderTensor
 from abc import ABC, abstractmethod
@@ -54,7 +55,7 @@ class HyperElastic(ABC):
         return True
 
     def _potential_from_B_voigt(self, b_flat):
-        B = SymmetricSecondOrderTensor.from_Voigt(b_flat)
+        B = CauchyGreenTensor.from_Voigt(b_flat)
         return self.potential_from_B(B)
 
     def stress_from_B_analytical(self, B):
@@ -86,7 +87,7 @@ class HyperElastic(ABC):
         dWdB = approx_fprime(b, self._potential_from_B_voigt, h)
         dWdB_full = SymmetricSecondOrderTensor.from_Voigt(dWdB)
         J = np.sqrt(B.I3)
-        return 2 / J * StressTensor(dWdB_full.dot(B))
+        return 2 / J * StressTensor(dWdB_full.dot(B), force_symmetry=True)
 
     def stress_from_B(self, B, h=1e-6):
         """
