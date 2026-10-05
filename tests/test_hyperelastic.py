@@ -20,7 +20,14 @@ class TestNeoHooke(unittest.TestCase):
         s_small = stiff * StrainTensor(eps)
         np.testing.assert_almost_equal(s_finite.matrix, s_small.matrix)
 
+    def test_incompressible(self):
+        assert not nh_incomp.is_compressible()
+        assert nh_comp.is_compressible()
 
+        F = DeformationGradient.eye() * 1.1
+        with self.assertRaises(ValueError) as context:
+            _ = nh_incomp.stress_from_F(F)
+        self.assertEqual(str(context.exception), "For incompressible behaviour, the determinant of the gradient must be 1.")
 
 if __name__ == '__main__':
     unittest.main()
