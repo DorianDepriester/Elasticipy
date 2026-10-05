@@ -53,5 +53,20 @@ class TestDeformationGradient(unittest.TestCase):
         assert isinstance(eps, StrainTensor)
         assert eps == StrainTensor.shear([1, 0, 0], [0, 1, 0], gamma/2)
 
+    def test_tensile(self):
+        u = [1, 0, 0]
+        mag = 0.5
+        F = DeformationGradient.tensile(u, mag)
+        np.testing.assert_array_equal(F.matrix, np.diag([1.5, 1, 1]))
+
+    def test_shear(self):
+        u = [1, 0, 0]
+        v = [0, 1, 0]
+        mag = 0.5
+        F = DeformationGradient.shear(u, v, mag)
+        F_the = np.eye(3)
+        F_the[0,1] = mag
+        np.testing.assert_array_equal(F.matrix, F_the)
+
 if __name__ == '__main__':
     unittest.main()
