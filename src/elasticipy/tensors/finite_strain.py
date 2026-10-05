@@ -218,6 +218,18 @@ class DeformationGradient(SecondOrderTensor):
         gradU = self - SymmetricSecondOrderTensor.eye(shape=self.shape)
         return StrainTensor(gradU, force_symmetry=True)
 
+    @classmethod
+    def tensile(cls, u, magnitude):
+        t = SecondOrderTensor.tensile(u, magnitude)
+        I = SecondOrderTensor.eye(shape=t.shape)
+        return cls(t.matrix + I.matrix)
+
+    @classmethod
+    def shear(cls, u, v, magnitude):
+        t = SecondOrderTensor.shear(u, v, magnitude)
+        I = SecondOrderTensor.eye(shape=t.shape)
+        return cls(t.matrix + I.matrix)
+
 class CauchyGreenTensor(SymmetricSecondOrderTensor):
     @property
     def J(self):
