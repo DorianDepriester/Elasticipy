@@ -3,6 +3,7 @@ from elasticipy.tensors.finite_strain import DeformationGradient
 import numpy as np
 
 from elasticipy.tensors.second_order import SymmetricSecondOrderTensor
+from elasticipy.tensors.stress_strain import StrainTensor
 
 
 class TestDeformationGradient(unittest.TestCase):
@@ -44,6 +45,13 @@ class TestDeformationGradient(unittest.TestCase):
         with self.assertRaises(ValueError) as context:
             _ = DeformationGradient.diag([-1,2,3])
         self.assertEqual(str(context.exception), "The determinant of the deformation tensor must be positive.")
+
+    def test_small_strain(self):
+        gamma = 0.1
+        F = DeformationGradient.eye() + np.array([[0, 0.1, 0],[0, 0, 0], [0, 0, 0]])
+        eps = F.small_strain()
+        assert isinstance(eps, StrainTensor)
+        assert eps == StrainTensor.shear([1, 0, 0], [0, 1, 0], gamma/2)
 
 if __name__ == '__main__':
     unittest.main()
