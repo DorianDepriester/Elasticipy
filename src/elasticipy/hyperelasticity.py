@@ -57,26 +57,18 @@ class HyperElastic(ABC):
         B = SymmetricSecondOrderTensor.from_Voigt(b_flat)
         return self.potential_from_B(B)
 
-    def _stress_from_derivative(self, B, h):
-        b = B.to_Voigt()
-        dWdB = approx_fprime(b, self._potential_from_B_voigt, h)
-        dWdB_full = SymmetricSecondOrderTensor.from_Voigt(dWdB)
-        J = np.sqrt(B.I3)
-        return 2 / J * StressTensor(dWdB_full.dot(B))
+    def stress_from_B_analytical(self, B):
+        raise NotImplementedError()
 
-    def stress_from_B(self, B, h=1e-6):
+    def stress_from_derivative(self, B, h=1e-6):
         """
-        Compute the Cauchy stress tensor from the left Cauchy-Green tensor.
-
-        If not hard-coded, the stress tensor is computed by finite difference from the derivative of the potential
-        function (see Notes).
+        Compute the stress tensor from the derivative of the potential function wrt. the left Cauchy-Green tensor B.
 
         Parameters
         ----------
-        B :  CauchyGreenTensor
+        B : CauchyGreenTensor
             Left Cauchy-Green tensor
-        h : float, optional
-            step size to perform finite difference calculation.
+        h : step size to use for finite differences
 
         Returns
         -------
@@ -90,7 +82,39 @@ class HyperElastic(ABC):
 
             \\mathbf{\\sigma} = \\frac2J \\frac{\\partial W}{\\partial \\mathbf{B}}\\cdot\\mathbf{B}
         """
-        return self._stress_from_derivative(B, h)
+        b = B.to_Voigt()
+        dWdB = approx_fprime(b, self._potential_from_B_voigt, h)
+        dWdB_full = SymmetricSecondOrderTensor.from_Voigt(dWdB)
+        J = np.sqrt(B.I3)
+        return 2 / J * StressTensor(dWdB_full.dot(B))
+
+    def stress_from_B(self, B, h=1e-6):
+        """
+        Compute the Cauchy stress tensor from the left Cauchy-Green tensor.
+
+        If the method `stress_from_B_analytical` is not implemented, the stress tensor is computed by finite difference
+        from the derivative of the potential function (`stress_from_derivative`).
+
+        Parameters
+        ----------
+        B :  CauchyGreenTensor
+            Left Cauchy-Green tensor
+        h : float, optional
+            step size to perform finite difference calculation.
+
+        Returns
+        -------
+        StressTensor
+
+        See Also
+        --------
+        stress_from_B_analytical : analytical expression of the stress tensor as a function of B
+        stress_from_derivative : numerical evaluation of the stress tensor for the derivative of the potential function
+        """
+        try:
+            return self.stress_from_B_analytical(B)
+        except NotImplementedError:
+            return self.stress_from_derivative(B, h=h)
 
     def stress_from_F(self, F, h=1e-6):
         """
