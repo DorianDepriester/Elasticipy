@@ -43,6 +43,9 @@ class HyperElastic(ABC):
         """
         pass
 
+    def is_compressible(self):
+        return True
+
     def _potential_from_B_voigt(self, b_flat):
         B = SymmetricSecondOrderTensor.from_Voigt(b_flat)
         return self.potential_from_B(B)
@@ -97,6 +100,9 @@ class HyperElastic(ABC):
         -------
         StressTensor
         """
+        J = F.J
+        if not self.is_compressible() and np.any(np.abs(J-1)>1e-6):
+            raise ValueError("For incompressible behaviour, the determinant of the gradient must be 1.")
         return self.stress_from_B(F.B, h=h)
 
 class MooneyRivlin(HyperElastic):
@@ -106,7 +112,7 @@ class MooneyRivlin(HyperElastic):
 
         Parameters
         ----------
-        C : list of list or numpy.ndarray
+        C : float or list of list or numpy.ndarray
             Material constants relative to deviatoric parts, provided as a NxN matrix (see notes)
         D : list of float or numpy.ndarray, optional
             Material constants relative to volumetric part. If not provided, the material is supposed to be
@@ -129,6 +135,9 @@ class MooneyRivlin(HyperElastic):
         """
         self.C = np.asarray(C)
         self.D = D
+
+    def is_compressible(self):
+        return self.D is not None
 
     def potential_from_B(self, B):
         J = B.J
@@ -165,8 +174,7 @@ class NeoHooke(MooneyRivlin):
         D : float, optional
             Material compressibility
         """
-        self.C = C
-        self.D = D
+        super().__init__(C, D=D)
 
     def potential_from_B(self, B):
         if self.D is None:
