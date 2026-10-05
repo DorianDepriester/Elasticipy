@@ -143,7 +143,7 @@ class MooneyRivlin(HyperElastic):
                 W += (J-1)**(2*k) / Dk
         return W
 
-class NeoHooke(HyperElastic):
+class NeoHooke(MooneyRivlin):
     def __init__(self, C, D=None):
         """
         Create a Neo-Hooke hyperelastic model
