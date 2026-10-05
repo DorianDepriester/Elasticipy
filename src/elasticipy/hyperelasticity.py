@@ -136,8 +136,8 @@ class MooneyRivlin(HyperElastic):
                 W += C[i, j] * (B.I1_bar-3)**i * (B.I2_bar - 3)**j
         D = self.D
         if D is not None:
-            for k in range(len(D)):
-                W += (J-1)**(2*k + 2) / D[k]
+            for k, Dk in enumerate(self.D, start=1):
+                W += (J-1)**(2*k) / Dk
         return W
 
 class NeoHooke(HyperElastic):
@@ -149,7 +149,7 @@ class NeoHooke(HyperElastic):
         if self.D1 is None:
             return self.C10 * (B.I1 - 3)
         else:
-            return self.C10 * (B.I1_bar - 3) + self.D1 * (B.J - 1)
+            return self.C10 * (B.I1_bar - 3) + self.D1 * (B.J - 1)**2
 
     def stress_from_gradient(self, gradient):
         J = gradient.J
