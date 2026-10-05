@@ -74,7 +74,7 @@ class HyperElastic(ABC):
 
         Parameters
         ----------
-        B :  SymmetricSecondOrderTensor
+        B :  CauchyGreenTensor
             Left Cauchy-Green tensor
         h : float, optional
             step size to perform finite difference calculation.
