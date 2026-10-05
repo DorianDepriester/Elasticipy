@@ -47,6 +47,13 @@ class HyperElastic(ABC):
         B = SymmetricSecondOrderTensor.from_Voigt(b_flat)
         return self.potential_from_B(B)
 
+    def _stress_from_derivative(self, B, h):
+        b = B.to_Voigt()
+        dWdB = approx_fprime(b, self._potential_from_B_voigt, h)
+        dWdB_full = SymmetricSecondOrderTensor.from_Voigt(dWdB)
+        J = np.sqrt(B.I3)
+        return 2 / J * StressTensor(dWdB_full.dot(B))
+
     def stress_from_B(self, B, h=1e-6):
         """
         Compute the Cauchy stress tensor from the left Cauchy-Green tensor.
@@ -73,11 +80,7 @@ class HyperElastic(ABC):
 
             \\mathbf{\\sigma} = \\frac2J \\frac{\\partial W}{\\partial \\mathbf{B}}\\cdot\\mathbf{B}
         """
-        b = B.to_Voigt()
-        dWdB = approx_fprime(b, self._potential_from_B_voigt, h)
-        dWdB_full = SymmetricSecondOrderTensor.from_Voigt(dWdB)
-        J = np.sqrt(B.I3)
-        return 2 / J * StressTensor(dWdB_full.dot(B))
+        return self._stress_from_derivative(B, h)
 
     def stress_from_F(self, F, h=1e-6):
         """
