@@ -40,5 +40,10 @@ class TestDeformationGradient(unittest.TestCase):
                 Eij = 0.5*(Fij.T @ Fij - np.eye(3))
                 np.testing.assert_array_almost_equal(E[i,j].matrix, Eij)
 
+    def test_negative_J(self):
+        with self.assertRaises(ValueError) as context:
+            _ = DeformationGradient.diag([-1,2,3])
+        self.assertEqual(str(context.exception), "The determinant of the deformation tensor must be positive.")
+
 if __name__ == '__main__':
     unittest.main()
