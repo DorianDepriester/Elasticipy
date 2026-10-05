@@ -5,7 +5,6 @@ import numpy as np
 from scipy.optimize import approx_fprime
 
 class HyperElastic(ABC):
-
     def potential_from_F(self, F):
         """
         Compute the potential function from the deformation gradient F.
