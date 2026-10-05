@@ -144,19 +144,42 @@ class MooneyRivlin(HyperElastic):
         return W
 
 class NeoHooke(HyperElastic):
-    def __init__(self, C10, D1):
-        self.C10 = C10
-        self.D1 = D1
+    def __init__(self, C, D=None):
+        """
+        Create a Neo-Hooke hyperelastic model
+
+        The compressible Neo-Hooke model defines the potential function as:
+
+        .. math::
+
+             W = C(\bar{I}_1 - 3) + \\frac{(J-1)^2}{D}
+
+        where :math:`C` and :math:`D` are the material constants and :math:`\bar{I}_1=I_1J^{-2/3}`. If D is None
+        (default), the material is assumed to be incompressible and the corresponding part in the equation above is
+        omitted.
+
+        Parameters
+        ----------
+        C : float
+            Material constant relative to deviatoric part
+        D : float, optional
+            Material compressibility
+        """
+        self.C = C
+        self.D = D
 
     def potential_from_B(self, B):
-        if self.D1 is None:
-            return self.C10 * (B.I1 - 3)
+        if self.D is None:
+            return self.C * (B.I1 - 3)
         else:
-            return self.C10 * (B.I1_bar - 3) + self.D1 * (B.J - 1)**2
+            return self.C * (B.I1_bar - 3) + (B.J - 1)**2 / self.D
 
     def stress_from_gradient(self, gradient):
         J = gradient.J
-        p = 2 * self.D1 * J * (J-1)
-        I = SymmetricSecondOrderTensor.eye(shape=gradient.shape)
-        tau = p * I + 2 * self.C10 / J**(2/3) * gradient.B.deviatoric_part()
+        if self.D is None and np.any(np.abs(J-1)>1e-6):
+            raise ValueError("For incompressible behaviour, the determinant of the gradient must be 1.")
+        tau = 2 * self.C / J**(2/3) * gradient.B.deviatoric_part()
+        if self.D is not None:
+            p = 2 * J * (J-1) / self.D
+            tau = tau + p * SymmetricSecondOrderTensor.eye(shape=gradient.shape)
         return StressTensor(tau / J)
