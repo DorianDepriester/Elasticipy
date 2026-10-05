@@ -1,6 +1,20 @@
+import numpy as np
+
 from elasticipy.tensors.second_order import SecondOrderTensor, SymmetricSecondOrderTensor
 
 class DeformationGradient(SecondOrderTensor):
+    def __init__(self, mat):
+        J = np.linalg.det(mat)
+        if np.any(np.asarray(J) <= 0):
+            raise ValueError("The determinant of the deformation tensor must be positive.")
+        super().__init__(mat)
+
+    @classmethod
+    def rand(cls, **kwargs):
+        a = SymmetricSecondOrderTensor.rand(**kwargs)
+        a = a * a.I3
+        return cls(a.matrix)
+
     @property
     def U(self):
         """
