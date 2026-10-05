@@ -3,7 +3,6 @@ from elasticipy.tensors.stress_strain import StressTensor
 from elasticipy.tensors.second_order import SymmetricSecondOrderTensor
 from abc import ABC, abstractmethod
 import numpy as np
-from scipy.optimize import approx_fprime
 
 class HyperElastic(ABC):
     def potential_from_F(self, F):
@@ -84,8 +83,13 @@ class HyperElastic(ABC):
             \\mathbf{\\sigma} = \\frac2J \\frac{\\partial W}{\\partial \\mathbf{B}}\\cdot\\mathbf{B}
         """
         b = B.to_Voigt()
-        dWdB = approx_fprime(b, self._potential_from_B_voigt, h)
-        dWdB_full = SymmetricSecondOrderTensor.from_Voigt(dWdB)
+        h_mat = np.eye(6) * h
+        dWdB_voigt = np.zeros(6)
+        for i in range(6):
+            DWp = self._potential_from_B_voigt(b + h_mat[i])
+            DWm = self._potential_from_B_voigt(b - h_mat[i])
+            dWdB_voigt[i] = (DWp - DWm) / 2 / h
+        dWdB_full = SymmetricSecondOrderTensor.from_Voigt(dWdB_voigt)
         J = np.sqrt(B.I3)
         return 2 / J * StressTensor(dWdB_full.dot(B), force_symmetry=True)
 
