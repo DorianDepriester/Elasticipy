@@ -13,7 +13,7 @@ class HyperElastic(ABC):
         Parameters
         ----------
         F : DeformationGradient
-            tensor or tensor array of defomation gradients
+            tensor or tensor array of deformation gradients
 
         Returns
         -------
@@ -159,7 +159,11 @@ class MooneyRivlin(HyperElastic):
                 W += C[i, j] * (B.I1_bar-3)**i * (B.I2_bar - 3)**j
         D = self.D
         if D is not None:
-            for k, Dk in enumerate(self.D, start=1):
+            if isinstance(D, float):
+                D = (self.D,)
+            else:
+                D = self.D
+            for k, Dk in enumerate(D, start=1):
                 W += (J-1)**(2*k) / Dk
         return W
 
