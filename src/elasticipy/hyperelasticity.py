@@ -104,7 +104,7 @@ class MooneyRivlin(HyperElastic):
         Parameters
         ----------
         C : list of list or numpy.ndarray
-            Material constants relative to deviatoric parts.
+            Material constants relative to deviatoric parts, provided as a NxN matrix (see notes)
         D : list of float or numpy.ndarray, optional
             Material constants relative to volumetric part. If not provided, the material is supposed to be
             incompressible.
@@ -115,7 +115,7 @@ class MooneyRivlin(HyperElastic):
 
         .. math::
 
-            W = \\sum_{i,j=0}^N C_{ij}(I_1-3)î(I_2-3)^j + \\sum_{k=1}\\frac{(J-1)^{2k}}{D_k}
+            W = \\sum_{i,j=0}^N C_{ij}(I_1-3)^i(I_2-3)^j + \\sum_{k=1}^M\\frac{(J-1)^{2k}}{D_k}
         """
         self.C = np.asarray(C)
         self.D = D
