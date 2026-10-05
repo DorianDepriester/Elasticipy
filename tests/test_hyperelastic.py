@@ -1,12 +1,12 @@
 import unittest
 import numpy as np
 from elasticipy.tensors.finite_strain import DeformationGradient
-from elasticipy.hyperelasticity import NeoHooke
+from elasticipy.hyperelasticity import NeoHooke, MooneyRivlin
 from elasticipy.tensors.elasticity import StiffnessTensor
 from elasticipy.tensors.stress_strain import StrainTensor
 
-C = 100
-D = 500
+C = 100.
+D = 500.
 nh_comp = NeoHooke(C, D=D)
 nh_incomp = NeoHooke(C)
 
@@ -58,7 +58,15 @@ class TestNeoHooke(unittest.TestCase):
         F = DeformationGradient.diag([1.5, 1.6, 1.7])
         stress = nh_comp.stress_from_F(F)
         derivative = nh_comp.stress_from_derivative(F.B, h=1e-7)
-        np.testing.assert_allclose(stress.matrix, derivative.matrix, atol=1e-4)
+        np.testing.assert_allclose(stress.matrix, derivative.matrix, atol=1e-6)
+
+    def test_nh_vs_MooneyRivelin(self):
+        mr = MooneyRivlin(C=[[0,0],[C,0]], D=D)
+        F = DeformationGradient([[1, 0.1, 0.2],[0.3, 1.4, 0.5], [0.6, 0.7, 1.8]])
+        stress_nh = nh_comp.stress_from_derivative(F.B, h=1e-6)
+        stress_mr = mr.stress_from_F(F, h=1e-6)
+        np.testing.assert_allclose(stress_nh.matrix, stress_mr.matrix, atol=1-3)
+
 
 if __name__ == '__main__':
     unittest.main()
