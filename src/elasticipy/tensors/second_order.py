@@ -1667,7 +1667,7 @@ class SecondOrderTensor:
 
         Returns
         -------
-        SecondOrderTensor
+        cls
 
         See Also
         --------
