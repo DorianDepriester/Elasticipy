@@ -33,7 +33,7 @@ class HyperElastic(ABC):
 
         Parameters
         ----------
-        B : SymmetricSecondOrderTensor
+        B : CauchyGreenTensor
             Left Cauchy-Green tensor
 
         Returns
@@ -121,16 +121,12 @@ class MooneyRivlin(HyperElastic):
         self.D = D
 
     def potential_from_B(self, B):
-        I1 = B.I1
-        I2 = B.I2
-        J = np.sqrt(B.I3)
-        I1_bar = J ** (-2 / 3) * I1
-        I2_bar = J ** (-4 / 3) * I2
-        W = np.zeros_like(I1)
+        J = B.J
+        W = np.zeros_like(J)
         C = self.C
         for i in range(C.shape[0]):
             for j in range(C.shape[1]):
-                W += C[i, j] * (I1_bar-3)**i * (I2_bar - 3)**j
+                W += C[i, j] * (B.I1_bar-3)**i * (B.I2_bar - 3)**j
         D = self.D
         if D is not None:
             for k in range(len(D)):
@@ -141,6 +137,12 @@ class NeoHooke(HyperElastic):
     def __init__(self, C10, D1):
         self.C10 = C10
         self.D1 = D1
+
+    def potential_from_B(self, B):
+        if self.D1 is None:
+            return self.C10 * (B.I1 - 3)
+        else:
+            return self.C10 * (B.I1_bar - 3) + self.D1 * (B.J - 1)
 
     def stress_from_gradient(self, gradient):
         J = gradient.J
