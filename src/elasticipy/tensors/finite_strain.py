@@ -114,14 +114,14 @@ class DeformationGradient(SecondOrderTensor):
 
         Returns
         -------
-        SymmetricSecondOrderTensor
+        CauchyGreenTensor
 
         See Also
         --------
         E : Green-Lagrangian tensor
         B : Left Cauchy-Green tensor
         """
-        return SymmetricSecondOrderTensor(self.T.dot(self))
+        return CauchyGreenTensor(self.T.dot(self))
 
     @property
     def B(self):
@@ -136,14 +136,14 @@ class DeformationGradient(SecondOrderTensor):
 
         Returns
         -------
-        SymmetricSecondOrderTensor
+        CauchyGreenTensor
 
         See Also
         --------
         E : Green-Lagrangian tensor
         C : Right Cauchy-Green tensor
         """
-        return SymmetricSecondOrderTensor(self.dot(self.T))
+        return CauchyGreenTensor(self.dot(self.T))
 
     def Green_Lagrangian(self):
         """
@@ -188,3 +188,55 @@ class DeformationGradient(SecondOrderTensor):
         B : Left Cauchy-Green tensor
         """
         return self.Green_Lagrangian()
+
+class CauchyGreenTensor(SymmetricSecondOrderTensor):
+    @property
+    def J(self):
+        """
+        Determinant of the gradient (Jacobian).
+
+        It is computed as follows:
+
+        .. math::
+
+            J = \\sqrt{det(\\mathbf{C})}
+
+        Returns
+        -------
+
+        """
+        return np.sqrt(self.I3)
+
+    @property
+    def I1_bar(self):
+        """
+        First invariant of the Cauchy-Green tensor, accounting for the spherical part of deformation
+
+        It is defined as:
+
+        .. math::
+
+            \\bar{I}_1 = I_1J**{-2/3}
+
+        Returns
+        -------
+        float or numpy.ndarray
+        """
+        return self.I1 * self.J**(-2 / 3)
+
+    @property
+    def I2_bar(self):
+        """
+        Second invariant of the Cauchy-Green tensor, accounting for the spherical part of deformation
+
+        It is defined as:
+
+        .. math::
+
+            \\bar{I}_2 = I_2J**{-4/3}
+
+        Returns
+        -------
+        float or numpy.ndarray
+        """
+        return self.I2 * self.J ** (-4 / 3)
