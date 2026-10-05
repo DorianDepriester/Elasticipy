@@ -172,7 +172,7 @@ class NeoHooke(MooneyRivlin):
 
         .. math::
 
-             W = C(\bar{I}_1 - 3) + \\frac{(J-1)^2}{D}
+             W = C(\\bar{I}_1 - 3) + \\frac{(J-1)^2}{D}
 
         where :math:`C` and :math:`D` are the material constants and :math:`\bar{I}_1=I_1J^{-2/3}`. If D is None
         (default), the material is assumed to be incompressible and the corresponding part in the equation above is
@@ -198,5 +198,5 @@ class NeoHooke(MooneyRivlin):
         tau = 2 * self.C / J ** (2/3) * B.deviatoric_part()
         if self.D is not None:
             p = 2 * J * (J-1) / self.D
-            tau = tau + p * SymmetricSecondOrderTensor.eye(shape=gradient.shape)
+            tau = tau + p * SymmetricSecondOrderTensor.eye(shape=B.shape)
         return StressTensor(tau / J)
