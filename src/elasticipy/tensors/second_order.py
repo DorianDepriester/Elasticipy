@@ -1646,6 +1646,33 @@ class SecondOrderTensor:
         r, p = polar(self.matrix, side=side)
         return r, SymmetricSecondOrderTensor(p)
 
+    @classmethod
+    def diag(cls, v):
+        """
+        Create a diagonal second-order tensor
+
+        Parameters
+        ----------
+        v : list of float or numpy.ndarray
+            Diagonal components of the tensor
+
+        Returns
+        -------
+        SecondOrderTensor
+
+        Examples
+        --------
+        >>> from elasticipy.tensors.second_order import SecondOrderTensor
+        >>> T = SecondOrderTensor.diag([1,2,3])
+        >>> print(T)
+        Second-order tensor
+        [[1 0 0]
+         [0 2 0]
+         [0 0 3]]
+        """
+        mat = np.diag(v)
+        return cls(mat)
+
 
 class SymmetricSecondOrderTensor(SecondOrderTensor):
     _voigt_map = [1, 1, 1, 1, 1, 1]
