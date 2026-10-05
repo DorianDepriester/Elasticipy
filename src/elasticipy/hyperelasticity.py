@@ -95,7 +95,10 @@ class HyperElastic(ABC):
 
     def stress_from_F(self, F, h=1e-6):
         """
-        Compute the stress tensor from the deformation gradient tensor
+        Compute the stress tensor from the deformation gradient tensor.
+
+        If the model is incompressible, the returned stress is the deviatoric stress, as the hydrostatic pressure cannot
+        be estimated.
 
         Parameters
         ----------
