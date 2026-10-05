@@ -44,6 +44,14 @@ class HyperElastic(ABC):
         pass
 
     def is_compressible(self):
+        """
+        Check whether the model corresponds to compressible behaviour or not.
+
+        Returns
+        -------
+        bool
+            True if the behaviour is compressible, False otherwise.
+        """
         return True
 
     def _potential_from_B_voigt(self, b_flat):
@@ -182,11 +190,9 @@ class NeoHooke(MooneyRivlin):
         else:
             return self.C * (B.I1_bar - 3) + (B.J - 1)**2 / self.D
 
-    def stress_from_gradient(self, gradient):
-        J = gradient.J
-        if self.D is None and np.any(np.abs(J-1)>1e-6):
-            raise ValueError("For incompressible behaviour, the determinant of the gradient must be 1.")
-        tau = 2 * self.C / J**(2/3) * gradient.B.deviatoric_part()
+    def stress_from_B(self, B, **kwargs):
+        J = B.J
+        tau = 2 * self.C / J ** (2/3) * B.deviatoric_part()
         if self.D is not None:
             p = 2 * J * (J-1) / self.D
             tau = tau + p * SymmetricSecondOrderTensor.eye(shape=gradient.shape)
