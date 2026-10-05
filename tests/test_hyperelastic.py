@@ -27,7 +27,32 @@ class TestNeoHooke(unittest.TestCase):
         F = DeformationGradient.eye() * 1.1
         with self.assertRaises(ValueError) as context:
             _ = nh_incomp.stress_from_F(F)
-        self.assertEqual(str(context.exception), "For incompressible behaviour, the determinant of the gradient must be 1.")
+        expected_error = "For incompressible behaviour, the determinant of the gradient must be 1."
+        self.assertEqual(str(context.exception), expected_error)
+
+    def test_stress_free_state(self):
+        F = DeformationGradient.eye()
+        np.testing.assert_almost_equal(nh_comp.stress_from_F(F).matrix, np.zeros((3, 3)))
+        lam = 1.5
+        F = DeformationGradient(np.diag([lam, lam**-0.5, lam**-0.5]))
+        np.testing.assert_almost_equal(
+            nh_comp.stress_from_B(F.B).matrix.trace(), 0)
+
+    def test_isochoric_uniaxial(self):
+        lam = 1.4
+        F = DeformationGradient.diag([lam, lam ** -0.5, lam ** -0.5])  # J = 1
+        sigma = nh_comp.stress_from_F(F)
+        B = np.diag([lam ** 2, lam ** -1, lam ** -1])
+        sigma_ref = 2 * C * (B - np.trace(B) / 3 * np.eye(3))
+        np.testing.assert_allclose(sigma.matrix, sigma_ref, atol=1e-5)
+
+    def test_spherical(self):
+        lam = 1.4
+        F = DeformationGradient.eye() * lam
+        sigma = nh_comp.stress_from_F(F)
+        J = F.J
+        expected = 2*J*(J-1) / D * np.eye(3) / J
+        np.testing.assert_array_almost_equal(sigma.matrix, expected)
 
 if __name__ == '__main__':
     unittest.main()
