@@ -12,7 +12,7 @@ class DeformationGradient(SecondOrderTensor):
 
             \\mathbf{F} = \\mathbf{R}\\cdot\\mathbf{U}
 
-        where :math:`\\mathbf{R}` is the positive semi definite
+        where :math:`\\mathbf{U}` is the positive definite and :math:`\\mathbf{F}` is an orthogonal matrix.
 
         Returns
         -------
@@ -36,7 +36,7 @@ class DeformationGradient(SecondOrderTensor):
 
             \\mathbf{F} = \\mathbf{V}\\cdot\\mathbf{R}
 
-        where :math:`\\mathbf{R}` is the positive semi definite
+        where :math:`\\mathbf{V}` is the positive semi definite and :math:`\\mathbf{F}` is an orthogonal matrix.
 
         Returns
         -------
@@ -166,6 +166,11 @@ class DeformationGradient(SecondOrderTensor):
         Returns
         -------
         SymmetricSecondOrderTensor
-            Green-Lagrangian tensor.
+            Green-Lagrangian tensor
+
+        See Also
+        --------
+        C : Right Cauchy-Green tensor
+        B : Left Cauchy-Green tensor
         """
         return self.Green_Lagrangian()
