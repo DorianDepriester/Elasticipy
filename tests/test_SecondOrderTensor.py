@@ -119,6 +119,10 @@ class TestSecondOrderTensor(unittest.TestCase):
         assert isinstance(V, SymmetricSecondOrderTensor)
         np.testing.assert_array_almost_equal(F.matrix, np.matmul(V.matrix, R))
 
+    def test_diag(self):
+        T = SecondOrderTensor.diag([1,2,3])
+        assert T == np.diag([1,2,3])
+
 
 class TestSymmetricSecondOrderTensor(unittest.TestCase):
     def test_constructor(self):
