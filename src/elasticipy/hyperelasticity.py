@@ -51,7 +51,7 @@ class HyperElastic(ABC):
         """
         Compute the Cauchy stress tensor from the left Cauchy-Green tensor.
 
-        If not implemented, the stress tensor is computed by finite difference from the derivative of the potential
+        If not hard-coded, the stress tensor is computed by finite difference from the derivative of the potential
         function (see Notes).
 
         Parameters
