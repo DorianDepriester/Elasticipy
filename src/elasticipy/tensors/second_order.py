@@ -200,6 +200,13 @@ class SecondOrderTensor:
             return self.__class__(self.matrix - other.matrix)
         elif isinstance(other, (int, float, np.ndarray)):
             return self.__class__(self.matrix - other)
+        elif isinstance(other, SecondOrderTensor):
+            if isinstance(self, SymmetricSecondOrderTensor) and isinstance(other, SymmetricSecondOrderTensor):
+                return SymmetricSecondOrderTensor(self.matrix - other.matrix)
+            elif isinstance(self, SkewSymmetricSecondOrderTensor) and isinstance(other, SkewSymmetricSecondOrderTensor):
+                return SkewSymmetricSecondOrderTensor(self.matrix - other.matrix)
+            else:
+                return SecondOrderTensor(self.matrix - other.matrix)
         else:
             raise NotImplementedError('The element to subtract must be a number, a numpy ndarray or a tensor.')
 
