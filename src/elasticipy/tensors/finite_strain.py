@@ -186,14 +186,15 @@ class DeformationGradient(SecondOrderTensor):
         --------
         C : Right Cauchy-Green tensor
         B : Left Cauchy-Green tensor
+        small_strain : Compute the associated small strain tensor
         """
         return self.Green_Lagrangian()
 
     def small_strain(self):
         """
-        Under the small strain assumption, make first order approximation to compute the small strain tensor.
+        Under the small strain assumption (SSA), make first order approximation to compute the small strain tensor.
 
-        Under the small strain assumption, we have:
+        Under the SSA, we have:
 
         .. math::
 
@@ -209,6 +210,10 @@ class DeformationGradient(SecondOrderTensor):
         -------
         StrainTensor
             Small strain tensor
+
+        See Also
+        --------
+        E : Green-Lagrangian tensor
         """
         gradU = self - SymmetricSecondOrderTensor.eye(shape=self.shape)
         return StrainTensor(gradU, force_symmetry=True)
