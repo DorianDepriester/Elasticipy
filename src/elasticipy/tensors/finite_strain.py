@@ -245,7 +245,7 @@ class CauchyGreenTensor(SymmetricSecondOrderTensor):
 
         .. math::
 
-            \\bar{I}_1 = I_1J**{-2/3}
+            \\bar{I}_1 = I_1J^{-2/3}
 
         Returns
         -------
@@ -262,7 +262,7 @@ class CauchyGreenTensor(SymmetricSecondOrderTensor):
 
         .. math::
 
-            \\bar{I}_2 = I_2J**{-4/3}
+            \\bar{I}_2 = I_2J^{-4/3}
 
         Returns
         -------
