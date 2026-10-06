@@ -232,6 +232,56 @@ class DeformationGradient(SecondOrderTensor):
 
     @classmethod
     def isochoric_tensile(cls, u, stretch):
+        """
+        Create a tensor, or a tensor array, corresponding to the isochoric tensile state (i.e. det(F)=1).
+
+        Parameters
+        ----------
+        u : list or tuple or numpy.ndarray
+            direction of principal stretch
+        stretch : float or list of floats or numpy.ndarray
+            Value(s) of the deformation gradient component along the tensile direction
+
+        Returns
+        -------
+        DeformationGradient
+
+        See Also
+        --------
+        tensile : create a gradient tensor corresponding to the pure tensile state
+        shear : create a gradient tensor corresponding to the pure shear state
+
+        Examples
+        --------
+        Create a gradient tensor corresponding to stretch along the first direction ([1,0,0]), whereas the stretch along
+        all orthogonal directions are such that det(F)=1:
+
+        >>> from elasticipy.tensors.finite_strain import DeformationGradient
+        >>> F = DeformationGradient.isochoric_tensile([1,0,0], stretch=2)
+        >>> print(F)
+        Second-order tensor
+        [[2.         0.         0.        ]
+         [0.         0.70710678 0.        ]
+         [0.         0.         0.70710678]]
+
+        The value for the stretch can be a list (or a numpy array), e.g.:
+
+        >>> F = DeformationGradient.isochoric_tensile([1,0,0], stretch=[1,2,3,4])
+        >>> print(F)
+        Second-order tensor
+        Shape=(4,)
+
+        >>> print(F[-1])
+        Second-order tensor
+        [[4.  0.  0. ]
+         [0.  0.5 0. ]
+         [0.  0.  0.5]]
+
+        One can check that the determinant is always one:
+
+        >>> print(F.I3)
+        [1. 1. 1. 1.]
+        """
         u = u / np.linalg.norm(u)
         p = np.einsum('i,j->ij', u, u)
         q = np.eye(3) - p
