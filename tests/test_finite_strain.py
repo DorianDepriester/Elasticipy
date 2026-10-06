@@ -78,5 +78,11 @@ class TestDeformationGradient(unittest.TestCase):
         F = DeformationGradient.isochoric_tensile([1,1,0], [1,2,3,4,5])
         np.testing.assert_array_almost_equal(F.J, np.ones(5))
 
+    def test_elongation(self):
+        F = DeformationGradient.diag([2, 1, 1])
+        assert F.elongation([1, 0, 0]) == 1.0
+        assert F.elongation([0, 1, 0]) == 0.0
+        assert F.elongation([0, 0, 1]) == 0.0
+
 if __name__ == '__main__':
     unittest.main()
