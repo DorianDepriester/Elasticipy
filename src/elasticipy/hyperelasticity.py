@@ -185,9 +185,8 @@ class MooneyRivlin(HyperElastic):
         for i in range(C.shape[0]):
             for j in range(C.shape[1]):
                 W += C[i, j] * (B.I1_bar-3)**i * (B.I2_bar - 3)**j
-        D = self.D
-        if D is not None:
-            if isinstance(D, float):
+        if self.D is not None:
+            if isinstance(self.D, float):
                 D = (self.D,)
             else:
                 D = self.D
