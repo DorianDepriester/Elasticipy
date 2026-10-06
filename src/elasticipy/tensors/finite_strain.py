@@ -230,6 +230,23 @@ class DeformationGradient(SecondOrderTensor):
         I = SecondOrderTensor.eye(shape=t.shape)
         return cls(t.matrix + I.matrix)
 
+    @classmethod
+    def isochoric_tensile(cls, u, stretch):
+        u = u / np.linalg.norm(u)
+        p = np.einsum('i,j->ij', u, u)
+        q = np.eye(3) - p
+        stretch = np.asarray(stretch)
+        einsum = 'ij,...->...ij'
+        a = np.einsum(einsum, p, stretch)
+        b = np.einsum(einsum, q, stretch ** (-0.5))
+        return cls(a + b)
+
+    def elongation(self, u):
+        C = self.C
+        u = u / np.linalg.norm(u)
+        a = np.einsum('i,...ij,j->...', u, C.matrix, u)
+        return a**0.5 -1
+
 class CauchyGreenTensor(SymmetricSecondOrderTensor):
     @property
     def J(self):
