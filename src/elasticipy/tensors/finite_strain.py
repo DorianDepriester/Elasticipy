@@ -292,6 +292,19 @@ class DeformationGradient(SecondOrderTensor):
         return cls(a + b)
 
     def elongation(self, u):
+        """
+        Compute the relative elongation of the material along a given direction.
+
+        Parameters
+        ----------
+        u : list or tuple or numpy.ndarray
+            direction along which one wants to compute the elongation
+
+        Returns
+        -------
+        float or numpy.ndarray
+            relative elongation
+        """
         C = self.C
         u = u / np.linalg.norm(u)
         a = np.einsum('i,...ij,j->...', u, C.matrix, u)
