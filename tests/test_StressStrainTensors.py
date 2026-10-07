@@ -783,6 +783,15 @@ class TestStressStrainTensors(unittest.TestCase):
         assert stress_array2.shape == (100,)
         np.testing.assert_almost_equal(stress_array.matrix, stress_array2.matrix)
 
+    def test_pressure_constructor(self):
+        s = StressTensor.pressure(1.0)
+        assert s == -np.eye(3)
+
+        p = [1,2,3,4]
+        s = StressTensor.pressure(p)
+        assert s.shape == (4,)
+        np.testing.assert_almost_equal(s.hydrostatic_pressure(), np.array(p))
+
 
 
 if __name__ == '__main__':
