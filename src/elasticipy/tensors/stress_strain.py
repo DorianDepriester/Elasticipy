@@ -268,6 +268,25 @@ class StressTensor(SymmetricSecondOrderTensor):
         """
         return -self.I1/3
 
+    @classmethod
+    def pressure(cls, p):
+        """
+        Create a stress tensor corresponding to hydrostatic pressure.
+
+        Parameters
+        ----------
+        p : float or list or numpy.ndarray
+            Pressure value(s)
+        Returns
+        -------
+        StressTensor
+        """
+        if isinstance(p, (int, float)):
+            return -StressTensor.eye() * p
+        else:
+            p = np.asarray(p)
+            return -StressTensor.eye(shape=p.shape) * p
+
     def elastic_energy(self, strain, mode='pair'):
         """
         Compute the elastic energy.
