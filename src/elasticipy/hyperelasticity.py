@@ -217,6 +217,7 @@ class NeoHooke(MooneyRivlin):
             Material compressibility
         """
         super().__init__(C, D=D)
+        self.C = float(C)
 
     def potential_from_B(self, B):
         if self.D is None:
