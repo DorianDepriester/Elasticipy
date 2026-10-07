@@ -67,6 +67,12 @@ class TestNeoHooke(unittest.TestCase):
         stress_mr = mr.stress_from_F(F, h=1e-6)
         np.testing.assert_allclose(stress_nh.matrix, stress_mr.matrix, atol=1-3)
 
+    def test_stress_from_F_array(self):
+        mag = [1,1.5,2]
+        F = DeformationGradient.isochoric_tensile([1,0,0],mag)
+        sigma = nh_comp.stress_from_F(F)
+        for i, magi in enumerate(mag):
+            np.testing.assert_array_almost_equal(sigma[i].matrix, nh_comp.stress_from_F(F[i]).matrix)
 
 if __name__ == '__main__':
     unittest.main()
