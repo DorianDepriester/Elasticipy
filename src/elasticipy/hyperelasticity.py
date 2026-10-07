@@ -225,7 +225,7 @@ class NeoHooke(MooneyRivlin):
         else:
             return self.C * (B.I1_bar - 3) + (B.J - 1)**2 / self.D
 
-    def stress_from_B(self, B, **kwargs):
+    def stress_from_B_analytical(self, B, **kwargs):
         J = B.J
         tau = 2 * self.C / J ** (2/3) * B.deviatoric_part()
         if self.D is not None:
