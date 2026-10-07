@@ -71,12 +71,14 @@ class TestDeformationGradient(unittest.TestCase):
     def test_isochoric_tensile(self):
         F = DeformationGradient.isochoric_tensile([1,0,0], 1)
         assert F == DeformationGradient.eye()
+        assert F.volumetric_strain() == 0.0
 
         F = DeformationGradient.isochoric_tensile([0,1,0], 100)
         np.testing.assert_array_equal(F.matrix, np.diag([0.1, 100, 0.1]))
 
         F = DeformationGradient.isochoric_tensile([1,1,0], [1,2,3,4,5])
         np.testing.assert_array_almost_equal(F.J, np.ones(5))
+        np.testing.assert_array_almost_equal(F.volumetric_strain(), np.zeros(5))
 
     def test_elongation(self):
         F = DeformationGradient.diag([2, 1, 1])
