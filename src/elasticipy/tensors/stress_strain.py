@@ -277,9 +277,15 @@ class StressTensor(SymmetricSecondOrderTensor):
         ----------
         p : float or list or numpy.ndarray
             Pressure value(s)
+
         Returns
         -------
         StressTensor
+
+        See Also
+        --------
+        tensile : create a stress tensor corresponding to uniaxial tensile/compressive stress
+        shear : create a stress tensor corresponding to pure shear stress
         """
         if isinstance(p, (int, float)):
             return -StressTensor.eye() * p
