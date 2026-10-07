@@ -227,8 +227,8 @@ class NeoHooke(MooneyRivlin):
 
     def stress_from_B_analytical(self, B, **kwargs):
         J = B.J
-        tau = 2 * self.C / J ** (2/3) * B.deviatoric_part()
+        tau = B.deviatoric_part() * 2 * self.C / J ** (2/3)
         if self.D is not None:
             p = 2 * J * (J-1) / self.D
-            tau = tau + p * SymmetricSecondOrderTensor.eye(shape=B.shape)
+            tau = tau + SymmetricSecondOrderTensor.eye(shape=B.shape) * p
         return StressTensor(tau / J)
