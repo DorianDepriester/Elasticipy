@@ -310,6 +310,23 @@ class DeformationGradient(SecondOrderTensor):
         a = np.einsum('i,...ij,j->...', u, C.matrix, u)
         return np.maximum(a, 0.)**0.5 -1
 
+    def volumetric_strain(self):
+        """
+        Compute the volumetric strain.
+
+        It is defined as:
+
+        .. math::
+
+            \frac{\Delta v}{v} = det(\mathbf{F}) - 1
+
+        Returns
+        -------
+        float or numpy.ndarray
+            Volumetric relative change
+        """
+        return self.I3 - 1
+
 class CauchyGreenTensor(SymmetricSecondOrderTensor):
     @property
     def J(self):
