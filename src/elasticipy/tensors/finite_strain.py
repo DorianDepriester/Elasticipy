@@ -308,7 +308,7 @@ class DeformationGradient(SecondOrderTensor):
         C = self.C
         u = u / np.linalg.norm(u)
         a = np.einsum('i,...ij,j->...', u, C.matrix, u)
-        return a**0.5 -1
+        return np.maximum(a, 0.)**0.5 -1
 
 class CauchyGreenTensor(SymmetricSecondOrderTensor):
     @property
