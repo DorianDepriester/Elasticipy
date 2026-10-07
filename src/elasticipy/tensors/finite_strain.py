@@ -318,7 +318,7 @@ class DeformationGradient(SecondOrderTensor):
 
         .. math::
 
-            \frac{\Delta v}{v} = det(\mathbf{F}) - 1
+            \\frac{\\Delta v}{v} = det(\\mathbf{F}) - 1
 
         Returns
         -------
