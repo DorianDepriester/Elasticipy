@@ -205,7 +205,7 @@ class NeoHooke(MooneyRivlin):
 
              W = C(\\bar{I}_1 - 3) + \\frac{(J-1)^2}{D}
 
-        where :math:`C` and :math:`D` are the material constants and :math:`\bar{I}_1=I_1J^{-2/3}`. If D is None
+        where :math:`C` and :math:`D` are the material constants and :math:`\\bar{I}_1=I_1J^{-2/3}`. If D is None
         (default), the material is assumed to be incompressible and the corresponding part in the equation above is
         omitted.
 
