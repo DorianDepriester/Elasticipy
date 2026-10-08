@@ -240,7 +240,7 @@ class DeformationGradient(SecondOrderTensor):
         u : list or tuple or numpy.ndarray
             direction of principal stretch
         stretch : float or list of floats or numpy.ndarray
-            Value(s) of the deformation gradient component along the tensile direction
+            Value(s) of the stretch (rel. elongation) along the tensile direction
 
         Returns
         -------
@@ -257,7 +257,7 @@ class DeformationGradient(SecondOrderTensor):
         all orthogonal directions are such that det(F)=1:
 
         >>> from elasticipy.tensors.finite_strain import DeformationGradient
-        >>> F = DeformationGradient.isochoric_tensile([1,0,0], stretch=2)
+        >>> F = DeformationGradient.isochoric_tensile([1,0,0], stretch=1)
         >>> print(F)
         Second-order tensor
         [[2.         0.         0.        ]
@@ -286,9 +286,10 @@ class DeformationGradient(SecondOrderTensor):
         p = np.einsum('i,j->ij', u, u)
         q = np.eye(3) - p
         stretch = np.asarray(stretch)
+        Fuu = stretch + 1
         einsum = 'ij,...->...ij'
-        a = np.einsum(einsum, p, stretch)
-        b = np.einsum(einsum, q, stretch ** (-0.5))
+        a = np.einsum(einsum, p, Fuu)
+        b = np.einsum(einsum, q, Fuu ** (-0.5))
         return cls(a + b)
 
     def elongation(self, u):
