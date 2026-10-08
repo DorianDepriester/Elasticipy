@@ -254,3 +254,14 @@ class NeoHooke(MooneyRivlin):
             p = 2 * J * (J-1) / self.D
             tau = tau + SymmetricSecondOrderTensor.eye(shape=B.shape) * p
         return StressTensor(tau / J)
+
+    @classmethod
+    def fit(cls, stretch, stress):
+        def fun(x, C):
+            nh_test = cls(C)
+            F = DeformationGradient.isochoric_tensile([1, 0, 0], x)
+            sigma_dev = nh_test.stress_from_F(F)
+            return sigma_dev.C[0, 0] - sigma_dev.C[1, 1]
+
+        C_opt, _ = curve_fit(fun, stretch, stress)
+        return cls(C_opt[0])
