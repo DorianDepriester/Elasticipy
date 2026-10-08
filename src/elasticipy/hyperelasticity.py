@@ -112,6 +112,10 @@ class HyperElastic(ABC):
         -------
         StressTensor
 
+        Notes
+        -----
+        If the material is incompressible, only the deviatoric part of the stress tensor is returned.
+
         See Also
         --------
         stress_from_B_analytical : analytical expression of the stress tensor as a function of B
