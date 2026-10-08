@@ -2,6 +2,7 @@ from elasticipy.tensors.finite_strain import CauchyGreenTensor
 from elasticipy.tensors.stress_strain import StressTensor
 from elasticipy.tensors.second_order import SymmetricSecondOrderTensor
 from abc import ABC, abstractmethod
+from scipy.optimize import curve_fit
 import numpy as np
 
 class HyperElastic(ABC):
