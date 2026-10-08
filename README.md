@@ -31,7 +31,8 @@ Among other features, this package implements:
 - Compatibility with the [Materials Project](https://next-gen.materialsproject.org/) API, [pymatgen](https://pymatgen.org/), 
 [orix](https://orix.readthedocs.io/) and [Damask](https://damask-multiphysics.org/),
 - Crystallographic texture -based calculations,
-- Implementation of common yield criteria, such as von Mises, Tresca, Drucker-Prager and Mohr-Coulomb.
+- Implementation of common yield criteria, such as von Mises, Tresca, Drucker-Prager and Mohr-Coulomb,
+- Finite strains (a.k.a large strains) and hyperelasticity.
 
 ## 🐍 Installation
 Elasticipy can be installed with PIP:
