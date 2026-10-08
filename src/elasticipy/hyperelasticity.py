@@ -144,6 +144,28 @@ class HyperElastic(ABC):
             raise ValueError("For incompressible behaviour, the determinant of the gradient must be 1.")
         return self.stress_from_B(F.B, h=h)
 
+    @classmethod
+    @abstractmethod
+    def fit(cls, stretch, tensile_stress, **kwargs):
+        """
+        Fit an hyperelastic model from stress/strain values given by a tensile test.
+
+        Parameters
+        ----------
+        stretch : list or numpy.ndarray
+            relative elongation (engineering strain)
+        tensile_stress : list or numpy.ndarray
+            True stress
+        kwargs
+            keyword arguments
+
+        Returns
+        -------
+        cls
+            Fitted hyperelastic model
+        """
+        pass
+
 class MooneyRivlin(HyperElastic):
     def __init__(self, C, D=None):
         """
