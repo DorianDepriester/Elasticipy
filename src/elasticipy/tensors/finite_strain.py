@@ -3,6 +3,8 @@ from elasticipy.tensors.second_order import SecondOrderTensor, SymmetricSecondOr
 from elasticipy.tensors.stress_strain import StrainTensor
 
 class DeformationGradient(SecondOrderTensor):
+    name = "Deformation Gradient tensor"
+
     def __init__(self, mat):
         J = np.linalg.det(mat)
         if np.any(np.asarray(J) <= 0):
@@ -329,6 +331,8 @@ class DeformationGradient(SecondOrderTensor):
         return self.I3 - 1
 
 class CauchyGreenTensor(SymmetricSecondOrderTensor):
+    name = "Cauchy-Green tensor"
+
     @property
     def J(self):
         """
