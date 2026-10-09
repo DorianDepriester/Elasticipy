@@ -85,7 +85,7 @@ class TestNeoHooke(unittest.TestCase):
     def test_fit(self):
         stretch, tensile_stress = compute_tensile_curve(nh_incomp)
         nh_fit = NeoHooke.fit(stretch, tensile_stress)
-        assert nh_fit.C == nh_incomp.C
+        np.testing.assert_array_equal(nh_fit.C, nh_incomp.C)
 
 class TestYeoh(unittest.TestCase):
     def test_yeoh_vs_neoHooke(self):
