@@ -261,12 +261,39 @@ class NeoHooke(MooneyRivlin):
         return StressTensor(tau / J)
 
     @classmethod
-    def fit(cls, stretch, stress):
+    def fit(cls, stretch, tensile_stress):
         def fun(x, C):
             nh_test = cls(C)
             F = DeformationGradient.isochoric_tensile([1, 0, 0], x)
             sigma_dev = nh_test.stress_from_F(F)
             return sigma_dev.C[0, 0] - sigma_dev.C[1, 1]
 
-        C_opt, _ = curve_fit(fun, stretch, stress)
+        C_opt, _ = curve_fit(fun, stretch, tensile_stress)
         return cls(C_opt[0])
+
+class Yeoh(MooneyRivlin):
+    def __init__(self, C, D=None):
+        """
+        Create a Yeoh hyper-elastic model
+
+        The compressible Yeoh potential is a particular case of the (generalized)
+        Mooney-Rivlin model, in which the deviatoric terms depend on the first
+        invariant only:
+
+        .. math::
+
+            W = \\sum_{i=1}^N C_{i0}(\\bar{I}_1-3)^i + \\sum_{k=1}^M\\frac{(J-1)^{2k}}{D_k}
+
+        Parameters
+        ----------
+        C : list of float
+            Material constants relative to deviatoric part, ordered as [C10, C20, ...]
+        D : list of float, optional
+            Material constants relative to volumetric part. If not provided,
+            the material is supposed to be incompressible.
+        """
+        C = np.asarray(C)
+        if C.ndim > 1:
+            raise ValueError('C must be a 1-D list of floats, e.g. [C10, C20, C30]')
+        C = np.atleast_2d(C)
+        super().__init__(C.T, D)
