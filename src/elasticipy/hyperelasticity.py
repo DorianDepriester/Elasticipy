@@ -318,3 +318,8 @@ class Yeoh(MooneyRivlin):
         C = np.atleast_1d(C)
         C = np.concatenate(([0.], C)).reshape(-1, 1)
         super().__init__(C, D)
+
+    @classmethod
+    def fit(cls, stretch, tensile_stress, M=3, N=None):
+        C_flat = super()._fit(stretch, tensile_stress, M=M, N=0)
+        return cls(C_flat)
