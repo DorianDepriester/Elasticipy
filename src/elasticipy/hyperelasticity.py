@@ -85,14 +85,15 @@ class HyperElastic(ABC):
         """
         b = B.to_Voigt()
         h_mat = np.eye(6) * h
-        dWdB_voigt = np.zeros(6)
+        shape = B.shape + (6,)
+        dWdB_voigt = np.zeros(shape)
         for i in range(6):
             DWp = self._potential_from_B_voigt(b + h_mat[i])
             DWm = self._potential_from_B_voigt(b - h_mat[i])
-            dWdB_voigt[i] = (DWp - DWm) / 2 / h
+            dWdB_voigt[..., i] = (DWp - DWm) / 2 / h
         dWdB_full = SymmetricSecondOrderTensor.from_Voigt(dWdB_voigt)
         J = np.sqrt(B.I3)
-        return 2 / J * StressTensor(dWdB_full.dot(B), force_symmetry=True)
+        return 2 * StressTensor(dWdB_full.dot(B), force_symmetry=True) / J
 
     def stress_from_B(self, B, h=1e-6):
         """
