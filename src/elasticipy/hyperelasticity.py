@@ -178,7 +178,7 @@ class MooneyRivlin(HyperElastic):
 
         Parameters
         ----------
-        C : float or list of list or numpy.ndarray
+        C : list or numpy.ndarray
             Material constants relative to deviatoric parts, provided as a NxN matrix (see notes)
         D : list of float or numpy.ndarray, optional
             Material constants relative to volumetric part. If not provided, the material is supposed to be
