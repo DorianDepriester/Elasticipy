@@ -102,11 +102,11 @@ class TestYeoh(unittest.TestCase):
         np.testing.assert_allclose(stress.matrix, derivative.matrix, atol=1e-6)
 
     def test_fit(self):
-        yh_3 = Yeoh([86.8, -1.886, 434.2])
+        yh_3 = Yeoh([39.8, -131.9, 82.8])
         stretch = np.linspace(0,1, 100)
         tensile_stress = yh_3.tensile_curve(stretch)
         yh_fit = Yeoh.fit(stretch, tensile_stress)
-        np.testing.assert_allclose(yh_fit.C, yh_3.C, atol=3)
+        np.testing.assert_allclose(yh_fit.C, yh_3.C)
 
 if __name__ == '__main__':
     unittest.main()
