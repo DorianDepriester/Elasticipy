@@ -3,13 +3,21 @@ import numpy as np
 from elasticipy.tensors.finite_strain import DeformationGradient
 from elasticipy.hyperelasticity import NeoHooke, MooneyRivlin, Yeoh
 from elasticipy.tensors.elasticity import StiffnessTensor
-from elasticipy.tensors.stress_strain import StrainTensor
+from elasticipy.tensors.stress_strain import StrainTensor, StressTensor
 
 C = 100.
 D = 500.
 nh_comp = NeoHooke(C, D=D)
 nh_incomp = NeoHooke(C)
+yh = Yeoh(C)
 
+def compute_tensile_curve(model):
+    stretch = np.linspace(0, 1, 100)
+    F = DeformationGradient.isochoric_tensile([1, 0, 0], stretch)
+    sigma_dev = model.stress_from_F(F)
+    p = sigma_dev.C[1, 1]  # sigma_dev_22
+    sigma = sigma_dev + StressTensor.pressure(p)
+    return stretch, sigma.C[0, 0]
 
 class TestNeoHooke(unittest.TestCase):
     def test_small_strain_compr(self):
@@ -75,17 +83,12 @@ class TestNeoHooke(unittest.TestCase):
             np.testing.assert_array_almost_equal(sigma[i].matrix, nh_comp.stress_from_F(F[i]).matrix)
 
     def test_fit(self):
-        stretch = np.linspace(0, 1, 100)
-        F = DeformationGradient.isochoric_tensile([1,0,0], stretch)
-        sigma_dev = nh_incomp.stress_from_F(F)
-        p = sigma_dev.C[1, 1]  # sigma_dev_22
-        sigma = sigma_dev + StressTensor.pressure(p)
-        nh_fit = NeoHooke.fit(stretch, sigma.C[0,0])
+        stretch, tensile_stress = compute_tensile_curve(nh_incomp)
+        nh_fit = NeoHooke.fit(stretch, tensile_stress)
         assert nh_fit.C == nh_incomp.C
 
 class TestYeoh(unittest.TestCase):
     def test_yeoh(self):
-        yh = Yeoh(C)
         F= DeformationGradient.isochoric_tensile([1,0,0], 2)
         assert yh.potential_from_F(F) == nh_incomp.potential_from_F(F)
 
