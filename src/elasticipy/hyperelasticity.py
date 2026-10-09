@@ -243,6 +243,25 @@ class MooneyRivlin(HyperElastic):
 
     @classmethod
     def fit(cls, stretch, tensile_stress, M=3, N=3):
+        """
+        Fit an incompressible Mooney-Rivlin hyper-elastic model on tensile curve data.
+
+        Parameters
+        ----------
+        stretch : list or numpy.ndarray
+            relative elongation (engineering strain)
+        tensile_stress : list or numpy.ndarray
+            True stress
+        M : int, optional
+            Maximum degree to consider for I1 dependence
+        N : int, optional
+            Maximum degree to consider for I2 dependence
+
+        Returns
+        -------
+        cls
+            Fitted hyperelastic model
+        """
         C_flat = cls._fit(stretch, tensile_stress, M, N)
         C_full = np.concatenate(([0.], C_flat))
         return cls(C_full.reshape(M+1, N+1))
