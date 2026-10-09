@@ -1,5 +1,6 @@
 import unittest
 import numpy as np
+
 from elasticipy.tensors.finite_strain import DeformationGradient
 from elasticipy.hyperelasticity import NeoHooke, MooneyRivlin, Yeoh
 from elasticipy.tensors.elasticity import StiffnessTensor
@@ -100,6 +101,12 @@ class TestYeoh(unittest.TestCase):
     def test_yeoh_vs_neoHooke(self):
         F= DeformationGradient.isochoric_tensile([1,0,0], 2)
         assert yh.potential_from_F(F) == nh_incomp.potential_from_F(F)
+
+    def test_fit(self):
+        yh_3 = Yeoh([86.8, -1.886, 434.2])
+        stretch, tensile_stress = compute_tensile_curve(yh_3)
+        yh_fit = Yeoh.fit(stretch, tensile_stress)
+        np.testing.assert_allclose(yh_fit.C, yh_3.C, atol=6)
 
 if __name__ == '__main__':
     unittest.main()
