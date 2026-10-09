@@ -232,11 +232,10 @@ class MooneyRivlin(HyperElastic):
         M = M + 1
         N = N + 1
         def fun(x, *C_flat):
+            F = DeformationGradient.isochoric_tensile([1, 0, 0], x)
             C_flat_full = np.concatenate(([0.], C_flat))
             C = np.asarray(C_flat_full).reshape(M, N)
-            nh_test = MooneyRivlin(C)
-            F = DeformationGradient.isochoric_tensile([1, 0, 0], x)
-            sigma_dev = nh_test.stress_from_F(F)
+            sigma_dev = MooneyRivlin(C).stress_from_F(F)
             return sigma_dev.C[0, 0] - sigma_dev.C[1, 1]
         C0 = np.zeros((M, N))
         E = tensile_stress/stretch
