@@ -228,7 +228,7 @@ class MooneyRivlin(HyperElastic):
         return W
 
     @classmethod
-    def _fit(cls, stretch, tensile_stress, M, N):
+    def _fit(cls, stretch, tensile_stress, M, N, **kwargs):
         M = M + 1
         N = N + 1
         def fun(x, *C_flat):
@@ -242,11 +242,11 @@ class MooneyRivlin(HyperElastic):
         E = np.nanmean(tensile_stress/stretch)
         C0[1,0] = E / 6
         C0_flat = C0.flatten()
-        C_flat_opt, _ = curve_fit(fun, stretch, tensile_stress, p0=C0_flat[1:])
+        C_flat_opt, _ = curve_fit(fun, stretch, tensile_stress, p0=C0_flat[1:], *kwargs)
         return C_flat_opt
 
     @classmethod
-    def fit(cls, stretch, tensile_stress, M=3, N=3):
+    def fit(cls, stretch, tensile_stress, M=3, N=3, **kwargs):
         """
         Fit an incompressible Mooney-Rivlin hyper-elastic model on tensile curve data.
 
@@ -260,6 +260,8 @@ class MooneyRivlin(HyperElastic):
             Maximum degree to consider for I1 dependence
         N : int, optional
             Maximum degree to consider for I2 dependence
+        kwargs
+            keyword arguments passed to scipy.optimize.curve_fit
 
         Returns
         -------
@@ -343,6 +345,6 @@ class Yeoh(MooneyRivlin):
         super().__init__(C, D)
 
     @classmethod
-    def fit(cls, stretch, tensile_stress, M=3, N=None):
-        C_flat = super()._fit(stretch, tensile_stress, M=M, N=0)
+    def fit(cls, stretch, tensile_stress, M=3, **kwargs):
+        C_flat = super()._fit(stretch, tensile_stress, M=M, N=0, **kwargs)
         return cls(C_flat)
