@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 from elasticipy.tensors.finite_strain import DeformationGradient
-from elasticipy.hyperelasticity import NeoHooke, MooneyRivlin
+from elasticipy.hyperelasticity import NeoHooke, MooneyRivlin, Yeoh
 from elasticipy.tensors.elasticity import StiffnessTensor
 from elasticipy.tensors.stress_strain import StrainTensor
 
@@ -73,6 +73,11 @@ class TestNeoHooke(unittest.TestCase):
         sigma = nh_comp.stress_from_F(F)
         for i, magi in enumerate(mag):
             np.testing.assert_array_almost_equal(sigma[i].matrix, nh_comp.stress_from_F(F[i]).matrix)
+
+    def test_yeoh(self):
+        yh = Yeoh(C)
+        F= DeformationGradient.isochoric_tensile([1,0,0], 2)
+        assert yh.potential_from_F(F) == nh_incomp.potential_from_F(F)
 
 if __name__ == '__main__':
     unittest.main()
