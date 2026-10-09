@@ -150,7 +150,6 @@ class HyperElastic(ABC):
         return self.stress_from_B(F.B, h=h)
 
     @classmethod
-    @abstractmethod
     def fit(cls, stretch, tensile_stress, **kwargs):
         """
         Fit an hyperelastic model from stress/strain values given by a tensile test.
@@ -286,7 +285,7 @@ class Yeoh(MooneyRivlin):
 
         Parameters
         ----------
-        C : list of float
+        C : float or list of float
             Material constants relative to deviatoric part, ordered as [C10, C20, ...]
         D : list of float, optional
             Material constants relative to volumetric part. If not provided,
@@ -295,5 +294,6 @@ class Yeoh(MooneyRivlin):
         C = np.asarray(C)
         if C.ndim > 1:
             raise ValueError('C must be a 1-D list of floats, e.g. [C10, C20, C30]')
-        C = np.atleast_2d(C)
-        super().__init__(C.T, D)
+        C = np.atleast_1d(C)
+        C = np.concatenate(([0.], C)).reshape(-1, 1)
+        super().__init__(C, D)
