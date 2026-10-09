@@ -245,14 +245,7 @@ class NeoHooke(MooneyRivlin):
         D : float, optional
             Material compressibility
         """
-        super().__init__(C, D=D)
-        self.C = float(C)
-
-    def potential_from_B(self, B):
-        if self.D is None:
-            return self.C * (B.I1 - 3)
-        else:
-            return self.C * (B.I1_bar - 3) + (B.J - 1)**2 / self.D
+        super().__init__([[0.], [C]], D=D)
 
     def stress_from_B_analytical(self, B, **kwargs):
         J = B.J
