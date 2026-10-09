@@ -175,6 +175,27 @@ class HyperElastic(ABC):
         """
         pass
 
+    def tensile_curve(self, stretch):
+        """
+        Compute the tensile curve of the hyperelastic model.
+
+        Parameters
+        ----------
+        stretch : float or list or numpy.ndarray
+            Engineering strain
+
+        Returns
+        -------
+        float or numpy.ndarray
+            True stress
+        """
+        if self.is_compressible():
+            raise NotImplementedError("Tensile curve is not implemented for compressible materials")
+        else:
+            F = DeformationGradient.isochoric_tensile([1, 0, 0], stretch)
+            sigma_dev = self.stress_from_F(F)
+            return sigma_dev.C[0, 0] - sigma_dev.C[1, 1]
+
 class MooneyRivlin(HyperElastic):
     def __init__(self, C, D=None):
         """
@@ -232,11 +253,10 @@ class MooneyRivlin(HyperElastic):
         M = M + 1
         N = N + 1
         def fun(x, *C_flat):
-            F = DeformationGradient.isochoric_tensile([1, 0, 0], x)
             C_flat_full = np.concatenate(([0.], C_flat))
             C = np.asarray(C_flat_full).reshape(M, N)
-            sigma_dev = MooneyRivlin(C).stress_from_F(F)
-            return sigma_dev.C[0, 0] - sigma_dev.C[1, 1]
+            model = MooneyRivlin(C)
+            return model.tensile_curve(stretch)
         C0 = np.zeros((M, N))
         E = tensile_stress/stretch
         Emean = E[np.isfinite(E)].mean()
