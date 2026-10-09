@@ -239,8 +239,9 @@ class MooneyRivlin(HyperElastic):
             sigma_dev = nh_test.stress_from_F(F)
             return sigma_dev.C[0, 0] - sigma_dev.C[1, 1]
         C0 = np.zeros((M, N))
-        E = np.nanmean(tensile_stress/stretch)
-        C0[1,0] = E / 6
+        E = tensile_stress/stretch
+        Emean = E[np.isfinite(E)].mean()
+        C0[1,0] = Emean / 6
         C0_flat = C0.flatten()
         C_flat_opt, _ = curve_fit(fun, stretch, tensile_stress, p0=C0_flat[1:], *kwargs)
         return C_flat_opt
