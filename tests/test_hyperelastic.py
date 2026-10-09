@@ -102,6 +102,12 @@ class TestYeoh(unittest.TestCase):
         F= DeformationGradient.isochoric_tensile([1,0,0], 2)
         assert yh.potential_from_F(F) == nh_incomp.potential_from_F(F)
 
+    def test_analytical_vs_derivative(self):
+        F = DeformationGradient.isochoric_tensile([1,0,0], 1)
+        stress = yh.stress_from_F(F)
+        derivative = yh.stress_from_derivative(F.B, h=1e-7)
+        np.testing.assert_allclose(stress.matrix, derivative.matrix, atol=1e-6)
+
     def test_fit(self):
         yh_3 = Yeoh([86.8, -1.886, 434.2])
         stretch, tensile_stress = compute_tensile_curve(yh_3)
