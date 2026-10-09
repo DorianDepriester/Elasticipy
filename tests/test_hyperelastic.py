@@ -74,6 +74,16 @@ class TestNeoHooke(unittest.TestCase):
         for i, magi in enumerate(mag):
             np.testing.assert_array_almost_equal(sigma[i].matrix, nh_comp.stress_from_F(F[i]).matrix)
 
+    def test_fit(self):
+        stretch = np.linspace(0, 1, 100)
+        F = DeformationGradient.isochoric_tensile([1,0,0], stretch)
+        sigma_dev = nh_incomp.stress_from_F(F)
+        p = sigma_dev.C[1, 1]  # sigma_dev_22
+        sigma = sigma_dev + StressTensor.pressure(p)
+        nh_fit = NeoHooke.fit(stretch, sigma.C[0,0])
+        assert nh_fit.C == nh_incomp.C
+
+class TestYeoh(unittest.TestCase):
     def test_yeoh(self):
         yh = Yeoh(C)
         F= DeformationGradient.isochoric_tensile([1,0,0], 2)
