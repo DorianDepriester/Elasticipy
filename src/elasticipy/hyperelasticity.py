@@ -223,6 +223,30 @@ class MooneyRivlin(HyperElastic):
                 W += (J-1)**(2*k) / Dk
         return W
 
+    @classmethod
+    def _fit(cls, stretch, tensile_stress, M, N):
+        M = M + 1
+        N = N + 1
+        def fun(x, *C_flat):
+            C_flat_full = np.concatenate(([0.], C_flat))
+            C = np.asarray(C_flat_full).reshape(M, N)
+            nh_test = MooneyRivlin(C)
+            F = DeformationGradient.isochoric_tensile([1, 0, 0], x)
+            sigma_dev = nh_test.stress_from_F(F)
+            return sigma_dev.C[0, 0] - sigma_dev.C[1, 1]
+        C0 = np.zeros((M, N))
+        E = np.nanmean(tensile_stress/stretch)
+        C0[1,0] = E / 6
+        C0_flat = C0.flatten()
+        C_flat_opt, _ = curve_fit(fun, stretch, tensile_stress, p0=C0_flat[1:])
+        return C_flat_opt
+
+    @classmethod
+    def fit(cls, stretch, tensile_stress, M=3, N=3):
+        C_flat = cls._fit(stretch, tensile_stress, M, N)
+        C_full = np.concatenate(([0.], C_flat))
+        return cls(C_full.reshape(M+1, N+1))
+
 class NeoHooke(MooneyRivlin):
     def __init__(self, C, D=None):
         """
