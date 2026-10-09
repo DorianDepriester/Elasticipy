@@ -344,6 +344,17 @@ class Yeoh(MooneyRivlin):
         C = np.concatenate(([0.], C)).reshape(-1, 1)
         super().__init__(C, D)
 
+    def stress_from_B_analytical(self, B, **kwargs):
+        if self.is_compressible():
+            raise NotImplementedError
+        else:
+            dWdI1 = np.zeros(B.shape)
+            C = self.C[:,0]
+            for i, Ci in enumerate(C[1:], start=1):
+                dWdI1 += i * Ci * (B.I1 - 3)**(i-1)
+            a =  2 * B.deviatoric_part() * dWdI1
+            return StressTensor(a.matrix)
+
     @classmethod
     def fit(cls, stretch, tensile_stress, M=3, **kwargs):
         C_flat = super()._fit(stretch, tensile_stress, M=M, N=0, **kwargs)
