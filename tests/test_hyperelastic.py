@@ -88,7 +88,7 @@ class TestNeoHooke(unittest.TestCase):
         assert nh_fit.C == nh_incomp.C
 
 class TestYeoh(unittest.TestCase):
-    def test_yeoh(self):
+    def test_yeoh_vs_neoHooke(self):
         F= DeformationGradient.isochoric_tensile([1,0,0], 2)
         assert yh.potential_from_F(F) == nh_incomp.potential_from_F(F)
 
