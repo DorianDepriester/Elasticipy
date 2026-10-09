@@ -93,7 +93,11 @@ class HyperElastic(ABC):
             dWdB_voigt[..., i] = (DWp - DWm) / 2 / h
         dWdB_full = SymmetricSecondOrderTensor.from_Voigt(dWdB_voigt)
         J = np.sqrt(B.I3)
-        return 2 * StressTensor(dWdB_full.dot(B), force_symmetry=True) / J
+        s = 2 * StressTensor(dWdB_full.dot(B), force_symmetry=True) / J
+        if self.is_compressible():
+            return s
+        else:
+            return s.deviatoric_part()
 
     def stress_from_B(self, B, h=1e-6):
         """
