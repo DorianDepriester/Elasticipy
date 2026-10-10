@@ -1,60 +1,56 @@
 """
-=====================================
-Hyperelastic behaviour (Neo-Hookean)
-=====================================
+==============================================
+Fit an hyperelastic model on a tensile curve
+==============================================
 
-This example shows how to model hyperelastic behaviour.
+This example shows how to fit an hyperelastic model on a tensile curve.
 """
 ###############################################################################
 # Create the hyper-elastic model
 # -------------------------------------
-# We consider the Neo-Hookean model
-from elasticipy.hyperelasticity import NeoHooke
-C = 37.9 # MPa
-nh = NeoHooke(C) # Incompressible case
+
 
 ###############################################################################
-# Create a deformation gradient tensor corresponding to tensile test
+# Simulate the tensile curve
 # -------------------------------------
-# We consider that the material is incompressible. Hence, the corresponding gradient tensor array can be defined as
-# follows:
-from elasticipy.tensors.finite_strain import DeformationGradient
+# We consider the Yeoh model
+from elasticipy.hyperelasticity import Yeoh
+C = [39.8, -131.9, 82.8] # MPa
+yh = Yeoh(C) # Incompressible case
+
+###############################################################################
+# Compute the corresponding tensile curve
 import numpy as np
-stretch = np.linspace(0,1) # 0 to 100% elongation
-F = DeformationGradient.isochoric_tensile([1,0,0], stretch)
+n = 100
+stretch = np.linspace(0,1, n) # 0 to 100% elongation
+tensile_stress = yh.tensile_curve(stretch)
 
 ###############################################################################
-# One can check that all values of this tensor array correspond to isochoric case:
-print(F.volumetric_strain())
+# and add some noise
+noise = np.random.randn(n) * 50
+tensile_stress = tensile_stress + noise
 
 ###############################################################################
-# Compute the corresponding stress
+# Fit a Yeoh model on the simulated sample
+# ----------------------------------------
+yh_fit = Yeoh.fit(stretch, tensile_stress)
+
+###############################################################################
+# Check fitted parameters
+print(yh_fit.C) # To be compared with C (see above)
+
+###############################################################################
+# Now recalculate the stress from the fitted model
+tensile_stress_fit = yh_fit.tensile_curve(stretch)
+
+###############################################################################
+# and plot sample data and fitted model
 # -------------------------------------
-# As the material is incompressible, the hydrostatic pressure cannot be estimated from the deformation gradient (it also
-# depends on the applied load). Therefore, the command below returns the deviatoric part of the stress only:
-sigma_dev = nh.stress_from_F(F)
-
-###############################################################################
-# Actually, on tensile tests, the tensile stress is supposed to be zero on transverse directions (load-free surface of
-# the sample). Thus, the hydrostatic pressure can be inferred from the tensile deviatoric stresses along transverse
-# directions:
-from elasticipy.tensors.stress_strain import StressTensor
-p = sigma_dev.C[1,1]    # sigma_dev_22
-sigma = sigma_dev + StressTensor.pressure(p) # sigma = sigma_dev - pI
-
-###############################################################################
-# One can check that the longitudinal transverse stress is always zero. E.g.:
-print(sigma[-1])
-
-###############################################################################
-# Plot tensile stress vs true strain
-# -------------------------------------
-# As we here talk about large strain, it's better to use true (logarithmic) strain:
-true_strain = np.log(1 + stretch)
-
-from matplotlib import pyplot as plt
-plt.plot(true_strain, sigma.C[0,0])
+import matplotlib.pyplot as plt
+plt.plot(stretch, tensile_stress,       label='Sample (Yeoh + noise)')
+plt.plot(stretch, tensile_stress_fit,   label='Fitted Yeoh')
+plt.legend()
 plt.xlabel('True strain')
 plt.ylabel('Stress (MPa)')
-plt.title('Tensile curve of incompressible Neo-Hookean material')
+plt.title('Fitting a Yeoh hyperelastic model')
 plt.show()
