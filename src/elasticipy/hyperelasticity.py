@@ -231,6 +231,14 @@ class MooneyRivlin(HyperElastic):
 
     @property
     def C(self):
+        """
+        Parameters of the hyperelastic model
+
+        Returns
+        -------
+        float or numpy.ndarray
+            Parameters of the hyperelastic model, returned in a human-readable way
+        """
         return self._C
 
     def is_compressible(self):
