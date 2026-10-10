@@ -224,10 +224,14 @@ class MooneyRivlin(HyperElastic):
             \\bar{I}_1 = I_1J^{-2/3}
             \\bar{I}_2 = I_2J^{-4/3}
         """
-        self.C = np.atleast_2d(C)
+        self._C = np.atleast_2d(C)
         if self.C[0, 0] != 0.:
             raise ValueError('C[0,0] must be zero.')
         self.D = D
+
+    @property
+    def C(self):
+        return self._C
 
     def is_compressible(self):
         return self.D is not None
