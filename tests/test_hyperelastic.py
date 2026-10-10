@@ -111,5 +111,8 @@ class TestYeoh(unittest.TestCase):
         yh_fit = Yeoh.fit(stretch, tensile_stress)
         np.testing.assert_allclose(yh_fit.C, yh_3.C)
 
+    def test_C_property(self):
+        np.testing.assert_array_equal(yh.C, np.array(C))
+
 if __name__ == '__main__':
     unittest.main()
