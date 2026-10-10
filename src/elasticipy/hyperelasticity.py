@@ -225,7 +225,7 @@ class MooneyRivlin(HyperElastic):
             \\bar{I}_2 = I_2J^{-4/3}
         """
         self._C = np.atleast_2d(C)
-        if self.C[0, 0] != 0.:
+        if self._C[0, 0] != 0.:
             raise ValueError('C[0,0] must be zero.')
         self.D = D
 
@@ -239,7 +239,7 @@ class MooneyRivlin(HyperElastic):
     def potential_from_B(self, B):
         J = B.J
         W = np.zeros_like(J)
-        C = self.C
+        C = self._C
         for i in range(C.shape[0]):
             for j in range(C.shape[1]):
                 W += C[i, j] * (B.I1_bar-3)**i * (B.I2_bar - 3)**j
@@ -320,10 +320,13 @@ class NeoHooke(MooneyRivlin):
         """
         super().__init__([[0.], [C]], D=D)
 
+    @property
+    def C(self):
+        return self._C[1,0]
+
     def stress_from_B_analytical(self, B, **kwargs):
         J = B.J
-        C = self.C[1,0]
-        tau = B.deviatoric_part() * 2 * C / J ** (2/3)
+        tau = B.deviatoric_part() * 2 * self.C / J ** (2/3)
         if self.D is not None:
             p = 2 * J * (J-1) / self.D
             tau = tau + SymmetricSecondOrderTensor.eye(shape=B.shape) * p
