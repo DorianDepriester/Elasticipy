@@ -371,13 +371,16 @@ class Yeoh(MooneyRivlin):
         C = np.concatenate(([0.], C)).reshape(-1, 1)
         super().__init__(C, D)
 
+    @property
+    def C(self):
+        return self._C[1:,0]
+
     def stress_from_B_analytical(self, B, **kwargs):
         if self.is_compressible():
             raise NotImplementedError
         else:
             dWdI1 = np.zeros(B.shape)
-            C = self.C[:,0]
-            for i, Ci in enumerate(C[1:], start=1):
+            for i, Ci in enumerate(self.C, start=1):
                 dWdI1 += i * Ci * (B.I1 - 3)**(i-1)
             a =  2 * B.deviatoric_part() * dWdI1
             return StressTensor(a.matrix)
