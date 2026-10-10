@@ -81,6 +81,9 @@ class TestNeoHooke(unittest.TestCase):
         nh_fit = NeoHooke.fit(stretch, tensile_stress)
         np.testing.assert_array_equal(nh_fit.C, nh_incomp.C)
 
+    def test_C_property(self):
+        assert nh_comp.C == C
+
 class TestYeoh(unittest.TestCase):
     def test_shear(self):
         eps = 1e-3
