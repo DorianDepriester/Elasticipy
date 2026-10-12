@@ -76,10 +76,15 @@ class TestNeoHooke(unittest.TestCase):
             np.testing.assert_array_almost_equal(sigma[i].matrix, nh_comp.stress_from_F(F[i]).matrix)
 
     def test_fit(self):
-        stretch = np.linspace(0, 1, 100)
-        tensile_stress = nh_incomp.tensile_curve(stretch)
-        nh_fit = NeoHooke.fit(stretch, tensile_stress)
-        np.testing.assert_array_equal(nh_fit.C, nh_incomp.C)
+        stretch = np.linspace(0, 1, 500)
+        mat = [True, False]
+        for i in range(2):
+            for j in range(2):
+                true_strain = mat[i]
+                true_stress = mat[j]
+                tensile_stress = nh_incomp.tensile_curve(stretch, true_stress=true_stress, true_strain=true_strain)
+                nh_fit = NeoHooke.fit(stretch, tensile_stress, true_stress=true_stress, true_strain=true_strain)
+                np.testing.assert_array_equal(nh_fit.C, nh_incomp.C)
 
     def test_C_property(self):
         assert nh_comp.C == C
