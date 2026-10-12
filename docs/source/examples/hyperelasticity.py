@@ -15,19 +15,19 @@ This example shows how to fit an hyperelastic model on a tensile curve.
 # -------------------------------------
 # We consider the Yeoh model
 from elasticipy.hyperelasticity import Yeoh
-C = [39.8, -131.9, 82.8] # MPa
+C = [0.18, -2e-3, 5e-5] # MPa
 yh = Yeoh(C) # Incompressible case
 
 ###############################################################################
 # Compute the corresponding tensile curve
 import numpy as np
-n = 100
-stretch = np.linspace(0,1, n) # 0 to 100% elongation
+n = 500
+stretch = np.linspace(0,7, n) # 0 to 100% elongation
 tensile_stress = yh.tensile_curve(stretch)
 
 ###############################################################################
 # and add some noise
-noise = np.random.randn(n) * 50
+noise = np.random.randn(n) * 2
 tensile_stress = tensile_stress + noise
 
 ###############################################################################

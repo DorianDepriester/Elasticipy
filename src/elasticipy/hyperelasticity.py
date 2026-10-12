@@ -175,7 +175,7 @@ class HyperElastic(ABC):
         """
         pass
 
-    def tensile_curve(self, stretch):
+    def tensile_curve(self, stretch, true_stress=True):
         """
         Compute the tensile curve of the hyperelastic model.
 
@@ -194,7 +194,11 @@ class HyperElastic(ABC):
         else:
             F = DeformationGradient.isochoric_tensile([1, 0, 0], stretch)
             sigma_dev = self.stress_from_F(F)
-            return sigma_dev.C[0, 0] - sigma_dev.C[1, 1]
+            sigma = sigma_dev.C[0, 0] - sigma_dev.C[1, 1]
+            if true_stress:
+                return sigma
+            else:
+                return sigma * (F.C[1,1] * F.C[2,2])
 
 class MooneyRivlin(HyperElastic):
     def __init__(self, C, D=None):

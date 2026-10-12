@@ -103,38 +103,43 @@ class DeformationGradient(SecondOrderTensor):
         """
         return self.I3
 
-    @property
-    def C(self):
+    def CauchyGreen(self, side='right'):
         """
-        Compute the right Cauchy-Green tensor.
+        Compute the Cauchy-Green tensor
 
-        The right Cauchy-Green tensor is defined as:
+        Returns either the right Cauchy-Green tensor or the left Cauchy-Green tensor (see below). The right Cauchy-Green
+        tensor is defined as:
 
         .. math::
 
-            \\mathbf{C} = \\mathbf{F}^\\top\\cdot\\mathbf{F}
+            C = \\mathbf{F}^\\top\\cdot\\mathbf{F}
 
+        The left Cauchy-Green tensor is defined as:
+
+        .. math::
+
+            B = \\mathbf{F}\\cdot\\mathbf{F}^\\top
+
+        Parameters
+        ----------
+        side : {'left', 'right'}
+            Specify if the right or left Cauchy-Green tensor should be computed.
         Returns
         -------
         CauchyGreenTensor
-
-        See Also
-        --------
-        E : Green-Lagrangian tensor
-        B : Left Cauchy-Green tensor
         """
-        return CauchyGreenTensor(self.T.dot(self))
+        return CauchyGreenTensor(self, side=side)
 
     @property
     def B(self):
         """
         Compute the left Cauchy-Green tensor.
 
-        The left Cauchy-Green tensor is defined as:
+        It is actually an alias for ``F.CauchyGreen(side='left')``.
 
         .. math::
 
-            \\mathbf{C} = \\mathbf{F}\\cdot\\mathbf{F}^\\top
+            \\mathbf{B} = \\mathbf{F}\\cdot\\mathbf{F}^\\top
 
         Returns
         -------
@@ -143,9 +148,9 @@ class DeformationGradient(SecondOrderTensor):
         See Also
         --------
         E : Green-Lagrangian tensor
-        C : Right Cauchy-Green tensor
+        CauchyGreen : compute a Cauchy-Green tensor
         """
-        return CauchyGreenTensor(self.dot(self.T))
+        return self.CauchyGreen(side='left')
 
     def Green_Lagrangian(self):
         """
@@ -166,11 +171,11 @@ class DeformationGradient(SecondOrderTensor):
 
         See Also
         --------
-        C : Right Cauchy-Green tensor
+        CauchyGreen : compute a Cauchy-Green tensor
         B : Left Cauchy-Green tensor
         """
         I = SymmetricSecondOrderTensor.eye(shape=self.shape)
-        return 0.5 * (self.C - I)
+        return 0.5 * (self.CauchyGreen() - I)
 
     @property
     def E(self):
@@ -186,7 +191,7 @@ class DeformationGradient(SecondOrderTensor):
 
         See Also
         --------
-        C : Right Cauchy-Green tensor
+        CauchyGreen : compute a Cauchy-Green tensor
         B : Left Cauchy-Green tensor
         small_strain : Compute the associated small strain tensor
         """
@@ -308,7 +313,7 @@ class DeformationGradient(SecondOrderTensor):
         float or numpy.ndarray
             relative elongation
         """
-        C = self.C
+        C = self.CauchyGreen()
         u = u / np.linalg.norm(u)
         a = np.einsum('i,...ij,j->...', u, C.matrix, u)
         return np.maximum(a, 0.)**0.5 -1
@@ -332,6 +337,35 @@ class DeformationGradient(SecondOrderTensor):
 
 class CauchyGreenTensor(SymmetricSecondOrderTensor):
     name = "Cauchy-Green tensor"
+
+    def __init__(self, M, side='right'):
+        """
+        Create a CauchyGreenTensor instance.
+
+        Parameters
+        ----------
+        M : np.ndarray or SecondOrderTensor or DeformationGradient
+            If a DeformationGradient instance is given, the Cauchy-Green tensor will be computed as follows (depending
+            on the `side` argument (see below):
+
+            .. math::
+
+                C = \\mathbf{F}^\\top\\cdot \\mathbf{F} \\quad \\text{(right)}
+
+                B = \\mathbf{F}\\cdot \\mathbf{F}^\\top \\quad \\text{(left)}
+
+        side : {'left', 'right'}
+            Create a left or right Cauchy-Green tensor. This option is only used if the first argument is of class
+            DeformationGradient (see above).
+        """
+        if isinstance(M, DeformationGradient):
+            if side == 'left':
+                C = M.dot(M.T)
+            else:
+                C = M.T.dot(M)
+            super().__init__(C)
+        else:
+            super().__init__(M)
 
     @property
     def J(self):
