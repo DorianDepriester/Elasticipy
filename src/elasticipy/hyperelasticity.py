@@ -176,24 +176,32 @@ class HyperElastic(ABC):
         """
         pass
 
-    def tensile_curve(self, stretch, true_stress=True):
+    def tensile_curve(self, longitudinal_strain, true_strain=False, true_stress=False):
         """
         Compute the tensile curve of the hyperelastic model.
 
         Parameters
         ----------
-        stretch : float or list or numpy.ndarray
-            Engineering strain
+        longitudinal_strain : float or list or numpy.ndarray
+            Longitudinal strain. It can relate to conventional (engineering) strain or a true (i.e. logarithmic) strain;
+            see below.
+        true_strain: bool, optional
+            Specify if the provided strain correspond to the true strain or the engineering strain.
+        true_stress: bool, optional
+            Sets if the returned tensile curve corresponds to the true stress (accounting for cross-section changes) or
+            the engineering stress.
 
         Returns
         -------
         float or numpy.ndarray
-            True stress
+            Tensile stress
         """
         if self.is_compressible():
             raise NotImplementedError("Tensile curve is not implemented for compressible materials")
         else:
-            F = DeformationGradient.isochoric_tensile([1, 0, 0], stretch)
+            if true_strain:
+                longitudinal_strain = np.exp(longitudinal_strain) - 1
+            F = DeformationGradient.isochoric_tensile([1, 0, 0], longitudinal_strain)
             sigma_dev = self.stress_from_F(F)
             sigma = sigma_dev.C[0, 0] - sigma_dev.C[1, 1]
             if true_stress:
@@ -266,30 +274,30 @@ class MooneyRivlin(HyperElastic):
         return W
 
     @classmethod
-    def _fit(cls, stretch, tensile_stress, M, N, **kwargs):
+    def _fit(cls, strain, stress, M, N, true_stress, true_strain, **kwargs):
         M = M + 1
         N = N + 1
         def fun(x, *C_flat):
             C_flat_full = np.concatenate(([0.], C_flat))
             C = np.asarray(C_flat_full).reshape(M, N)
             model = MooneyRivlin(C)
-            return model.tensile_curve(stretch)
+            return model.tensile_curve(x, true_strain=true_strain, true_stress=true_stress)
         C0 = np.zeros((M, N))
-        E = tensile_stress/stretch
+        E = stress / strain
         Emean = E[np.isfinite(E)].mean()
         C0[1,0] = Emean / 6
         C0_flat = C0.flatten()
-        C_flat_opt, _ = curve_fit(fun, stretch, tensile_stress, p0=C0_flat[1:], *kwargs)
+        C_flat_opt, _ = curve_fit(fun, strain, stress, p0=C0_flat[1:], *kwargs)
         return C_flat_opt
 
     @classmethod
-    def fit(cls, stretch, tensile_stress, M=3, N=3, **kwargs):
+    def fit(cls, longitudinal_strain, tensile_stress, M=3, N=3, true_strain=False, true_stress=False, **kwargs):
         """
         Fit an incompressible Mooney-Rivlin hyper-elastic model on tensile curve data.
 
         Parameters
         ----------
-        stretch : list or numpy.ndarray
+        longitudinal_strain : list or numpy.ndarray
             relative elongation (engineering strain)
         tensile_stress : list or numpy.ndarray
             True stress
@@ -297,6 +305,11 @@ class MooneyRivlin(HyperElastic):
             Maximum degree to consider for I1 dependence
         N : int, optional
             Maximum degree to consider for I2 dependence
+        true_strain: bool, optional
+            Sets if the provided strain correspond to true (i.e. logarithmic) or engineering definition
+        true_stress: bool, optional
+            Sets if the provided stress correspond to true (accounting for cross-section changes) or engineering
+            definition of the tensile stress
         kwargs
             keyword arguments passed to scipy.optimize.curve_fit
 
@@ -305,7 +318,7 @@ class MooneyRivlin(HyperElastic):
         cls
             Fitted hyperelastic model
         """
-        C_flat = cls._fit(stretch, tensile_stress, M, N)
+        C_flat = cls._fit(longitudinal_strain, tensile_stress, M, N, true_stress, true_strain)
         C_full = np.concatenate(([0.], C_flat))
         return cls(C_full.reshape(M+1, N+1))
 
@@ -346,14 +359,12 @@ class NeoHooke(MooneyRivlin):
         return StressTensor(tau / J)
 
     @classmethod
-    def fit(cls, stretch, tensile_stress):
+    def fit(cls, longitudinal_strain, tensile_stress, true_strain=False, true_stress=False, **kwargs):
         def fun(x, C):
             nh_test = cls(C)
-            F = DeformationGradient.isochoric_tensile([1, 0, 0], x)
-            sigma_dev = nh_test.stress_from_F(F)
-            return sigma_dev.C[0, 0] - sigma_dev.C[1, 1]
+            return nh_test.tensile_curve(x, true_strain=true_strain, true_stress=true_stress)
 
-        C_opt, _ = curve_fit(fun, stretch, tensile_stress)
+        C_opt, _ = curve_fit(fun, longitudinal_strain, tensile_stress, **kwargs)
         return cls(C_opt[0])
 
 class Yeoh(MooneyRivlin):
@@ -399,6 +410,6 @@ class Yeoh(MooneyRivlin):
             return StressTensor(a.matrix)
 
     @classmethod
-    def fit(cls, stretch, tensile_stress, M=3, **kwargs):
-        C_flat = super()._fit(stretch, tensile_stress, M=M, N=0, **kwargs)
+    def fit(cls, longitudinal_strain, tensile_stress, M=3, true_stress=False, true_strain=False, **kwargs):
+        C_flat = super()._fit(longitudinal_strain, tensile_stress, M=M, N=0, true_stress=true_stress, true_strain=true_strain, **kwargs)
         return cls(C_flat)

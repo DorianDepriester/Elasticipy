@@ -22,12 +22,12 @@ yh = Yeoh(C) # Incompressible case
 # Compute the corresponding tensile curve
 import numpy as np
 n = 500
-stretch = np.linspace(0,7, n) # 0 to 100% elongation
+stretch = np.linspace(-0.8,7, n) # 0 to 100% elongation
 tensile_stress = yh.tensile_curve(stretch)
 
 ###############################################################################
 # and add some noise
-noise = np.random.randn(n) * 2
+noise = np.random.randn(n) * 1.0
 tensile_stress = tensile_stress + noise
 
 ###############################################################################
@@ -50,7 +50,7 @@ import matplotlib.pyplot as plt
 plt.plot(stretch, tensile_stress,       label='Sample (Yeoh + noise)')
 plt.plot(stretch, tensile_stress_fit,   label='Fitted Yeoh')
 plt.legend()
-plt.xlabel('True strain')
-plt.ylabel('Stress (MPa)')
+plt.xlabel('Engineering strain')
+plt.ylabel('Engineering stress (MPa)')
 plt.title('Fitting a Yeoh hyperelastic model')
 plt.show()
