@@ -15,7 +15,7 @@ This example shows how to fit an hyperelastic model on a tensile curve.
 # -------------------------------------
 # We consider the Yeoh model
 from elasticipy.hyperelasticity import Yeoh
-C = [0.18, -2e-3, 5e-5] # MPa
+C = [0.18, -2e-3, 5e-5] # MPa, taken from https://help.altair.com/hwsolvers/rad/topics/solvers/rad/yeoh_hyperelastic_material_verification_intro_r.htm
 yh = Yeoh(C) # Incompressible case
 
 ###############################################################################
