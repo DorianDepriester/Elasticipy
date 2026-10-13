@@ -28,12 +28,12 @@ tensile_stress = yh.tensile_curve(stretch)
 ###############################################################################
 # and add some noise
 noise = np.random.randn(n) * 1.0
-tensile_stress = tensile_stress + noise
+tensile_stress_noise = tensile_stress + noise
 
 ###############################################################################
 # Fit a Yeoh model on the simulated sample
 # ----------------------------------------
-yh_fit = Yeoh.fit(stretch, tensile_stress)
+yh_fit = Yeoh.fit(stretch, tensile_stress_noise)
 
 ###############################################################################
 # Check fitted parameters
@@ -47,8 +47,9 @@ tensile_stress_fit = yh_fit.tensile_curve(stretch)
 # and plot sample data and fitted model
 # -------------------------------------
 import matplotlib.pyplot as plt
-plt.plot(stretch, tensile_stress,       label='Sample (Yeoh + noise)')
-plt.plot(stretch, tensile_stress_fit,   label='Fitted Yeoh')
+plt.plot(stretch, tensile_stress, label='Ground truth (Yeoh)')
+plt.scatter(stretch, tensile_stress_noise, label='Sample (Yeoh + noise)', marker='.')
+plt.plot(stretch, tensile_stress_fit,   label='Fitted Yeoh', linestyle='dotted')
 plt.legend()
 plt.xlabel('Engineering strain')
 plt.ylabel('Engineering stress (MPa)')
