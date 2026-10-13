@@ -22,12 +22,12 @@ yh = Yeoh(C) # Incompressible case
 # Compute the corresponding tensile curve
 import numpy as np
 n = 500
-stretch = np.linspace(-0.8,7, n) # 0 to 100% elongation
+stretch = np.linspace(0,7, n) # 0 to 700% elongation
 tensile_stress = yh.tensile_curve(stretch)
 
 ###############################################################################
 # and add some noise
-noise = np.random.randn(n) * 1.0
+noise = np.random.randn(n) * 0.5
 tensile_stress_noise = tensile_stress + noise
 
 ###############################################################################
