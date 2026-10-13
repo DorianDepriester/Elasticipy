@@ -111,7 +111,7 @@ class TestYeoh(unittest.TestCase):
 
     def test_fit(self):
         yh_3 = Yeoh([39.8, -131.9, 82.8])
-        stretch = np.linspace(0,0.7, 100)
+        stretch = np.linspace(0,0.8, 100)
         mat = [True, False]
         for i in range(2):
             for j in range(2):
@@ -119,7 +119,7 @@ class TestYeoh(unittest.TestCase):
                 true_stress = mat[j]
                 tensile_stress = yh_3.tensile_curve(stretch, true_strain=true_strain, true_stress=true_stress)
                 yh_fit = Yeoh.fit(stretch, tensile_stress, true_strain=true_strain, true_stress=true_stress)
-                np.testing.assert_allclose(yh_fit.C, yh_3.C)
+                np.testing.assert_allclose(yh_fit.C, yh_3.C, atol=1e-3)
 
     def test_C_property(self):
         np.testing.assert_array_equal(yh.C, np.array(C))

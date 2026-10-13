@@ -283,9 +283,13 @@ class MooneyRivlin(HyperElastic):
             model = MooneyRivlin(C)
             return model.tensile_curve(x, true_strain=true_strain, true_stress=true_stress)
         C0 = np.zeros((M, N))
-        C0[1,0] = 1.0
+        C0[1,0] = 1.
         C0_flat = C0.flatten()
-        C_flat_opt, _ = curve_fit(fun, strain, stress, p0=C0_flat[1:], *kwargs)
+        lb = -np.ones_like(C0)*np.inf
+        lb[1,0] = 0.0
+        ub = np.ones_like(C0)*np.inf
+        bounds = [lb.flatten()[1:], ub.flatten()[1:]]
+        C_flat_opt, _ = curve_fit(fun, strain, stress, p0=C0_flat[1:], bounds=bounds, **kwargs)
         return C_flat_opt
 
     @classmethod
