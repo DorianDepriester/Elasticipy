@@ -242,6 +242,15 @@ class MooneyRivlin(HyperElastic):
             raise ValueError('C[0,0] must be zero.')
         self.D = D
 
+    def __repr__(self):
+        msg = 'Cij=\r' + self._C.__str__()
+        if self.is_compressible():
+            head = 'Generalized Mooney-Rivlin hyper-elastic model\r'
+            msg += '\rD=' + self.D.__str__()
+        else:
+            head = 'Generalized incompressible Mooney-Rivlin hyper-elastic model\r'
+        return head + msg
+
     @property
     def C(self):
         """
