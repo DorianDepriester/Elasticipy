@@ -156,13 +156,13 @@ class HyperElastic(ABC):
         return self.stress_from_B(B, h=h)
 
     @classmethod
-    def fit(cls, stretch, tensile_stress, **kwargs):
+    def fit(cls, tensile_strain, tensile_stress, **kwargs):
         """
         Fit an hyperelastic model from stress/strain values given by a tensile test.
 
         Parameters
         ----------
-        stretch : list or numpy.ndarray
+        tensile_strain : list or numpy.ndarray
             relative elongation (engineering strain)
         tensile_stress : list or numpy.ndarray
             True stress
@@ -293,13 +293,13 @@ class MooneyRivlin(HyperElastic):
         return C_flat_opt
 
     @classmethod
-    def fit(cls, longitudinal_strain, tensile_stress, M=3, N=3, true_strain=False, true_stress=False, **kwargs):
+    def fit(cls, tensile_strain, tensile_stress, M=3, N=3, true_strain=False, true_stress=False, **kwargs):
         """
         Fit an incompressible Mooney-Rivlin hyper-elastic model on tensile curve data.
 
         Parameters
         ----------
-        longitudinal_strain : list or numpy.ndarray
+        tensile_strain : list or numpy.ndarray
             relative elongation (engineering strain)
         tensile_stress : list or numpy.ndarray
             True stress
@@ -320,7 +320,7 @@ class MooneyRivlin(HyperElastic):
         cls
             Fitted hyperelastic model
         """
-        C_flat = cls._fit(longitudinal_strain, tensile_stress, M, N, true_stress, true_strain)
+        C_flat = cls._fit(tensile_strain, tensile_stress, M, N, true_stress, true_strain)
         C_full = np.concatenate(([0.], C_flat))
         return cls(C_full.reshape(M+1, N+1))
 
@@ -361,12 +361,12 @@ class NeoHooke(MooneyRivlin):
         return StressTensor(tau / J)
 
     @classmethod
-    def fit(cls, longitudinal_strain, tensile_stress, true_strain=False, true_stress=False, **kwargs):
+    def fit(cls, tensile_strain, tensile_stress, true_strain=False, true_stress=False, **kwargs):
         def fun(x, C):
             nh_test = cls(C)
             return nh_test.tensile_curve(x, true_strain=true_strain, true_stress=true_stress)
 
-        C_opt, _ = curve_fit(fun, longitudinal_strain, tensile_stress, **kwargs)
+        C_opt, _ = curve_fit(fun, tensile_strain, tensile_stress, **kwargs)
         return cls(C_opt[0])
 
 class Yeoh(MooneyRivlin):
@@ -412,6 +412,6 @@ class Yeoh(MooneyRivlin):
             return StressTensor(a.matrix)
 
     @classmethod
-    def fit(cls, longitudinal_strain, tensile_stress, M=3, true_stress=False, true_strain=False, **kwargs):
-        C_flat = super()._fit(longitudinal_strain, tensile_stress, M=M, N=0, true_stress=true_stress, true_strain=true_strain, **kwargs)
+    def fit(cls, tensile_strain, tensile_stress, M=3, true_stress=False, true_strain=False, **kwargs):
+        C_flat = super()._fit(tensile_strain, tensile_stress, M=M, N=0, true_stress=true_stress, true_strain=true_strain, **kwargs)
         return cls(C_flat)
