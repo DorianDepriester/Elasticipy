@@ -99,6 +99,18 @@ class TestNeoHooke(unittest.TestCase):
     def test_C_property(self):
         assert nh_comp.C == C
 
+    def test_repr(self):
+        assert nh_incomp.__repr__() == ('Generalized incompressible Mooney-Rivlin hyper-elastic model\r'
+                                'Cij=\r'
+                                '[[  0.]\n'
+                                ' [100.]]')
+
+        assert nh_comp.__repr__() == ('Generalized Mooney-Rivlin hyper-elastic model\r'
+                                'Cij=\r'
+                                '[[  0.]\n'
+                                ' [100.]]\r'
+                                'D=500.0')
+
 class TestYeoh(unittest.TestCase):
     def test_M_N(self):
         assert yh_3.M == 3
@@ -124,7 +136,7 @@ class TestYeoh(unittest.TestCase):
         np.testing.assert_allclose(stress.matrix, derivative.matrix, atol=1e-6)
 
     def test_fit(self):
-        stretch = np.linspace(0,0.8, 100)
+        stretch = np.linspace(0,1, 100)
         mat = [True, False]
         for i in range(2):
             for j in range(2):
@@ -137,6 +149,12 @@ class TestYeoh(unittest.TestCase):
     def test_C_property(self):
         np.testing.assert_array_equal(yh.C, np.array(C))
 
+    def test_repr(self):
+        assert yh.__repr__() == ('Generalized incompressible Mooney-Rivlin hyper-elastic model\r'
+                                'Cij=\r'
+                                '[[  0.]\n'
+                                ' [100.]]')
+
 class TestMooneyRivelin(unittest.TestCase):
     def test_fit(self):
         stretch = np.linspace(0, 1, 500)
@@ -147,6 +165,12 @@ class TestMooneyRivelin(unittest.TestCase):
     def test_M_N(self):
         assert mr_23.M == 1
         assert mr_23.N == 2
+
+    def test_repr(self):
+        assert mr_23.__repr__() == ('Generalized incompressible Mooney-Rivlin hyper-elastic model\r'
+                                   'Cij=\r'
+                                   '[[0.    0.087 0.005]\n'
+                                   ' [0.35  0.012 0.003]]')
 
 if __name__ == '__main__':
     unittest.main()
