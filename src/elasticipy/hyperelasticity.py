@@ -243,13 +243,21 @@ class MooneyRivlin(HyperElastic):
         self.D = D
 
     def __repr__(self):
-        msg = 'Cij=\r' + self._C.__str__()
+        C = np.array2string(self.C, separator=', ')
+        msg = f'{self.__class__.__name__}(C={C}'
         if self.is_compressible():
-            head = 'Generalized Mooney-Rivlin hyper-elastic model\r'
-            msg += '\rD=' + self.D.__str__()
-        else:
-            head = 'Generalized incompressible Mooney-Rivlin hyper-elastic model\r'
-        return head + msg
+            D = self.D if isinstance(self.D, float) else list(self.D)
+            msg += f', D={D}'
+        msg += ')'
+        return msg
+
+    def __str__(self):
+        C = str(self.C)
+        head = 'Generalized incompressible Mooney-Rivlin hyper-elastic model'
+        if self.is_compressible():
+            head = 'Generalized Mooney-Rivlin hyper-elastic model'
+            return f'{head}\nCij=\n{C}\nD={self.D}'
+        return f'{head}\nCij=\n{C}'
 
     @property
     def C(self):
