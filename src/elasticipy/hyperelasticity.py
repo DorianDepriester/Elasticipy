@@ -416,14 +416,21 @@ class Yeoh(MooneyRivlin):
         return self._C[1:,0]
 
     def stress_from_B_analytical(self, B, **kwargs):
-        if self.is_compressible():
-            raise NotImplementedError
-        else:
-            dWdI1 = np.zeros(B.shape)
-            for i, Ci in enumerate(self.C, start=1):
-                dWdI1 += i * Ci * (B.I1 - 3)**(i-1)
-            a =  2 * B.deviatoric_part() * dWdI1
-            return StressTensor(a.matrix)
+        J = B.J
+        # dW/dI1_bar
+        dWdI1 = np.zeros(B.shape)
+        C = np.atleast_1d(self._C[1:, 0])
+        for i, Ci in enumerate(C, start=1):
+            dWdI1 += i * Ci * (B.I1_bar - 3) ** (i - 1)
+        # deviatoric stress (unloaded: pressure term) + volumetric contribution
+        tau = 2 * B.deviatoric_part() * dWdI1 / J ** (2 / 3)  # careful: see note below
+        if self.D is not None:
+            D = np.atleast_1d(self.D)
+            p = np.zeros(B.shape)
+            for k, Dk in enumerate(D, start=1):
+                p += 2 * k * J * (J - 1) ** (2 * k - 1) / Dk
+            tau = tau + SymmetricSecondOrderTensor.eye(shape=B.shape) * p
+        return StressTensor(tau / J)
 
     @classmethod
     def fit(cls, tensile_strain, tensile_stress, M=3, true_stress=False, true_strain=False, C0=None, **kwargs):
