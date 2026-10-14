@@ -273,23 +273,36 @@ class MooneyRivlin(HyperElastic):
                 W += (J-1)**(2*k) / Dk
         return W
 
+    @staticmethod
+    def _initial_guess_fit(tensile_strain, tensile_stress, M, N):
+        strain_thres = 1e-2
+        mask = tensile_strain < strain_thres
+        eps = tensile_strain[mask]
+        sig = tensile_stress[mask]
+        C = np.zeros((M, N))
+        if np.count_nonzero(mask) > 2:
+            E, _ = np.polyfit(eps, sig, 1)
+        else:
+            E = (tensile_stress[-1] - tensile_stress[0]) / (tensile_strain[-1] - tensile_strain[0])
+        C[1, 0] = max(E / 6, 1e-6)
+        return C.flatten()[1:]
+
     @classmethod
     def _fit(cls, strain, stress, M, N, true_stress, true_strain, **kwargs):
         M = M + 1
         N = N + 1
+        shape = (M, N)
         def fun(x, *C_flat):
             C_flat_full = np.concatenate(([0.], C_flat))
-            C = np.asarray(C_flat_full).reshape(M, N)
+            C = np.asarray(C_flat_full).reshape(shape)
             model = MooneyRivlin(C)
             return model.tensile_curve(x, true_strain=true_strain, true_stress=true_stress)
-        C0 = np.zeros((M, N))
-        C0[1,0] = 1.
-        C0_flat = C0.flatten()
-        lb = -np.ones_like(C0)*np.inf
+        p0 = cls._initial_guess_fit(strain, stress, M, N)
+        lb = -np.ones(shape)*np.inf
         lb[1,0] = 0.0
-        ub = np.ones_like(C0)*np.inf
+        ub = np.ones(shape)*np.inf
         bounds = [lb.flatten()[1:], ub.flatten()[1:]]
-        C_flat_opt, _ = curve_fit(fun, strain, stress, p0=C0_flat[1:], bounds=bounds, **kwargs)
+        C_flat_opt, _ = curve_fit(fun, strain, stress, p0=p0, bounds=bounds, **kwargs)
         return C_flat_opt
 
     @classmethod
