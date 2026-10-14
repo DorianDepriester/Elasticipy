@@ -100,15 +100,19 @@ class TestNeoHooke(unittest.TestCase):
         assert nh_comp.C == C
 
     def test_repr(self):
-        assert nh_incomp.__repr__() == ('Generalized incompressible Mooney-Rivlin hyper-elastic model\r'
-                                'Cij=\r'
+        assert nh_incomp.__repr__() == 'NeoHooke(C=100.)'
+        assert nh_comp.__repr__() == 'NeoHooke(C=100., D=500.0)'
+
+    def test_str(self):
+        assert nh_incomp.__str__() == ('Generalized incompressible Mooney-Rivlin hyper-elastic model\n'
+                                'Cij=\n'
                                 '[[  0.]\n'
                                 ' [100.]]')
 
-        assert nh_comp.__repr__() == ('Generalized Mooney-Rivlin hyper-elastic model\r'
-                                'Cij=\r'
+        assert nh_comp.__str__() == ('Generalized Mooney-Rivlin hyper-elastic model\n'
+                                'Cij=\n'
                                 '[[  0.]\n'
-                                ' [100.]]\r'
+                                ' [100.]]\n'
                                 'D=500.0')
 
 class TestYeoh(unittest.TestCase):
@@ -150,8 +154,11 @@ class TestYeoh(unittest.TestCase):
         np.testing.assert_array_equal(yh.C, np.array(C))
 
     def test_repr(self):
-        assert yh.__repr__() == ('Generalized incompressible Mooney-Rivlin hyper-elastic model\r'
-                                'Cij=\r'
+        assert yh.__repr__() == 'Yeoh(C=[100.])'
+
+    def test_str(self):
+        assert yh.__str__() == ('Generalized incompressible Mooney-Rivlin hyper-elastic model\n'
+                                'Cij=\n'
                                 '[[  0.]\n'
                                 ' [100.]]')
 
@@ -167,8 +174,11 @@ class TestMooneyRivelin(unittest.TestCase):
         assert mr_23.N == 2
 
     def test_repr(self):
-        assert mr_23.__repr__() == ('Generalized incompressible Mooney-Rivlin hyper-elastic model\r'
-                                   'Cij=\r'
+        assert mr_23.__repr__() == 'MooneyRivlin(C=[[0.   , 0.087, 0.005],\n [0.35 , 0.012, 0.003]])'
+
+    def test_str(self):
+        assert mr_23.__str__() == ('Generalized incompressible Mooney-Rivlin hyper-elastic model\n'
+                                   'Cij=\n'
                                    '[[0.    0.087 0.005]\n'
                                    ' [0.35  0.012 0.003]]')
 
