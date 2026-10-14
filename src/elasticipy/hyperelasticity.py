@@ -228,7 +228,7 @@ class MooneyRivlin(HyperElastic):
 
         .. math::
 
-            W = \\sum_{i=0}^M\\sum_{j=0}^N C_{ij}(\\bar{I}_1-3)^i(\\bar{I}_2-3)^j + \\sum_{k=1}^M\\frac{(J-1)^{2k}}{D_k}
+            W = \\sum_{i=0}^M\\sum_{j=0}^N C_{ij}(\\bar{I}_1-3)^i(\\bar{I}_2-3)^j + \\sum_{k=1}^P\\frac{(J-1)^{2k}}{D_k}
 
         with
 
