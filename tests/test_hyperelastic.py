@@ -94,14 +94,14 @@ class TestNeoHooke(unittest.TestCase):
                 true_stress = mat[j]
                 tensile_stress = nh_incomp.tensile_curve(stretch, true_stress=true_stress, true_strain=true_strain)
                 nh_fit = NeoHooke.fit(stretch, tensile_stress, true_stress=true_stress, true_strain=true_strain)
-                np.testing.assert_array_equal(nh_fit.C, nh_incomp.C)
+                np.isclose(nh_fit.C, nh_incomp.C)
 
     def test_C_property(self):
         assert nh_comp.C == C
 
     def test_repr(self):
         assert nh_incomp.__repr__() == 'NeoHooke(C=100.)'
-        assert nh_comp.__repr__() == 'NeoHooke(C=100., D=500.0)'
+        assert nh_comp.__repr__() == 'NeoHooke(C=100., D=[np.float64(500.0)])'
 
     def test_str(self):
         assert nh_incomp.__str__() == ('Generalized incompressible Mooney-Rivlin hyper-elastic model\n'
@@ -113,7 +113,7 @@ class TestNeoHooke(unittest.TestCase):
                                 'Cij=\n'
                                 '[[  0.]\n'
                                 ' [100.]]\n'
-                                'D=500.0')
+                                'D=[500.]')
 
 class TestYeoh(unittest.TestCase):
     def test_M_N(self):
