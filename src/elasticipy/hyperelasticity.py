@@ -251,8 +251,7 @@ class MooneyRivlin(HyperElastic):
         C = np.array2string(self.C, separator=', ')
         msg = f'{self.__class__.__name__}(C={C}'
         if self.is_compressible():
-            D = self.D if isinstance(self.D, float) else list(self.D)
-            msg += f', D={D}'
+            msg += f', D={self.D}'
         msg += ')'
         return msg
 
