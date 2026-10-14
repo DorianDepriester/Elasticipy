@@ -243,9 +243,9 @@ class MooneyRivlin(HyperElastic):
         if self._C[0, 0] != 0.:
             raise ValueError('C[0,0] must be zero.')
         if D is not None:
-            self.D = np.atleast_1d(D)
+            self._D = np.atleast_1d(D)
         else:
-            self.D = None
+            self._D = None
 
     def __repr__(self):
         C = np.array2string(self.C, separator=', ')
@@ -261,7 +261,7 @@ class MooneyRivlin(HyperElastic):
         head = 'Generalized incompressible Mooney-Rivlin hyper-elastic model'
         if self.is_compressible():
             head = 'Generalized Mooney-Rivlin hyper-elastic model'
-            return f'{head}\nCij=\n{C}\nD={self.D}'
+            return f'{head}\nCij=\n{C}\nD={self._D}'
         return f'{head}\nCij=\n{C}'
 
     @property
@@ -276,8 +276,19 @@ class MooneyRivlin(HyperElastic):
         """
         return self._C
 
+    @property
+    def D(self):
+        """
+        Coefficients of the J dependence
+
+        Returns
+        -------
+        float or numpy.ndarray
+        """
+        return self._D
+
     def is_compressible(self):
-        return self.D is not None
+        return self._D is not None
 
     def potential_from_B(self, B):
         J = B.J
@@ -286,11 +297,11 @@ class MooneyRivlin(HyperElastic):
         for i in range(C.shape[0]):
             for j in range(C.shape[1]):
                 W += C[i, j] * (B.I1_bar-3)**i * (B.I2_bar - 3)**j
-        if self.D is not None:
-            if isinstance(self.D, float):
-                D = (self.D,)
+        if self._D is not None:
+            if isinstance(self._D, float):
+                D = (self._D,)
             else:
-                D = self.D
+                D = self._D
             for k, Dk in enumerate(D, start=1):
                 W += (J-1)**(2*k) / Dk
         return W
@@ -427,8 +438,8 @@ class Yeoh(MooneyRivlin):
             dWdI1 += i * Ci * (B.I1_bar - 3) ** (i - 1)
         # deviatoric stress (unloaded: pressure term) + volumetric contribution
         tau = 2 * B.deviatoric_part() * dWdI1 / J ** (2 / 3)  # careful: see note below
-        if self.D is not None:
-            D = np.atleast_1d(self.D)
+        if self._D is not None:
+            D = np.atleast_1d(self._D)
             p = np.zeros(B.shape)
             for k, Dk in enumerate(D, start=1):
                 p += 2 * k * J * (J - 1) ** (2 * k - 1) / Dk
@@ -470,3 +481,10 @@ class NeoHooke(Yeoh):
     @property
     def C(self):
         return self._C[1,0]
+
+    @property
+    def D(self):
+        if self._D is not None:
+            return float(self._D[0])
+        else:
+            return None
