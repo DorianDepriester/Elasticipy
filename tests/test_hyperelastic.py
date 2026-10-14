@@ -11,8 +11,18 @@ D = 500.
 nh_comp = NeoHooke(C, D=D)
 nh_incomp = NeoHooke(C)
 yh = Yeoh(C)
+yh_3 = Yeoh([39.8, -131.9, 82.8])
+
+C_23 = np.array([[0, 0.087, 0.005],
+                   [0.35, 0.012, 0.003]])
+mr_23 = MooneyRivlin(C_23)
 
 class TestNeoHooke(unittest.TestCase):
+    def test_M_N(self):
+        assert nh_comp.M == 1
+        assert nh_incomp.M == 1
+        assert nh_comp.N == 0
+
     def test_small_strain_compr(self):
         eps = np.array([[11, 12, 13], [12, 22, 23], [13, 23, 33]]) * 1e-7
         F = DeformationGradient(eps) + DeformationGradient.eye()
@@ -90,6 +100,10 @@ class TestNeoHooke(unittest.TestCase):
         assert nh_comp.C == C
 
 class TestYeoh(unittest.TestCase):
+    def test_M_N(self):
+        assert yh_3.M == 3
+        assert yh_3.N == 0
+
     def test_shear(self):
         eps = 1e-3
         F = DeformationGradient.isochoric_tensile([1,0,0], eps)
@@ -110,7 +124,6 @@ class TestYeoh(unittest.TestCase):
         np.testing.assert_allclose(stress.matrix, derivative.matrix, atol=1e-6)
 
     def test_fit(self):
-        yh_3 = Yeoh([39.8, -131.9, 82.8])
         stretch = np.linspace(0,0.8, 100)
         mat = [True, False]
         for i in range(2):
@@ -123,6 +136,17 @@ class TestYeoh(unittest.TestCase):
 
     def test_C_property(self):
         np.testing.assert_array_equal(yh.C, np.array(C))
+
+class TestMooneyRivelin(unittest.TestCase):
+    def test_fit(self):
+        stretch = np.linspace(0, 1, 500)
+        tensile_stress = mr_23.tensile_curve(stretch)
+        mr_fit = MooneyRivlin.fit(stretch, tensile_stress, M=1, N=2)
+        np.testing.assert_array_almost_equal(mr_fit.C, mr_23.C)
+
+    def test_M_N(self):
+        assert mr_23.M == 1
+        assert mr_23.N == 2
 
 if __name__ == '__main__':
     unittest.main()
