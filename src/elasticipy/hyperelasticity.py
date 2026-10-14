@@ -242,7 +242,10 @@ class MooneyRivlin(HyperElastic):
         self._C = np.atleast_2d(C)
         if self._C[0, 0] != 0.:
             raise ValueError('C[0,0] must be zero.')
-        self.D = D
+        if D is not None:
+            self.D = np.atleast_1d(D)
+        else:
+            self.D = None
 
     def __repr__(self):
         C = np.array2string(self.C, separator=', ')
