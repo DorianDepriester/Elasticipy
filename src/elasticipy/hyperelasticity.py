@@ -297,11 +297,7 @@ class MooneyRivlin(HyperElastic):
             for j in range(C.shape[1]):
                 W += C[i, j] * (B.I1_bar-3)**i * (B.I2_bar - 3)**j
         if self._D is not None:
-            if isinstance(self._D, float):
-                D = (self._D,)
-            else:
-                D = self._D
-            for k, Dk in enumerate(D, start=1):
+            for k, Dk in enumerate(self._D, start=1):
                 W += (J-1)**(2*k) / Dk
         return W
 
@@ -438,9 +434,8 @@ class Yeoh(MooneyRivlin):
         # deviatoric stress (unloaded: pressure term) + volumetric contribution
         tau = 2 * B.deviatoric_part() * dWdI1 / J ** (2 / 3)  # careful: see note below
         if self._D is not None:
-            D = np.atleast_1d(self._D)
             p = np.zeros(B.shape)
-            for k, Dk in enumerate(D, start=1):
+            for k, Dk in enumerate(self._D, start=1):
                 p += 2 * k * J * (J - 1) ** (2 * k - 1) / Dk
             tau = tau + SymmetricSecondOrderTensor.eye(shape=B.shape) * p
         return StressTensor(tau / J)
