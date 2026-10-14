@@ -383,51 +383,6 @@ class MooneyRivlin(HyperElastic):
         """
         return self._C.shape[1] - 1
 
-class NeoHooke(MooneyRivlin):
-    def __init__(self, C, D=None):
-        """
-        Create a Neo-Hooke hyperelastic model
-
-        The compressible Neo-Hooke model defines the potential function as:
-
-        .. math::
-
-             W = C(\\bar{I}_1 - 3) + \\frac{(J-1)^2}{D}
-
-        where :math:`C` and :math:`D` are the material constants and :math:`\\bar{I}_1=I_1J^{-2/3}`. If D is None
-        (default), the material is assumed to be incompressible and the corresponding part in the equation above is
-        omitted.
-
-        Parameters
-        ----------
-        C : float
-            Material constant relative to deviatoric part
-        D : float, optional
-            Material compressibility
-        """
-        super().__init__([[0.], [C]], D=D)
-
-    @property
-    def C(self):
-        return self._C[1,0]
-
-    def stress_from_B_analytical(self, B, **kwargs):
-        J = B.J
-        tau = B.deviatoric_part() * 2 * self.C / J ** (2/3)
-        if self.D is not None:
-            p = 2 * J * (J-1) / self.D
-            tau = tau + SymmetricSecondOrderTensor.eye(shape=B.shape) * p
-        return StressTensor(tau / J)
-
-    @classmethod
-    def fit(cls, tensile_strain, tensile_stress, true_strain=False, true_stress=False, C0=None, **kwargs):
-        def fun(x, C):
-            nh_test = cls(C)
-            return nh_test.tensile_curve(x, true_strain=true_strain, true_stress=true_stress)
-
-        C_opt, _ = curve_fit(fun, tensile_strain, tensile_stress, **kwargs)
-        return cls(C_opt[0])
-
 class Yeoh(MooneyRivlin):
     def __init__(self, C, D=None):
         """
@@ -477,3 +432,39 @@ class Yeoh(MooneyRivlin):
                               true_stress=true_stress, true_strain=true_strain,
                               C0=C0, **kwargs)
         return cls(C_flat)
+
+class NeoHooke(Yeoh):
+    def __init__(self, C, D=None):
+        """
+        Create a Neo-Hooke hyperelastic model
+
+        The compressible Neo-Hooke model defines the potential function as:
+
+        .. math::
+
+             W = C(\\bar{I}_1 - 3) + \\frac{(J-1)^2}{D}
+
+        where :math:`C` and :math:`D` are the material constants and :math:`\\bar{I}_1=I_1J^{-2/3}`. If D is None
+        (default), the material is assumed to be incompressible and the corresponding part in the equation above is
+        omitted.
+
+        Parameters
+        ----------
+        C : float
+            Material constant relative to deviatoric part
+        D : float, optional
+            Material compressibility
+        """
+        super().__init__(C, D=D)
+
+    @property
+    def C(self):
+        return self._C[1,0]
+
+    def stress_from_B_analytical(self, B, **kwargs):
+        J = B.J
+        tau = B.deviatoric_part() * 2 * self.C / J ** (2/3)
+        if self.D is not None:
+            p = 2 * J * (J-1) / self.D
+            tau = tau + SymmetricSecondOrderTensor.eye(shape=B.shape) * p
+        return StressTensor(tau / J)
