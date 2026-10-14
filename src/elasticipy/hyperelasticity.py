@@ -470,11 +470,3 @@ class NeoHooke(Yeoh):
     @property
     def C(self):
         return self._C[1,0]
-
-    def stress_from_B_analytical(self, B, **kwargs):
-        J = B.J
-        tau = B.deviatoric_part() * 2 * self.C / J ** (2/3)
-        if self.D is not None:
-            p = 2 * J * (J-1) / self.D
-            tau = tau + SymmetricSecondOrderTensor.eye(shape=B.shape) * p
-        return StressTensor(tau / J)
