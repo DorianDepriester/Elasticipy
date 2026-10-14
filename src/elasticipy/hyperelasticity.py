@@ -252,7 +252,7 @@ class MooneyRivlin(HyperElastic):
         return msg
 
     def __str__(self):
-        C = str(self.C)
+        C = str(self._C)
         head = 'Generalized incompressible Mooney-Rivlin hyper-elastic model'
         if self.is_compressible():
             head = 'Generalized Mooney-Rivlin hyper-elastic model'
