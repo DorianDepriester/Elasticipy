@@ -212,23 +212,23 @@ class HyperElastic(ABC):
 class MooneyRivlin(HyperElastic):
     def __init__(self, C, D=None):
         """
-        Create a Mooney-Rivlin hyper-elastic model
+        Create a generalized Mooney-Rivlin hyper-elastic model
 
         Parameters
         ----------
         C : list or numpy.ndarray
-            Material constants relative to deviatoric parts, provided as a NxN matrix (see notes)
+            Material constants relative to deviatoric parts, provided as a MxN matrix (see notes)
         D : list of float or numpy.ndarray, optional
             Material constants relative to volumetric part. If not provided, the material is supposed to be
             incompressible.
 
         Notes
         -----
-        The compressible Mooney-Rivlin potential is defined as:
+        The generalized compressible Mooney-Rivlin potential is defined as:
 
         .. math::
 
-            W = \\sum_{i,j=0}^N C_{ij}(\\bar{I}_1-3)^i(\\bar{I}_2-3)^j + \\sum_{k=1}^M\\frac{(J-1)^{2k}}{D_k}
+            W = \\sum_{i=0}^M\\sum_{j=0}^N C_{ij}(\\bar{I}_1-3)^i(\\bar{I}_2-3)^j + \\sum_{k=1}^M\\frac{(J-1)^{2k}}{D_k}
 
         with
 
@@ -336,6 +336,30 @@ class MooneyRivlin(HyperElastic):
         C_flat = cls._fit(tensile_strain, tensile_stress, M, N, true_stress, true_strain)
         C_full = np.concatenate(([0.], C_flat))
         return cls(C_full.reshape(M+1, N+1))
+
+    @property
+    def M(self):
+        """
+        Returns the maximum degree to consider for I1 dependence.
+
+        Returns
+        -------
+        int
+            Maximum degree to consider for I1 dependence
+        """
+        return self._C.shape[0] - 1
+
+    @property
+    def N(self):
+        """
+        Returns the maximum degree to consider for I2 dependence.
+
+        Returns
+        -------
+        int
+            Maximum degree to consider for I2 dependence
+        """
+        return self._C.shape[1] - 1
 
 class NeoHooke(MooneyRivlin):
     def __init__(self, C, D=None):
