@@ -277,6 +277,18 @@ class MooneyRivlin(HyperElastic):
 
     @C.setter
     def C(self, C):
+        """
+        Update the C parameters of the hyperelastic model
+
+        Parameters
+        ----------
+        C : float or list or numpy.ndarray
+            New value
+
+        Returns
+        -------
+        None
+        """
         self._C = self.__class__(C)._C
 
     @property
