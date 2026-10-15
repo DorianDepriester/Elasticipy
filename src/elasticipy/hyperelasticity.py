@@ -302,6 +302,22 @@ class MooneyRivlin(HyperElastic):
         """
         return self._D
 
+    @D.setter
+    def D(self, D):
+        """
+        Update the D parameters of the hyperelastic model
+
+        Parameters
+        ----------
+        D : float or list or numpy.ndarray
+            New value for I3 parameter dependence
+
+        Returns
+        -------
+        None
+        """
+        self._D = np.atleast_1d(D)
+
     def is_compressible(self):
         return self._D is not None
 
@@ -444,6 +460,14 @@ class Yeoh(MooneyRivlin):
     def C(self, C):
         self._C = self.__class__(C)._C
 
+    @property
+    def D(self):
+        return self._D
+
+    @D.setter
+    def D(self, D):
+        self._D = np.atleast_1d(D)
+
     def stress_from_B_analytical(self, B, **kwargs):
         J = B.J
         # dW/dI1_bar
@@ -506,3 +530,7 @@ class NeoHooke(Yeoh):
             return float(self._D[0])
         else:
             return None
+
+    @D.setter
+    def D(self, D):
+        self._D = np.atleast_1d(D)
