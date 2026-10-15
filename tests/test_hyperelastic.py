@@ -115,6 +115,11 @@ class TestNeoHooke(unittest.TestCase):
                                 ' [100.]]\n'
                                 'D=[500.]')
 
+    def test_set_C(self):
+        a = NeoHooke(1)
+        a.C = 2
+        np.testing.assert_array_equal(a._C, np.array([[0.], [2.]]))
+
 class TestYeoh(unittest.TestCase):
     def test_M_N(self):
         assert yh_3.M == 3
@@ -153,6 +158,12 @@ class TestYeoh(unittest.TestCase):
     def test_C_property(self):
         np.testing.assert_array_equal(yh.C, np.array(C))
 
+    def test_set_C(self):
+        a = Yeoh([1, 2])
+        Cnew = np.array([2, 3])
+        a.C = Cnew
+        np.testing.assert_array_equal(a._C, np.array([[0.], [2.], [3.]]))
+
     def test_repr(self):
         assert yh.__repr__() == 'Yeoh(C=[100.])'
 
@@ -181,6 +192,12 @@ class TestMooneyRivelin(unittest.TestCase):
                                    'Cij=\n'
                                    '[[0.    0.087 0.005]\n'
                                    ' [0.35  0.012 0.003]]')
+
+    def test_set_C(self):
+        a = MooneyRivlin(np.zeros(2))
+        Cnew = np.array([[0, 1],[1, 1]])
+        a.C = Cnew
+        np.testing.assert_array_equal(a._C, Cnew)
 
 if __name__ == '__main__':
     unittest.main()
