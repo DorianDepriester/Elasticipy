@@ -275,6 +275,10 @@ class MooneyRivlin(HyperElastic):
         """
         return self._C
 
+    @C.setter
+    def C(self, C):
+        self._C = self.__class__(C)._C
+
     @property
     def D(self):
         """
@@ -424,6 +428,10 @@ class Yeoh(MooneyRivlin):
     def C(self):
         return self._C[1:,0]
 
+    @C.setter
+    def C(self, C):
+        self._C = self.__class__(C)._C
+
     def stress_from_B_analytical(self, B, **kwargs):
         J = B.J
         # dW/dI1_bar
@@ -475,6 +483,10 @@ class NeoHooke(Yeoh):
     @property
     def C(self):
         return self._C[1,0]
+
+    @C.setter
+    def C(self, C):
+        self._C = self.__class__(C)._C
 
     @property
     def D(self):
