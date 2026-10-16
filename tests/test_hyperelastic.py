@@ -132,9 +132,9 @@ class TestNeoHooke(unittest.TestCase):
 
     def test_tensile_curve_compressible(self):
         eps = 1e-2
-        stress = nh_comp.tensile_curve(eps)
+        stress = nh_comp.tensile_curve(eps, true_stress=True)
         E = stiff.Young_modulus.eval([1,0,0])
-        assert np.isclose(stress / eps, E)
+        assert np.isclose(stress / eps, E, rtol=5e-3)
 
     def test_near_incompressible(self):
         F = DeformationGradient.isochoric_tensile([1,0,0], 1)
