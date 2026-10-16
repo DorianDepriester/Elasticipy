@@ -2,7 +2,7 @@ from elasticipy.tensors.finite_strain import CauchyGreenTensor, DeformationGradi
 from elasticipy.tensors.stress_strain import StressTensor
 from elasticipy.tensors.second_order import SymmetricSecondOrderTensor
 from abc import ABC, abstractmethod
-from scipy.optimize import curve_fit
+from scipy.optimize import curve_fit, minimize_scalar
 import numpy as np
 
 class HyperElastic(ABC):
@@ -199,7 +199,19 @@ class HyperElastic(ABC):
             Tensile stress
         """
         if self.is_compressible():
-            raise NotImplementedError("Tensile curve is not implemented for compressible materials")
+            F11 = 1+longitudinal_strain
+            def trial_gradient(F22_trial):
+                F_trial = DeformationGradient.diag([F11, F22_trial, F22_trial])
+                s_trial = self.stress_from_F(F_trial)
+                cost = (s_trial.C[1,1] / s_trial.C[0,0])**2
+                return cost
+            F22_incomp = F11**(-0.5)
+            bounds = (F22_incomp, F11)
+            res = minimize_scalar(trial_gradient, bounds=bounds, method='bounded')
+            F22 = res.x
+            F = DeformationGradient.diag([F11, F22, F22])
+            stress = self.stress_from_F(F)
+            return stress.C[0,0]
         else:
             if true_strain:
                 longitudinal_strain = np.exp(longitudinal_strain) - 1
