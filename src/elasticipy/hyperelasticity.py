@@ -198,6 +198,8 @@ class HyperElastic(ABC):
         float or numpy.ndarray
             Tensile stress
         """
+        if true_strain:
+            longitudinal_strain = np.exp(longitudinal_strain) - 1
         if self.is_compressible():
             F11 = 1+longitudinal_strain
             def trial_gradient(F22_trial):
@@ -213,8 +215,6 @@ class HyperElastic(ABC):
             stress = self.stress_from_F(F)
             return stress.C[0,0]
         else:
-            if true_strain:
-                longitudinal_strain = np.exp(longitudinal_strain) - 1
             F = DeformationGradient.isochoric_tensile([1, 0, 0], longitudinal_strain)
             sigma_dev = self.stress_from_F(F)
             sigma = sigma_dev.C[0, 0] - sigma_dev.C[1, 1]
