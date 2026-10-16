@@ -108,7 +108,7 @@ class TestNeoHooke(unittest.TestCase):
 
     def test_repr(self):
         assert nh_incomp.__repr__() == 'NeoHooke(C=100.)'
-        assert nh_comp.__repr__() == 'NeoHooke(C=100., D=500.0)'
+        assert nh_comp.__repr__() == 'NeoHooke(C=100., D=0.002)'
 
     def test_str(self):
         assert nh_incomp.__str__() == ('Generalized incompressible Mooney-Rivlin hyper-elastic model\n'
@@ -120,7 +120,7 @@ class TestNeoHooke(unittest.TestCase):
                                 'Cij=\n'
                                 '[[  0.]\n'
                                 ' [100.]]\n'
-                                'D=[500.]')
+                                'D=[0.002]')
 
     def test_setter(self):
         a = NeoHooke(1)
