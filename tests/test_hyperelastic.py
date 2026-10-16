@@ -36,6 +36,7 @@ class TestNeoHooke(unittest.TestCase):
         s_finite = nh_comp.stress_from_F(F)
         p = s_finite.hydrostatic_pressure()
         np.testing.assert_almost_equal(p / eps /3, 2/D, decimal=4)
+        np.testing.assert_array_equal(s_finite.matrix, -np.eye(3)*p)
 
     def test_incompressible(self):
         assert not nh_incomp.is_compressible()
