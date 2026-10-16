@@ -212,16 +212,15 @@ class HyperElastic(ABC):
             res = minimize_scalar(trial_gradient, bounds=bounds, method='bounded')
             F22 = res.x
             F = DeformationGradient.diag([F11, F22, F22])
-            stress = self.stress_from_F(F)
-            return stress.C[0,0]
+            sigma = self.stress_from_F(F).C[0, 0]
         else:
             F = DeformationGradient.isochoric_tensile([1, 0, 0], longitudinal_strain)
             sigma_dev = self.stress_from_F(F)
             sigma = sigma_dev.C[0, 0] - sigma_dev.C[1, 1]
-            if true_stress:
-                return sigma
-            else:
-                return sigma * (F.C[1,1] * F.C[2,2])
+        if true_stress:
+            return sigma
+        else:
+            return sigma * (F.C[1,1] * F.C[2,2])
 
 class MooneyRivlin(HyperElastic):
     def __init__(self, C, D=None):
