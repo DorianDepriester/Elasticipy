@@ -156,7 +156,7 @@ class TestYeoh(unittest.TestCase):
     def test_shear(self):
         eps = 1e-3
         F = DeformationGradient.isochoric_tensile([1,0,0], eps)
-        sigma = yh.stress_from_F(F, h=1e-4)
+        sigma = yh.stress_from_F(F)
         s = sigma.C[0,0] - sigma.C[1,1]
         E = s/eps
         E_th = 6 * C
