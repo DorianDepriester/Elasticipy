@@ -31,6 +31,12 @@ class TestNeoHooke(unittest.TestCase):
         s_small = stiff * StrainTensor(eps)
         np.testing.assert_almost_equal(s_finite.matrix, s_small.matrix)
 
+        eps = 1e-9
+        F = DeformationGradient.eye() * (1 - eps)
+        s_finite = nh_comp.stress_from_F(F)
+        p = s_finite.hydrostatic_pressure()
+        np.testing.assert_almost_equal(p / eps /3, 2/D, decimal=4)
+
     def test_incompressible(self):
         assert not nh_incomp.is_compressible()
         assert nh_comp.is_compressible()
