@@ -131,7 +131,7 @@ class TestNeoHooke(unittest.TestCase):
         np.testing.assert_array_equal(a._D, np.array([1.]))
 
     def test_tensile_curve_compressible(self):
-        eps = 1e-2
+        eps = 1e-4
         stress = nh_comp.tensile_curve(eps, true_stress=True)
         E = stiff.Young_modulus.eval([1,0,0])
         assert np.isclose(stress / eps, E, rtol=5e-3)
