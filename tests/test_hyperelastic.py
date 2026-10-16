@@ -143,9 +143,9 @@ class TestNeoHooke(unittest.TestCase):
         stress_incom = nh_incomp.stress_from_F(F)
         np.testing.assert_array_almost_equal(stress_quasi.matrix, stress_incom.matrix)
 
-        strectch = 1.0
-        tensile_stress_incomp = nh_incomp.tensile_curve(strectch)
-        tensile_stress_quasi = nh_nearinc.tensile_curve(strectch)
+        stretch = 0.5
+        tensile_stress_incomp = nh_incomp.tensile_curve(stretch)
+        tensile_stress_quasi = nh_nearinc.tensile_curve(stretch)
         assert np.isclose(tensile_stress_incomp, tensile_stress_quasi)
 
 class TestYeoh(unittest.TestCase):
