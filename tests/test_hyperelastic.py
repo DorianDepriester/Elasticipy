@@ -130,6 +130,24 @@ class TestNeoHooke(unittest.TestCase):
         a.D = 1
         np.testing.assert_array_equal(a._D, np.array([1.]))
 
+    def test_tensile_curve_compressible(self):
+        eps = 1e-2
+        stress = nh_comp.tensile_curve(eps)
+        E = stiff.Young_modulus.eval([1,0,0])
+        assert np.isclose(stress / eps, E)
+
+    def test_near_incompressible(self):
+        F = DeformationGradient.isochoric_tensile([1,0,0], 1)
+        nh_nearinc = NeoHooke(C, 1e-9)
+        stress_quasi = nh_nearinc.stress_from_F(F)
+        stress_incom = nh_incomp.stress_from_F(F)
+        np.testing.assert_array_almost_equal(stress_quasi.matrix, stress_incom.matrix)
+
+        strectch = 1.0
+        tensile_stress_incomp = nh_incomp.tensile_curve(strectch)
+        tensile_stress_quasi = nh_nearinc.tensile_curve(strectch)
+        assert np.isclose(tensile_stress_incomp, tensile_stress_quasi)
+
 class TestYeoh(unittest.TestCase):
     def test_M_N(self):
         assert yh_3.M == 3
