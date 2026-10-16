@@ -9,6 +9,7 @@ from elasticipy.tensors.stress_strain import StrainTensor, StressTensor
 C = 100.
 D = 1/500
 nh_comp = NeoHooke(C, D=D)
+stiff = StiffnessTensor.isotropic(G=2 * C, K=2 / D)
 nh_incomp = NeoHooke(C)
 yh = Yeoh(C)
 yh_3 = Yeoh([39.8, -131.9, 82.8])
@@ -23,11 +24,10 @@ class TestNeoHooke(unittest.TestCase):
         assert nh_incomp.M == 1
         assert nh_comp.N == 0
 
-    def test_small_strain_compr(self):
+    def test_small_strain_comparison(self):
         eps = np.array([[11, 12, 13], [12, 22, 23], [13, 23, 33]]) * 1e-7
         F = DeformationGradient(eps) + DeformationGradient.eye()
         s_finite = nh_comp.stress_from_F(F)
-        stiff = StiffnessTensor.isotropic(G=2*C, K=2/D)
         s_small = stiff * StrainTensor(eps)
         np.testing.assert_almost_equal(s_finite.matrix, s_small.matrix)
 
