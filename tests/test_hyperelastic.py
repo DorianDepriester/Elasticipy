@@ -7,7 +7,7 @@ from elasticipy.tensors.elasticity import StiffnessTensor
 from elasticipy.tensors.stress_strain import StrainTensor, StressTensor
 
 C = 100.
-D = 500.
+D = 1/500
 nh_comp = NeoHooke(C, D=D)
 nh_incomp = NeoHooke(C)
 yh = Yeoh(C)
