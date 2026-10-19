@@ -454,7 +454,7 @@ class Yeoh(MooneyRivlin):
         ----------
         C : float or list of float
             Material constants relative to deviatoric part, ordered as [C10, C20, ...]
-        D : list of float, optional
+        D : float  or list or numpy.ndarray, optional
             Material constants relative to volumetric part. If not provided,
             the material is supposed to be incompressible.
         """
