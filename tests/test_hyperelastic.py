@@ -134,7 +134,7 @@ class TestNeoHooke(unittest.TestCase):
         eps = 1e-4
         stress = nh_comp.tensile_curve(eps, true_stress=True)
         E = stiff.Young_modulus.eval([1,0,0])
-        assert np.isclose(stress / eps, E, rtol=5e-3)
+        assert np.isclose(stress / eps, E, rtol=1e-4)
 
     def test_near_incompressible(self):
         F = DeformationGradient.isochoric_tensile([1,0,0], 1)
@@ -146,7 +146,7 @@ class TestNeoHooke(unittest.TestCase):
         stretch = 1.0
         tensile_stress_incomp = nh_incomp.tensile_curve(stretch)
         tensile_stress_quasi = nh_nearinc.tensile_curve(stretch)
-        assert np.isclose(tensile_stress_incomp, tensile_stress_quasi, atol=10)
+        assert np.isclose(tensile_stress_incomp, tensile_stress_quasi, atol=4)
 
 class TestYeoh(unittest.TestCase):
     def test_M_N(self):
