@@ -201,6 +201,8 @@ class HyperElastic(ABC):
         if true_strain:
             longitudinal_strain = np.exp(longitudinal_strain) - 1
         if self.is_compressible():
+            if isinstance(longitudinal_strain, np.ndarray):
+                return np.array([self.tensile_curve(eps_i) for eps_i in longitudinal_strain])
             F11 = 1+longitudinal_strain
             def trial_gradient(F22_trial):
                 F_trial = DeformationGradient.diag([F11, F22_trial, F22_trial])
