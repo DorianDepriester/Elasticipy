@@ -361,14 +361,14 @@ class MooneyRivlin(HyperElastic):
         return C.flatten()[1:]
 
     @classmethod
-    def _fit(cls, strain, stress, M, N, true_stress, true_strain, C0=None, **kwargs):
+    def _fit(cls, strain, stress, M, N, true_stress, true_strain, D, C0=None, **kwargs):
         M = M + 1
         N = N + 1
         shape = (M, N)
         def fun(x, *C_flat):
             C_flat_full = np.concatenate(([0.], C_flat))
             C = np.asarray(C_flat_full).reshape(shape)
-            model = MooneyRivlin(C)
+            model = MooneyRivlin(C, D=D)
             return model.tensile_curve(x, true_strain=true_strain, true_stress=true_stress)
         lb = -np.ones(shape)*np.inf
         lb[1,0] = 0.0
@@ -380,7 +380,9 @@ class MooneyRivlin(HyperElastic):
         return C_flat_opt
 
     @classmethod
-    def fit(cls, tensile_strain, tensile_stress, M=3, N=3, true_strain=False, true_stress=False, C0=None, **kwargs):
+    def fit(cls, tensile_strain, tensile_stress, M=3, N=3,
+            true_strain=False, true_stress=False,
+            C0=None, D=None, **kwargs):
         """
         Fit an incompressible Mooney-Rivlin hyper-elastic model on tensile curve data.
 
@@ -399,6 +401,8 @@ class MooneyRivlin(HyperElastic):
         true_stress: bool, optional
             Sets if the provided stress correspond to true (accounting for cross-section changes) or engineering
             definition of the tensile stress
+        D : float or list or numpy.ndarray
+            Compressibility parameters. If None, the behaviour is assumed to be incompressible.
         C0 : list or np.ndarray, optional
             Initial guess for C
         kwargs
@@ -409,9 +413,10 @@ class MooneyRivlin(HyperElastic):
         cls
             Fitted hyperelastic model
         """
-        C_flat = cls._fit(tensile_strain, tensile_stress, M, N, true_stress, true_strain, C0=C0, **kwargs)
+        C_flat = cls._fit(tensile_strain, tensile_stress, M, N, true_stress, true_strain, D, C0=C0, **kwargs)
         C_full = np.concatenate(([0.], C_flat))
-        return cls(C_full.reshape(M+1, N+1))
+        C_mat = C_full.reshape(M+1, N+1)
+        return cls(C_mat, D=D)
 
     @property
     def M(self):
@@ -498,12 +503,13 @@ class Yeoh(MooneyRivlin):
         return StressTensor(tau / J)
 
     @classmethod
-    def fit(cls, tensile_strain, tensile_stress, M=3, true_stress=False, true_strain=False, C0=None, **kwargs):
+    def fit(cls, tensile_strain, tensile_stress, M=3, true_stress=False, true_strain=False, D=None, C0=None, **kwargs):
         C_flat = super()._fit(tensile_strain, tensile_stress,
                               M=M, N=0,
                               true_stress=true_stress, true_strain=true_strain,
+                              D=D,
                               C0=C0, **kwargs)
-        return cls(C_flat)
+        return cls(C_flat, D=D)
 
 class NeoHooke(Yeoh):
     def __init__(self, C, D=None):
