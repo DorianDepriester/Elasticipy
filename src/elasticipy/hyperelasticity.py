@@ -210,8 +210,8 @@ class HyperElastic(ABC):
                 cost = (s_trial.C[1,1] / s_trial.C[0,0])**2
                 return cost
             F22_incomp = F11**(-0.5)
-            bounds = (F22_incomp, F11)
-            res = minimize_scalar(trial_gradient, bounds=bounds, method='bounded', tol=1e-9)
+            bounds = (1.0, F22_incomp)
+            res = minimize_scalar(trial_gradient, bracket=bounds, method='brent')
             F22 = res.x
             F = DeformationGradient.diag([F11, F22, F22])
             sigma = self.stress_from_F(F).C[0, 0]
