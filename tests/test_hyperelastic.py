@@ -93,7 +93,6 @@ class TestNeoHooke(unittest.TestCase):
             np.testing.assert_array_almost_equal(sigma[i].matrix, nh_comp.stress_from_F(F[i]).matrix)
 
     def test_fit(self):
-        stretch = np.linspace(0, 1, 500)
         mat = [True, False]
         for i in range(2):
             for j in range(2):
@@ -102,6 +101,13 @@ class TestNeoHooke(unittest.TestCase):
                 tensile_stress = nh_incomp.tensile_curve(stretch, true_stress=true_stress, true_strain=true_strain)
                 nh_fit = NeoHooke.fit(stretch, tensile_stress, true_stress=true_stress, true_strain=true_strain)
                 np.isclose(nh_fit.C, nh_incomp.C)
+
+    def test_fit_compressible(self):
+        stretch = np.linspace(0, 1, 100)
+        tensile_stress = nh_comp.tensile_curve(stretch)
+        nh_fit = NeoHooke.fit(stretch, tensile_stress, D=D)
+        np.isclose(nh_fit.C, nh_comp.C)
+
 
     def test_C_property(self):
         assert nh_comp.C == C
