@@ -207,7 +207,7 @@ class HyperElastic(ABC):
             def trial_gradient(F22_trial):
                 F_trial = DeformationGradient.diag([F11, F22_trial, F22_trial])
                 s_trial = self.stress_from_F(F_trial)
-                cost = (s_trial.C[1,1] / s_trial.C[0,0])**2
+                cost = (s_trial.C[1,1] + s_trial.C[2,2])**2
                 return cost
             F22_incomp = F11**(-0.5)
             bounds = (1.0, F22_incomp)
