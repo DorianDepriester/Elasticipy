@@ -93,6 +93,7 @@ class TestNeoHooke(unittest.TestCase):
             np.testing.assert_array_almost_equal(sigma[i].matrix, nh_comp.stress_from_F(F[i]).matrix)
 
     def test_fit(self):
+        stretch = np.linspace(0, 1, 100)
         mat = [True, False]
         for i in range(2):
             for j in range(2):
