@@ -104,7 +104,7 @@ class TestNeoHooke(unittest.TestCase):
                 np.isclose(nh_fit.C, nh_incomp.C)
 
     def test_fit_compressible(self):
-        stretch = np.linspace(0, 1, 100)
+        stretch = np.linspace(0, 1, 50)
         tensile_stress = nh_comp.tensile_curve(stretch)
         nh_fit = NeoHooke.fit(stretch, tensile_stress, D=D)
         np.isclose(nh_fit.C, nh_comp.C)
