@@ -1684,7 +1684,15 @@ class SecondOrderTensor:
          [0 2 0]
          [0 0 3]]
         """
-        mat = np.diag(v)
+        v = np.asarray(v)
+        if v.ndim == 1:
+            mat = np.diag(v)
+        else:
+            shape = np.asarray(v).shape[1:] + (3,3)
+            mat = np.zeros(shape)
+            mat[..., 0, 0] = v[0]
+            mat[..., 1, 1] = v[1]
+            mat[..., 2, 2] = v[2]
         return cls(mat)
 
 
