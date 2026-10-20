@@ -335,6 +335,52 @@ class DeformationGradient(SecondOrderTensor):
         """
         return self.I3 - 1
 
+    def Piola_Kirchoff_1(self, stress):
+        """
+        Compute the first Piola-Kirchoff (PK1) tensor.
+
+        PK1 is defined as:
+
+        .. math::
+
+            \\mathbf{P} = J\\mathbf{\\sigma}\\cdot\\mathbf{F}^{-\\top}
+
+        Parameters
+        ----------
+        stress : StressTensor
+            Cauchy stress tensor to compute PK1 from
+
+        Returns
+        -------
+        SecondOrderTensor
+        """
+        Finv = self.inv()
+        return self.J * stress.dot(Finv.T)
+
+    def Piola_Kirchoff_2(self, stress):
+        """
+        Compute the second Piola-Kirchoff (PK2) tensor.
+
+        PK1 is defined as:
+
+        .. math::
+
+            \\mathbf{S} = J\\mathbf{F}^{-1}\\mathbf{\\sigma}\\cdot\\mathbf{F}^{-\\top}
+
+        Parameters
+        ----------
+        stress : StressTensor
+            Cauchy stress tensor to compute PK2 from
+
+        Returns
+        -------
+        SymmetricSecondOrderTensor
+        """
+        Finv = self.inv()
+        pk1 = self.J * stress.dot(Finv.T)
+        pk2 = Finv.dot(pk1)
+        return SymmetricSecondOrderTensor(pk2.matrix)
+
 class CauchyGreenTensor(SymmetricSecondOrderTensor):
     name = "Cauchy-Green tensor"
 
