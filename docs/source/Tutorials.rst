@@ -15,3 +15,4 @@ Tutorials
     ./Tutorials/Plasticity.rst
     ./Tutorials/FourthOrderTensors.rst
     ./Tutorials/texture.rst
+    ./Tutorials/Tutorial_FiniteStrain_Hyperelasticity.rst
