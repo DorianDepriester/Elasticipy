@@ -139,6 +139,8 @@ class SecondOrderTensor:
     name = 'Second-order tensor'
     "Name to use when printing the tensor"
 
+    __array_priority__ = 100
+
     def __init__(self, matrix):
         """
         Create an array of second-order tensors.
@@ -546,7 +548,7 @@ class SecondOrderTensor:
         return self.__class__(matrix)
 
     def __rmul__(self, other):
-        if isinstance(other, (float, int)):
+        if isinstance(other, (float, int, np.ndarray)):
             return self.__mul__(other)
         else:
             raise NotImplementedError('Left multiplication is only implemented for scalar values.')
