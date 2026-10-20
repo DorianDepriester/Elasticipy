@@ -3,7 +3,7 @@ from elasticipy.tensors.finite_strain import DeformationGradient
 import numpy as np
 
 from elasticipy.tensors.second_order import SymmetricSecondOrderTensor
-from elasticipy.tensors.stress_strain import StrainTensor
+from elasticipy.tensors.stress_strain import StrainTensor, StressTensor
 
 
 class TestDeformationGradient(unittest.TestCase):
@@ -85,6 +85,76 @@ class TestDeformationGradient(unittest.TestCase):
         assert F.elongation([1, 0, 0]) == 1.0
         assert F.elongation([0, 1, 0]) == 0.0
         assert F.elongation([0, 0, 1]) == 0.0
+
+
+class TestPiolaKirchoff(unittest.TestCase):
+    def test_Piola_Kirchoff_1_identity(self):
+        """Quand F = I, P = σ (pas de transformation)"""
+        F = DeformationGradient.eye()
+        sigma = StressTensor.diag([1, 2, 3])
+        P = F.Piola_Kirchoff_1(sigma)
+        np.testing.assert_array_almost_equal(P.matrix, sigma.matrix)
+
+    def test_Piola_Kirchoff_2_identity(self):
+        """Quand F = I, S = σ (pas de transformation)"""
+        F = DeformationGradient.eye()
+        sigma = StressTensor.diag([1, 2, 3])
+        S = F.Piola_Kirchoff_2(sigma)
+        np.testing.assert_array_almost_equal(S.matrix, sigma.matrix)
+
+    def test_Piola_Kirchoff_1_2_relationship(self):
+        """Vérifie que S = F⁻¹·P"""
+        F = DeformationGradient.rand()
+        sigma = StressTensor.rand()
+
+        P = F.Piola_Kirchoff_1(sigma)
+        S_from_P = F.inv().dot(P)
+
+        S = F.Piola_Kirchoff_2(sigma)
+        np.testing.assert_array_almost_equal(S.matrix, S_from_P.matrix)
+
+    def test_Piola_Kirchoff_1_formula(self):
+        """Vérifie la formule P = J·σ·F⁻ᵀ"""
+        F = DeformationGradient.diag([2, 1, 1])
+        sigma = StressTensor.diag([3, 4, 5])
+
+        Finv = F.inv()
+        P_expected = F.J * sigma.dot(Finv.T)
+        P_actual = F.Piola_Kirchoff_1(sigma)
+
+        np.testing.assert_array_almost_equal(P_actual.matrix, P_expected.matrix)
+
+    def test_Piola_Kirchoff_2_formula(self):
+        """Vérifie la formule S = J·F⁻¹·σ·F⁻ᵀ"""
+        F = DeformationGradient.diag([2, 1, 1])
+        sigma = StressTensor.diag([3, 4, 5])
+
+        Finv = F.inv()
+        J = F.J
+        S_expected = J * Finv.dot(sigma).dot(Finv.T)
+        S_actual = F.Piola_Kirchoff_2(sigma)
+
+        np.testing.assert_array_almost_equal(S_actual.matrix, S_expected.matrix)
+
+    def test_Piola_Kirchoff_2_symmetry(self):
+        """PK2 doit être symétrique si σ est symétrique"""
+        F = DeformationGradient.rand()
+        sigma = StressTensor.rand()
+
+        S = F.Piola_Kirchoff_2(sigma)
+        np.testing.assert_array_almost_equal(S.matrix, S.matrix.T)
+
+    def test_Piola_Kirchoff_array_input(self):
+        """Test avec des tenseurs de contrainte en tableau"""
+        shape = (3, 4)
+        F = DeformationGradient.rand(shape=shape)
+        sigma = StressTensor.rand(shape=shape)
+
+        P = F.Piola_Kirchoff_1(sigma)
+        S = F.Piola_Kirchoff_2(sigma)
+
+        assert P.shape == shape
+        assert S.shape == shape
 
 if __name__ == '__main__':
     unittest.main()
