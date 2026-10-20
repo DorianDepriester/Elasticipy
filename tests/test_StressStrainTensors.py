@@ -5,6 +5,7 @@ from scipy.spatial.transform import Rotation
 
 from elasticipy.tensors.elasticity import StiffnessTensor
 import elasticipy.tensors.stress_strain as Tensors
+from elasticipy.tensors.finite_strain import DeformationGradient
 from elasticipy.tensors.second_order import SecondOrderTensor, SymmetricSecondOrderTensor, SkewSymmetricSecondOrderTensor
 from elasticipy.tensors.stress_strain import StrainTensor, StressTensor
 from pymatgen.analysis.elasticity import Strain as mgStrain, Stress as mgStress
@@ -792,7 +793,15 @@ class TestStressStrainTensors(unittest.TestCase):
         assert s.shape == (4,)
         np.testing.assert_almost_equal(s.hydrostatic_pressure(), np.array(p))
 
+    def test_PK1(self):
+        F = DeformationGradient.rand()
+        s = StressTensor.rand()
+        assert F.Piola_Kirchoff_1(s) == s.Piola_Kirchoff_1(F)
 
+    def test_PK2(self):
+        F = DeformationGradient.rand()
+        s = StressTensor.rand()
+        assert F.Piola_Kirchoff_2(s) == s.Piola_Kirchoff_2(F)
 
 if __name__ == '__main__':
     unittest.main()
