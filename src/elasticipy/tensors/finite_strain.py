@@ -353,6 +353,10 @@ class DeformationGradient(SecondOrderTensor):
         Returns
         -------
         SecondOrderTensor
+
+        See Also
+        --------
+        Piola_Kirchoff_2 : second Piola-Kirchoff tensor
         """
         Finv = self.inv()
         return self.J * stress.dot(Finv.T)
@@ -375,6 +379,10 @@ class DeformationGradient(SecondOrderTensor):
         Returns
         -------
         SymmetricSecondOrderTensor
+
+        See Also
+        --------
+        Piola_Kirchoff_1 : First Piola-Kirchoff tensor
         """
         Finv = self.inv()
         pk1 = self.J * stress.dot(Finv.T)
