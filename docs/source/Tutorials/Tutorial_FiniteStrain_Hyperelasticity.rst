@@ -551,7 +551,7 @@ For a more complex model like Yeoh:
 Differences between Analytical and Numerical Formulations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-For some models (like Yeoh), Elasticipy implements both:
+For some models (like Yeoh and Neo-Hookean), Elasticipy implements both:
 - An **analytical formulation** (faster and more precise)
 - A **numerical formulation** (by finite differences, more general)
 
@@ -573,86 +573,3 @@ For some models (like Yeoh), Elasticipy implements both:
     >>> # Comparison
     >>> np.allclose(sigma_analytical.matrix, sigma_numerical.matrix, atol=1e-6)
     True
-
-
-----------------------------------------------------------------------------------------------------
-
-Practical Examples
-------------------
-
-
-Example 1: Simulating a Tensile Test
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Let's simulate a uniaxial tensile test on a hyperelastic material:
-
-.. doctest::
-
-    >>> # Material properties (natural rubber)
-    >>> C10 = 0.5  # MPa
-    >>> neo_hooke = NeoHooke(C10)
-    >>> 
-    >>> # Tensile simulation
-    >>> stretches = np.linspace(0, 2.0, 20)
-    >>> stresses = neo_hooke.tensile_curve(stretches)
-    >>> 
-    >>> # Display
-    >>> print("Stretch | Stress (MPa)")
-    >>> for s, sig in zip(stretches[::4], stresses[::4]):
-    ...     print(f"{s:.2f}       | {sig:.4f}")
-    Stretch | Stress (MPa)
-    0.00       | 0.0000
-    0.10       | 0.1667
-    0.20       | 0.3667
-    0.30       | 0.6000
-    0.40       | 0.8667
-
-
-Example 2: Comparing Different Models
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Let's compare the predictions of different models for a given deformation:
-
-.. doctest::
-
-    >>> # Deformation: biaxial tension
-    >>> F_biaxial = DeformationGradient.diag([1.5, 1.5, 1.0/1.5**2])
-    >>> 
-    >>> # Models
-    >>> models = {
-    ...     'Neo-Hooke': NeoHooke(C=100.0),
-    ...     'Yeoh': Yeoh([100.0, -10.0, 1.0]),
-    ...     'Mooney-Rivlin': MooneyRivlin(np.array([[0, 50], [50, 0]]))
-    ... }
-    >>> 
-    >>> # Stress calculation
-    >>> for name, model in models.items():
-    ...     sigma = model.stress_from_F(F_biaxial)
-    ...     print(f"{name:20s}: sigma_xx = {sigma.C[0,0]:.4f}, sigma_yy = {sigma.C[1,1]:.4f}, sigma_zz = {sigma.C[2,2]:.4f}")
-    Neo-Hooke         : sigma_xx = 133.3333, sigma_yy = 133.3333, sigma_zz = -66.6667
-    Yeoh              : sigma_xx = 136.6667, sigma_yy = 136.6667, sigma_zz = -70.0000
-    Mooney-Rivlin     : sigma_xx = 133.3333, sigma_yy = 133.3333, sigma_zz = -66.6667
-
-
-Example 3: Simple Shear Deformation
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Let's analyze the behavior under pure shear:
-
-.. doctest::
-
-    >>> # Simple shear with different amplitudes
-    >>> shear_magnitudes = [0.1, 0.5, 1.0, 1.5]
-    >>> nh = NeoHooke(C=100.0)
-    >>> 
-    >>> print("Amplitude | Shear Stress (MPa)")
-    >>> for mag in shear_magnitudes:
-    ...     F = DeformationGradient.shear([1,0,0], [0,1,0], magnitude=mag)
-    ...     sigma = nh.stress_from_F(F)
-    ...     tau_xy = sigma.C[0,1]
-    ...     print(f"{mag:.1f}        | {tau_xy:.4f}")
-    Amplitude | Shear Stress (MPa)
-    0.1        | 19.8019
-    0.5        | 90.9091
-    1.0        | 147.0588
-    1.5        | 171.4678
