@@ -113,7 +113,7 @@ def Kroner_Eshelby(Cs, particle_sizes=None, orientations=None,
     elif np.logical_not(np.any(Cs == 0.)):
         avg_method = 'Reuss'
     else:
-        raise NotImplemented
+        raise NotImplementedError
     C_macro_0 = StiffnessTensor.weighted_average(Cs, volume_fractions=volume_fractions, method=avg_method)
 
     if particle_sizes is None:
