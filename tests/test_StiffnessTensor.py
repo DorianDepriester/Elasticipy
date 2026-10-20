@@ -1,7 +1,7 @@
 import unittest
 
 import numpy as np
-from pytest import approx
+from pytest import approx, importorskip
 import os
 import pandas as pd
 
@@ -14,7 +14,6 @@ from pymatgen.analysis.elasticity import elastic as mg
 from orix.quaternion import Rotation as orix_rot
 from elasticipy.tensors.mapping import KelvinMapping, VoigtMapping
 import sys
-from damask import Rotation as damask_rot
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 file_path = os.path.join(current_dir, 'MaterialsProject.json')
@@ -781,6 +780,7 @@ class TestStiffnessConstructor(unittest.TestCase):
         np.testing.assert_array_almost_equal(C_rotated_full_scipy, C_rotated_flat.full_tensor)
 
     def test_damask(self):
+        damask_rot = importorskip("damask").Rotation
         shape = (5,)
         rot = damask_rot.from_random(shape=shape)
         C = S.inv()
