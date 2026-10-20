@@ -547,7 +547,7 @@ class FourthOrderTensor:
         elif isinstance(other, (float, int, np.float32, np.float64)):
             return self + other * self.__class__.ones(shape=self.shape)
         else:
-            raise NotImplemented
+            raise NotImplementedError
         new_tensor._matrix = mat
         return new_tensor
 
