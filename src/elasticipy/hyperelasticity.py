@@ -201,28 +201,33 @@ class HyperElastic(ABC):
         if true_strain:
             longitudinal_strain = np.exp(longitudinal_strain) - 1
         if self.is_compressible():
-            if isinstance(longitudinal_strain, np.ndarray):
-                return np.array([self.tensile_curve(eps_i) for eps_i in longitudinal_strain])
-            F11 = 1+longitudinal_strain
-            def trial_gradient(F22_trial):
-                F_trial = DeformationGradient.diag([F11, F22_trial, F22_trial])
-                s_trial = self.stress_from_F(F_trial)
-                cost = (s_trial.C[1,1] + s_trial.C[2,2])**2
-                return cost
-            F22_incomp = F11**(-0.5)
-            bounds = (1.0, F22_incomp)
-            res = minimize_scalar(trial_gradient, bracket=bounds, method='brent')
-            F22 = res.x
-            F = DeformationGradient.diag([F11, F22, F22])
-            sigma = self.stress_from_F(F).C[0, 0]
+            longitudinal_strain = np.asarray(longitudinal_strain)
+            strain_flat = longitudinal_strain.flatten()
+            sigma_flat = np.zeros_like(strain_flat)
+            F11 = 1 + strain_flat
+            for i, (F11_i, F22_incomp) in enumerate(zip(F11, F11 ** (-0.5))):
+                def trial_gradient(F22_trial):
+                    F_trial = DeformationGradient.diag([F11_i, F22_trial, F22_trial])
+                    s_trial = self.stress_from_F(F_trial)
+                    cost = (s_trial.C[1,1] + s_trial.C[2,2])**2
+                    return cost
+                res = minimize_scalar(trial_gradient, bracket=(1.0, F22_incomp), method='brent')
+                F22 = res.x
+                F = DeformationGradient.diag([F11_i, F22, F22])
+                true_stress = self.stress_from_F(F).C[0, 0]
+                if true_stress:
+                    sigma_flat[i] = true_stress
+                else:
+                    sigma_flat[i] = true_stress * (F.C[1,1] * F.C[2,2])
+            return sigma_flat.reshape(longitudinal_strain.shape)
         else:
             F = DeformationGradient.isochoric_tensile([1, 0, 0], longitudinal_strain)
             sigma_dev = self.stress_from_F(F)
             sigma = sigma_dev.C[0, 0] - sigma_dev.C[1, 1]
-        if true_stress:
-            return sigma
-        else:
-            return sigma * (F.C[1,1] * F.C[2,2])
+            if true_stress:
+                return sigma
+            else:
+                return sigma * (F.C[1,1] * F.C[2,2])
 
 class MooneyRivlin(HyperElastic):
     def __init__(self, C, D=None):
