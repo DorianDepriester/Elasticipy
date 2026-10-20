@@ -586,6 +586,8 @@ class SecondOrderTensor:
                 return np.all(self.matrix == other, axis=(-2, -1))
             else:
                 raise ValueError('The value to compare must be an array of shape {} or {}'.format(self.shape, self.shape + (3,3)))
+        else:
+            return NotImplemented
 
     def dot(self, other, mode='pair'):
         """
