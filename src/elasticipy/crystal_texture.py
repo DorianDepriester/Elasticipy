@@ -9,7 +9,7 @@ import numpy as np
 from elasticipy.polefigure import add_polefigure
 from elasticipy.tensors.fourth_order import FourthOrderTensor
 from abc import ABC
-from scipy.spatial.transform.rotation import Rotation
+from scipy.spatial.transform import Rotation
 from scipy import __version__ as scipy_version
 
 ANGLE_35 = 35.26438968

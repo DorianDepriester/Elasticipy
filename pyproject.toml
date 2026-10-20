@@ -23,7 +23,7 @@ classifiers = [
 dependencies = [
     "numpy >= 1.20.0",
     "scipy",
-    "matplotlib",
+    "matplotlib >= 3.11",
     "qtpy",
     "pyqt5",
     "pymatgen",

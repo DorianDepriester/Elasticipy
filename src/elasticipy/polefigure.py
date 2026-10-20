@@ -12,6 +12,9 @@ def _format_coord(phi, theta):
 class StereographicScale(mscale.ScaleBase):
     name = 'stereographic'
 
+    def __init__(self):
+        pass
+
     def set_default_locators_and_formatters(self, axis):
         axis.set_major_locator(FixedLocator(np.radians(np.arange(0, 90, 20))))
         axis.set_major_formatter(ThetaFormatter())  # Use the same formatter as for phi (called theta in polar)
@@ -53,6 +56,9 @@ mscale.register_scale(StereographicScale)
 
 class LambertScale(mscale.ScaleBase):
     name = 'lambert'
+
+    def __init__(self):
+        pass
 
     def set_default_locators_and_formatters(self, axis):
         axis.set_major_locator(FixedLocator(np.radians(np.arange(0, 90, 15))))
