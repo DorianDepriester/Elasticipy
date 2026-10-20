@@ -28,14 +28,14 @@ large deformations. It relies on several key concepts:
 The Deformation Gradient Tensor F
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The **deformation gradient tensor** :math:`\\mathbf{F}` is defined as:
+The **deformation gradient tensor** :math:`\mathbf{F}` is defined as:
 
 .. math::
 
-    \\mathbf{F} = \\frac{\\partial \\mathbf{x}}{\\partial \\mathbf{X}}
+    \mathbf{F} = \frac{\partial \mathbf{x}}{\partial \mathbf{X}}
 
-where :math:`\\mathbf{X}` is the position of a point in the reference configuration and
-:math:`\\mathbf{x}` is its position in the deformed configuration.
+where :math:`\mathbf{X}` is the position of a point in the reference configuration and
+:math:`\mathbf{x}` is its position in the deformed configuration.
 
 .. doctest::
 
@@ -57,7 +57,7 @@ where :math:`\\mathbf{X}` is the position of a point in the reference configurat
      [0.  1.  0. ]
      [0.  0.  1. ]]
 
-The determinant of :math:`\\mathbf{F}`, denoted :math:`J = \\det(\\mathbf{F})`, represents the **volume change**:
+The determinant of :math:`\mathbf{F}`, denoted :math:`J = \det(\mathbf{F})`, represents the **volume change**:
 
 .. doctest::
 
@@ -69,8 +69,8 @@ The determinant of :math:`\\mathbf{F}`, denoted :math:`J = \\det(\\mathbf{F})`, 
 
 .. warning::
 
-    The determinant of :math:`\\mathbf{F}` must always be **positive** (orientation preservation).
-    Elasticipy raises an error if you try to create a tensor with :math:`J \\leq 0`:
+    The determinant of :math:`\mathbf{F}` must always be **positive** (orientation preservation).
+    Elasticipy raises an error if you try to create a tensor with :math:`J \leq 0`:
 
     >>> try:
     ...     F_invalid = DeformationGradient.diag([-1, 2, 3])
@@ -126,16 +126,16 @@ Elasticipy provides convenient methods for creating common deformation states:
 Polar Decomposition
 ~~~~~~~~~~~~~~~~~~~
 
-The tensor :math:`\\mathbf{F}` can be decomposed into a rotation part and a stretch part:
+The tensor :math:`\mathbf{F}` can be decomposed into a rotation part and a stretch part:
 
 .. math::
 
-    \\mathbf{F} = \\mathbf{R} \\cdot \\mathbf{U} = \\mathbf{V} \\cdot \\mathbf{R}
+    \mathbf{F} = \mathbf{R} \cdot \mathbf{U} = \mathbf{V} \cdot \mathbf{R}
 
 where:
-- :math:`\\mathbf{R}` is the **rotation tensor** (orthogonal)
-- :math:`\\mathbf{U}` is the **right stretch tensor** (symmetric positive definite)
-- :math:`\\mathbf{V}` is the **left stretch tensor** (symmetric positive semi-definite)
+- :math:`\mathbf{R}` is the **rotation tensor** (orthogonal)
+- :math:`\mathbf{U}` is the **right stretch tensor** (symmetric positive definite)
+- :math:`\mathbf{V}` is the **left stretch tensor** (symmetric positive semi-definite)
 
 .. doctest::
 
@@ -160,13 +160,13 @@ Cauchy-Green tensors measure pure deformation, independently of rotations.
 
 .. math::
 
-    \\mathbf{C} = \\mathbf{F}^\\top \\cdot \\mathbf{F} = \\mathbf{U}^2
+    \mathbf{C} = \mathbf{F}^\top \cdot \mathbf{F} = \mathbf{U}^2
 
 **Left Cauchy-Green Tensor (B)**:
 
 .. math::
 
-    \\mathbf{B} = \\mathbf{F} \\cdot \\mathbf{F}^\\top = \\mathbf{V}^2
+    \mathbf{B} = \mathbf{F} \cdot \mathbf{F}^\top = \mathbf{V}^2
 
 .. doctest::
 
@@ -182,7 +182,7 @@ Cauchy-Green tensors measure pure deformation, independently of rotations.
      [0.   1.44 0.  ]
      [0.   0.   0.64]]
     
-    >>> print("\\nB (left):")
+    >>> print("\nB (left):")
     >>> print(B)
     B (left):
     Symmetric second-order tensor
@@ -190,21 +190,21 @@ Cauchy-Green tensors measure pure deformation, independently of rotations.
      [0.   1.44 0.  ]
      [0.   0.   0.64]]
 
-In this particular case (diagonal deformation), :math:`\\mathbf{C} = \\mathbf{B}` because
-:math:`\\mathbf{R} = \\mathbf{I}`.
+In this particular case (diagonal deformation), :math:`\mathbf{C} = \mathbf{B}` because
+:math:`\mathbf{R} = \mathbf{I}`.
 
 
 Invariants of Cauchy-Green Tensors
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The invariants of :math:`\\mathbf{B}` (or :math:`\\mathbf{C}`) are fundamental for describing
+The invariants of :math:`\mathbf{B}` (or :math:`\mathbf{C}`) are fundamental for describing
 the deformation state:
 
 .. math::
 
-    I_1 &= \\text{tr}(\\mathbf{B}) \\\
-    I_2 &= \\frac{1}{2} \\left[ \\text{tr}(\\mathbf{B})^2 - \\text{tr}(\\mathbf{B}^2) \\right] \\\
-    I_3 &= \\det(\\mathbf{B}) = J^2
+    I_1 &= \text{tr}(\mathbf{B}) \\
+    I_2 &= \frac{1}{2} \left[ \text{tr}(\mathbf{B})^2 - \text{tr}(\mathbf{B}^2) \right] \\
+    I_3 &= \det(\mathbf{B}) = J^2
 
 Elasticipy automatically calculates these invariants:
 
@@ -224,8 +224,8 @@ For incompressible materials, the **modified invariants** are often used:
 
 .. math::
 
-    \\bar{I}_1 = I_1 J^{-2/3} \\\
-    \\bar{I}_2 = I_2 J^{-4/3}
+    \bar{I}_1 = I_1 J^{-2/3} \\
+    \bar{I}_2 = I_2 J^{-4/3}
 
 .. doctest::
 
@@ -238,11 +238,11 @@ For incompressible materials, the **modified invariants** are often used:
 Green-Lagrange Tensor
 ~~~~~~~~~~~~~~~~~~~~~
 
-The **Green-Lagrange tensor** :math:`\\mathbf{E}` is a strain measure defined by:
+The **Green-Lagrange tensor** :math:`\mathbf{E}` is a strain measure defined by:
 
 .. math::
 
-    \\mathbf{E} = \\frac{1}{2} (\\mathbf{C} - \\mathbf{I})
+    \mathbf{E} = \frac{1}{2} (\mathbf{C} - \mathbf{I})
 
 .. doctest::
 
@@ -256,7 +256,7 @@ The **Green-Lagrange tensor** :math:`\\mathbf{E}` is a strain measure defined by
 .. note::
 
     For **small deformations** (small perturbation hypothesis), the Green-Lagrange tensor
-    reduces to the small strain tensor :math:`\\mathbf{\\epsilon}`:
+    reduces to the small strain tensor :math:`\mathbf{\epsilon}`:
 
     >>> F_small = DeformationGradient.eye() + DeformationGradient.rand(seed=1) * 1e-6
     >>> E_small = F_small.E
@@ -276,9 +276,9 @@ by a **strain energy density function** :math:`W` (or elastic potential):
 
 .. math::
 
-    \\mathbf{\\sigma} = \\frac{2}{J} \\frac{\\partial W}{\\partial \\mathbf{B}} \\cdot \\mathbf{B}
+    \mathbf{\sigma} = \frac{2}{J} \frac{\partial W}{\partial \mathbf{B}} \cdot \mathbf{B}
 
-where :math:`\\mathbf{\\sigma}` is the Cauchy stress tensor.
+where :math:`\mathbf{\sigma}` is the Cauchy stress tensor.
 
 Elasticipy implements several classical hyperelastic models.
 
@@ -293,13 +293,13 @@ For an **incompressible** material:
 
 .. math::
 
-    W = C_{10} (\\bar{I}_1 - 3)
+    W = C_{10} (\bar{I}_1 - 3)
 
 For a **compressible** material:
 
 .. math::
 
-    W = C_{10} (\\bar{I}_1 - 3) + \\frac{(J - 1)^2}{D}
+    W = C_{10} (\bar{I}_1 - 3) + \frac{(J - 1)^2}{D}
 
 where:
 - :math:`C_{10}` is related to the shear modulus: :math:`C_{10} = G/2`
@@ -351,7 +351,7 @@ For a given deformation state, the stress tensor can be calculated:
     >>> # Stress calculation with compressible Neo-Hooke
     >>> F_comp = DeformationGradient.diag([1.5, 1.0, 1.0])
     >>> sigma_comp = nh_comp.stress_from_F(F_comp)
-    >>> print("\\nStress (compressible):")
+    >>> print("\nStress (compressible):")
     >>> print(sigma_comp)
     Stress (compressible):
     Stress tensor
@@ -400,7 +400,7 @@ The **Mooney-Rivlin** model is a generalization of the Neo-Hooke model that acco
 
 .. math::
 
-    W = \\sum_{i=0}^M \\sum_{j=0}^N C_{ij} (\\bar{I}_1 - 3)^i (\\bar{I}_2 - 3)^j + \\sum_{k=1}^P \\frac{(J - 1)^{2k}}{D_k}
+    W = \sum_{i=0}^M \sum_{j=0}^N C_{ij} (\bar{I}_1 - 3)^i (\bar{I}_2 - 3)^j + \sum_{k=1}^P \frac{(J - 1)^{2k}}{D_k}
 
 .. doctest::
 
@@ -431,7 +431,7 @@ the first invariant:
 
 .. math::
 
-    W = \\sum_{i=1}^N C_{i0} (\\bar{I}_1 - 3)^i + \\sum_{k=1}^M \\frac{(J - 1)^{2k}}{D_k}
+    W = \sum_{i=1}^N C_{i0} (\bar{I}_1 - 3)^i + \sum_{k=1}^M \frac{(J - 1)^{2k}}{D_k}
 
 .. doctest::
 
@@ -670,7 +670,7 @@ Best Practices
 
 2. **Compressibility**:
    - For **incompressible** materials (rubber, some polymers), use
-     :math:`D = \\text{None}` or a very large value
+     :math:`D = \text{None}` or a very large value
    - For **compressible** materials, provide an appropriate value for :math:`D`
 
 3. **Numerical Precision**:
@@ -696,9 +696,9 @@ Summary of Main Classes and Methods
    * - Class
      - Description
    * - ``DeformationGradient``
-     - Deformation gradient tensor :math:`\\mathbf{F}`
+     - Deformation gradient tensor :math:`\mathbf{F}`
    * - ``CauchyGreenTensor``
-     - Cauchy-Green tensors :math:`\\mathbf{B}` and :math:`\\mathbf{C}`
+     - Cauchy-Green tensors :math:`\mathbf{B}` and :math:`\mathbf{C}`
 
 **Key Properties and Methods**:
 
@@ -709,7 +709,7 @@ Summary of Main Classes and Methods
    * - Method/Property
      - Description
    * - ``F.J``
-     - Jacobian (determinant of :math:`\\mathbf{F}`)
+     - Jacobian (determinant of :math:`\mathbf{F}`)
    * - ``F.U``, ``F.V``
      - Right and left stretch tensors
    * - ``F.R``
@@ -725,7 +725,7 @@ Summary of Main Classes and Methods
    * - ``F.volumetric_strain()``
      - Volumetric strain
    * - ``F.elongation(u)``
-     - Relative elongation in direction :math:`\\mathbf{u}`
+     - Relative elongation in direction :math:`\mathbf{u}`
 
 **Hyperelastic Models**:
 
@@ -738,7 +738,7 @@ Summary of Main Classes and Methods
    * - ``NeoHooke(C, D=None)``
      - Neo-Hooke model
    * - ``Yeoh(C, D=None)``
-     - Yeoh model (dependent on :math:`\\bar{I}_1`)
+     - Yeoh model (dependent on :math:`\bar{I}_1`)
    * - ``MooneyRivlin(C_ij, D=None)``
      - General Mooney-Rivlin model
 
@@ -753,9 +753,9 @@ Summary of Main Classes and Methods
    * - ``potential_from_F(F)``
      - Calculate strain energy :math:`W`
    * - ``stress_from_F(F)``
-     - Calculate stresses from :math:`\\mathbf{F}`
+     - Calculate stresses from :math:`\mathbf{F}`
    * - ``stress_from_B(B)``
-     - Calculate stresses from :math:`\\mathbf{B}`
+     - Calculate stresses from :math:`\mathbf{B}`
    * - ``tensile_curve(stretch)``
      - Tensile curve
    * - ``fit(stretch, stress)``
@@ -792,11 +792,11 @@ For applications with Elasticipy:
 Exercises
 --------
 
-1. **Pure Deformation**: Create a tensor :math:`\\mathbf{F}` corresponding to pure tension
-   along the z-axis with a stretch of 2.0. Calculate :math:`\\mathbf{B}`, :math:`\\mathbf{C}`,
-   and verify that :math:`\\mathbf{B} = \\mathbf{C}`.
+1. **Pure Deformation**: Create a tensor :math:`\mathbf{F}` corresponding to pure tension
+   along the z-axis with a stretch of 2.0. Calculate :math:`\mathbf{B}`, :math:`\mathbf{C}`,
+   and verify that :math:`\mathbf{B} = \mathbf{C}`.
 
-2. **Pure Shear**: Create a tensor :math:`\\mathbf{F}` for pure shear in the x-y plane
+2. **Pure Shear**: Create a tensor :math:`\mathbf{F}` for pure shear in the x-y plane
    with magnitude 0.5. Calculate stresses using a Neo-Hooke model (:math:`C = 100`).
 
 3. **Model Comparison**: Compare the tensile curves predicted by Neo-Hooke, Yeoh
@@ -806,7 +806,7 @@ Exercises
 4. **Parameter Fitting**: Generate tensile data with a known Yeoh model, then use the
    ``fit`` method to recover the parameters.
 
-5. **Biaxial Deformation**: Create a biaxial deformation with :math:`F = \\text{diag}([1.2, 1.2, 1/1.44])`.
+5. **Biaxial Deformation**: Create a biaxial deformation with :math:`F = \text{diag}([1.2, 1.2, 1/1.44])`.
    Calculate stresses with Neo-Hooke and verify that the stress in the z direction is negative
    (compression due to incompressibility).
 
