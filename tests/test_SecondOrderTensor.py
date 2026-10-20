@@ -123,6 +123,13 @@ class TestSecondOrderTensor(unittest.TestCase):
         T = SecondOrderTensor.diag([1,2,3])
         assert T == np.diag([1,2,3])
 
+        depth = 4
+        mat = np.random.randn(3, depth)
+        T = SecondOrderTensor.diag(mat)
+        assert T.shape == (depth,)
+        for i in range(0, depth):
+            assert T[i] == np.diag(mat[...,i])
+
 
 class TestSymmetricSecondOrderTensor(unittest.TestCase):
     def test_constructor(self):
