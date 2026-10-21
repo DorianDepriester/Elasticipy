@@ -585,7 +585,7 @@ class SecondOrderTensor:
             if (other.shape == (3,3)) or (other.shape == self.shape + (3,3)):
                 return np.all(self.matrix == other, axis=(-2, -1))
             else:
-                raise ValueError('The value to compare must be an array of shape {} or {}'.format(self.shape, self.shape + (3,3)))
+                raise NotImplementedError('The value to compare must be an array of shape {} or {}'.format(self.shape, self.shape + (3,3)))
         else:
             return NotImplemented
 
