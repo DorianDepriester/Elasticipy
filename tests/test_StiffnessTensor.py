@@ -1036,5 +1036,13 @@ class TestStiffnessConstructor(unittest.TestCase):
         np.testing.assert_array_almost_equal(C1.Reuss_average().matrix(), C.Reuss_average(orientations=rotations).matrix())
         np.testing.assert_array_almost_equal(C1.Hill_average().matrix(), C.Hill_average(orientations=rotations).matrix())
 
+    def test_void(self):
+        v = StiffnessTensor.void()
+        assert v == np.zeros((6,6))
+
+    def test_rigid(self):
+        r = ComplianceTensor.rigid()
+        assert r == np.zeros((6,6))
+
 if __name__ == '__main__':
     unittest.main()
