@@ -2057,7 +2057,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         -------
         StiffnessTensor
         """
-        return cls.zeros(shape=shape, check_positive_definite=False)
+        return cls.zeros(shape=shape)
 
     @classmethod
     def rigid(cls, shape=()):
@@ -2075,6 +2075,11 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         """
         mat = np.inf * np.ones(shape=shape + (6,6))
         return cls(mat, check_positive_definite=False)
+
+    @classmethod
+    def zeros(cls, **kwargs):
+        t = SymmetricFourthOrderTensor.zeros(**kwargs)
+        return cls(t, check_positive_definite=False)
 
 
 class ComplianceTensor(StiffnessTensor):
@@ -2690,4 +2695,4 @@ class ComplianceTensor(StiffnessTensor):
         -------
         ComplianceTensor
         """
-        return cls.zeros(shape=shape, check_positive_definite=False)
+        return cls.zeros(shape=shape)
