@@ -12,12 +12,12 @@ SIZE_FEPX_DATA = 2453
 NSTEP_FEPX_DATA = 3
 
 class TestFEPX(unittest.TestCase):
-    def test_stress_from_file(self):
+    def test_strain_from_file(self):
         a = from_step_file(FEPX_DATA + 'strain/strain.step0')
         assert isinstance(a, StrainTensor)
         assert a.shape == (SIZE_FEPX_DATA,)
 
-    def test_strain_from_file(self):
+    def test_stress_from_file(self):
         a = from_step_file(FEPX_DATA + 'stress/stress.step0')
         assert isinstance(a, StressTensor)
         assert a.shape == (SIZE_FEPX_DATA,)
