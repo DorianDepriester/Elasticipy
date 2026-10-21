@@ -58,14 +58,15 @@ def from_step_file(file, dtype=None):
         else:
             dtype = float
     if issubclass(dtype,SymmetricSecondOrderTensor):
-        return dtype.from_Voigt(array, voigt_map=[1,1,1,1,1,1])
-    elif dtype == SkewSymmetricSecondOrderTensor:
+        mapping = [1,1,1,1,1,1] # https://fepx.info/doc/output.html#
+        return dtype.from_Voigt(array, voigt_map=mapping)
+    elif issubclass(dtype, SkewSymmetricSecondOrderTensor):
         zeros = np.zeros(array.shape[0])
         mat = np.array([[ zeros,         array[:, 0],   array[:, 1]],
                         [-array[:, 0],  zeros,          array[:, 2]],
                         [-array[:, 1], -array[:, 2],    zeros     ]]).transpose((2, 0, 1))
         return SkewSymmetricSecondOrderTensor(mat)
-    elif dtype == SecondOrderTensor:
+    elif issubclass(dtype, SecondOrderTensor):
         length = array.shape[0]
         return SecondOrderTensor(array.reshape((length,3,3)))
     elif dtype == float:
