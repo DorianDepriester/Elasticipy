@@ -135,7 +135,7 @@ class IsotropicHardening:
         elif isinstance(strain, StrainTensor):
             self.plastic_strain += strain.eq_strain()
         else:
-            raise ValueError('The applied strain must be float of StrainTensor')
+            raise TypeError('The applied strain must be float of StrainTensor')
         return self.flow_stress(self.plastic_strain, **kwargs)
 
     def compute_strain_increment(self, stress, criterion='von Mises', apply_strain=True, **kwargs):
