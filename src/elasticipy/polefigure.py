@@ -1,8 +1,16 @@
+import re
+
 import numpy as np
+from matplotlib import __version__ as _mpl_version
 from matplotlib import transforms as mtransforms
 from matplotlib import scale as mscale
 from matplotlib.ticker import FixedLocator
 from matplotlib.projections.polar import ThetaFormatter
+
+# matplotlib >= 3.11 supports scales whose constructors take no *axis* parameter.
+# On older versions, scale_factory passes the axis positionally, so the *axis*
+# parameter must be kept to remain compatible.
+_MPL_SUPPORTS_AXISLESS_SCALES = tuple(int(x) for x in re.findall(r'\d+', _mpl_version)[:2]) >= (3, 11)
 
 def _format_coord(phi, theta):
     return ('azimuth=%0.1f\N{DEGREE SIGN}, '
@@ -12,8 +20,12 @@ def _format_coord(phi, theta):
 class StereographicScale(mscale.ScaleBase):
     name = 'stereographic'
 
-    def __init__(self):
-        pass
+    if _MPL_SUPPORTS_AXISLESS_SCALES:
+        def __init__(self):
+            pass
+    else:
+        def __init__(self, axis=None):
+            pass
 
     def set_default_locators_and_formatters(self, axis):
         axis.set_major_locator(FixedLocator(np.radians(np.arange(0, 90, 20))))
@@ -57,8 +69,12 @@ mscale.register_scale(StereographicScale)
 class LambertScale(mscale.ScaleBase):
     name = 'lambert'
 
-    def __init__(self):
-        pass
+    if _MPL_SUPPORTS_AXISLESS_SCALES:
+        def __init__(self):
+            pass
+    else:
+        def __init__(self, axis=None):
+            pass
 
     def set_default_locators_and_formatters(self, axis):
         axis.set_major_locator(FixedLocator(np.radians(np.arange(0, 90, 15))))
