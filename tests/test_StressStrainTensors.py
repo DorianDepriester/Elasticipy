@@ -344,7 +344,7 @@ class TestStressStrainTensors(unittest.TestCase):
         shape2 = (3,4,5,6)
         d = SecondOrderTensor(np.random.random(shape2 + (3, 3)))
         expected_error = 'The value to compare must be an array of shape {} or {}'.format(shape, shape + (3,3))
-        with self.assertRaises(ValueError) as context:
+        with self.assertRaises(NotImplementedError) as context:
             _ = a == d
         self.assertEqual(str(context.exception), expected_error)
 
