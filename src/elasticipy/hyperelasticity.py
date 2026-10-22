@@ -2,7 +2,7 @@ from elasticipy.tensors.finite_strain import CauchyGreenTensor, DeformationGradi
 from elasticipy.tensors.stress_strain import StressTensor
 from elasticipy.tensors.second_order import SymmetricSecondOrderTensor
 from abc import ABC, abstractmethod
-from scipy.optimize import curve_fit, minimize_scalar
+from scipy.optimize import brentq, curve_fit, minimize_scalar
 import numpy as np
 
 class HyperElastic(ABC):
@@ -205,13 +205,26 @@ class HyperElastic(ABC):
             F22 = np.zeros_like(longitudinal_strain)
             F11 = 1 + longitudinal_strain
             for i, (F11_i, F22_incomp) in enumerate(zip(F11, F11 ** (-0.5))):
-                def trial_gradient(F22_trial):
+                def residual_lateral_stress(F22_trial):
                     F_trial = DeformationGradient.diag([F11_i, F22_trial, F22_trial])
                     s_trial = self.stress_from_F(F_trial)
-                    cost = (s_trial.C[1,1] + s_trial.C[2,2])**2
-                    return cost
-                res = minimize_scalar(trial_gradient, bracket=(1.0, F22_incomp), method='brent')
-                F22[i] = res.x
+                    return s_trial.C[1, 1] + s_trial.C[2, 2]
+                lo, hi = sorted((1.0, F22_incomp))
+                if np.isclose(lo, hi):
+                    F22[i] = 0.5 * (lo + hi)
+                else:
+                    res_lo = residual_lateral_stress(lo)
+                    res_hi = residual_lateral_stress(hi)
+                    if res_lo == 0.:
+                        F22[i] = lo
+                    elif res_hi == 0.:
+                        F22[i] = hi
+                    elif res_lo * res_hi < 0.:
+                        F22[i] = brentq(residual_lateral_stress, lo, hi, xtol=1e-12)
+                    else:
+                        res = minimize_scalar(lambda F22_trial: abs(residual_lateral_stress(F22_trial)),
+                                              bounds=(lo, hi), method='bounded')
+                        F22[i] = res.x
             F = DeformationGradient.diag([F11, F22, F22])
             sigma = self.stress_from_F(F).C[0, 0]
         else:
