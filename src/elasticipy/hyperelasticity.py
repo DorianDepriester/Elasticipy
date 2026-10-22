@@ -220,7 +220,7 @@ class HyperElastic(ABC):
                     elif res_hi == 0.:
                         F22[i] = hi
                     elif res_lo * res_hi < 0.:
-                        F22[i] = brentq(residual_lateral_stress, lo, hi, xtol=1e-12)
+                        F22[i] = brentq(residual_lateral_stress, lo, hi, xtol=1e-8)
                     else:
                         res = minimize_scalar(lambda F22_trial: abs(residual_lateral_stress(F22_trial)),
                                               bounds=(lo, hi), method='bounded')
