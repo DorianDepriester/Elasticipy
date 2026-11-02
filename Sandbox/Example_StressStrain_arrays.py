@@ -7,8 +7,8 @@ from scipy.spatial.transform import Rotation
 # Simple example of stress
 # ======================================================
 stress = StressTensor.shear([1,0,0],[0,1,0],1)
-print(stress.vonMises())
-print(stress.Tresca())
+print(stress.von_mises())
+print(stress.tresca())
 
 # ======================================================
 # Simple example of strain

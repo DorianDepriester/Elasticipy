@@ -1,4 +1,5 @@
 import unittest
+import pytest
 from pytest import approx
 import numpy as np
 from scipy.spatial.transform import Rotation
@@ -200,11 +201,11 @@ class TestStressStrainTensors(unittest.TestCase):
         matrix[2, np.arange(3), np.arange(3)] = -1  # Hydrostatic pressure
         stress = Tensors.StressTensor(matrix)
 
-        vM_stress = stress.vonMises()
+        vM_stress = stress.von_mises()
         vm_th = np.array([1, np.sqrt(3), 0.0])
         np.testing.assert_array_equal(vM_stress, vm_th)
 
-        Tresca_stress = stress.Tresca()
+        Tresca_stress = stress.tresca()
         Tresca_th = np.array([1, 2, 0.0])
         np.testing.assert_array_equal(Tresca_stress, Tresca_th)
 
@@ -802,6 +803,14 @@ class TestStressStrainTensors(unittest.TestCase):
         F = DeformationGradient.rand()
         s = StressTensor.rand()
         assert F.Piola_Kirchoff_2(s) == s.Piola_Kirchoff_2(F)
+
+def test_deprecated_aliases():
+    sigma = StressTensor.tensile([1, 0, 0], 1)
+    with pytest.warns(DeprecationWarning):
+        assert sigma.vonMises() == sigma.von_mises()
+    with pytest.warns(DeprecationWarning):
+        assert sigma.Tresca() == sigma.tresca()
+
 
 if __name__ == '__main__':
     unittest.main()
