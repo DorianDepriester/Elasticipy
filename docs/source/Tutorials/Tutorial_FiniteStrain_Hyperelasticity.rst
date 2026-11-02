@@ -438,8 +438,8 @@ the first invariant:
     >>> print(yeoh)
     Generalized incompressible Mooney-Rivlin hyper-elastic model
     Cij=
-    [[  0. ]
-     [39.8]
+    [[  0.  ]
+     [  39.8]
      [-131.9]
      [ 82.8]]
     
