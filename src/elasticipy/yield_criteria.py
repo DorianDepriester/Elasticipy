@@ -322,14 +322,14 @@ class VonMisesCriterion(YieldCriterion):
         -------
         float or numpy.ndarray
         """
-        return stress.vonMises()
+        return stress.von_mises()
 
     def yield_function(self, stress):
         return self.eq_stress(stress) - self.yield_stress
 
     @staticmethod
     def normal(stress, **kwargs):
-        eq_stress = stress.vonMises()
+        eq_stress = stress.von_mises()
         dev_stress = stress.deviatoric_part()
         gradient_tensor = dev_stress / eq_stress
         return StrainTensor(3 / 2 * gradient_tensor.matrix)
@@ -348,7 +348,7 @@ class TrescaCriterion(VonMisesCriterion):
 
     @staticmethod
     def eq_stress(stress, **kwargs):
-        return stress.Tresca()
+        return stress.tresca()
 
     @staticmethod
     def normal(stress, **kwargs):

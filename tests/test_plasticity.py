@@ -105,7 +105,7 @@ class TestJohnsonCook(unittest.TestCase):
         stress = StressTensor.shear([1,0,0],[0,1,0], 1000)
         strain = JC_tresca.compute_strain_increment(stress)
         eq_stress_tr = JC_tresca.flow_stress(strain.eq_strain())
-        assert eq_stress_tr == approx(stress.Tresca())
+        assert eq_stress_tr == approx(stress.tresca())
 
     def test_DruckerPrager(self):
         dp = DruckerPrager(0.2, 100)

@@ -22,7 +22,7 @@ class TestDruckerPrager(unittest.TestCase):
     def test_vonMises(self):
         pg_vm = DruckerPrager(0, 1)
         for stress in [tensile_x, tensile_y, shear, biaxial]:
-            assert pg_vm.yield_function(stress) == stress.vonMises() / np.sqrt(3) - 1
+            assert pg_vm.yield_function(stress) == stress.von_mises() / np.sqrt(3) - 1
 
             mises_crit = VonMisesCriterion()
             np.testing.assert_array_almost_equal(pg_vm.normal(stress).matrix, mises_crit.normal(stress).matrix)
@@ -68,7 +68,7 @@ class TestMohrCoulomb(unittest.TestCase):
     def test_Tresca(self):
         mv_tr = MohrCoulomb(1, 0)
         for stress in [tensile_x, tensile_y, shear, biaxial]:
-            assert mv_tr.yield_function(stress) == stress.Tresca() - 2
+            assert mv_tr.yield_function(stress) == stress.tresca() - 2
 
             tresca_crit = TrescaCriterion()
             np.testing.assert_array_almost_equal(mv_tr.normal(stress).matrix, tresca_crit.normal(stress).matrix)

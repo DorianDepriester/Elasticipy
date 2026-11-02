@@ -13,7 +13,7 @@ equivalent stresses:
 
     >>> from elasticipy.tensors.stress_strain import StressTensor, StrainTensor
     >>> stress = StressTensor.shear([1, 0, 0], [0, 1, 0], 1.0) # Unit XY shear stress
-    >>> print(stress.vonMises(), stress.Tresca())
+    >>> print(stress.von_mises(), stress.tresca())
     1.7320508075688772 2.0
 
 So now, let's have a look on the strain tensor, and compute the principal strains and the volumetric change:
@@ -100,7 +100,7 @@ that the maximum shear stress is around 0.849. Those can be checked by:
 
     >>> s.principal_stresses()
     array([ 1.51167769,  0.3519979 , -0.18566326])
-    >>> print(s.Tresca() / 2)
+    >>> print(s.tresca() / 2)
     0.848670477704235
 
 

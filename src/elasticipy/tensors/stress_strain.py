@@ -1,3 +1,5 @@
+import warnings
+
 import numpy as np
 from elasticipy.tensors.second_order import SymmetricSecondOrderTensor
 
@@ -175,7 +177,7 @@ class StressTensor(SymmetricSecondOrderTensor):
         """
         return self.eigvals()
 
-    def vonMises(self):
+    def von_mises(self):
         """
         von Mises equivalent stress.
 
@@ -186,7 +188,7 @@ class StressTensor(SymmetricSecondOrderTensor):
 
         See Also
         --------
-        Tresca : Tresca equivalent stress
+        tresca : Tresca equivalent stress
 
         Examples
         --------
@@ -194,13 +196,13 @@ class StressTensor(SymmetricSecondOrderTensor):
 
         >>> from elasticipy.tensors.stress_strain import StressTensor
         >>> sigma = StressTensor.tensile([1,0,0],1)
-        >>> print(sigma.vonMises())
+        >>> print(sigma.von_mises())
         1.0
 
         For (single-valued) shear stress:
 
         >>> sigma = StressTensor.shear([1,0,0],[0,1,0],1)
-        >>> print(sigma.vonMises())
+        >>> print(sigma.von_mises())
         1.7320508075688772
 
         For arrays of stresses :
@@ -209,12 +211,12 @@ class StressTensor(SymmetricSecondOrderTensor):
         >>> sigma_xx = np.linspace(0,1,5)
         >>> sigma_xy = np.linspace(0,1,5)
         >>> sigma = StressTensor.tensile([1,0,0],sigma_xx) + StressTensor.shear([1,0,0],[0,1,0],sigma_xy)
-        >>> sigma.vonMises()
+        >>> sigma.von_mises()
         array([0. , 0.5, 1. , 1.5, 2. ])
         """
         return np.sqrt(3 * self.J2)
 
-    def Tresca(self):
+    def tresca(self):
         """
         Tresca(-Guest) equivalent stress.
 
@@ -225,7 +227,7 @@ class StressTensor(SymmetricSecondOrderTensor):
 
         See Also
         --------
-        vonMises : von Mises equivalent stress
+        von_mises : von Mises equivalent stress
 
         Examples
         --------
@@ -233,13 +235,13 @@ class StressTensor(SymmetricSecondOrderTensor):
 
         >>> from elasticipy.tensors.stress_strain import StressTensor
         >>> sigma = StressTensor.tensile([1,0,0],1)
-        >>> print(sigma.Tresca())
+        >>> print(sigma.tresca())
         1.0
 
         For (single-valued) shear stress:
 
         >>> sigma = StressTensor.shear([1,0,0],[0,1,0],1)
-        >>> print(sigma.Tresca())
+        >>> print(sigma.tresca())
         2.0
 
         For arrays of stresses :
@@ -248,11 +250,29 @@ class StressTensor(SymmetricSecondOrderTensor):
         >>> sigma_xx = np.linspace(0,1,5)
         >>> sigma_xy = np.linspace(0,1,5)
         >>> sigma = StressTensor.tensile([1,0,0],sigma_xx) + StressTensor.shear([1,0,0],[0,1,0],sigma_xy)
-        >>> sigma.Tresca()
+        >>> sigma.tresca()
         array([0.        , 0.55901699, 1.11803399, 1.67705098, 2.23606798])
         """
         ps = self.principal_stresses()
         return ps[...,0] - ps[...,-1]
+
+    def vonMises(self):
+        warnings.warn(
+            "StressTensor.vonMises() is deprecated and will be removed in a future release. "
+            "Use StressTensor.von_mises() instead.",
+            DeprecationWarning,
+            stacklevel=2
+        )
+        return self.von_mises()
+
+    def Tresca(self):
+        warnings.warn(
+            "StressTensor.Tresca() is deprecated and will be removed in a future release. "
+            "Use StressTensor.tresca() instead.",
+            DeprecationWarning,
+            stacklevel=2
+        )
+        return self.tresca()
 
     def hydrostatic_pressure(self):
         """
@@ -355,7 +375,7 @@ class StressTensor(SymmetricSecondOrderTensor):
         See Also
         --------
         hydrostatic_pressure : compute the hydrostatic pressure
-        vonMises : compute the von Mises equivalent stress
+        von_mises : compute the von Mises equivalent stress
         Lode_angle : compute the Lode angle
 
         Notes
@@ -384,7 +404,7 @@ class StressTensor(SymmetricSecondOrderTensor):
         >>> s2.triaxiality()
         array([0.33333333, 0.57735027, 0.66666667])
         """
-        return self.I1 / self.vonMises() / 3
+        return self.I1 / self.von_mises() / 3
 
     def save_as_txt(self, file, name_prefix='S', **kwargs):
         super().save_as_txt(file, name_prefix=name_prefix, **kwargs)
