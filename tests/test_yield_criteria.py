@@ -1,5 +1,5 @@
 import unittest
-from elasticipy.yield_criteria import DruckerPrager, MohrCoulomb, TrescaCriterion, VonMisesCriterion
+from elasticipy.yield_criteria import DruckerPrager, MohrCoulomb, TrescaCriterion, VonMisesCriterion, Hill
 from elasticipy.tensors.stress_strain import StressTensor, StrainTensor
 import numpy as np
 from pytest import approx
@@ -126,6 +126,23 @@ class TestVonMisesCriterion(unittest.TestCase):
                                   [1, 0, 0],
                                   [0, 0, 0]])
         np.testing.assert_array_almost_equal(normal.matrix, normal_th)
+
+class TestHillCriterion(unittest.TestCase):
+    def test_yield_function(self):
+        hill = Hill(1,1,1,1,1,1)
+        assert hill.yield_function(StressTensor.zeros()) == -1.0
+        assert hill.yield_function(StressTensor.pressure(100.)) == -1.0
+
+    def test_from_yield_stresses(self):
+        hill = Hill.from_yield_stresses(11,22,33,23, 13, 12)
+        assert hill.yield_function(StressTensor.tensile([1,0,0], 11)) == 0.0
+        assert np.isclose(hill.yield_function(StressTensor.tensile([0,1,0], 22)), 0.0)
+        assert np.isclose(hill.yield_function(StressTensor.tensile([0,0,1], 33)), 0.0)
+        assert np.isclose(hill.yield_function(StressTensor.shear([0,1,0], [0,0,1], 23)), 0.0)
+        assert np.isclose(hill.yield_function(StressTensor.shear([1,0,0], [0,0,1], 13)), 0.0)
+        assert np.isclose(hill.yield_function(StressTensor.shear([1,0,0], [0,1,0], 12)), 0.0)
+
+
 
 if __name__ == '__main__':
     unittest.main()
