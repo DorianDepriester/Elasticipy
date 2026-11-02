@@ -446,27 +446,6 @@ the first invariant:
     >>> print(f"M = {yeoh.M}, N = {yeoh.N}")
     M = 3, N = 0
 
-
-Strain Energy Potential Calculation
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-For all models, the **strain energy density** :math:`W` can be calculated:
-
-.. doctest::
-
-    >>> F = DeformationGradient.isochoric_tensile([1, 0, 0], stretch=0.5)
-    >>> 
-    >>> # Potential for Neo-Hooke
-    >>> W_nh = nh_incomp.potential_from_F(F)
-    >>> print(f"W (Neo-Hooke) = {W_nh:.4f}")
-    W (Neo-Hooke) = 16.666666666666668
-    
-    >>> # Potential for Yeoh
-    >>> W_yeoh = yeoh.potential_from_F(F)
-    >>> print(f"W (Yeoh) = {W_yeoh:.4f}")
-    W (Yeoh) = 18.291666666666666
-
-
 Tensile Curves
 ~~~~~~~~~~~~~~
 
