@@ -644,3 +644,41 @@ class MohrCoulomb(YieldCriterion):
         strain = StrainTensor(normal)
         return strain / strain.eq_strain()
 
+
+class Hill(YieldCriterion):
+    name = "Hill quadratic"
+
+    def __init__(self, F, G, H, L, M, N):
+        """
+        Create a quadratic Hill yield criterion.
+
+        Parameters
+        ----------
+        F, G, H, L, M, N : float
+            Hill constants
+        """
+        self.F = F
+        self.G = G
+        self.H = H
+        self.L = L
+        self.M = M
+        self.N = N
+
+    def yield_function(self, stress):
+        return (  self.F*(stress.C[1,1] - stress.C[2,2])**2
+                + self.G*(stress.C[2,2] - stress.C[0,0])**2
+                + self.H*(stress.C[1,1] - stress.C[0,0])**2
+                + 2 * self.L*stress.C[1,2]**2
+                + 2 * self.M*stress.C[2,0]**2
+                + 2 * self.N*stress.C[0,1]**2 - 1)
+
+    @classmethod
+    def from_yield_stresses(cls, s11, s22, s33, tau23, tau13, tau12):
+        F = 0.5 * (-1/s11**2 + 1/s22**2 + 1/s33**2)
+        G = 0.5 * ( 1/s11**2 - 1/s22**2 + 1/s33**2)
+        H = 0.5 * ( 1/s11**2 + 1/s22**2 - 1/s33**2)
+        L = 0.5 / tau23 ** 2
+        M = 0.5 / tau13 ** 2
+        N = 0.5 / tau12 ** 2
+        return cls(F, G, H, L, M, N)
+
