@@ -11,8 +11,6 @@ stretches, or intense compressions.
     This tutorial assumes you are familiar with the basic concepts of stress and strain tensors.
     For an introduction, see the :doc:`Tutorial_StressStrain` tutorial.
 
-----------------------------------------------------------------------------------------------------
-
 Finite Strain Theory
 --------------------
 
@@ -264,9 +262,6 @@ The **Green-Lagrange tensor** :math:`\mathbf{E}` is a strain measure defined by:
     >>> # Comparison (second-order terms are negligible)
     >>> np.allclose(E_small.matrix, epsilon.matrix, atol=1e-12)
     True
-
-
-----------------------------------------------------------------------------------------------------
 
 Hyperelasticity
 ---------------
