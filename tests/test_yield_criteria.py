@@ -151,6 +151,15 @@ class TestHillCriterion(unittest.TestCase):
         assert np.isclose(hill.yield_function(StressTensor.shear([1,0,0], [0,0,1], 13)), 0.0)
         assert np.isclose(hill.yield_function(StressTensor.shear([1,0,0], [0,1,0], 12)), 0.0)
 
+    def test_von_Mises(self):
+        sigma_y = 1.
+        F = 1 / (2 * sigma_y**2)
+        L = 3 / (2 * sigma_y**2)
+        hill = Hill(F, F, F, L, L, L)
+        s = StressTensor.rand((100,))
+        f_hill = hill.yield_function(s)
+        np.testing.assert_array_almost_equal(sigma_y * (1 + f_hill), s.von_mises()**2)
+
 
 
 if __name__ == '__main__':
