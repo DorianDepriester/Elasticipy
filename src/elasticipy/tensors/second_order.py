@@ -1777,7 +1777,7 @@ class SymmetricSecondOrderTensor(SecondOrderTensor):
 
         Returns
         -------
-        SymmetricSecondOrderTensor
+        cls
 
         See Also
         --------
