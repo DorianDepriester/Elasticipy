@@ -50,7 +50,7 @@ where :math:`\mathbf{X}` is the position of a point in the reference configurati
     >>> # Pure tensile deformation along x
     >>> F_tensile = DeformationGradient.diag([1.5, 1.0, 1.0])
     >>> print(F_tensile)
-    Second-order tensor
+    Deformation Gradient tensor
     [[1.5 0.  0. ]
      [0.  1.  0. ]
      [0.  0.  1. ]]
@@ -89,7 +89,7 @@ Elasticipy provides convenient methods for creating common deformation states:
     >>> # Tension along direction [1,0,0] with a stretch of 0.5 (50% elongation)
     >>> F = DeformationGradient.tensile([1, 0, 0], magnitude=0.5)
     >>> print(F)
-    Second-order tensor
+    Deformation Gradient tensor
     [[1.5 0.  0. ]
      [0.  1.  0. ]
      [0.  0.  1. ]]
@@ -101,7 +101,7 @@ Elasticipy provides convenient methods for creating common deformation states:
     >>> # Shear in XY plane with magnitude 0.3
     >>> F_shear = DeformationGradient.shear([1, 0, 0], [0, 1, 0], magnitude=0.3)
     >>> print(F_shear)
-    Second-order tensor
+    Deformation Gradient tensor
     [[1.  0.3 0. ]
      [0.  1.  0. ]
      [0.  0.  1. ]]
@@ -113,12 +113,12 @@ Elasticipy provides convenient methods for creating common deformation states:
     >>> # Tension along x with stretch of 1.0, other directions adapt to maintain J=1
     >>> F_iso = DeformationGradient.isochoric_tensile([1, 0, 0], stretch=1.0)
     >>> print(F_iso)
-    Second-order tensor
+    Deformation Gradient tensor
     [[2.         0.         0.        ]
      [0.         0.70710678 0.        ]
      [0.         0.         0.70710678]]
     >>> print(f"J = {F_iso.J:.10f} (should be 1.0)")
-    J = 1.0000000000
+    J = 1.0000000000 (should be 1.0)
 
 
 Polar Decomposition
@@ -173,17 +173,17 @@ Cauchy-Green tensors measure pure deformation, independently of rotations.
     >>> B = F.CauchyGreen(side='left')  # or simply F.B
     
     >>> print("C (right):")
-    >>> print(C)
     C (right):
-    Symmetric second-order tensor
+    >>> print(C)
+    Cauchy-Green tensor
     [[2.25 0.   0.  ]
      [0.   1.44 0.  ]
      [0.   0.   0.64]]
     
-    >>> print("\nB (left):")
-    >>> print(B)
+    >>> print("B (left):")
     B (left):
-    Symmetric second-order tensor
+    >>> print(B)
+    Cauchy-Green tensor
     [[2.25 0.   0.  ]
      [0.   1.44 0.  ]
      [0.   0.   0.64]]
@@ -212,11 +212,11 @@ Elasticipy automatically calculates these invariants:
     >>> print(f"I1 = {B.I1:.4f}")
     I1 = 4.3300
     >>> print(f"I2 = {B.I2:.4f}")
-    I2 = 3.9156
+    I2 = 5.6016
     >>> print(f"I3 = {B.I3:.4f}")
-    I3 = 1.4400
+    I3 = 2.0736
     >>> print(f"J = sqrt(I3) = {B.J:.4f}")
-    J = 1.2000
+    J = sqrt(I3) = 1.4400
 
 For incompressible materials, the **modified invariants** are often used:
 
@@ -228,9 +228,9 @@ For incompressible materials, the **modified invariants** are often used:
 .. doctest::
 
     >>> print(f"I1_bar = {B.I1_bar:.4f}")
-    I1_bar = 4.3300
+    I1_bar = 3.3956
     >>> print(f"I2_bar = {B.I2_bar:.4f}")
-    I2_bar = 3.9156
+    I2_bar = 3.4448
 
 
 Green-Lagrange Tensor
@@ -247,9 +247,9 @@ The **Green-Lagrange tensor** :math:`\mathbf{E}` is a strain measure defined by:
     >>> E = F.E  # or F.Green_Lagrangian()
     >>> print(E)
     Symmetric second-order tensor
-    [[1.25  0.    0.  ]
-     [0.    0.44  0.  ]
-     [0.    0.    -0.18]]
+    [[ 0.625  0.     0.   ]
+     [ 0.     0.22   0.   ]
+     [ 0.     0.    -0.18 ]]
 
 .. note::
 
@@ -336,8 +336,8 @@ For a given deformation state, the stress tensor can be calculated:
     >>> # Stress calculation with incompressible Neo-Hooke
     >>> sigma_incomp = nh_incomp.stress_from_F(F)
     >>> print("Stress (incompressible):")
-    >>> print(sigma_incomp)
     Stress (incompressible):
+    >>> print(sigma_incomp)
     Stress tensor
     [[ 211.11111111    0.            0.        ]
      [   0.         -105.55555556    0.        ]
@@ -347,8 +347,8 @@ For a given deformation state, the stress tensor can be calculated:
     >>> F_comp = DeformationGradient.diag([1.5, 1.0, 1.0])
     >>> sigma_comp = nh_comp.stress_from_F(F_comp)
     >>> print("\nStress (compressible):")
-    >>> print(sigma_comp)
     Stress (compressible):
+    >>> print(sigma_comp)
     Stress tensor
     [[584.7936476   0.          0.       ]
      [  0.        457.6031762   0.       ]
@@ -441,7 +441,7 @@ the first invariant:
     [[   0. ]
      [  39.8]
      [-131.9]
-     [ 82.8]]
+     [  82.8]]
     
     >>> print(f"M = {yeoh.M}, N = {yeoh.N}")
     M = 3, N = 0
