@@ -438,7 +438,7 @@ the first invariant:
     >>> print(yeoh)
     Generalized incompressible Mooney-Rivlin hyper-elastic model
     Cij=
-    [[  0.  ]
+    [[   0. ]
      [  39.8]
      [-131.9]
      [ 82.8]]
@@ -459,6 +459,7 @@ A common application is the calculation of **tensile curves**:
     >>> 
     >>> # Display first values
     >>> print("Stretch | Stress")
+    Stretch | Stress
     >>> for stretch, stress in zip(stretch_values[:5], stress_values[:5]):
     ...     print(f"{stretch:.2f}      | {stress:.4f}")
     0.00      | 0.0000
@@ -509,7 +510,7 @@ Elasticipy allows **fitting** hyperelastic model parameters from experimental te
     >>> # Fitting a Neo-Hooke model
     >>> nh_fit = NeoHooke.fit(stretch_exp, stress_exp)
     >>> print(f"Fitted C = {nh_fit.C:.4f} (actual value = {nh_incomp.C:.4f})")
-    Fitted C = 100.0000 (actual value = 100.0000)
+    Fitted C = 98.7273 (actual value = 100.0000)
 
 For a more complex model like Yeoh:
 
