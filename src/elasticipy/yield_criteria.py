@@ -316,8 +316,8 @@ class VonMisesCriterion(YieldCriterion):
 
         Parameters
         ----------
-        yield_stress : float
-            Tensile yield stress
+        yield_stress : float, optional
+            Tensile yield stress. Default is 1.0.
         """
         self.yield_stress = yield_stress
 
