@@ -461,12 +461,11 @@ A common application is the calculation of **tensile curves**:
     >>> print("Stretch | Stress")
     >>> for stretch, stress in zip(stretch_values[:5], stress_values[:5]):
     ...     print(f"{stretch:.2f}      | {stress:.4f}")
-    Stretch | Stress
     0.00      | 0.0000
-    0.02      | 0.6000
-    0.04      | 1.2000
-    0.06      | 1.8000
-    0.08      | 2.4000
+    0.02      | 11.8828
+    0.04      | 23.3132
+    0.06      | 34.3253
+    0.08      | 44.9502
 
 .. plot::
 
