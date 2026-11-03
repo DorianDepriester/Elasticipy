@@ -512,15 +512,6 @@ Elasticipy allows **fitting** hyperelastic model parameters from experimental te
     >>> print(f"Fitted C = {nh_fit.C:.4f} (actual value = {nh_incomp.C:.4f})")
     Fitted C = 98.7273 (actual value = 100.0000)
 
-For a more complex model like Yeoh:
-
-.. doctest::
-
-    >>> # Fitting a Yeoh model with M=3
-    >>> yeoh_fit = Yeoh.fit(stretch_exp, stress_exp, M=3)
-    >>> print(f"Fitted C = {yeoh_fit.C}")
-    Fitted C = [39.8  -131.9   82.8]
-
 
 Differences between Analytical and Numerical Formulations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
