@@ -89,15 +89,12 @@ def localization_tensor(C_macro, C_incl, a1, a2, a3, n_phi=100, n_theta=50):
         Localization tensor
     """
     E = polarization_tensor(C_macro, a1, a2, a3, n_phi=n_phi, n_theta=n_theta)
-    if C_incl==np.inf:
-        return I - E.ddot(C_macro)
-    else:
-        Ainv = E.ddot(C_incl - C_macro) + I
-        return Ainv.inv()
+    Ainv = E.ddot(C_incl - C_macro) + I
+    return Ainv.inv()
 
 
 def Kroner_Eshelby(Cs, particle_sizes=None, orientations=None,
-                   volume_fractions=None, n_phi=50, n_theta=100, method='del2', maxiter=1000):
+                   volume_fractions=None, n_phi=100, n_theta=50, method='del2', maxiter=1000):
     if isinstance(Cs, (tuple, list)):
         Cs = StiffnessTensor.stack(Cs)
     if orientations is not None:
