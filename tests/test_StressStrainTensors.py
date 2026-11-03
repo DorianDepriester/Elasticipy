@@ -797,7 +797,7 @@ class TestStressStrainTensors(unittest.TestCase):
     def test_PK1(self):
         F = DeformationGradient.rand()
         s = StressTensor.rand()
-        assert F.Piola_Kirchoff_1(s) == s.Piola_Kirchoff_1(F)
+        assert F.piola_kirchoff_1(s) == s.piola_kirchoff_1(F)
 
     def test_PK2(self):
         F = DeformationGradient.rand()

@@ -413,7 +413,7 @@ class StressTensor(SymmetricSecondOrderTensor):
     def load_from_txt(cls, file, name_prefix='S', **kwargs):
         return super().load_from_txt(file, name_prefix=name_prefix, **kwargs)
 
-    def Piola_Kirchoff_1(self, F):
+    def piola_kirchoff_1(self, F):
         """
         Compute the first Piola-Kirchoff stress tensor (PK1)
 
@@ -430,7 +430,7 @@ class StressTensor(SymmetricSecondOrderTensor):
         --------
         Piola_Kirchoff_2 : second PK stress tensor
         """
-        return F.Piola_Kirchoff_1(self)
+        return F.piola_kirchoff_1(self)
 
     def Piola_Kirchoff_2(self, F):
         """

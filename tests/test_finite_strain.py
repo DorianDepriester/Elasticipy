@@ -92,7 +92,7 @@ class TestPiolaKirchoff(unittest.TestCase):
         """Quand F = I, P = σ (pas de transformation)"""
         F = DeformationGradient.eye()
         sigma = StressTensor.diag([1, 2, 3])
-        P = F.Piola_Kirchoff_1(sigma)
+        P = F.piola_kirchoff_1(sigma)
         np.testing.assert_array_almost_equal(P.matrix, sigma.matrix)
 
     def test_Piola_Kirchoff_2_identity(self):
@@ -107,7 +107,7 @@ class TestPiolaKirchoff(unittest.TestCase):
         F = DeformationGradient.rand()
         sigma = StressTensor.rand()
 
-        P = F.Piola_Kirchoff_1(sigma)
+        P = F.piola_kirchoff_1(sigma)
         S_from_P = F.inv().dot(P)
 
         S = F.Piola_Kirchoff_2(sigma)
@@ -120,7 +120,7 @@ class TestPiolaKirchoff(unittest.TestCase):
 
         Finv = F.inv()
         P_expected = F.J * sigma.dot(Finv.T)
-        P_actual = F.Piola_Kirchoff_1(sigma)
+        P_actual = F.piola_kirchoff_1(sigma)
 
         np.testing.assert_array_almost_equal(P_actual.matrix, P_expected.matrix)
 
@@ -150,7 +150,7 @@ class TestPiolaKirchoff(unittest.TestCase):
         F = DeformationGradient.rand(shape=shape)
         sigma = StressTensor.rand(shape=shape)
 
-        P = F.Piola_Kirchoff_1(sigma)
+        P = F.piola_kirchoff_1(sigma)
         S = F.Piola_Kirchoff_2(sigma)
 
         assert P.shape == shape
