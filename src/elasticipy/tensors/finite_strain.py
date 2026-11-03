@@ -266,7 +266,7 @@ class DeformationGradient(SecondOrderTensor):
         >>> from elasticipy.tensors.finite_strain import DeformationGradient
         >>> F = DeformationGradient.isochoric_tensile([1,0,0], stretch=1)
         >>> print(F)
-        Second-order tensor
+        Deformation Gradient tensor
         [[2.         0.         0.        ]
          [0.         0.70710678 0.        ]
          [0.         0.         0.70710678]]
@@ -275,14 +275,14 @@ class DeformationGradient(SecondOrderTensor):
 
         >>> F = DeformationGradient.isochoric_tensile([1,0,0], stretch=[1,2,3,4])
         >>> print(F)
-        Second-order tensor
+        Deformation Gradient tensor
         Shape=(4,)
 
         >>> print(F[-1])
-        Second-order tensor
-        [[4.  0.  0. ]
-         [0.  0.5 0. ]
-         [0.  0.  0.5]]
+        Deformation Gradient tensor
+        [[5.        0.        0.       ]
+         [0.        0.4472136 0.       ]
+         [0.        0.        0.4472136]]
 
         One can check that the determinant is always one:
 
