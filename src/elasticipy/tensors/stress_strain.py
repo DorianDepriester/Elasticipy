@@ -432,7 +432,7 @@ class StressTensor(SymmetricSecondOrderTensor):
         """
         return F.piola_kirchoff_1(self)
 
-    def Piola_Kirchoff_2(self, F):
+    def piola_kirchoff_2(self, F):
         """
         Compute the second Piola-Kirchoff stress tensor (PK2)
 
@@ -449,7 +449,7 @@ class StressTensor(SymmetricSecondOrderTensor):
         --------
         Piola_Kirchoff_1 : first PK stress tensor
         """
-        return F.Piola_Kirchoff_2(self)
+        return F.piola_kirchoff_2(self)
 
 
 class StrainRateTensor(StrainTensor):

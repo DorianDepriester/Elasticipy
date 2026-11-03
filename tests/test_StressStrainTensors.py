@@ -802,7 +802,7 @@ class TestStressStrainTensors(unittest.TestCase):
     def test_PK2(self):
         F = DeformationGradient.rand()
         s = StressTensor.rand()
-        assert F.Piola_Kirchoff_2(s) == s.Piola_Kirchoff_2(F)
+        assert F.piola_kirchoff_2(s) == s.piola_kirchoff_2(F)
 
 def test_deprecated_aliases():
     sigma = StressTensor.tensile([1, 0, 0], 1)
