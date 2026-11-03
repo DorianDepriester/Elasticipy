@@ -46,7 +46,9 @@ class YieldCriterion(ABC):
 
     def normal(self, stress, **kwargs):
         """
-        Apply the normality rule
+        Apply the normality rule.
+
+        If ```normal_analytical`` is not defined, the normal is computed by finite difference of the yield function.
 
         Parameters
         ----------
@@ -59,6 +61,10 @@ class YieldCriterion(ABC):
         -------
         StrainTensor
             Normalized direction of plastic flow
+
+        See Also
+        --------
+        normal_from_derivative : apply the normality rule by finite difference
         """
         try:
             return self.normal_analytical(stress)
@@ -66,6 +72,21 @@ class YieldCriterion(ABC):
             return self.normal_from_derivative(stress, **kwargs)
 
     def normal_from_derivative(self, stress, h=1e-6):
+        """
+        Compute the direction of plastic flow from the derivative of the normality rule.
+
+        Parameters
+        ----------
+        stress : StressTensor
+            Stress tensor to apply the normality rule from
+        h : float
+            Step to apply to the stress for applying the finite difference
+
+        Returns
+        -------
+        StressTensor
+            Normalized direction of plastic flow
+        """
         h_mat = np.eye(6) * h
         shape = stress.shape + (6,)
         dfds_voigt = np.zeros(shape)
