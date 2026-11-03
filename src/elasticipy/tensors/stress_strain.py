@@ -212,7 +212,7 @@ class StressTensor(SymmetricSecondOrderTensor):
         >>> sigma_xy = np.linspace(0,1,5)
         >>> sigma = StressTensor.tensile([1,0,0],sigma_xx) + StressTensor.shear([1,0,0],[0,1,0],sigma_xy)
         >>> sigma.von_mises()
-        array([-0. , 0.5, 1. , 1.5, 2. ])
+        array([-0. ,  0.5,  1. ,  1.5,  2. ])
         """
         return np.sqrt(3 * self.J2)
 
