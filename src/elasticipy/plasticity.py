@@ -23,9 +23,9 @@ class IsotropicHardening:
         if isinstance(criterion, str):
             criterion = criterion.lower()
             if criterion in ('von mises', 'mises', 'vonmises', 'j2'):
-                self.criterion = VonMisesCriterion
+                self.criterion = VonMisesCriterion()
             elif criterion == 'tresca':
-                self.criterion = TrescaCriterion
+                self.criterion = TrescaCriterion()
             else:
                 raise ValueError('The criterion can be "Tresca", "von Mises" or "J2".')
         else:
