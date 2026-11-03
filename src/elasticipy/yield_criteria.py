@@ -650,7 +650,17 @@ class Hill(YieldCriterion):
 
     def __init__(self, F, G, H, L, M, N):
         """
-        Create a quadratic Hill yield criterion.
+        Create an anisotropic quadratic Hill yield criterion.
+
+        The yield function of the quadratic Hill criterion is defined as:
+
+        .. math::
+
+            F(\\sigma_{22}-\\sigma_{11})^2 + G(\\sigma_{11}-\\sigma_{33})^2 + H(\\sigma_{11}-\\sigma_{22})^2
+            + 2L\\sigma_{23}^2 + 2M\\sigma_{13}^2 + 2N\\sigma_{12}^2 - 1
+
+
+        where :math:`F, G, H, L, M, N` are constants.
 
         Parameters
         ----------
