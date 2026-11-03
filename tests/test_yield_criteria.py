@@ -93,7 +93,8 @@ class TestTrescaCriterion(unittest.TestCase):
     def test_normality_Tresca(self):
         biaxial = (StressTensor.tensile([1,0,0],[0, 1, 1, 1, 1, 1, 0]) +
                    StressTensor.tensile([0,1,0],[-1, -1, -0.5, 0, 0.5, 1, 1]))
-        n = TrescaCriterion().normal(biaxial)
+        tr = TrescaCriterion()
+        n = tr.normal(biaxial)
         assert n[0] == VonMisesCriterion().normal(biaxial[0])
         assert n[2] == K * np.diag([1, -1, 0])
         assert n[2] == K * np.diag([1, -1, 0])
@@ -101,6 +102,9 @@ class TestTrescaCriterion(unittest.TestCase):
         assert n[4] == K * np.diag([1, 0, -1])
         assert n[5] == VonMisesCriterion().normal(biaxial[5])
         assert n[6] == VonMisesCriterion().normal(biaxial[6])
+
+        n_derivative = tr.normal_from_derivative(biaxial)
+        np.testing.assert_array_almost_equal(n_derivative.matrix, n.matrix)
 
         # Check that the magnitude of the normal is 1
         np.testing.assert_array_equal(n.eq_strain(), np.ones(biaxial.shape))
@@ -117,15 +121,20 @@ class TestVonMisesCriterion(unittest.TestCase):
 
     def test_normality_J2(self):
         tensile_stress = StressTensor.tensile([1, 0, 0], 1)
-        normal = VonMisesCriterion().normal(tensile_stress)
+        vm = VonMisesCriterion()
+        normal = vm.normal(tensile_stress)
         assert normal == np.diag([1., -0.5, -0.5])
+        normal_diff = vm.normal_from_derivative(tensile_stress)
+        np.testing.assert_array_almost_equal(normal_diff.matrix, normal.matrix)
 
         shear_stress = StressTensor.shear([1, 0, 0], [0, 1, 0], 1)
-        normal = VonMisesCriterion().normal(shear_stress)
+        normal = vm.normal(shear_stress)
         normal_th = K * np.array([[0, 1, 0],
                                   [1, 0, 0],
                                   [0, 0, 0]])
         np.testing.assert_array_almost_equal(normal.matrix, normal_th)
+        normal_diff = vm.normal_from_derivative(shear_stress)
+        np.testing.assert_array_almost_equal(normal_diff.matrix, normal.matrix)
 
 class TestHillCriterion(unittest.TestCase):
     def test_yield_function(self):
