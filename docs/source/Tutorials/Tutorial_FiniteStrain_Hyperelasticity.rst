@@ -339,9 +339,9 @@ For a given deformation state, the stress tensor can be calculated:
     >>> print(sigma_incomp)
     Stress (incompressible):
     Stress tensor
-    [[ 33.33333333 -16.66666667 -16.66666667]
-     [-16.66666667  16.66666667   0.        ]
-     [-16.66666667   0.          16.66666667]]
+    [[ 211.11111111    0.            0.        ]
+     [   0.         -105.55555556    0.        ]
+     [   0.            0.         -105.55555556]]
     
     >>> # Stress calculation with compressible Neo-Hooke
     >>> F_comp = DeformationGradient.diag([1.5, 1.0, 1.0])
@@ -350,9 +350,9 @@ For a given deformation state, the stress tensor can be calculated:
     >>> print(sigma_comp)
     Stress (compressible):
     Stress tensor
-    [[166.66666667  0.          0.        ]
-     [ 0.          33.33333333  0.        ]
-     [ 0.          0.          33.33333333]]
+    [[584.7936476   0.          0.       ]
+     [  0.        457.6031762   0.       ]
+     [  0.          0.        457.6031762]]
 
 
 Comparison with Linear Elasticity
@@ -374,7 +374,7 @@ linear elasticity:
     >>> 
     >>> # Small deformation
     >>> eps = 1e-6
-    >>> F_small = DeformationGradient.eye() + StrainTensor.shear([1,0,0], [0,1,0], eps)
+    >>> F_small = DeformationGradient.shear([1,0,0], [0,1,0], eps)
     >>> 
     >>> # Stress by hyperelasticity
     >>> sigma_hyper = nh_comp.stress_from_F(F_small)
