@@ -42,7 +42,7 @@ where :math:`\mathbf{X}` is the position of a point in the reference configurati
     >>> # Create an identity tensor (no deformation)
     >>> F_identity = DeformationGradient.eye()
     >>> print(F_identity)  # doctest: +NORMALIZE_WHITESPACE
-    Second-order tensor
+    Deformation Gradient tensor
     [[1. 0. 0.]
      [0. 1. 0.]
      [0. 0. 1.]]
@@ -346,7 +346,7 @@ For a given deformation state, the stress tensor can be calculated:
     >>> # Stress calculation with compressible Neo-Hooke
     >>> F_comp = DeformationGradient.diag([1.5, 1.0, 1.0])
     >>> sigma_comp = nh_comp.stress_from_F(F_comp)
-    >>> print("\nStress (compressible):")
+    >>> print("Stress (compressible):")
     Stress (compressible):
     >>> print(sigma_comp)
     Stress tensor
