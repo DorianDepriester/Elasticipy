@@ -621,17 +621,9 @@ class FourthOrderTensor:
         ...         for k in range(3):
         ...             T1T2_cross_loop[i,j,k] = T1[i,j].ddot(T2[k])
 
-        One can check that the results are consistent with:
+        One can check that the results are consistent:
 
-        >>> T1T2_cross_loop == T1T2_cross
-        array([[[ True,  True,  True],
-                [ True,  True,  True],
-                [ True,  True,  True]],
-        <BLANKLINE>
-               [[ True,  True,  True],
-                [ True,  True,  True],
-                [ True,  True,  True]]])
-
+        >>> np.testing.assert_array_almost_equal(T1T2_cross_loop.matrix(), T1T2_cross.matrix())
         """
         if isinstance(other, FourthOrderTensor):
             if self.ndim == 0 and other.ndim == 0:
