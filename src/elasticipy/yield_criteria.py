@@ -1,4 +1,4 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 
 import numpy as np
 from matplotlib import pyplot as plt
@@ -24,6 +24,7 @@ class YieldCriterion(ABC):
     """
     name = 'generic'
 
+    @abstractmethod
     def yield_function(self, stress):
         """
         Return the yield function, with respect to the plasticity criterion.
@@ -38,7 +39,10 @@ class YieldCriterion(ABC):
         float or numpy.ndarray
             Negative if, and only if, the elasticity criterion is met
         """
-        pass
+        return np.zeros_like(stress)
+
+    def normal_analytical(self, stress):
+        raise NotImplementedError()
 
     def normal(self, stress, **kwargs):
         """
@@ -47,7 +51,7 @@ class YieldCriterion(ABC):
         Parameters
         ----------
         stress : StressTensor
-            Stress tensor to apply the normality rule
+            Stress tensor to apply the normality rule from
         kwargs : dict
             Keyword arguments passed to the function
 
@@ -56,7 +60,23 @@ class YieldCriterion(ABC):
         StrainTensor
             Normalized direction of plastic flow
         """
-        pass
+        try:
+            return self.normal_analytical(stress)
+        except NotImplementedError:
+            return self.normal_from_derivative(stress, **kwargs)
+
+    def normal_from_derivative(self, stress, h=1e-6):
+        h_mat = np.eye(6) * h
+        shape = stress.shape + (6,)
+        dfds_voigt = np.zeros(shape)
+        for i in range(6):
+            stress_p = stress + StressTensor.from_Voigt(h_mat[i])
+            stress_m = stress - StressTensor.from_Voigt(h_mat[i])
+            dfp = self.yield_function(stress_p)
+            dfm = self.yield_function(stress_m)
+            dfds_voigt[..., i] = (dfp - dfm) / 2 / h
+        normal = StrainTensor.from_Voigt(dfds_voigt)
+        return normal/normal.eq_strain()
 
     @property
     def _plot_bounds(self):
@@ -328,7 +348,7 @@ class VonMisesCriterion(YieldCriterion):
         return self.eq_stress(stress) - self.yield_stress
 
     @staticmethod
-    def normal(stress, **kwargs):
+    def normal_analytical(stress, **kwargs):
         eq_stress = stress.von_mises()
         dev_stress = stress.deviatoric_part()
         gradient_tensor = dev_stress / eq_stress
@@ -350,8 +370,7 @@ class TrescaCriterion(VonMisesCriterion):
     def eq_stress(stress, **kwargs):
         return stress.tresca()
 
-    @staticmethod
-    def normal(stress, **kwargs):
+    def normal_analytical(self, stress, **kwargs):
         vals, dirs = stress.eig()
         u1 = dirs[..., 0]
         u3 = dirs[..., 2]
@@ -519,7 +538,7 @@ class DruckerPrager(YieldCriterion):
     def eq_stress(self, stress, **kwargs):
         return (stress.J2**0.5 + self.alpha * stress.I1) / (1/3**0.5 + self.alpha)
 
-    def normal(self, stress, **kwargs):
+    def normal_analytical(self, stress, **kwargs):
         J2 = stress.J2
         gradient = stress.deviatoric_part() / (2 * J2**0.5) + self.alpha * StressTensor.eye(stress.shape)
         strain = StrainTensor(gradient.matrix)
@@ -621,7 +640,7 @@ class MohrCoulomb(YieldCriterion):
         s_max = 2 * self.c * np.cos(self.phi) / (1 - np.sin(self.phi))
         return (s_min, s_max), (s_min, s_max)
 
-    def normal(self, stress, **kwargs):
+    def normal_analytical(self, stress, **kwargs):
         s, dirs = stress.eig()
         u1 = dirs[..., 0]
         u2 = dirs[..., 1]

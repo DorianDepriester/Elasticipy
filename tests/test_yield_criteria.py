@@ -93,19 +93,19 @@ class TestTrescaCriterion(unittest.TestCase):
     def test_normality_Tresca(self):
         biaxial = (StressTensor.tensile([1,0,0],[0, 1, 1, 1, 1, 1, 0]) +
                    StressTensor.tensile([0,1,0],[-1, -1, -0.5, 0, 0.5, 1, 1]))
-        n = TrescaCriterion.normal(biaxial)
-        assert n[0] == VonMisesCriterion.normal(biaxial[0])
+        n = TrescaCriterion().normal(biaxial)
+        assert n[0] == VonMisesCriterion().normal(biaxial[0])
         assert n[2] == K * np.diag([1, -1, 0])
         assert n[2] == K * np.diag([1, -1, 0])
-        assert n[3] == VonMisesCriterion.normal(biaxial[3])
+        assert n[3] == VonMisesCriterion().normal(biaxial[3])
         assert n[4] == K * np.diag([1, 0, -1])
-        assert n[5] == VonMisesCriterion.normal(biaxial[5])
-        assert n[6] == VonMisesCriterion.normal(biaxial[6])
+        assert n[5] == VonMisesCriterion().normal(biaxial[5])
+        assert n[6] == VonMisesCriterion().normal(biaxial[6])
 
         # Check that the magnitude of the normal is 1
         np.testing.assert_array_equal(n.eq_strain(), np.ones(biaxial.shape))
         triaxial = StressTensor(np.diag([1,2,4]))
-        n = TrescaCriterion.normal(triaxial)
+        n = TrescaCriterion().normal(triaxial)
         assert n == K * np.diag([-1, 0, 1])
         assert n.eq_strain() == 1.0
 
@@ -117,11 +117,11 @@ class TestVonMisesCriterion(unittest.TestCase):
 
     def test_normality_J2(self):
         tensile_stress = StressTensor.tensile([1, 0, 0], 1)
-        normal = VonMisesCriterion.normal(tensile_stress)
+        normal = VonMisesCriterion().normal(tensile_stress)
         assert normal == np.diag([1., -0.5, -0.5])
 
         shear_stress = StressTensor.shear([1, 0, 0], [0, 1, 0], 1)
-        normal = VonMisesCriterion.normal(shear_stress)
+        normal = VonMisesCriterion().normal(shear_stress)
         normal_th = K * np.array([[0, 1, 0],
                                   [1, 0, 0],
                                   [0, 0, 0]])
