@@ -350,7 +350,7 @@ class SecondOrderTensor:
         I3 : Third invariant of the tensors (det)
         """
         a = self.I1**2
-        b = np.einsum('...ij,...ij->...', self.matrix, self.matrix)
+        b = np.einsum('...ij,...ji->...', self.matrix, self.matrix)
         return 0.5 * (a - b)
 
     @property
