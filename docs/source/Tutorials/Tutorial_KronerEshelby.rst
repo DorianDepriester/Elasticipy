@@ -40,8 +40,11 @@ in equal volume fractions.
     >>> C_eff = kroner_eshelby((C_inclusion, C_matrix), volume_fractions=[0.5, 0.5])
 
 Since the phases are isotropic and spherical inclusions are assumed (the default), the resulting macroscopic
-behaviour is isotropic as well:
+behaviour is isotropic as well. This can be verified through the universal anisotropy factor, which is equal to
+zero for a purely isotropic material:
 
+    >>> print(C_eff.universal_anisotropy)
+    2.5713262630233658e-09
     >>> print(C_eff.bulk_modulus)
     1543.5773653350213
     >>> print(C_eff.C44)
