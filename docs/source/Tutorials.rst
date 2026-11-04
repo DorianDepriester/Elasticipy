@@ -11,6 +11,7 @@ Tutorials
     ./Tutorials/Tutorial_ThermalExpansion.rst
     ./Tutorials/Tutorial_wave-velocities.rst
     ./Tutorials/Tutorial_MultiplePhases.rst
+    ./Tutorials/Tutorial_KronerEshelby.rst
     ./Tutorials/Tutorial_ReadWriteFiles.rst
     ./Tutorials/Plasticity.rst
     ./Tutorials/FourthOrderTensors.rst
