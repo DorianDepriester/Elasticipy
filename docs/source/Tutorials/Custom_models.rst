@@ -75,16 +75,6 @@ Let us instantiate the criterion and check the yield function on a uniaxial stre
     >>> float(hosford.yield_function(stress))
     -99.0
 
-The ``scale_stress_to_yield_surface`` method is inherited as is:
-
-.. doctest::
-
-    >>> hosford.scale_stress_to_yield_surface(stress)
-    Stress tensor
-    [[99.99999999  0.          0.        ]
-     [ 0.          0.          0.        ]
-     [ 0.          0.          0.        ]]
-
 The normality rule is also available: since we did not define the ``normal_analytical`` method, the base class
 automatically falls back to a finite-difference evaluation of the gradient of the yield function:
 
@@ -129,8 +119,7 @@ optional ``normal_analytical`` method and return the analytical gradient of the 
 ``elasticipy/yield_criteria.py`` are good examples of such gradient computations, including the treatment of
 singular points.
 
-Other optional refinements include exposing the equivalent stress through an ``eq_stress`` method (like the
-criteria shipped with Elasticipy do), or defining the ``_plot_bounds`` property so that ``plot2D`` selects a
+Other optional refinements include exposing the equivalent stress through an ``eq_stress`` method, or defining the ``_plot_bounds`` property so that ``plot2D`` selects a
 relevant plotting range by default.
 
 The ``HyperElastic`` class
