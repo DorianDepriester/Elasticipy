@@ -96,11 +96,31 @@ automatically falls back to a finite-difference evaluation of the gradient of th
      [ 0.  -0.5  0. ]
      [ 0.   0.  -0.5]]
 
-Finally, the yield surface can be plotted exactly like for any other criterion:
+Finally, the yield surface can be plotted exactly like for any other criterion. For instance, the following figure
+compares the Hosford yield surface (:math:`a=8`) with that of von Mises:
 
-.. code-block:: python
+.. plot::
 
-    fig, ax = hosford.plot2D()
+    import numpy as np
+    from elasticipy.yield_criteria import YieldCriterion, VonMisesCriterion
+
+    class HosfordCriterion(YieldCriterion):
+        name = 'Hosford'
+
+        def __init__(self, a, yield_stress=1.0):
+            self.a = a
+            self.yield_stress = yield_stress
+
+        def yield_function(self, stress):
+            s = stress.principal_stresses()
+            eq_stress = (0.5 * (np.abs(s[..., 0] - s[..., 1]) ** self.a
+                              + np.abs(s[..., 1] - s[..., 2]) ** self.a
+                              + np.abs(s[..., 2] - s[..., 0]) ** self.a)) ** (1 / self.a)
+            return eq_stress - self.yield_stress
+
+    hosford = HosfordCriterion(a=8, yield_stress=1.)
+    fig, ax = hosford.plot2D(color='tab:blue')
+    VonMisesCriterion(yield_stress=1.).plot2D(color='tab:red', fig=fig, ax=ax)
     fig.show()
 
 For efficiency (or for singular points where finite differences are inaccurate), one can also implement the
