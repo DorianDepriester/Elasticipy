@@ -1,5 +1,5 @@
 Extending Elasticipy: implementing custom models
------------------------------------------------
+------------------------------------------------
 Elasticipy does not claim to implement every plasticity or hyperelasticity model that exists. Instead, it provides
 two abstract base classes that cover the *generic* machinery (normality rule, plotting, scaling to the yield
 surface, stress computation from the energy potential, tensile curves...) so that implementing a new model boils
@@ -10,8 +10,8 @@ This tutorial shows how to do so through two worked examples:
 - the `Hosford yield criterion <https://en.wikipedia.org/wiki/Yield_surface#Hosford_yield_function>`_ for plasticity,
 - the `Gent hyperelastic model <https://en.wikipedia.org/wiki/Gent_(hyperelastic_model)>`_ for hyperelasticity.
 
-Anatomy of the ``YieldCriterion`` class
-=======================================
+The ``YieldCriterion`` class
+============================
 All the plasticity criteria available in Elasticipy (von Mises, Tresca, Drucker-Prager, Mohr-Coulomb, Hill...)
 derive from the ``YieldCriterion`` abstract class, available in the ``elasticipy.yield_criteria`` module. This base
 class already implements, for every subclass:
@@ -27,7 +27,7 @@ method, which is the only abstract method. It takes a ``StressTensor`` (or an ar
 :math:`f(\sigma)`, negative if and only if the stress state is elastic.
 
 The Hosford yield criterion
-===========================
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 The Hosford criterion is a generalization of von Mises and Tresca which depends on a single exponent :math:`a`.
 It is defined by the equivalent stress:
 
@@ -39,7 +39,7 @@ where :math:`\sigma_1, \sigma_2, \sigma_3` are the principal stresses. The yield
 :math:`f(\sigma)=\sigma_{eq}-\sigma_y`, where :math:`\sigma_y` is the tensile yield stress. For :math:`a=2` and
 :math:`a\to\infty`, one recovers the von Mises and Tresca criteria, respectively.
 
-A minimal implementation is:
+Since ``yield_function`` is the only abstract method, a minimal implementation only requires defining it:
 
 .. code-block:: python
 
@@ -53,24 +53,17 @@ A minimal implementation is:
             self.a = a
             self.yield_stress = yield_stress
 
-        def eq_stress(self, stress, **kwargs):
-            s = stress.principal_stresses()
-            return (0.5 * (np.abs(s[..., 0] - s[..., 1]) ** self.a
-                          + np.abs(s[..., 1] - s[..., 2]) ** self.a
-                          + np.abs(s[..., 2] - s[..., 0]) ** self.a)) ** (1 / self.a)
-
         def yield_function(self, stress):
-            return self.eq_stress(stress) - self.yield_stress
+            s = stress.principal_stresses()
+            eq_stress = (0.5 * (np.abs(s[..., 0] - s[..., 1]) ** self.a
+                              + np.abs(s[..., 1] - s[..., 2]) ** self.a
+                              + np.abs(s[..., 2] - s[..., 0]) ** self.a)) ** (1 / self.a)
+            return eq_stress - self.yield_stress
 
-        @property
-        def _plot_bounds(self):
-            s = self.yield_stress
-            return (-s, s), (-s, s)
-
-That is all that is required: the ``name`` class attribute is used as a default label in the plots, and the
-``_plot_bounds`` property is optional (it only helps ``plot2D`` select a relevant plotting range). Note that the
-implementation is fully vectorized: ``stress`` can be a single stress tensor or an arbitrarily-shaped array of
-stress tensors, exactly like the criteria shipped with Elasticipy.
+That is really all: everything else (normality rule, plotting, scaling...) is inherited from ``YieldCriterion``.
+The ``name`` class attribute is only used as a default label in the plots. Note that the implementation is fully
+vectorized: ``stress`` can be a single stress tensor or an arbitrarily-shaped array of stress tensors, exactly
+like the criteria shipped with Elasticipy.
 
 Let us instantiate the criterion and check the yield function on a uniaxial stress state:
 
@@ -115,8 +108,12 @@ optional ``normal_analytical`` method and return the analytical gradient of the 
 ``elasticipy/yield_criteria.py`` are good examples of such gradient computations, including the treatment of
 singular points.
 
-Anatomy of the ``HyperElastic`` class
-======================================
+Other optional refinements include exposing the equivalent stress through an ``eq_stress`` method (like the
+criteria shipped with Elasticipy do), or defining the ``_plot_bounds`` property so that ``plot2D`` selects a
+relevant plotting range by default.
+
+The ``HyperElastic`` class
+===========================
 Hyperelastic models all derive from the ``HyperElastic`` abstract class of the ``elasticipy.hyperelasticity``
 module. Again, most of the work is already done by the base class:
 
@@ -132,7 +129,7 @@ by default) to declare incompressible behaviour; in this case, ``stress_from_B``
 and ``tensile_curve`` enforces isochoric deformation.
 
 The Gent hyperelastic model
-===========================
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 The Gent model was designed to account for the finite extensibility of polymer chains. Its potential reads:
 
 .. math::
