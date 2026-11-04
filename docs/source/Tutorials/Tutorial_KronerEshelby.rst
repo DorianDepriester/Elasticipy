@@ -83,12 +83,15 @@ The rotations can be described either with ``orix`` or with ``scipy``. Here, we 
      [ -2.65  -1.78   1.7   -0.97  -0.49 148.96]]
 
 As expected, the resulting macroscopic stiffness is almost isotropic (the residual anisotropy is due to the
-finite number of orientations). The corresponding mean elastic moduli are:
+finite number of orientations). Printing the Young and shear moduli reveals their extreme values, which are
+barely apart, hence demonstrating the quasi-isotropy:
 
-    >>> print(C_poly.Young_modulus.mean())
-    311.0985092753945
-    >>> print(C_poly.shear_modulus.mean())
-    148.61481207772414
+    >>> print(C_poly.Young_modulus)
+    Spherical function
+    Min=305.35267073674885, Max=316.3652560079066
+    >>> print(C_poly.shear_modulus)
+    Hyperspherical function
+    Min=145.72180133181965, Max=151.26550389562928
 
 Ellipsoidal inclusions
 ======================
