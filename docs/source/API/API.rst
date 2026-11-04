@@ -6,6 +6,7 @@ API documentation
 
    Elasticipy.crystal_texture
    Elasticipy.hyperelasticity
+   Elasticipy.homogenization.kroner_eshelby
    Elasticipy.interfaces.PRISMS
    Elasticipy.interfaces.FEPX
    Elasticipy.pole_figure
