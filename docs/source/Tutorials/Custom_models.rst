@@ -101,6 +101,7 @@ Finally, the yield surface can be plotted exactly like for any other criterion:
 .. code-block:: python
 
     fig, ax = hosford.plot2D()
+    fig.show()
 
 For efficiency (or for singular points where finite differences are inaccurate), one can also implement the
 optional ``normal_analytical`` method and return the analytical gradient of the yield function as a
