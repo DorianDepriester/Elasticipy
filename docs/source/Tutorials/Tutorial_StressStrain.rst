@@ -248,4 +248,4 @@ Which yields the same results in terms of stress:
      [ 8.22419895e+01 -4.88440590e-01 -1.52733598e-01]
      [ 2.02619662e-01 -1.52733598e-01 -4.66942413e-02]]
 
-See :ref:`here<Averaging methods>` for further details about the averaging methods.
+See :ref:`here<tutorials/tutorial_averagingmethods:Averaging methods>` for further details about the averaging methods.

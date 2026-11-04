@@ -34,7 +34,7 @@ def from_step_file(file, dtype=None):
     ----------
     file : str
         Path to the file to read
-    dtype : type, optional
+    dtype : ``type``, optional
         If provided, sets the type of returned array. It can be:
           - float
           - SecondOrderTensor
@@ -85,7 +85,7 @@ def from_results_folder(folder, dtype=None):
     ----------
     folder : str
         Path to the folder to read the results from
-    dtype : type, optional
+    dtype : ``type``, optional
         If provided, sets the type of returned array. It can be:
           - float
           - SecondOrderTensor

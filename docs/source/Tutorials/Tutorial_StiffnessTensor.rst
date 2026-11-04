@@ -58,12 +58,12 @@ One can check that both approaches yield the same tensor:
 Anisotropic cases
 -----------------
 Elasticipy supports anisotropy (actually, it was meant for that...). It supports usual material symmetries, such as
-orthotropy and transverse-isotropy. In additions, it also supports all crystal symmetries, as listed by [Nye]_ and
+orthotropy and transverse-isotropy. In additions, it also supports all crystal symmetries, as listed by [Nye1985]_ and
 summed up below:
 
 .. figure:: images/Nye.png
 
-    Patterns of stiffness and compliance tensors of crystals, depending on their symmetries [Nye]_.
+    Patterns of stiffness and compliance tensors of crystals, depending on their symmetries [Nye1985]_.
 
 For example, create a stiffness tensor with monoclinic symmetry:
 
@@ -138,6 +138,8 @@ The previous consideration also apply for the Poisson ratio:
     >>> print(C.Poisson_ratio)
     Hyperspherical function
     Min=-0.5501886056193297, Max=1.4394343811866284
+
+.. _plotting-directional-moduli:
 
 Plotting
 --------
@@ -222,5 +224,5 @@ When plotting the X-Y, X-Z and Y-Z sections, the min, max and mean values are pl
 
 .. [Ranganathan] S. I. Ranganathan and M. Ostoja-Starzewski (2008), Universal Elastic Anisotropy Index,
            *Phys. Rev. Lett.*, 101(5), 055504, . https://doi.org/10.1103/PhysRevLett.101.055504
-.. [Nye] Nye, J. F. (1985), Physical properties of crystals: Their representation by tensors and matrices,
+.. [Nye1985] Nye, J. F. (1985), Physical properties of crystals: Their representation by tensors and matrices,
             Oxford university press.

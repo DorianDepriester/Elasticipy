@@ -193,7 +193,7 @@ In this particular case (diagonal deformation), :math:`\mathbf{C} = \mathbf{B}` 
 
 
 Invariants of Cauchy-Green Tensors
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The invariants of :math:`\mathbf{B}` (or :math:`\mathbf{C}`) are fundamental for describing
 the deformation state:
@@ -497,7 +497,7 @@ A common application is the calculation of **tensile curves**:
 
 
 Model Fitting from Experimental Data
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Elasticipy allows **fitting** hyperelastic model parameters from experimental tensile test data:
 

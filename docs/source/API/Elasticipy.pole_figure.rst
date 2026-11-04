@@ -5,4 +5,3 @@ elasticipy.polefigure
    :members:
    :undoc-members:
    :show-inheritance:
-   :inherited-members:

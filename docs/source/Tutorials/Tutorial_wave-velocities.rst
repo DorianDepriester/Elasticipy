@@ -65,4 +65,4 @@ Now, we can plot all the velocities on three independent pole figures:
 .. image:: images/WaveVelocities.png
 
 
-For further details about plotting options, see :ref:`here<plotting>`.
+For further details about plotting options, see :ref:`here<tutorials/texture:Plotting>`.

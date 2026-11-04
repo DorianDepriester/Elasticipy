@@ -103,7 +103,7 @@ Plotting Voigt, Reuss and Hill averages at once
 
 Above, we have only used the Hill average for estimating the macroscopic elastic response. In order to evidence the
 influence of the method (namely Voigt, Reuss or Hill), we can plot the directional Young moduli on orthogonal
-sections (see :ref:`here<plotting>` for details) for each of the aforementioned methods as follows:
+sections (see :ref:`here<plotting-directional-moduli>` for details) for each of the aforementioned methods as follows:
 
 .. plot::
 
