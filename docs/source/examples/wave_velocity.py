@@ -7,7 +7,7 @@ This example shows how to compute the wave velocities from the stiffness tensor,
 """
 ###############################################################################
 # Define the stiffness tensor for forsterite
-# -------------------------------------
+# ------------------------------------------
 #
 # We define the stiffness tensor for a forsterite (taken from `the similar tutorial for MTEX users
 # <https://mtex-toolbox.github.io/WaveVelocities.html>`_.) as well as the mass density

@@ -118,7 +118,7 @@ Again, the Hill average can be computed as follows:
      [  0.     0.    -0.     6.62   0.    47.45]]
 
 Random sampling
-~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~
 Sample of orientations can be drawn from all kind of textures. While a "random" sample from a single discrete texture
 does not make any sense, it can be of great interest for fibres or composite textures.
 

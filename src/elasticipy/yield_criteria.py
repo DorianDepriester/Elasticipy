@@ -148,8 +148,8 @@ class YieldCriterion(ABC):
 
         .. plot::
 
-            from elasticipy.plasticity import VonMisesPlasticity
-            VonMisesPlasticity().plot2D()
+            from elasticipy.yield_criteria import VonMisesCriterion
+            VonMisesCriterion().plot2D()
 
         """
         margin = 1.05
@@ -452,12 +452,13 @@ class DruckerPrager(YieldCriterion):
             cohesion factor
         phi : float
             cone angle, in degrees
-        fit : str ['inside', 'middle', 'outside'], optional
+        fit : str, optional
             How to treat c and phi, as they usually refer to the Mohr-Coulomb (MC) yield criterion. It relates the shape
             of the DP cone in the principal stress space with respect to that of the MC criterion:
-              - inside : the DP cone is inside that of MC (tangent to the faces of the MC cone)
-              - outside : the DP cone is outside that of MC
-              - middle : the DP cone is of intermediate shape between inside and outside.
+
+            - inside : the DP cone is inside that of MC (tangent to the faces of the MC cone)
+            - outside : the DP cone is outside that of MC
+            - middle : the DP cone is of intermediate shape between inside and outside.
         degrees : bool, optional
             Whether the friction angle is in given degrees. Default is True.
 
