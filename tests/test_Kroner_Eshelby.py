@@ -1,8 +1,9 @@
 import unittest
-from elasticipy.homogenization.kroner_eshelby import polarization_tensor, Kroner_Eshelby
+from elasticipy.homogenization.kroner_eshelby import polarization_tensor, Kroner_Eshelby, kroner_eshelby
 from elasticipy.tensors.elasticity import StiffnessTensor
 from elasticipy.tensors.fourth_order import SymmetricFourthOrderTensor
 import numpy as np
+from scipy.spatial.transform import Rotation
 from pytest import approx
 
 mu_i, mu_m = 100, 200
@@ -79,6 +80,56 @@ class TestKronerEshelby(unittest.TestCase):
         np.testing.assert_array_almost_equal(Cmacro.matrix(), Ci.matrix())
         Cmacro = Kroner_Eshelby((Ci, Cm), volume_fractions=[0, 1])
         np.testing.assert_array_almost_equal(Cmacro.matrix(), Cm.matrix())
+
+    def test_backward_compatible_alias(self):
+        assert Kroner_Eshelby is kroner_eshelby
+
+    def test_single_tensor_input(self):
+        Cmacro = kroner_eshelby(Chex)
+        np.testing.assert_array_almost_equal(Cmacro.matrix(), Chex.matrix())
+
+    def test_particle_sizes_shapes_equivalent_to_spheres(self):
+        Cref = kroner_eshelby((Chex, Chex))
+        C1 = kroner_eshelby((Chex, Chex), particle_sizes=np.array([[1., 1., 1.],
+                                                                  [1., 1., 1.]]))
+        np.testing.assert_array_almost_equal(C1.matrix(), Cref.matrix())
+
+    def test_isotropic_two_phase_within_bounds(self):
+        f = 0.5
+        Cmacro = kroner_eshelby((Ci, Cm), volume_fractions=[f, 1 - f])
+        K_voigt = f * K_i + (1 - f) * K_m
+        K_reuss = 1 / (f / K_i + (1 - f) / K_m)
+        G_voigt = f * mu_i + (1 - f) * mu_m
+        G_reuss = 1 / (f / mu_i + (1 - f) / mu_m)
+        assert K_reuss - 1e-6 <= Cmacro.bulk_modulus <= K_voigt + 1e-6
+        assert G_reuss - 1e-6 <= Cmacro.C44 <= G_voigt + 1e-6
+
+    def test_random_orientations_near_isotropic_aggregate(self):
+        np.random.seed(0)
+        rots = Rotation.random(30, random_state=0)
+        Cs = [Chex * r for r in rots]
+        Cmacro = kroner_eshelby(Cs, orientations=rots)
+        m = Cmacro.matrix()
+        assert approx(m[0, 0], rel=0.05) == m[1, 1]
+        assert approx(m[0, 0], rel=0.05) == m[2, 2]
+        assert approx(m[3, 3], rel=0.05) == m[4, 4]
+        assert approx(m[3, 3], rel=0.05) == m[5, 5]
+        assert approx(2 * m[3, 3], rel=0.05) == m[0, 0] - m[0, 1]
+
+    def test_orix_orientations(self):
+        from orix.quaternion import Orientation
+        np.random.seed(0)
+        orients = Orientation.random(30)
+        Cs = [Chex * o for o in orients]
+        Cmacro = kroner_eshelby(Cs, orientations=orients)
+        m = Cmacro.matrix()
+        assert approx(m[0, 0], rel=0.05) == m[1, 1]
+        assert approx(m[0, 0], rel=0.05) == m[2, 2]
+        assert approx(m[3, 3], rel=0.05) == m[5, 5]
+
+    def test_non_convergence_raises(self):
+        with self.assertRaises(RuntimeError):
+            kroner_eshelby((Ci, Cm), volume_fractions=[0.5, 0.5], maxiter=1)
 
 
 if __name__ == '__main__':

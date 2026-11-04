@@ -128,10 +128,9 @@ def kroner_eshelby(Cs, particle_sizes=None, orientations=None,
     Cs : StiffnessTensor or tuple/list of StiffnessTensor
         Stiffness tensors of the particles, expressed in the global frame.
     particle_sizes : array_like, optional
-        Half-lengths (a1, a2, a3) of the ellipsoid principal axes.
+        Half-lengths (a1, a2, a3) of the ellipsoid principal axes, given
+        as an array of shape (m, 3) (one row of half-axes per particle).
         If None, spherical inclusions are assumed (default).
-        Accepted shapes are (3, m) (rows: a1, a2, a3 for each particle)
-        or (m, 3) (one row of half-axes per particle).
     orientations : scipy.spatial.transform.Rotation or orix Orientation, optional
         Rotations mapping each particle frame onto the global frame.
         If None, all particles are assumed aligned with the global
@@ -161,6 +160,8 @@ def kroner_eshelby(Cs, particle_sizes=None, orientations=None,
     """
     if isinstance(Cs, (tuple, list)):
         Cs = StiffnessTensor.stack(Cs)
+    elif not Cs.shape:
+        Cs = StiffnessTensor.stack([Cs])
     if orientations is not None:
         Cs_local = (Cs * orientations.inv())        # Stiffness tensors written in the particules' frames
     else:
