@@ -337,7 +337,7 @@ class SecondOrderTensor:
 
         For a matrix M, it is defined as::
 
-            I_2 = 0.5 * ( np.trace(M)**2 + np.trace(np.matmul(M, M.T)) )
+            I_2 = 0.5 * ( np.trace(M)**2 - np.trace(np.matmul(M, M)) )
 
         Returns
         -------
@@ -350,7 +350,7 @@ class SecondOrderTensor:
         I3 : Third invariant of the tensors (det)
         """
         a = self.I1**2
-        b = np.matmul(self.matrix, self._transpose_tensor()).trace(axis1=-1, axis2=-2)
+        b = np.matmul(self.matrix, self.matrix).trace(axis1=-1, axis2=-2)
         return 0.5 * (a - b)
 
     @property
