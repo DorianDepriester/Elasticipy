@@ -39,8 +39,66 @@ class PlotlyDirective(Directive):
 
         return nodes_list
 
+# Pages that moved during the documentation reorganization. Old URLs (root-level
+# tutorials, pre-reorganization API pages, old module names) still receive
+# traffic and would otherwise return 404. A tiny redirect page is generated at
+# each old location, forwarding the reader to the new path below.
+doc_redirects = {
+    'Tutorial_AveragingMethods': 'Tutorials/Tutorial_AveragingMethods.html',
+    'Tutorial_MultiplePhases': 'Tutorials/Tutorial_MultiplePhases.html',
+    'Tutorial_ReadWriteFiles': 'Tutorials/Tutorial_ReadWriteFiles.html',
+    'Tutorial_StiffnessTensor': 'Tutorials/Tutorial_StiffnessTensor.html',
+    'Tutorial_StressStrain': 'Tutorials/Tutorial_StressStrain.html',
+    'Tutorial_ThermalExpansion': 'Tutorials/Tutorial_ThermalExpansion.html',
+    'Tutorial_wave-velocities': 'Tutorials/Tutorial_wave-velocities.html',
+    'example_StressStrain': 'Tutorials/Tutorial_StressStrain.html',
+    'GUI': 'Tutorials/GUI.html',
+    'Elasticipy': 'API/API.html',
+    'modules': 'API/API.html',
+    '_modules/index': 'API/API.html',
+    '_modules/Elasticipy/SecondOrderTensor': 'API/API.html',
+    '_modules/Elasticipy/FourthOrderTensor': 'API/API.html',
+    '_modules/Elasticipy/StressStrainTensors': 'API/API.html',
+    '_modules/Elasticipy/SphericalFunction': 'API/API.html',
+    'Elasticipy.plasticity': 'API/Elasticipy.plasticity.html',
+    'elasticipy.plasticity': 'API/Elasticipy.plasticity.html',
+    'hyperelasticity': 'API/Elasticipy.hyperelasticity.html',
+    'tensors.elasticity': 'API/Elasticipy.tensors.elasticity.html',
+    '_static/elasticity': 'API/Elasticipy.tensors.elasticity.html',
+    'Elasticipy.tensors.elasticity': 'API/Elasticipy.tensors.elasticity.html',
+    'Elasticipy.tensors.finite_strain': 'API/Elasticipy.tensors.finite_strain.html',
+    'Elasticipy.tensors.fourth_order': 'API/Elasticipy.tensors.fourth_order.html',
+    'Elasticipy.tensors.second_order': 'API/Elasticipy.tensors.second_order.html',
+    'Elasticipy.tensors.stress_strain': 'API/Elasticipy.tensors.stress_strain.html',
+    'Elasticipy.tensors.thermal_expansion': 'API/Elasticipy.tensors.thermal_expansion.html',
+    'Elasticipy.SecondOrderTensor': 'API/Elasticipy.tensors.second_order.html',
+    'Elasticipy.FourthOrderTensor': 'API/Elasticipy.tensors.fourth_order.html',
+    'Elasticipy.StressStrainTensors': 'API/Elasticipy.tensors.stress_strain.html',
+    'Elasticipy.SphericalFunction': 'API/Elasticipy.spherical_function.html',
+    'Elasticipy.spherical_function': 'API/Elasticipy.spherical_function.html',
+    'Elasticipy.interfaces.FEPX': 'API/Elasticipy.interfaces.FEPX.html',
+    'Elasticipy.interfaces.PRISMS': 'API/Elasticipy.interfaces.PRISMS.html',
+    'fibre_texture': 'auto_examples/fibre_texture.html',
+    'Young_3D': 'auto_examples/Young_3D.html',
+    'Poisson_sections': 'auto_examples/Poisson_sections.html',
+}
+
+
+def _collect_redirect_pages(app):
+    pages = []
+    for pagename, target in doc_redirects.items():
+        prefix = '../' * pagename.count('/')
+        context = {
+            'redirect_target': prefix + target,
+            'title': 'Redirecting to ' + target,
+        }
+        pages.append((pagename, context, 'redirect.html'))
+    return pages
+
+
 def setup(app):
     app.add_directive("plotly", PlotlyDirective)
+    app.connect('html-collect-pages', _collect_redirect_pages)
 
 src_path = os.path.abspath('../../src/')
 sys.path.insert(0, src_path)
