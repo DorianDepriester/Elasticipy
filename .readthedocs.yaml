@@ -30,6 +30,60 @@ sphinx:
 #   - pdf
 #   - epub
 
+# Redirects for pages that moved during the documentation reorganization
+# (see https://docs.readthedocs.io/en/stable/guides/redirects.html)
+redirects:
+  # Tutorials moved from the root to /Tutorials/
+  - source: /Tutorial_(.*).html
+    target: /Tutorials/Tutorial_$1.html
+  - source: /example_StressStrain.html
+    target: /Tutorials/Tutorial_StressStrain.html
+  - source: /GUI.html
+    target: /Tutorials/GUI.html
+  # API pages moved from the root to /API/ and modules were renamed
+  - source: /Elasticipy.tensors.(.*).html
+    target: /API/Elasticipy.tensors.$1.html
+  - source: /Elasticipy.plasticity.html
+    target: /API/Elasticipy.plasticity.html
+  - source: /elasticipy.plasticity.html
+    target: /API/Elasticipy.plasticity.html
+  - source: /tensors.elasticity.html
+    target: /API/Elasticipy.tensors.elasticity.html
+  - source: /_static/elasticity.html
+    target: /API/Elasticipy.tensors.elasticity.html
+  - source: /Elasticipy.SecondOrderTensor.html
+    target: /API/Elasticipy.tensors.second_order.html
+  - source: /Elasticipy.FourthOrderTensor.html
+    target: /API/Elasticipy.tensors.fourth_order.html
+  - source: /Elasticipy.StressStrainTensors.html
+    target: /API/Elasticipy.tensors.stress_strain.html
+  - source: /Elasticipy.SphericalFunction.html
+    target: /API/Elasticipy.spherical_function.html
+  - source: /Elasticipy.spherical_function.html
+    target: /API/Elasticipy.spherical_function.html
+  - source: /Elasticipy.interfaces.FEPX.html
+    target: /API/Elasticipy.interfaces.FEPX.html
+  - source: /Elasticipy.interfaces.PRISMS.html
+    target: /API/Elasticipy.interfaces.PRISMS.html
+  - source: /Elasticipy.html
+    target: /API/API.html
+  - source: /modules.html
+    target: /API/API.html
+  - source: /hyperelasticity.html
+    target: /API/Elasticipy.hyperelasticity.html
+  # Old module source pages
+  - source: /_modules/Elasticipy/(.*).html
+    target: /API/API.html
+  - source: /_modules/index.html
+    target: /API/API.html
+  # Old example pages, now built by the Sphinx gallery
+  - source: /fibre_texture.html
+    target: /auto_examples/fibre_texture.html
+  - source: /Young_3D.html
+    target: /auto_examples/Young_3D.html
+  - source: /Poisson_sections.html
+    target: /auto_examples/Poisson_sections.html
+
 # Optional but recommended, declare the Python requirements required
 # to build your documentation
 # See https://docs.readthedocs.io/en/stable/guides/reproducible-builds.html
