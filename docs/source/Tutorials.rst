@@ -14,6 +14,7 @@ Tutorials
     ./Tutorials/Tutorial_KronerEshelby.rst
     ./Tutorials/Tutorial_ReadWriteFiles.rst
     ./Tutorials/Plasticity.rst
+    ./Tutorials/Custom_models.rst
     ./Tutorials/FourthOrderTensors.rst
     ./Tutorials/texture.rst
     ./Tutorials/Tutorial_FiniteStrain_Hyperelasticity.rst
