@@ -246,12 +246,14 @@ class YieldCriterion(ABC):
 
         Examples
         --------
-        Plot the von Mises elastic domain in the deviatoric plane:
+        Plot the von Mises and Tresca elastic domains in the deviatoric plane:
 
         .. plot::
 
-            from elasticipy.yield_criteria import VonMisesCriterion
-            VonMisesCriterion().plot_deviatoric()
+            from elasticipy.yield_criteria import VonMisesCriterion, TrescaCriterion
+            fig, ax = VonMisesCriterion().plot_deviatoric()
+            TrescaCriterion().plot_deviatoric(fig=fig, ax=ax, color='blue')
+            ax.legend()
 
         """
         margin = 1.05
