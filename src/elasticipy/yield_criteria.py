@@ -9,6 +9,22 @@ from scipy.optimize import minimize
 from elasticipy.tensors.stress_strain import StressTensor, StrainTensor
 from elasticipy._plotting_tools import _draw_plotly_arrow, _draw_plotly_isosurface
 
+def _nice_tick_step(x):
+    if x <= 0:
+        return 1.
+    exponent = np.floor(np.log10(x))
+    fraction = x / 10 ** exponent
+    if fraction < 1.5:
+        factor = 1.
+    elif fraction < 3.5:
+        factor = 2.
+    elif fraction < 7.5:
+        factor = 5.
+    else:
+        factor = 10.
+    return factor * 10 ** exponent
+
+
 def _sort_yield_stresses(s):
     s3, s1 = min(s), max(s)
     if s1 < 0.:
@@ -249,25 +265,46 @@ class YieldCriterion(ABC):
                  + StressTensor.tensile([0, 0, 1], s3))
         f = self.yield_function(sigma)
 
+        # Rotate the figure so that sigma_3 points upwards, sigma_1 towards the lower left and sigma_2
+        # towards the lower right
+        angle0 = 7 * np.pi / 6
+        rot = np.array([[np.cos(angle0), -np.sin(angle0)], [np.sin(angle0), np.cos(angle0)]])
+        X = rot[0, 0] * U + rot[0, 1] * V
+        Y = rot[1, 0] * U + rot[1, 1] * V
+
         if ax is None or fig is None:
             fig, ax = plt.subplots()
 
         if alpha != 0.:
-            ax.contourf(U, V, f, levels=[-np.inf, 0], colors=[color], alpha=alpha)
-        ax.contour(U, V, f, levels=[0], colors=color, linewidths=linewidth, linestyles=linestyle)
+            ax.contourf(X, Y, f, levels=[-np.inf, 0], colors=[color], alpha=alpha)
+        ax.contour(X, Y, f, levels=[0], colors=color, linewidths=linewidth, linestyles=linestyle)
 
         if label is None:
             label = self.name
         proxy = Line2D([0], [0], color=color, label=label, linewidth=linewidth, linestyle=linestyle)
         ax.add_line(proxy)
 
-        # Draw the projections of the three principal stress axes, 120° apart from each other
+        # Draw the projections of the three principal stress axes, 120° apart from each other, with ticks
+        # showing the stress values along each axis
         r_axis = r_max / margin
-        for angle, name in [(0, r'$\sigma_1$'), (2 * np.pi / 3, r'$\sigma_2$'), (4 * np.pi / 3, r'$\sigma_3$')]:
+        s_max = r_axis * np.sqrt(3 / 2)
+        step = _nice_tick_step(s_max / 4)
+        ticks = np.concatenate([np.arange(-step, -s_max, -step), np.arange(step, s_max, step)])
+        tick_len = r_axis * 0.03
+        label_offset = r_axis * 0.07
+        for i, name in enumerate([r'$\sigma_1$', r'$\sigma_2$', r'$\sigma_3$']):
+            angle = angle0 + i * 2 * np.pi / 3
             d = np.array([np.cos(angle), np.sin(angle)])
+            n = np.array([-d[1], d[0]])
             ax.plot([-d[0] * r_axis, d[0] * r_axis], [-d[1] * r_axis, d[1] * r_axis],
                     color='black', linewidth=0.5)
             ax.text(*(1.1 * r_axis * d), name, ha='center', va='center')
+            for t in ticks:
+                p = d * (t * np.sqrt(2 / 3))
+                ax.plot([p[0] - n[0] * tick_len, p[0] + n[0] * tick_len],
+                        [p[1] - n[1] * tick_len, p[1] + n[1] * tick_len],
+                        color='black', linewidth=0.5)
+                ax.text(*(p + n * label_offset), f'{t:g}', ha='center', va='center', fontsize=8)
         ax.set_xticks([])
         ax.set_yticks([])
         for spine in ax.spines.values():
