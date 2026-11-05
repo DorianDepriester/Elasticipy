@@ -141,6 +141,7 @@ class YieldCriterion(ABC):
         See Also
         --------
         plot3D : plot the yield surface in the principal stress space
+        plot_deviatoric : plot the elastic domain in the deviatoric plane
 
         Examples
         --------
@@ -186,6 +187,88 @@ class YieldCriterion(ABC):
 
         return fig, ax
 
+    def plot_deviatoric(self, color='red', fig=None, ax=None, alpha=0.3,
+                        npt=400, label=None, linewidth=1., linestyle='solid'):
+        """
+        Plot the elastic domain in the deviatoric plane (pi-plane), i.e. the plane where the three principal
+        stresses sum up to zero.
+
+        Parameters
+        ----------
+        color : str, optional
+            Color to use for the plot.
+        fig : matplotlib.figure.Figure, optional
+            Figure to plot on. If not provided, a new figure will be created.
+        ax : matplotlib.axes.Axes, optional
+            Axes to plot on.
+        alpha : float, optional
+            Transparency of the inside of the yield surface.
+        npt : int, optional
+            Number of points along each direction to use for the plot.
+        label : str, optional
+            Label for the plot. If not provided, the name of the yield criterion constructor will be used.
+        linewidth : float, optional
+            Width of the lines in the plot. Default is 1.
+        linestyle : str, optional
+            Style of the lines in the plot. Default is 'solid'.
+
+        Returns
+        -------
+        fig : matplotlib.figure.Figure
+            Figure where the plot is drawn.
+        ax : matplotlib.axes.Axes
+            Axes where the plot is drawn.
+
+        See Also
+        --------
+        plot2D : plot the elastic domain in the biaxial tensile stress space
+        plot3D : plot the yield surface in the principal stress space
+
+        Examples
+        --------
+        Plot the von Mises elastic domain in the deviatoric plane:
+
+        .. plot::
+
+            from elasticipy.yield_criteria import VonMisesCriterion
+            VonMisesCriterion().plot_deviatoric()
+
+        """
+        margin = 1.05
+        r_max = np.max(np.abs(self._plot_bounds)) * margin
+        e1 = np.array([2., -1., -1.]) / np.sqrt(6)
+        e2 = np.array([0., 1., -1.]) / np.sqrt(2)
+        u = np.linspace(-r_max, r_max, npt)
+        U, V = np.meshgrid(u, u)
+        s1 = U * e1[0] + V * e2[0]
+        s2 = U * e1[1] + V * e2[1]
+        s3 = U * e1[2] + V * e2[2]
+        sigma = (StressTensor.tensile([1, 0, 0], s1)
+                 + StressTensor.tensile([0, 1, 0], s2)
+                 + StressTensor.tensile([0, 0, 1], s3))
+        f = self.yield_function(sigma)
+
+        if ax is None or fig is None:
+            fig, ax = plt.subplots()
+
+        if alpha != 0.:
+            ax.contourf(U, V, f, levels=[-np.inf, 0], colors=[color], alpha=alpha)
+        ax.contour(U, V, f, levels=[0], colors=color, linewidths=linewidth, linestyles=linestyle)
+
+        if label is None:
+            label = self.name
+        proxy = Line2D([0], [0], color=color, label=label, linewidth=linewidth, linestyle=linestyle)
+        ax.add_line(proxy)
+
+        ax.set_xlabel(r'$\pi_1$')
+        ax.set_ylabel(r'$\pi_2$')
+        ax.axhline(0, color='black', linewidth=0.5)
+        ax.axvline(0, color='black', linewidth=0.5)
+        ax.grid(True)
+        ax.axis('equal')
+
+        return fig, ax
+
     def plot3D(self, xrange=None, yrange=None, zrange=None, color='red', opacity=1.0, npt=100, fig=None):
         """
         Plot the yield surface in the principal stress space
@@ -212,6 +295,7 @@ class YieldCriterion(ABC):
         See Also
         --------
         plot2D : plot the yield surface in the biaxial stress space
+        plot_deviatoric : plot the elastic domain in the deviatoric plane
         draw_surface_normal : show the surface normal at a given location in the principal stress space
         """
         if fig is None:

@@ -3,6 +3,7 @@ from elasticipy.yield_criteria import DruckerPrager, MohrCoulomb, TrescaCriterio
 from elasticipy.tensors.stress_strain import StressTensor, StrainTensor
 import numpy as np
 from pytest import approx
+from matplotlib import pyplot as plt
 
 tensile_x = StressTensor.tensile([1, 0, 0], 1)
 tensile_y = StressTensor.tensile([0, 1, 0], 1)
@@ -160,6 +161,17 @@ class TestHillCriterion(unittest.TestCase):
         f_hill = hill.yield_function(s)
         np.testing.assert_array_almost_equal(sigma_y * (1 + f_hill), s.von_mises()**2)
 
+
+
+class TestPlotDeviatoric(unittest.TestCase):
+    def test_plot_deviatoric(self):
+        for criterion in [VonMisesCriterion(), TrescaCriterion(),
+                          DruckerPrager.from_cohesion_friction_angle(1., 30.),
+                          MohrCoulomb(1., 30.)]:
+            fig, ax = criterion.plot_deviatoric()
+            assert fig is not None
+            assert ax is not None
+            plt.close(fig)
 
 
 if __name__ == '__main__':
