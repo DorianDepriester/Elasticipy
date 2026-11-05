@@ -173,6 +173,14 @@ class TestPlotDeviatoric(unittest.TestCase):
             assert ax is not None
             plt.close(fig)
 
+    def test_plot_deviatoric_superposition(self):
+        sigma_y = 100
+        fig, ax = VonMisesCriterion(yield_stress=sigma_y).plot_deviatoric()
+        fig, ax = TrescaCriterion(yield_stress=sigma_y).plot_deviatoric(fig=fig, ax=ax, color='blue')
+        sigma_labels = [t.get_text() for t in ax.texts if 'sigma' in t.get_text()]
+        assert sorted(sigma_labels) == sorted([r'$\sigma_1$', r'$\sigma_2$', r'$\sigma_3$'])
+        plt.close(fig)
+
     def test_plot_deviatoric_ticks(self):
         criterion = VonMisesCriterion()
         for ticks in [False, [-1., 0., 1.], np.linspace(-1, 1, 5)]:

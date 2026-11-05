@@ -290,31 +290,34 @@ class YieldCriterion(ABC):
         ax.add_line(proxy)
 
         # Draw the projections of the three principal stress axes, 120° apart from each other, with ticks
-        # showing the stress values along each axis
-        r_axis = r_max / margin
-        s_max = r_axis * np.sqrt(3 / 2)
-        if ticks is None:
-            step = _nice_tick_step(s_max / 4)
-            ticks = np.concatenate([np.arange(-step, -s_max, -step), np.arange(step, s_max, step)])
-        elif ticks is False:
-            ticks = []
-        else:
-            ticks = np.asarray(ticks, dtype=float)
-        tick_len = r_axis * 0.03
-        label_offset = r_axis * 0.07
-        for i, name in enumerate([r'$\sigma_1$', r'$\sigma_2$', r'$\sigma_3$']):
-            angle = angle0 + i * 2 * np.pi / 3
-            d = np.array([np.cos(angle), np.sin(angle)])
-            n = np.array([-d[1], d[0]])
-            ax.plot([-d[0] * r_axis, d[0] * r_axis], [-d[1] * r_axis, d[1] * r_axis],
-                    color='black', linewidth=0.5)
-            ax.text(*(1.1 * r_axis * d), name, ha='center', va='center')
-            for t in ticks:
-                p = d * (t * np.sqrt(2 / 3))
-                ax.plot([p[0] - n[0] * tick_len, p[0] + n[0] * tick_len],
-                        [p[1] - n[1] * tick_len, p[1] + n[1] * tick_len],
+        # showing the stress values along each axis. They are only drawn once, even if multiple yield
+        # surfaces are plotted on the same axes.
+        if not getattr(ax, '_deviatoric_axes_drawn', False):
+            r_axis = r_max / margin
+            s_max = r_axis * np.sqrt(3 / 2)
+            if ticks is None:
+                step = _nice_tick_step(s_max / 4)
+                ticks = np.concatenate([np.arange(-step, -s_max, -step), np.arange(step, s_max, step)])
+            elif ticks is False:
+                ticks = []
+            else:
+                ticks = np.asarray(ticks, dtype=float)
+            tick_len = r_axis * 0.03
+            label_offset = r_axis * 0.07
+            for i, name in enumerate([r'$\sigma_1$', r'$\sigma_2$', r'$\sigma_3$']):
+                angle = angle0 + i * 2 * np.pi / 3
+                d = np.array([np.cos(angle), np.sin(angle)])
+                n = np.array([-d[1], d[0]])
+                ax.plot([-d[0] * r_axis, d[0] * r_axis], [-d[1] * r_axis, d[1] * r_axis],
                         color='black', linewidth=0.5)
-                ax.text(*(p + n * label_offset), f'{t:g}', ha='center', va='center', fontsize=8)
+                ax.text(*(1.1 * r_axis * d), name, ha='center', va='center')
+                for t in ticks:
+                    p = d * (t * np.sqrt(2 / 3))
+                    ax.plot([p[0] - n[0] * tick_len, p[0] + n[0] * tick_len],
+                            [p[1] - n[1] * tick_len, p[1] + n[1] * tick_len],
+                            color='black', linewidth=0.5)
+                    ax.text(*(p + n * label_offset), f'{t:g}', ha='center', va='center', fontsize=8)
+            ax._deviatoric_axes_drawn = True
         ax.set_xticks([])
         ax.set_yticks([])
         for spine in ax.spines.values():
