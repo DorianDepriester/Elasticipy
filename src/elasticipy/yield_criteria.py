@@ -101,7 +101,7 @@ class YieldCriterion(ABC):
 
     @property
     def _plot_bounds(self):
-        return (0.0, 1.0), (0.0, 1.0)
+        return (-1.0, 1.0), (-1.0, 1.0)
 
     def plot2D(self, color='red', fig=None, ax=None, alpha=0.3,
                xrange=None, yrange=None, npt=400, label=None, linewidth=1., linestyle='solid'):
