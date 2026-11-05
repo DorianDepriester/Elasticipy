@@ -268,7 +268,10 @@ class YieldCriterion(ABC):
             ax.plot([-d[0] * r_axis, d[0] * r_axis], [-d[1] * r_axis, d[1] * r_axis],
                     color='black', linewidth=0.5)
             ax.text(*(1.1 * r_axis * d), name, ha='center', va='center')
-        ax.grid(True)
+        ax.set_xticks([])
+        ax.set_yticks([])
+        for spine in ax.spines.values():
+            spine.set_visible(False)
         ax.axis('equal')
 
         return fig, ax
