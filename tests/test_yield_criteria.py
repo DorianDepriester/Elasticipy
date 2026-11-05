@@ -173,6 +173,14 @@ class TestPlotDeviatoric(unittest.TestCase):
             assert ax is not None
             plt.close(fig)
 
+    def test_plot_deviatoric_ticks(self):
+        criterion = VonMisesCriterion()
+        for ticks in [False, [-1., 0., 1.], np.linspace(-1, 1, 5)]:
+            fig, ax = criterion.plot_deviatoric(ticks=ticks)
+            assert fig is not None
+            assert ax is not None
+            plt.close(fig)
+
 
 if __name__ == '__main__':
     unittest.main()

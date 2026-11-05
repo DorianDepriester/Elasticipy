@@ -204,7 +204,7 @@ class YieldCriterion(ABC):
         return fig, ax
 
     def plot_deviatoric(self, color='red', fig=None, ax=None, alpha=0.3,
-                        npt=400, label=None, linewidth=1., linestyle='solid'):
+                        npt=400, label=None, linewidth=1., linestyle='solid', ticks=None):
         """
         Plot the elastic domain in the deviatoric plane (pi-plane), i.e. the plane where the three principal
         stresses sum up to zero. The projections of the three principal stress axes are shown as three
@@ -228,6 +228,9 @@ class YieldCriterion(ABC):
             Width of the lines in the plot. Default is 1.
         linestyle : str, optional
             Style of the lines in the plot. Default is 'solid'.
+        ticks : array_like or bool, optional
+            Stress values to display as ticks along the three principal stress axes. If None (default), the
+            ticks are set automatically. If False, no tick is drawn at all.
 
         Returns
         -------
@@ -288,8 +291,13 @@ class YieldCriterion(ABC):
         # showing the stress values along each axis
         r_axis = r_max / margin
         s_max = r_axis * np.sqrt(3 / 2)
-        step = _nice_tick_step(s_max / 4)
-        ticks = np.concatenate([np.arange(-step, -s_max, -step), np.arange(step, s_max, step)])
+        if ticks is None:
+            step = _nice_tick_step(s_max / 4)
+            ticks = np.concatenate([np.arange(-step, -s_max, -step), np.arange(step, s_max, step)])
+        elif ticks is False:
+            ticks = []
+        else:
+            ticks = np.asarray(ticks, dtype=float)
         tick_len = r_axis * 0.03
         label_offset = r_axis * 0.07
         for i, name in enumerate([r'$\sigma_1$', r'$\sigma_2$', r'$\sigma_3$']):
