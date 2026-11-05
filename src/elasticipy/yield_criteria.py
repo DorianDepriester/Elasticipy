@@ -191,7 +191,8 @@ class YieldCriterion(ABC):
                         npt=400, label=None, linewidth=1., linestyle='solid'):
         """
         Plot the elastic domain in the deviatoric plane (pi-plane), i.e. the plane where the three principal
-        stresses sum up to zero.
+        stresses sum up to zero. The projections of the three principal stress axes are shown as three
+        axes 120° apart from each other.
 
         Parameters
         ----------
@@ -260,10 +261,13 @@ class YieldCriterion(ABC):
         proxy = Line2D([0], [0], color=color, label=label, linewidth=linewidth, linestyle=linestyle)
         ax.add_line(proxy)
 
-        ax.set_xlabel(r'$\pi_1$')
-        ax.set_ylabel(r'$\pi_2$')
-        ax.axhline(0, color='black', linewidth=0.5)
-        ax.axvline(0, color='black', linewidth=0.5)
+        # Draw the projections of the three principal stress axes, 120° apart from each other
+        r_axis = r_max / margin
+        for angle, name in [(0, r'$\sigma_1$'), (2 * np.pi / 3, r'$\sigma_2$'), (4 * np.pi / 3, r'$\sigma_3$')]:
+            d = np.array([np.cos(angle), np.sin(angle)])
+            ax.plot([-d[0] * r_axis, d[0] * r_axis], [-d[1] * r_axis, d[1] * r_axis],
+                    color='black', linewidth=0.5)
+            ax.text(*(1.1 * r_axis * d), name, ha='center', va='center')
         ax.grid(True)
         ax.axis('equal')
 
