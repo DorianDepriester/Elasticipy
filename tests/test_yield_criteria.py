@@ -3,6 +3,7 @@ from elasticipy.yield_criteria import DruckerPrager, MohrCoulomb, TrescaCriterio
 from elasticipy.tensors.stress_strain import StressTensor, StrainTensor
 import numpy as np
 from pytest import approx
+from matplotlib import pyplot as plt
 
 tensile_x = StressTensor.tensile([1, 0, 0], 1)
 tensile_y = StressTensor.tensile([0, 1, 0], 1)
@@ -160,6 +161,33 @@ class TestHillCriterion(unittest.TestCase):
         f_hill = hill.yield_function(s)
         np.testing.assert_array_almost_equal(sigma_y * (1 + f_hill), s.von_mises()**2)
 
+
+
+class TestPlotDeviatoric(unittest.TestCase):
+    def test_plot_deviatoric(self):
+        for criterion in [VonMisesCriterion(), TrescaCriterion(),
+                          DruckerPrager.from_cohesion_friction_angle(1., 30.),
+                          MohrCoulomb(1., 30.)]:
+            fig, ax = criterion.plot_deviatoric()
+            assert fig is not None
+            assert ax is not None
+            plt.close(fig)
+
+    def test_plot_deviatoric_superposition(self):
+        sigma_y = 100
+        fig, ax = VonMisesCriterion(yield_stress=sigma_y).plot_deviatoric()
+        fig, ax = TrescaCriterion(yield_stress=sigma_y).plot_deviatoric(fig=fig, ax=ax, color='blue')
+        sigma_labels = [t.get_text() for t in ax.texts if 'sigma' in t.get_text()]
+        assert sorted(sigma_labels) == sorted([r'$\sigma_1$', r'$\sigma_2$', r'$\sigma_3$'])
+        plt.close(fig)
+
+    def test_plot_deviatoric_ticks(self):
+        criterion = VonMisesCriterion()
+        for ticks in [False, [-1., 0., 1.], np.linspace(-1, 1, 5)]:
+            fig, ax = criterion.plot_deviatoric(ticks=ticks)
+            assert fig is not None
+            assert ax is not None
+            plt.close(fig)
 
 
 if __name__ == '__main__':

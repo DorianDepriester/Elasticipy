@@ -9,6 +9,22 @@ from scipy.optimize import minimize
 from elasticipy.tensors.stress_strain import StressTensor, StrainTensor
 from elasticipy._plotting_tools import _draw_plotly_arrow, _draw_plotly_isosurface
 
+def _nice_tick_step(x):
+    if x <= 0:
+        return 1.
+    exponent = np.floor(np.log10(x))
+    fraction = x / 10 ** exponent
+    if fraction < 1.5:
+        factor = 1.
+    elif fraction < 3.5:
+        factor = 2.
+    elif fraction < 7.5:
+        factor = 5.
+    else:
+        factor = 10.
+    return factor * 10 ** exponent
+
+
 def _sort_yield_stresses(s):
     s3, s1 = min(s), max(s)
     if s1 < 0.:
@@ -141,6 +157,7 @@ class YieldCriterion(ABC):
         See Also
         --------
         plot3D : plot the yield surface in the principal stress space
+        plot_deviatoric : plot the elastic domain in the deviatoric plane
 
         Examples
         --------
@@ -186,6 +203,129 @@ class YieldCriterion(ABC):
 
         return fig, ax
 
+    def plot_deviatoric(self, color='red', fig=None, ax=None, alpha=0.3,
+                        npt=400, label=None, linewidth=1., linestyle='solid', ticks=None):
+        """
+        Plot the elastic domain in the deviatoric plane (pi-plane), i.e. the plane where the three principal
+        stresses sum up to zero. The projections of the three principal stress axes are shown as three
+        axes 120° apart from each other.
+
+        Parameters
+        ----------
+        color : str, optional
+            Color to use for the plot.
+        fig : matplotlib.figure.Figure, optional
+            Figure to plot on. If not provided, a new figure will be created.
+        ax : matplotlib.axes.Axes, optional
+            Axes to plot on.
+        alpha : float, optional
+            Transparency of the inside of the yield surface.
+        npt : int, optional
+            Number of points along each direction to use for the plot.
+        label : str, optional
+            Label for the plot. If not provided, the name of the yield criterion constructor will be used.
+        linewidth : float, optional
+            Width of the lines in the plot. Default is 1.
+        linestyle : str, optional
+            Style of the lines in the plot. Default is 'solid'.
+        ticks : array_like or bool, optional
+            Stress values to display as ticks along the three principal stress axes. If None (default), the
+            ticks are set automatically. If False, no tick is drawn at all.
+
+        Returns
+        -------
+        fig : matplotlib.figure.Figure
+            Figure where the plot is drawn.
+        ax : matplotlib.axes.Axes
+            Axes where the plot is drawn.
+
+        See Also
+        --------
+        plot2D : plot the elastic domain in the biaxial tensile stress space
+        plot3D : plot the yield surface in the principal stress space
+
+        Examples
+        --------
+        Plot the von Mises and Tresca elastic domains in the deviatoric plane:
+
+        .. plot::
+
+            from elasticipy.yield_criteria import VonMisesCriterion, TrescaCriterion
+            fig, ax = VonMisesCriterion().plot_deviatoric()
+            TrescaCriterion().plot_deviatoric(fig=fig, ax=ax, color='blue')
+            ax.legend()
+
+        """
+        margin = 1.05
+        r_max = np.max(np.abs(self._plot_bounds)) * margin
+        e1 = np.array([2., -1., -1.]) / np.sqrt(6)
+        e2 = np.array([0., 1., -1.]) / np.sqrt(2)
+        u = np.linspace(-r_max, r_max, npt)
+        U, V = np.meshgrid(u, u)
+        s1 = U * e1[0] + V * e2[0]
+        s2 = U * e1[1] + V * e2[1]
+        s3 = U * e1[2] + V * e2[2]
+        sigma = (StressTensor.tensile([1, 0, 0], s1)
+                 + StressTensor.tensile([0, 1, 0], s2)
+                 + StressTensor.tensile([0, 0, 1], s3))
+        f = self.yield_function(sigma)
+
+        # Rotate the figure so that sigma_3 points upwards, sigma_1 towards the lower left and sigma_2
+        # towards the lower right
+        angle0 = 7 * np.pi / 6
+        rot = np.array([[np.cos(angle0), -np.sin(angle0)], [np.sin(angle0), np.cos(angle0)]])
+        X = rot[0, 0] * U + rot[0, 1] * V
+        Y = rot[1, 0] * U + rot[1, 1] * V
+
+        if ax is None or fig is None:
+            fig, ax = plt.subplots()
+
+        if alpha != 0.:
+            ax.contourf(X, Y, f, levels=[-np.inf, 0], colors=[color], alpha=alpha)
+        ax.contour(X, Y, f, levels=[0], colors=color, linewidths=linewidth, linestyles=linestyle)
+
+        if label is None:
+            label = self.name
+        proxy = Line2D([0], [0], color=color, label=label, linewidth=linewidth, linestyle=linestyle)
+        ax.add_line(proxy)
+
+        # Draw the projections of the three principal stress axes, 120° apart from each other, with ticks
+        # showing the stress values along each axis. They are only drawn once, even if multiple yield
+        # surfaces are plotted on the same axes.
+        if not getattr(ax, '_deviatoric_axes_drawn', False):
+            r_axis = r_max / margin
+            s_max = r_axis * np.sqrt(3 / 2)
+            if ticks is None:
+                step = _nice_tick_step(s_max / 4)
+                ticks = np.concatenate([np.arange(-step, -s_max, -step), np.arange(step, s_max, step)])
+            elif ticks is False:
+                ticks = []
+            else:
+                ticks = np.asarray(ticks, dtype=float)
+            tick_len = r_axis * 0.03
+            label_offset = r_axis * 0.07
+            for i, name in enumerate([r'$\sigma_1$', r'$\sigma_2$', r'$\sigma_3$']):
+                angle = angle0 + i * 2 * np.pi / 3
+                d = np.array([np.cos(angle), np.sin(angle)])
+                n = np.array([-d[1], d[0]])
+                ax.plot([-d[0] * r_axis, d[0] * r_axis], [-d[1] * r_axis, d[1] * r_axis],
+                        color='black', linewidth=0.5)
+                ax.text(*(1.1 * r_axis * d), name, ha='center', va='center')
+                for t in ticks:
+                    p = d * (t * np.sqrt(2 / 3))
+                    ax.plot([p[0] - n[0] * tick_len, p[0] + n[0] * tick_len],
+                            [p[1] - n[1] * tick_len, p[1] + n[1] * tick_len],
+                            color='black', linewidth=0.5)
+                    ax.text(*(p + n * label_offset), f'{t:g}', ha='center', va='center', fontsize=8)
+            ax._deviatoric_axes_drawn = True
+        ax.set_xticks([])
+        ax.set_yticks([])
+        for spine in ax.spines.values():
+            spine.set_visible(False)
+        ax.axis('equal')
+
+        return fig, ax
+
     def plot3D(self, xrange=None, yrange=None, zrange=None, color='red', opacity=1.0, npt=100, fig=None):
         """
         Plot the yield surface in the principal stress space
@@ -212,6 +352,7 @@ class YieldCriterion(ABC):
         See Also
         --------
         plot2D : plot the yield surface in the biaxial stress space
+        plot_deviatoric : plot the elastic domain in the deviatoric plane
         draw_surface_normal : show the surface normal at a given location in the principal stress space
         """
         if fig is None:
