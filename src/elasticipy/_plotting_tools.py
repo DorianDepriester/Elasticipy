@@ -3,9 +3,37 @@ from matplotlib import pyplot as plt, cm
 import plotly.graph_objects as go
 import plotly.io as pio
 import numpy as np
+import os
+import tempfile
+import webbrowser
+
+try:
+    from plotly.io._base_renderers import ExternalRenderer
+
+    class _TempFileRenderer(ExternalRenderer):
+        """
+        Renderer that saves the figure to a temporary HTML file and opens it in a web browser.
+
+        Unlike the built-in 'browser' renderer, it does not rely on a local one-shot HTTP server, so
+        it never blocks the calling script.
+        """
+
+        def render(self, fig_dict):
+            from plotly.io import to_html
+            html = to_html(fig_dict, include_plotlyjs=True, full_html=True, validate=False)
+            fd, path = tempfile.mkstemp(suffix='.html', prefix='elasticipy_')
+            with os.fdopen(fd, 'w', encoding='utf-8') as f:
+                f.write(html)
+            webbrowser.open('file://' + path)
+
+    pio.renderers['elasticipy'] = _TempFileRenderer()
+    _default_renderer = 'elasticipy'
+except ImportError:
+    _default_renderer = 'browser'
 
 if pio.renderers.default in ('', 'auto'):
-    pio.renderers.default = 'browser'
+    pio.renderers.default = _default_renderer
+
 
 def cart2sph(u):
     x = u[:, :, 0],
