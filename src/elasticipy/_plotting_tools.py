@@ -32,7 +32,7 @@ try:
 except ImportError:
     _default_renderer = 'browser'
 
-if pio.renderers.default in ('', 'auto'):
+if pio.renderers.default in ('', 'auto', 'browser'):
     pio.renderers.default = _default_renderer
 
 
