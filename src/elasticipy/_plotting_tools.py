@@ -1,7 +1,11 @@
 from matplotlib.colors import Normalize
 from matplotlib import pyplot as plt, cm
 import plotly.graph_objects as go
+import plotly.io as pio
 import numpy as np
+
+if pio.renderers.default in ('', 'auto'):
+    pio.renderers.default = 'browser'
 
 def cart2sph(u):
     x = u[:, :, 0],
