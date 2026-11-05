@@ -24,7 +24,8 @@ try:
             fd, path = tempfile.mkstemp(suffix='.html', prefix='elasticipy_')
             with os.fdopen(fd, 'w', encoding='utf-8') as f:
                 f.write(html)
-            webbrowser.open('file://' + path)
+            if not webbrowser.open('file://' + path):
+                print(f'Figure saved to {path}')
 
     pio.renderers['elasticipy'] = _TempFileRenderer()
     _default_renderer = 'elasticipy'
