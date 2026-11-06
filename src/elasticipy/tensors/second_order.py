@@ -373,7 +373,7 @@ class SecondOrderTensor:
     @property
     def J1(self):
         """
-        First invariant of the deviatoric part of the stress tensor. It is always zeros, as the deviatoric part as null
+        First invariant of the deviatoric part of the tensor. It is always zeros, as the deviatoric part as null
         trace.
 
         Returns
@@ -396,8 +396,7 @@ class SecondOrderTensor:
         float or np.ndarray
             J2 invariant
         """
-        j2 = -self.deviatoric_part().I2
-        return np.clip(j2, 0, np.inf)
+        return -self.deviatoric_part().I2
 
     @property
     def J3(self):
@@ -665,7 +664,7 @@ class SecondOrderTensor:
 
         See Also
         --------
-        T : transpose the tensor array (not the components)
+        T : transpose the tensor(s)
         """
         if self.ndim < 2:
             return self
@@ -1884,7 +1883,11 @@ class SymmetricSecondOrderTensor(SecondOrderTensor):
     def inv(self):
         return SymmetricSecondOrderTensor(_inv_3x3(self.matrix, sym=True))
 
-    def Lode_angle(self, degrees=False):
+    @property
+    def J2(self):
+        return np.clip(super().J2, 0, np.inf)
+
+    def lode_angle(self, degrees=False):
         """
         Computes the Lode angle of the tensor.
 
