@@ -209,6 +209,45 @@ class TestStressStrainTensors(unittest.TestCase):
         Tresca_th = np.array([1, 2, 0.0])
         np.testing.assert_array_equal(Tresca_stress, Tresca_th)
 
+    def test_lode_angle_haigh_westergaard(self):
+        """
+        Check the Lode angle and Haigh-Westergaard coordinates for simple tension, compression, pure shear and
+        hydrostatic pressure.
+        """
+        matrix = np.zeros((4, 3, 3))
+        matrix[0, 0, 0] = 1  # Simple tension
+        matrix[1, 0, 0] = -1  # Simple compression
+        matrix[2, 1, 0] = matrix[2, 0, 1] = 1  # Pure shear
+        matrix[3, np.arange(3), np.arange(3)] = -1  # Hydrostatic pressure
+        stress = Tensors.StressTensor(matrix)
+
+        ksi, rho, theta = stress.haigh_westergaard()
+        ksi_th = np.array([1, -1, 0, -3]) / np.sqrt(3)
+        rho_th = np.array([np.sqrt(2/3), np.sqrt(2/3), np.sqrt(2), 0])
+        theta_th = np.array([0, np.pi/3, np.pi/6, 0])
+        np.testing.assert_almost_equal(ksi, ksi_th)
+        np.testing.assert_almost_equal(rho, rho_th)
+        np.testing.assert_almost_equal(theta, theta_th)
+
+        np.testing.assert_almost_equal(stress.lode_angle(), theta_th)
+        np.testing.assert_almost_equal(stress.lode_angle(degrees=True), np.rad2deg(theta_th),
+                                       decimal=5)  # Lower tolerance due to floating-point noise on arccos
+
+        # Single-valued tensors
+        single_stress = Tensors.StressTensor(matrix[0])
+        ksi, rho, theta = single_stress.haigh_westergaard()
+        np.testing.assert_almost_equal(ksi, [1/np.sqrt(3)])
+        np.testing.assert_almost_equal(rho, [np.sqrt(2/3)])
+        self.assertAlmostEqual(single_stress.lode_angle(degrees=True), 0.0, places=5)
+
+        # Lode angle is not defined for non-symmetric tensors
+        non_symmetric = SecondOrderTensor([[0, 1, 0],
+                                           [-1, 0, 0],
+                                           [0, 0, 0]])
+        self.assertFalse(hasattr(non_symmetric, 'lode_angle'))
+        self.assertFalse(hasattr(non_symmetric, 'haigh_westergaard'))
+        self.assertLess(non_symmetric.J2, 0)
+
     def test_rotation_stiffness(self, ):
         """
         Check that the two ways to compute stress from a rotated stiffness tensor are consistent.
