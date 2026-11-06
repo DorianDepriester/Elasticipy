@@ -827,7 +827,7 @@ class MohrCoulomb(YieldCriterion):
         return strain / strain.eq_strain()
 
 
-class Hill(YieldCriterion):
+class HillCriterion(YieldCriterion):
     name = "Hill quadratic"
 
     def __init__(self, F, G, H, L, M, N):

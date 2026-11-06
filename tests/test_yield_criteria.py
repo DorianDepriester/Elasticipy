@@ -1,5 +1,5 @@
 import unittest
-from elasticipy.yield_criteria import DruckerPrager, MohrCoulomb, TrescaCriterion, VonMisesCriterion, Hill
+from elasticipy.yield_criteria import DruckerPrager, MohrCoulomb, TrescaCriterion, VonMisesCriterion, HillCriterion
 from elasticipy.tensors.stress_strain import StressTensor, StrainTensor
 import numpy as np
 from pytest import approx
@@ -139,12 +139,12 @@ class TestVonMisesCriterion(unittest.TestCase):
 
 class TestHillCriterion(unittest.TestCase):
     def test_yield_function(self):
-        hill = Hill(1,1,1,1,1,1)
+        hill = HillCriterion(1, 1, 1, 1, 1, 1)
         assert hill.yield_function(StressTensor.zeros()) == -1.0
         assert hill.yield_function(StressTensor.pressure(100.)) == -1.0
 
     def test_from_yield_stresses(self):
-        hill = Hill.from_yield_stresses(11,22,33,23, 13, 12)
+        hill = HillCriterion.from_yield_stresses(11, 22, 33, 23, 13, 12)
         assert hill.yield_function(StressTensor.tensile([1,0,0], 11)) == 0.0
         assert np.isclose(hill.yield_function(StressTensor.tensile([0,1,0], 22)), 0.0)
         assert np.isclose(hill.yield_function(StressTensor.tensile([0,0,1], 33)), 0.0)
@@ -156,7 +156,7 @@ class TestHillCriterion(unittest.TestCase):
         sigma_y = 1.
         F = 1 / (2 * sigma_y**2)
         L = 3 / (2 * sigma_y**2)
-        hill = Hill(F, F, F, L, L, L)
+        hill = HillCriterion(F, F, F, L, L, L)
         s = StressTensor.rand((100,))
         f_hill = hill.yield_function(s)
         np.testing.assert_array_almost_equal(sigma_y * (1 + f_hill), s.von_mises()**2)
