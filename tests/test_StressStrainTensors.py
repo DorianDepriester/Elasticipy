@@ -233,11 +233,11 @@ class TestStressStrainTensors(unittest.TestCase):
         np.testing.assert_almost_equal(stress.lode_angle(degrees=True), np.rad2deg(theta_th),
                                        decimal=5)  # Lower tolerance due to floating-point noise on arccos
 
-        # Single-valued tensors
+        # Single-valued tensors return scalars
         single_stress = Tensors.StressTensor(matrix[0])
         ksi, rho, theta = single_stress.haigh_westergaard()
-        np.testing.assert_almost_equal(ksi, [1/np.sqrt(3)])
-        np.testing.assert_almost_equal(rho, [np.sqrt(2/3)])
+        self.assertAlmostEqual(ksi, 1/np.sqrt(3))
+        self.assertAlmostEqual(rho, np.sqrt(2/3))
         self.assertAlmostEqual(single_stress.lode_angle(degrees=True), 0.0, places=5)
 
         # Lode angle is not defined for non-symmetric tensors

@@ -1919,10 +1919,7 @@ class SymmetricSecondOrderTensor(SecondOrderTensor):
         _, _, theta = self.haigh_westergaard()
         if degrees:
             theta = np.rad2deg(theta)
-        if self.shape:
-            return theta
-        else:
-            return theta[0]
+        return theta
 
     def haigh_westergaard(self):
         """
@@ -1938,7 +1935,8 @@ class SymmetricSecondOrderTensor(SecondOrderTensor):
         Returns
         -------
         ksi : float or numpy.ndarray
-            Hydrostatic coordinate(s): ksi = I1/sqrt(3)
+            Hydrostatic coordinate(s): ksi = I1/sqrt(3). A float is returned if the tensor is single-valued,
+            otherwise, an array of the same shape as the tensor is returned.
         rho : float or numpy.ndarray
             Distance(s) to the hydrostatic axis: rho = sqrt(2*J2)
         theta : float or numpy.ndarray
@@ -1970,7 +1968,10 @@ class SymmetricSecondOrderTensor(SecondOrderTensor):
         theta = np.zeros(shape=J3.shape)
         cosine = J3[non_hydro] / 2 * (3 / J2[non_hydro] )**(3 / 2)
         theta[non_hydro] = np.arccos(cosine) / 3
-        return ksi, rho, theta
+        if self.shape:
+            return ksi, rho, theta
+        else:
+            return ksi[0], rho[0], theta[0]
 
 
 class SkewSymmetricSecondOrderTensor(SecondOrderTensor):
