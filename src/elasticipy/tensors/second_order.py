@@ -1906,6 +1906,7 @@ class SymmetricSecondOrderTensor(SecondOrderTensor):
         --------
         J2 : Second invariant of the deviatoric part
         J3 : Third invariant of the deviatoric part
+        haigh_westergaard : compute the Haigh-Westergaard coordinates
 
         Notes
         -----
@@ -1918,12 +1919,46 @@ class SymmetricSecondOrderTensor(SecondOrderTensor):
         _, _, theta = self.haigh_westergaard()
         if degrees:
             theta = np.rad2deg(theta)
-        if self.shape:
-            return theta
-        else:
-            return theta[0]
+        return theta
 
     def haigh_westergaard(self):
+        """
+        Compute the Haigh-Westergaard coordinates of the tensor.
+
+        The Haigh-Westergaard coordinates are the cylindrical coordinates (ksi, rho, theta) of the tensor in the
+        principal stress space, that is:
+
+        - ``ksi``: the hydrostatic coordinate (distance to the deviatoric (pi) plane),
+        - ``rho``: the distance to the hydrostatic axis,
+        - ``theta``: the Lode angle (angle in the deviatoric plane).
+
+        Returns
+        -------
+        ksi : float or numpy.ndarray
+            Hydrostatic coordinate(s): ksi = I1/sqrt(3). A float is returned if the tensor is single-valued,
+            otherwise, an array of the same shape as the tensor is returned.
+        rho : float or numpy.ndarray
+            Distance(s) to the hydrostatic axis: rho = sqrt(2*J2)
+        theta : float or numpy.ndarray
+            Lode angle(s) (in radians). It is zero for hydrostatic tensors.
+
+        See Also
+        --------
+        lode_angle : compute the Lode angle only
+        I1 : First invariant of the tensor (trace)
+        J2 : Second invariant of the deviatoric part
+        J3 : Third invariant of the deviatoric part
+
+        Notes
+        -----
+        The Lode angle is defined such that:
+
+        .. math::
+
+            \\cos(3\\theta)= \\frac{J_3}{2}\\left(\\frac{3}{J_2}\\right)^{3/2}
+
+        For hydrostatic tensors (that is J2 = 0), the Lode angle is set to zero.
+        """
         I1 = np.atleast_1d(self.I1)
         J2 = np.atleast_1d(self.J2)
         J3 = np.atleast_1d(self.J3)
@@ -1933,7 +1968,10 @@ class SymmetricSecondOrderTensor(SecondOrderTensor):
         theta = np.zeros(shape=J3.shape)
         cosine = J3[non_hydro] / 2 * (3 / J2[non_hydro] )**(3 / 2)
         theta[non_hydro] = np.arccos(cosine) / 3
-        return ksi, rho, theta
+        if self.shape:
+            return ksi, rho, theta
+        else:
+            return ksi[0], rho[0], theta[0]
 
 
 class SkewSymmetricSecondOrderTensor(SecondOrderTensor):
