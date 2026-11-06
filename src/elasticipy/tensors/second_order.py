@@ -1906,6 +1906,7 @@ class SymmetricSecondOrderTensor(SecondOrderTensor):
         --------
         J2 : Second invariant of the deviatoric part
         J3 : Third invariant of the deviatoric part
+        haigh_westergaard : compute the Haigh-Westergaard coordinates
 
         Notes
         -----
@@ -1924,6 +1925,42 @@ class SymmetricSecondOrderTensor(SecondOrderTensor):
             return theta[0]
 
     def haigh_westergaard(self):
+        """
+        Compute the Haigh-Westergaard coordinates of the tensor.
+
+        The Haigh-Westergaard coordinates are the cylindrical coordinates (ksi, rho, theta) of the tensor in the
+        principal stress space, that is:
+
+        - ``ksi``: the hydrostatic coordinate (distance to the deviatoric (pi) plane),
+        - ``rho``: the distance to the hydrostatic axis,
+        - ``theta``: the Lode angle (angle in the deviatoric plane).
+
+        Returns
+        -------
+        ksi : float or numpy.ndarray
+            Hydrostatic coordinate(s): ksi = I1/sqrt(3)
+        rho : float or numpy.ndarray
+            Distance(s) to the hydrostatic axis: rho = sqrt(2*J2)
+        theta : float or numpy.ndarray
+            Lode angle(s) (in radians). It is zero for hydrostatic tensors.
+
+        See Also
+        --------
+        lode_angle : compute the Lode angle only
+        I1 : First invariant of the tensor (trace)
+        J2 : Second invariant of the deviatoric part
+        J3 : Third invariant of the deviatoric part
+
+        Notes
+        -----
+        The Lode angle is defined such that:
+
+        .. math::
+
+            \\cos(3\\theta)= \\frac{J_3}{2}\\left(\\frac{3}{J_2}\\right)^{3/2}
+
+        For hydrostatic tensors (that is J2 = 0), the Lode angle is set to zero.
+        """
         I1 = np.atleast_1d(self.I1)
         J2 = np.atleast_1d(self.J2)
         J3 = np.atleast_1d(self.J3)

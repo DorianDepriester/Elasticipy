@@ -376,7 +376,7 @@ class StressTensor(SymmetricSecondOrderTensor):
         --------
         hydrostatic_pressure : compute the hydrostatic pressure
         von_mises : compute the von Mises equivalent stress
-        Lode_angle : compute the Lode angle
+        lode_angle : compute the Lode angle
 
         Notes
         -----
