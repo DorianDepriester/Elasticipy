@@ -35,7 +35,7 @@ def gamma(C_macro_local, phi, theta, a1, a2, a3):
     -----
     Given the macroscopic stiffness tensor **C**, the gamma tensor is defined as:
 
-    .. math:
+    .. math::
 
         \\gamma_{ijkl}\\left(\phi,\\theta\\right) = \\frac{1}{4}\\left(
         D^{-1}_{ik}u_ju_l + D^{-1}_{jk}u_iu_l + D^{-1}_{il}u_ju_k + D^{-1}_{jl}u_iu_k
@@ -43,7 +43,7 @@ def gamma(C_macro_local, phi, theta, a1, a2, a3):
 
     where **D** denotes the Christoffel tensor, such that:
 
-    .. math:
+    .. math::
 
         D_{ik}=C_{ijkl}u_ju_l
     """
@@ -98,14 +98,14 @@ def polarization_tensor(C, a1, a2, a3, n_phi=100, n_theta=50):
     -----
     The polarization tensor is defined as:
 
-    .. math:
+    .. math::
 
 	    P_{ijkl}=\\frac{1}{4\\pi}\\int_{0}^{\\pi}\\int_{0}^{2\\pi}
 	    \\gamma_{ijkl}\\left(\\phi,\\theta\\right)\\sin\\theta\\mathrm{d}\\phi\\mathrm{d}\\theta
 
 	where :math:`\\mathbf{\\gamma}`` denotes the gamma tensor, such that:
 
-    .. math:
+    .. math::
 
         \\gamma_{ijkl}\\left(\phi,\\theta\\right) = \\frac{1}{4}\\left(
         D^{-1}_{ik}u_ju_l + D^{-1}_{jk}u_iu_l + D^{-1}_{il}u_ju_k + D^{-1}_{jl}u_iu_k
@@ -154,7 +154,7 @@ def localization_tensor(C_macro, C_incl, a1, a2, a3, n_phi=100, n_theta=50):
     -----
     The localization tensor is defined as:
 
-    .. math:
+    .. math::
 
         \\\mathbf{A}= \\left[\\mathbf{P}:\left( \\mathbf{C}-\\mathbf{C}^{macro}\right) + \\mathbf{I}\\right]^{-1}
 
@@ -291,6 +291,3 @@ def kroner_eshelby(Cs, particle_sizes=None, orientations=None,
     vec_0 = _vec_components(C_macro_0)
     sol = fixed_point(fun, vec_0, method=method, maxiter=maxiter)
     return StiffnessTensor.triclinic(*sol)
-
-
-Kroner_Eshelby = kroner_eshelby
