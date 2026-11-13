@@ -92,6 +92,7 @@ def polarization_tensor(C, a1, a2, a3, n_phi=100, n_theta=50):
     See Also
     --------
     gamma : compute gamma tensor
+    localization_tensor : compute the localization tensor
 
     Notes
     -----
