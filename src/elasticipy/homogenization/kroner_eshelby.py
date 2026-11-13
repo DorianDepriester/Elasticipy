@@ -1,14 +1,10 @@
 import numpy as np
-
 from elasticipy.tensors.elasticity import StiffnessTensor
 from elasticipy.tensors.fourth_order import FourthOrderTensor, SymmetricFourthOrderTensor
 from scipy.optimize import fixed_point
-
 from elasticipy.tensors.mapping import VoigtMapping
 
 I = FourthOrderTensor.identity()
-ITER = 0
-
 
 def gamma(C_macro_local, phi, theta, a1, a2, a3):
     s1 = np.sin(theta)*np.cos(phi) / a1
