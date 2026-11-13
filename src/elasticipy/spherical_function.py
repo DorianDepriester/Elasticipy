@@ -556,6 +556,7 @@ class SphericalFunction:
         See Also
         --------
         plot_xyz_sections : plot values of the function in X-Y, X-Z an Y-Z planes.
+        plot_as_pole_figure : plot the spatial dependence using pole figure projection
 
         Examples
         --------
@@ -609,6 +610,11 @@ class SphericalFunction:
             The figure object containing the polar plots.
         axs : list of matplotlib.axes._subplots.PolarAxesSubplot
             List of axes objects for each plot.
+
+        See Also
+        --------
+        plot_as_pole_figure : plot the spatial dependence using pole figure projection
+        plot3D : plot the spatial dependence as a 3D surface
 
         Examples
         --------
@@ -680,6 +686,11 @@ class SphericalFunction:
             The Matplotlib figure containing the plot.
         ax : matplotlib.axes._axes.Axes
             The Matplotlib axes of the plot.
+
+        See Also
+        --------
+        plot_xyz_sections : plot values of the function in X-Y, X-Z an Y-Z planes.
+        plot3D : plot the spatial dependence as a 3D surface
 
         Examples
         --------
