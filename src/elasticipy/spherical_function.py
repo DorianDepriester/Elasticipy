@@ -943,6 +943,11 @@ class HyperSphericalFunction(SphericalFunction):
         matplotlib.pyplot.figure or plotly.graph_objs._figure.Figure
             Handle to plotly figure object.
 
+        See Also
+        -------
+        plot_xyz_sections : plot spatial dependence in three orthogonal planes
+        plot_as_pole_figure : use pole figure projection to show the spatial dependence
+
         Examples
         --------
         Plot the mean value for shear modulus of copper single-crystal in interactive mode (with plotly):
@@ -1016,6 +1021,11 @@ class HyperSphericalFunction(SphericalFunction):
             The created figure.
         axs : list of matplotlib.axes._subplots.PolarAxesSubplot
             List of polar axis subplots.
+
+        See Also
+        --------
+        plot3D : plot the spatial dependence as a 3D surface
+        plot_as_pole_figure : use pole figure projection to show the spatial dependence
 
         Examples
         --------
@@ -1105,6 +1115,10 @@ class HyperSphericalFunction(SphericalFunction):
         ax : matplotlib.axes.Axes
             The axes object containing the plot.
 
+        See Also
+        --------
+        plot3D : plot the spatial dependence as a 3D surface
+        plot_xyz_sections : plot spatial dependence in three orthogonal planes
 
         Examples
         --------
