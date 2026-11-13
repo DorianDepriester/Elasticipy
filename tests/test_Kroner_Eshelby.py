@@ -1,5 +1,5 @@
 import unittest
-from elasticipy.homogenization.kroner_eshelby import polarization_tensor, Kroner_Eshelby, kroner_eshelby
+from elasticipy.homogenization.kroner_eshelby import polarization_tensor, kroner_eshelby
 from elasticipy.tensors.elasticity import StiffnessTensor
 from elasticipy.tensors.fourth_order import SymmetricFourthOrderTensor
 import numpy as np
@@ -80,9 +80,6 @@ class TestKronerEshelby(unittest.TestCase):
         np.testing.assert_array_almost_equal(Cmacro.matrix(), Ci.matrix())
         Cmacro = Kroner_Eshelby((Ci, Cm), volume_fractions=[0, 1])
         np.testing.assert_array_almost_equal(Cmacro.matrix(), Cm.matrix())
-
-    def test_backward_compatible_alias(self):
-        assert Kroner_Eshelby is kroner_eshelby
 
     def test_single_tensor_input(self):
         Cmacro = kroner_eshelby(Chex)
