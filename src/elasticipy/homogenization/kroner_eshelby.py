@@ -15,7 +15,7 @@ def gamma(C_macro_local, phi, theta, a1, a2, a3):
     a1 = np.einsum('mnik,mnj,mnl->mnijkl', Dinv.matrix, s, s)
     return SymmetricFourthOrderTensor(a1, force_symmetries=True)
 
-def vec_components(C):
+def _vec_components(C):
     Cxx = ("C11", "C12", "C13", "C14", "C15", "C16",
            "C22", "C23", "C24", "C25", "C26",
            "C33", "C34", "C35", "C36",
@@ -204,10 +204,10 @@ def kroner_eshelby(Cs, particle_sizes=None, orientations=None,
         Q = Cs.ddot(A)
         CiAi_mean = Q.weighted_average(weights=volume_fractions)
         CiAi_mean.mapping = VoigtMapping()
-        vec = vec_components(CiAi_mean)
+        vec = _vec_components(CiAi_mean)
         return vec
 
-    vec_0 = vec_components(C_macro_0)
+    vec_0 = _vec_components(C_macro_0)
     sol = fixed_point(fun, vec_0, method=method, maxiter=maxiter)
     return StiffnessTensor.triclinic(*sol)
 
