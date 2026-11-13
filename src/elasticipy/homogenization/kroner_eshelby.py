@@ -88,6 +88,10 @@ def polarization_tensor(C, a1, a2, a3, n_phi=100, n_theta=50):
     -------
     FourthOrderTensor
         Polarization tensor
+
+    See Also
+    --------
+    gamma : compute gamma tensor
     """
     theta = np.linspace(0, np.pi, n_theta)
     phi = np.linspace(0, 2 * np.pi, n_phi)
