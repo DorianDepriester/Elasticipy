@@ -83,7 +83,8 @@ def uniform_spherical_distribution(n_evals, seed=None, return_orthogonal=False):
 
     Notes
     -----
-    The returned vector(s) are not unit. If needed, one can use:
+    The returned vector(s) are not unit. If needed, one can use::
+
         u = (u.T / np.linalg.norm(u, axis=1)).T
     """
     if seed is None:
