@@ -1016,6 +1016,17 @@ class HyperSphericalFunction(SphericalFunction):
             The created figure.
         axs : list of matplotlib.axes._subplots.PolarAxesSubplot
             List of polar axis subplots.
+
+        Examples
+        --------
+        Plot the min, max and mean values of the shear modulus of single-crystal copper in 3 orthogonal planes:
+
+        .. plot::
+
+            from elasticipy.tensors.elasticity import StiffnessTensor
+            C = StiffnessTensor.cubic(C11=186, C12=134, C44=77)
+            G = C.shear_modulus
+            fig, ax = G.plot_xyz_sections()
         """
         if fig is None:
             new_fig = plt.figure()
@@ -1093,6 +1104,18 @@ class HyperSphericalFunction(SphericalFunction):
             The figure object containing the plot.
         ax : matplotlib.axes.Axes
             The axes object containing the plot.
+
+
+        Examples
+        --------
+        Plot the mean value of the shear modulus of single-crystal copper as a PF:
+
+        .. plot::
+
+            from elasticipy.tensors.elasticity import StiffnessTensor
+            C = StiffnessTensor.cubic(C11=186, C12=134, C44=77)
+            G = C.shear_modulus
+            fig = G.plot_as_pole_figure()
         """
         if subplot_kwargs is None:
             subplot_kwargs = {}
