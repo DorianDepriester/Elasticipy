@@ -52,7 +52,7 @@ def gamma(C_macro_local, phi, theta, a1, a2, a3):
     .. math::
 
 		u_1 =\\frac{\\sin\\theta\\cos\\phi}{a_1}\\text{, }
-		u_2 =\\frac{\\sin\\theta\\sin\\phi}{a_2}\\\text{, }
+		u_2 =\\frac{\\sin\\theta\\sin\\phi}{a_2}\\text{, }
 		u_3 =\\frac{\\cos\\theta}{a_3}
     """
     s1 = np.sin(theta)*np.cos(phi) / a1
@@ -191,13 +191,12 @@ def kroner_eshelby(Cs, particle_sizes=None, orientations=None,
 
     .. math::
 
-        A_i = (I + \\mathbf{P}(\\mathbf{C}_{eff}) : (\\mathbf{C}_i - \\mathbf{C}_{eff}))^{-1},
+        A_i = (\\mathbf{I} + \\mathbf{P}(\\mathbf{C}_{eff}) : (\\mathbf{C}_i - \\mathbf{C}_{eff}))^{-1},
 
     and :math:`\\mathbf{P}(\\mathbf{C}_{eff}))` is the Eshelby polarization tensor of the ellipsoid,
     computed by angular quadrature over the unit sphere. The resulting
-    implicit equation on :math:`P(C_{eff})` is solved by fixed-point iteration, with
-    the initial guess chosen as the Hill (or Voigt/Reuss) average of the
-    phase stiffnesses.
+    implicit equation on :math:`\\mathbf{P}(\\mathbf{C}_{eff}))` is solved by fixed-point iteration, with
+    the initial guess chosen as the Hill (or Voigt/Reuss) average of the phase stiffnesses.
 
     Notes
     -----
