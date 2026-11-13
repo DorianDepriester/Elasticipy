@@ -441,8 +441,9 @@ class SphericalFunction:
 
         Notes
         -----
-        The full integration over the unit sphere, used if method=='exact', takes advantage of numpy.integrate.dblquad.
-        This algorithm is robust but usually slow. The Monte Carlo method can be 1000 times faster.
+        The full integration over the unit sphere, used if ``method=='exact'``, takes advantage of
+        numpy.integrate.dblquad. This algorithm is robust but usually slow. The Monte Carlo method can be 1000 times
+        faster.
         """
         if method == 'exact':
             if mean is None:
