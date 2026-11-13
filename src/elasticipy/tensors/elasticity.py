@@ -499,7 +499,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
         Returns
         -------
-        FourthOrderTensor
+        cls
 
         See Also
         --------
@@ -526,7 +526,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
         Returns
         -------
-        FourthOrderTensor
+        cls
 
         See Also
         --------
@@ -553,7 +553,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
         Returns
         -------
-        FourthOrderTensor
+        cls
 
         See Also
         --------
@@ -600,7 +600,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
         Returns
         -------
-        FourthOrderTensor
+        cls
 
         See Also
         --------
@@ -648,7 +648,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
         Returns
         -------
-        FourthOrderTensor
+        cls
 
         See Also
         --------
@@ -691,7 +691,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
         Returns
         -------
-        FourthOrderTensor
+        cls
 
         See Also
         --------
@@ -1316,7 +1316,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
         Returns
         -------
-        StiffnessTensor
+        cls
 
         See Also
         --------
@@ -2452,9 +2452,10 @@ class ComplianceTensor(StiffnessTensor):
             Components of the tensor, using the Voigt notation
         phase_name : str, optional
             Phase name to display
+
         Returns
         -------
-        FourthOrderTensor
+        cls
 
         See Also
         --------
@@ -2478,9 +2479,10 @@ class ComplianceTensor(StiffnessTensor):
             S15 component of the tensor, only used for point groups 3 and -3.
         phase_name : str, optional
             Phase name to display
+
         Returns
         -------
-        FourthOrderTensor
+        cls
 
         See Also
         --------
@@ -2507,7 +2509,7 @@ class ComplianceTensor(StiffnessTensor):
 
         Returns
         -------
-        FourthOrderTensor
+        cls
 
         See Also
         --------
@@ -2554,7 +2556,7 @@ class ComplianceTensor(StiffnessTensor):
 
         Returns
         -------
-        FourthOrderTensor
+        cls
 
         See Also
         --------
@@ -2602,7 +2604,7 @@ class ComplianceTensor(StiffnessTensor):
 
         Returns
         -------
-        FourthOrderTensor
+        cls
 
         See Also
         --------
@@ -2645,7 +2647,7 @@ class ComplianceTensor(StiffnessTensor):
 
         Returns
         -------
-        FourthOrderTensor
+        cls
 
         See Also
         --------
