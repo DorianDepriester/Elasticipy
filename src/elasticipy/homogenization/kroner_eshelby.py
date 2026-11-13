@@ -144,6 +144,21 @@ def localization_tensor(C_macro, C_incl, a1, a2, a3, n_phi=100, n_theta=50):
     -------
     FourthOrderTensor
         Localization tensor
+
+    See Also
+    --------
+    polarization_tensor : compute polarization tensor
+
+    Notes
+    -----
+    The localization tensor is defined as:
+
+    .. math:
+
+        \\\mathbf{A}= \\left[\\mathbf{P}:\left( \\mathbf{C}-\\mathbf{C}^{macro}\right) + \\mathbf{I}\\right]^{-1}
+
+    where :math:`\\mathbf{P}`, :math:`\\mathbf{C}` and :math:`\\mathbf{C}^{macro}` denote the polarization tensor, the
+    particule stiffness tensor and the macroscopic stiffness tensor, respectively.
     """
     E = polarization_tensor(C_macro, a1, a2, a3, n_phi=n_phi, n_theta=n_theta)
     Ainv = E.ddot(C_incl - C_macro) + I
