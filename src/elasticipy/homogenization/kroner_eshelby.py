@@ -51,8 +51,8 @@ def gamma(C_macro_local, phi, theta, a1, a2, a3):
 
     .. math::
 
-		u_1 =\\frac{\\sin\\theta\\cos\\phi}{a_1}\\
-		u_2 =\\frac{\\sin\\theta\\sin\\phi}{a_2}\\
+		u_1 =\\frac{\\sin\\theta\\cos\\phi}{a_1}\\text{, }
+		u_2 =\\frac{\\sin\\theta\\sin\\phi}{a_2}\\\text{, }
 		u_3 =\\frac{\\cos\\theta}{a_3}
     """
     s1 = np.sin(theta)*np.cos(phi) / a1
@@ -164,7 +164,7 @@ def localization_tensor(C_macro, C_incl, a1, a2, a3, n_phi=100, n_theta=50):
 
     .. math::
 
-        \\\mathbf{A}= \\left[\\mathbf{P}:\left( \\mathbf{C}-\\mathbf{C}^{macro}\\right) + \\mathbf{I}\\right]^{-1}
+        \\mathbf{A}= \\left[\\mathbf{P}:\left( \\mathbf{C}-\\mathbf{C}^{macro}\\right) + \\mathbf{I}\\right]^{-1}
 
     where :math:`\\mathbf{P}`, :math:`\\mathbf{C}` and :math:`\\mathbf{C}^{macro}` denote the polarization tensor, the
     particule stiffness tensor and the macroscopic stiffness tensor, respectively.
@@ -185,17 +185,17 @@ def kroner_eshelby(Cs, particle_sizes=None, orientations=None,
 
     .. math::
 
-        C_{eff} = <C_i : A_i>
+        \\mathbf{C}_{eff} = <\\mathbf{C}_i : \\mathbf{A}_i>
 
     where :math:`A_i` is the localization tensor of the i-th inclusion,
 
     .. math::
 
-        A_i = (I + P(C_{eff}) : (C_i - C_{eff}))^{-1},
+        A_i = (I + \\mathbf{P}(\\mathbf{C}_{eff}) : (\\mathbf{C}_i - \\mathbf{C}_{eff}))^{-1},
 
-    and :math:`P(C_{eff}) is the Eshelby polarization tensor of the ellipsoid,
+    and :math:`\\mathbf{P}(\\mathbf{C}_{eff}))` is the Eshelby polarization tensor of the ellipsoid,
     computed by angular quadrature over the unit sphere. The resulting
-    implicit equation on :math:`P(C_{eff}) is solved by fixed-point iteration, with
+    implicit equation on :math:`P(C_{eff})` is solved by fixed-point iteration, with
     the initial guess chosen as the Hill (or Voigt/Reuss) average of the
     phase stiffnesses.
 
