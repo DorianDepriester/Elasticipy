@@ -193,9 +193,9 @@ def kroner_eshelby(Cs, particle_sizes=None, orientations=None,
 
         A_i = (\\mathbf{I} + \\mathbf{P}(\\mathbf{C}_{eff}) : (\\mathbf{C}_i - \\mathbf{C}_{eff}))^{-1},
 
-    and :math:`\\mathbf{P}(\\mathbf{C}_{eff}))` is the Eshelby polarization tensor of the ellipsoid,
+    and :math:`\\mathbf{P}(\\mathbf{C}_{eff})` is the Eshelby polarization tensor of the ellipsoid,
     computed by angular quadrature over the unit sphere. The resulting
-    implicit equation on :math:`\\mathbf{P}(\\mathbf{C}_{eff}))` is solved by fixed-point iteration, with
+    implicit equation on :math:`\\mathbf{P}(\\mathbf{C}_{eff})` is solved by fixed-point iteration, with
     the initial guess chosen as the Hill (or Voigt/Reuss) average of the phase stiffnesses.
 
     Notes
