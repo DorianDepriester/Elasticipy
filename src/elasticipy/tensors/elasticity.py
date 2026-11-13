@@ -828,10 +828,10 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         else:
             Sfull = self.inv().full_tensor
         def compute_PoissonRatio(u, v):
-            numer = np.einsum('ijkl,...i,...j,...k,...l->...',Sfull,v,v,u,u)
-            denom = np.einsum('ijkl,...i,...j,...k,...l->...',Sfull,u,u,u,u)
+            ein_str = 'ijkl,...i,...j,...k,...l->...'
+            numer = np.einsum(ein_str,Sfull, v, v, u, u)
+            denom = np.einsum(ein_str,Sfull, u, u, u, u)
             return -numer / denom
-
         return HyperSphericalFunction(compute_PoissonRatio)
 
     @_elementwise_property
