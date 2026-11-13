@@ -98,13 +98,17 @@ def kroner_eshelby(Cs, particle_sizes=None, orientations=None,
     Each phase is modeled as an ellipsoidal inclusion embedded in the
     (unknown) macroscopic medium. The effective stiffness is defined as
 
+    .. math::
+
         C_eff = <C_i : A_i>
 
-    where A_i is the localization tensor of the i-th inclusion,
+    where :math:`A_i` is the localization tensor of the i-th inclusion,
+
+    .. math::
 
         A_i = (I + P(C_eff) : (C_i - C_eff))^-1,
 
-    and P(C_eff) is the Eshelby polarization tensor of the ellipsoid,
+    and :math:`P(C_eff)è is the Eshelby polarization tensor of the ellipsoid,
     computed by angular quadrature over the unit sphere. The resulting
     implicit equation on C_eff is solved by fixed-point iteration, with
     the initial guess chosen as the Hill (or Voigt/Reuss) average of the
