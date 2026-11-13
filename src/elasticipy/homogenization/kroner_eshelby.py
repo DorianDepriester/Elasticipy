@@ -111,7 +111,7 @@ def polarization_tensor(C, a1, a2, a3, n_phi=100, n_theta=50):
 	    P_{ijkl}=\\frac{1}{4\\pi}\\int_{0}^{\\pi}\\int_{0}^{2\\pi}
 	    \\gamma_{ijkl}\\left(\\phi,\\theta\\right)\\sin\\theta\\mathrm{d}\\phi\\mathrm{d}\\theta
 
-	where :math:`\\mathbf{\\gamma}` denotes the gamma tensor, such that:
+    where :math:`\\mathbf{\\gamma}` denotes the gamma tensor, such that:
 
     .. math::
 
