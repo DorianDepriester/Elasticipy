@@ -7,6 +7,46 @@ from elasticipy.tensors.mapping import VoigtMapping
 I = FourthOrderTensor.identity()
 
 def gamma(C_macro_local, phi, theta, a1, a2, a3):
+    """
+    Compute the gamma tensor (integrand for the polarization tensor)
+
+    Parameters
+    ----------
+    C_macro_local : StiffnessTensor
+        Macroscopic stiffness tensor, written in the coordinate system align with the principal axes of the ellipsoid.
+    phi : float or ndarray
+        phi angle in the spherical coordinate system
+    theta : float or ndarray
+        theta angle in the spherical coordinate system
+    a1, a2, a3  : float
+        half-lengths of the ellipsoid
+
+    Returns
+    -------
+    SymmetricFourthOrderTensor
+        gamma tensor, expressed in the coordinate system align with the principal axes of the ellipsoid.
+
+    See Also
+    --------
+    localization_tensor : compute the localization tensor
+    elasticipy.tensors.elasticity.StiffnessTensor.Christoffel_tensor : compute the 2nd-order Christoffel tensor
+
+    Notes
+    -----
+    Given the macroscopic stiffness tensor **C**, the gamma tensor is defined as:
+
+    .. math:
+
+        \\gamma_{ijkl}\\left(\phi,\\theta\\right) = \\frac{1}{4}\\left(
+        D^{-1}_{ik}u_ju_l + D^{-1}_{jk}u_iu_l + D^{-1}_{il}u_ju_k + D^{-1}_{jl}u_iu_k
+        \\right)
+
+    where **D** denotes the Christoffel tensor, such that:
+
+    .. math:
+
+        D_{ik}=C_{ijkl}u_ju_l
+    """
     s1 = np.sin(theta)*np.cos(phi) / a1
     s2 = np.sin(theta)*np.sin(phi) / a2
     s3 = np.cos(theta) / a3
