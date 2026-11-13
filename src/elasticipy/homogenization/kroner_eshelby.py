@@ -92,6 +92,23 @@ def polarization_tensor(C, a1, a2, a3, n_phi=100, n_theta=50):
     See Also
     --------
     gamma : compute gamma tensor
+
+    Notes
+    -----
+    The polarization tensor is defined as:
+
+    .. math:
+
+	    P_{ijkl}=\\frac{1}{4\\pi}\\int_{0}^{\\pi}\\int_{0}^{2\\pi}
+	    \\gamma_{ijkl}\\left(\\phi,\\theta\\right)\\sin\\theta\\mathrm{d}\\phi\\mathrm{d}\\theta
+
+	where :math:`\\mathbf{\\gamma}`` denotes the gamma tensor, such that:
+
+    .. math:
+
+        \\gamma_{ijkl}\\left(\phi,\\theta\\right) = \\frac{1}{4}\\left(
+        D^{-1}_{ik}u_ju_l + D^{-1}_{jk}u_iu_l + D^{-1}_{il}u_ju_k + D^{-1}_{jl}u_iu_k
+        \\right)
     """
     theta = np.linspace(0, np.pi, n_theta)
     phi = np.linspace(0, 2 * np.pi, n_phi)
