@@ -46,6 +46,14 @@ def gamma(C_macro_local, phi, theta, a1, a2, a3):
     .. math::
 
         D_{ik}=C_{ijkl}u_ju_l
+
+    with
+
+    .. math::
+
+		u_1 =\\frac{\\sin\\theta\\cos\\phi}{a_1}\\
+		u_2 =\\frac{\\sin\\theta\\sin\\phi}{a_2}\\
+		u_3 =\\frac{\\cos\\theta}{a_3}
     """
     s1 = np.sin(theta)*np.cos(phi) / a1
     s2 = np.sin(theta)*np.sin(phi) / a2
@@ -103,7 +111,7 @@ def polarization_tensor(C, a1, a2, a3, n_phi=100, n_theta=50):
 	    P_{ijkl}=\\frac{1}{4\\pi}\\int_{0}^{\\pi}\\int_{0}^{2\\pi}
 	    \\gamma_{ijkl}\\left(\\phi,\\theta\\right)\\sin\\theta\\mathrm{d}\\phi\\mathrm{d}\\theta
 
-	where :math:`\\mathbf{\\gamma}`` denotes the gamma tensor, such that:
+	where :math:`\\mathbf{\\gamma}` denotes the gamma tensor, such that:
 
     .. math::
 
@@ -156,7 +164,7 @@ def localization_tensor(C_macro, C_incl, a1, a2, a3, n_phi=100, n_theta=50):
 
     .. math::
 
-        \\\mathbf{A}= \\left[\\mathbf{P}:\left( \\mathbf{C}-\\mathbf{C}^{macro}\right) + \\mathbf{I}\\right]^{-1}
+        \\\mathbf{A}= \\left[\\mathbf{P}:\left( \\mathbf{C}-\\mathbf{C}^{macro}\\right) + \\mathbf{I}\\right]^{-1}
 
     where :math:`\\mathbf{P}`, :math:`\\mathbf{C}` and :math:`\\mathbf{C}^{macro}` denote the polarization tensor, the
     particule stiffness tensor and the macroscopic stiffness tensor, respectively.
@@ -183,7 +191,7 @@ def kroner_eshelby(Cs, particle_sizes=None, orientations=None,
 
     .. math::
 
-        A_i = (I + P(C_{eff}) : (C_i - C_{eff}))^-1,
+        A_i = (I + P(C_{eff}) : (C_i - C_{eff}))^{-1},
 
     and :math:`P(C_{eff}) is the Eshelby polarization tensor of the ellipsoid,
     computed by angular quadrature over the unit sphere. The resulting
