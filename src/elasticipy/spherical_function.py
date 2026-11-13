@@ -941,6 +941,26 @@ class HyperSphericalFunction(SphericalFunction):
         -------
         matplotlib.pyplot.figure or plotly.graph_objs._figure.Figure
             Handle to plotly figure object.
+
+        Examples
+        --------
+        Plot the mean value for shear modulus of copper single-crystal in interactive mode (with plotly):
+
+        .. plotly::
+
+            from elasticipy.tensors.elasticity import StiffnessTensor
+            C = StiffnessTensor.cubic(C11=186, C12=134, C44=77)
+            G = C.shear_modulus
+            fig = G.plot3D()
+
+        Plot the min and max values for Poisson ratio of copper single-crystal in interactive mode (with plotly):
+
+        .. plotly::
+
+            from elasticipy.tensors.elasticity import StiffnessTensor
+            C = StiffnessTensor.cubic(C11=186, C12=134, C44=77)
+            nu = C.Poisson_ratio
+            fig = nu.plot3D(which='minmax')
         """
         uv, values = self.evaluate_on_spherical_grid((n_phi, n_theta, n_psi), return_in_spherical=False, use_symmetry=False)
         u, _ = uv
