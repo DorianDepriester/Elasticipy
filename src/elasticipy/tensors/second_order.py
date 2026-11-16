@@ -1678,6 +1678,26 @@ class SecondOrderTensor:
         .. math::
 
             exp(\\mathbf{A}) = \\sum_{k=0}^\\infty \\frac{\\mathbf{A}^k}{k!}
+
+        Examples
+        --------
+        We have an equivalent behaviour as for exp(0)=1:
+
+        >>> zeros = SecondOrderTensor.zeros()
+        >>> print(zeros.exp())
+        Second-order tensor
+        [[1. 0. 0.]
+         [0. 1. 0.]
+         [0. 0. 1.]]
+
+        Similarly, as exp(1)=e, we have:
+
+        >>> eye = SecondOrderTensor.eye()
+        >>> print(eye.exp())
+        Second-order tensor
+        [[2.71828183 0.         0.        ]
+         [0.         2.71828183 0.        ]
+         [0.         0.         2.71828183]]
         """
         expm = scipy.linalg.expm(self.matrix)
         if isinstance(self, SymmetricSecondOrderTensor):
@@ -1697,6 +1717,27 @@ class SecondOrderTensor:
         See Also
         --------
         exp : matrix exponential of the tensor
+
+        Examples
+        --------
+        We have an equivalent behaviour as for log(1):
+
+        >>> eye = SecondOrderTensor.eye()
+        >>> print(eye.log())
+        Second-order tensor
+        [[0. 0. 0.]
+         [0. 0. 0.]
+         [0. 0. 0.]]
+
+        Similarly, as log(e)=1, we have:
+
+        >>> import numpy as np
+        >>> exp1 = SecondOrderTensor.eye() * np.exp(1)
+        >>> print(exp1.log())
+        Second-order tensor
+        [[1. 0. 0.]
+         [0. 1. 0.]
+         [0. 0. 1.]]
         """
         log = scipy.linalg.logm(self.matrix)
         return SecondOrderTensor(log)
