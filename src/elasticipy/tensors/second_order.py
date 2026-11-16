@@ -2,6 +2,7 @@ import warnings
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import scipy
 from scipy.spatial.transform import Rotation
 from scipy.linalg import polar
 ALPHABET = 'abcdefghijklmnopqrstuv'
@@ -1655,6 +1656,50 @@ class SecondOrderTensor:
             mat[..., 1, 1] = v[1]
             mat[..., 2, 2] = v[2]
         return cls(mat)
+
+    def exp(self):
+        """
+        Compute the matrix exponential of the tensor.
+
+        Returns
+        -------
+        SymmetricSecondOrderTensor or SecondOrderTensor
+            If the original tensor is symmetric, the returned exponential is symmetric as well. Otherwise, the returned
+            value is of class SecondOrderTensor. The returned value will be of same shape as the input tensor.
+
+        See Also
+        --------
+        log : matrix logarithm of the tensor
+
+        Notes
+        -----
+        The matrix exponential of tensor A is defined as:
+
+        .. math::
+
+            exp(\\mathbf{A}) = \\sum_{k=0}^\\infty \\frac{\\mathbf{A}^k}{k!}
+        """
+        expm = scipy.linalg.expm(self.matrix)
+        if isinstance(self, SymmetricSecondOrderTensor):
+            return SymmetricSecondOrderTensor(expm)
+        else:
+            return SecondOrderTensor(expm)
+
+    def log(self):
+        """
+        Compute the principal matrix logarithm of the tensor.
+
+        Returns
+        -------
+        SecondOrderTensor
+            The returned value will be of same shape as the input tensor.
+
+        See Also
+        --------
+        exp : matrix exponential of the tensor
+        """
+        log = scipy.linalg.logm(self.matrix)
+        return SecondOrderTensor(log)
 
 
 class SymmetricSecondOrderTensor(SecondOrderTensor):

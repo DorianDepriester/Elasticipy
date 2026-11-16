@@ -1,4 +1,7 @@
 import unittest
+
+import scipy
+
 from elasticipy.tensors.second_order import SecondOrderTensor, SymmetricSecondOrderTensor, SkewSymmetricSecondOrderTensor
 import numpy as np
 from pytest import approx
@@ -130,6 +133,21 @@ class TestSecondOrderTensor(unittest.TestCase):
         for i in range(0, depth):
             assert T[i] == np.diag(mat[...,i])
 
+    def test_exp_log(self):
+        zeros = SymmetricSecondOrderTensor.zeros()
+        eye = SymmetricSecondOrderTensor.eye()
+        assert zeros.exp() ==  eye
+        assert isinstance(zeros.exp(), SymmetricSecondOrderTensor)
+        assert eye.log() == zeros
+        assert isinstance(eye.log(), SecondOrderTensor) and not isinstance(eye.log(), SymmetricSecondOrderTensor)
+
+        shape = (4, 3)
+        A = SecondOrderTensor.rand(shape)
+        A_exp = A.exp()
+        assert isinstance(A_exp, SecondOrderTensor) and not isinstance(A_exp, SymmetricSecondOrderTensor)
+        for i in range(0, shape[0]):
+            for j in range(0, shape[1]):
+                assert A_exp[i,j] == scipy.linalg.expm(A.matrix[i,j])
 
 class TestSymmetricSecondOrderTensor(unittest.TestCase):
     def test_constructor(self):
