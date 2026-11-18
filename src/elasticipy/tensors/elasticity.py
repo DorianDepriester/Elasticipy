@@ -445,7 +445,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
         Examples
         --------
-        >>> from elasticipy.tensors.elasticity import StiffnessTensor\n
+        >>> from elasticipy.tensors.elasticity import StiffnessTensor
         >>> StiffnessTensor.fromCrystalSymmetry(symmetry='monoclinic', diad='y', phase_name='TiNi',
         ...                                     C11=231, C12=127, C13=104,
         ...                                     C22=240, C23=131, C33=175,
@@ -460,7 +460,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
          [  0.   0.   0.   3.   0.  85.]]
         Phase: TiNi
 
-        >>> from elasticipy.tensors.elasticity import ComplianceTensor\n
+        >>> from elasticipy.tensors.elasticity import ComplianceTensor
         >>> ComplianceTensor.fromCrystalSymmetry(symmetry='monoclinic', diad='y', phase_name='TiNi',
         ...                                      S11=8, S12=-3, S13=-2,
         ...                                      S22=8, S23=-5, S33=10,
@@ -966,7 +966,8 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
         >>> from scipy.spatial.transform import Rotation
         >>> import numpy as np
-        >>> g = Rotation.from_euler('X', np.linspace(0, 90, 1000), degrees=True)    # 1000 rotations around X
+        >>> angles = np.linspace(0, 90, 1000)
+        >>> g = Rotation.from_euler('X', angles, degrees=True)    # 1000 rotations around X
 
         Now apply rotations to compute the array of stiffness tensors:
 
@@ -1057,7 +1058,8 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
         >>> from scipy.spatial.transform import Rotation
         >>> import numpy as np
-        >>> g = Rotation.from_euler('X', np.linspace(0, 90, 1000), degrees=True)    # 1000 rotations around X
+        >>> angles = np.linspace(0, 90, 1000)
+        >>> g = Rotation.from_euler('X', angles, degrees=True)    # 1000 rotations around X
 
         Now apply rotations to compute the array of stiffness tensors:
 
@@ -1139,7 +1141,8 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
         >>> from scipy.spatial.transform import Rotation
         >>> import numpy as np
-        >>> g = Rotation.from_euler('X', np.linspace(0, 90, 1000), degrees=True)    # 1000 rotations around X
+        >>> angles = np.linspace(0, 90, 1000)
+        >>> g = Rotation.from_euler('X', angles, degrees=True)    # 1000 rotations around X
 
         Now apply rotations to compute the array of stiffness tensors:
 
@@ -1519,7 +1522,7 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
 
         >>> c_s2
         Spherical function
-        Min=1.7034628596749235, Max=2.9315098498896437
+        Min=1.7034628596748984, Max=2.9315098498896437
         """
         if self.ndim:
             raise ValueError('This function is not suitable for tensor array. Consider subscripting (e.g. C[0].wave_velocity()).')

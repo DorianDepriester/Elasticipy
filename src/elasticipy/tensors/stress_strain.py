@@ -40,6 +40,7 @@ class StrainTensor(SymmetricSecondOrderTensor):
                [ 0.002,  0.   , -0.002],
                [ 0.003,  0.   , -0.003],
                [ 0.004,  0.   , -0.004]])
+
         """
         return self.eigvals()
 
@@ -72,6 +73,7 @@ class StrainTensor(SymmetricSecondOrderTensor):
          [-0.    -0.    -0.001]]
         >>> print(eps_hydro.volumetric_strain())
         -0.003
+
         """
         return self.I1
 
@@ -97,9 +99,11 @@ class StrainTensor(SymmetricSecondOrderTensor):
         >>> eps_eq = StrainTensor.tensile([1,0,0], 1e-3).eq_strain()
         >>> print(eps_eq)
         0.000816496580927726
+
         >>> eps_eq = StrainTensor.shear([1,0,0],[0,1,0], 1e-3).eq_strain()
         >>> print(eps_eq)
         0.0011547005383792514
+
         """
         return np.sqrt(2/3 * self.ddot(self))
 
@@ -140,7 +144,8 @@ class StrainTensor(SymmetricSecondOrderTensor):
 
         >>> e = eps.elastic_energy(sigma)
         >>> print(e)
-        0.13423295454545456
+        0.13423295454545459
+
         """
         return 0.5 * self.ddot(stress, mode=mode)
 
@@ -213,6 +218,7 @@ class StressTensor(SymmetricSecondOrderTensor):
         >>> sigma = StressTensor.tensile([1,0,0],sigma_xx) + StressTensor.shear([1,0,0],[0,1,0],sigma_xy)
         >>> sigma.von_mises()
         array([-0. ,  0.5,  1. ,  1.5,  2. ])
+
         """
         return np.sqrt(3 * self.J2)
 
@@ -252,6 +258,7 @@ class StressTensor(SymmetricSecondOrderTensor):
         >>> sigma = StressTensor.tensile([1,0,0],sigma_xx) + StressTensor.shear([1,0,0],[0,1,0],sigma_xy)
         >>> sigma.tresca()
         array([0.        , 0.55901699, 1.11803399, 1.67705098, 2.23606798])
+
         """
         ps = self.principal_stresses()
         return ps[...,0] - ps[...,-1]
@@ -403,6 +410,7 @@ class StressTensor(SymmetricSecondOrderTensor):
         >>> s2 = s1 + StressTensor.tensile([0,1,0],[0,0.5,1])
         >>> s2.triaxiality()
         array([0.33333333, 0.57735027, 0.66666667])
+
         """
         return self.I1 / self.von_mises() / 3
 

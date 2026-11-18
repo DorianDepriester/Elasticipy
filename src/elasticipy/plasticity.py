@@ -74,6 +74,7 @@ class IsotropicHardening:
         >>> JC.flow_stress(np.linspace(0,0.1,5)) # Check that the yield stress = B
         array([ 792.        ,  987.44950657, 1026.04662195, 1052.067513  ,
                1072.26584567])
+
         """
         pass
 
@@ -129,6 +130,7 @@ class IsotropicHardening:
          type: Isotropic
          criterion: von Mises
          current strain: 0.2
+
         """
         if isinstance(strain, float):
             self.plastic_strain += np.abs(strain)
@@ -209,6 +211,7 @@ class IsotropicHardening:
         [[ 0.  0.  0.]
          [ 0. -0.  0.]
          [ 0.  0. -0.]]
+
         """
 
     def reset_strain(self):
@@ -243,6 +246,7 @@ class IsotropicHardening:
          type: Isotropic
          criterion: von Mises
          current strain: 0.0
+
         """
         self.plastic_strain = 0.0
 
