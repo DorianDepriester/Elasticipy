@@ -1107,7 +1107,8 @@ class SecondOrderTensor:
         Now try with tensor array:
         >>> t = tensor.rand(shape=(100,50))
         >>> t.shape
-        (100,50)
+        (100, 50)
+
         """
         if shape is None:
             shape = (3,3)
@@ -1274,6 +1275,7 @@ class SecondOrderTensor:
 
         >>> div[0,0,0,:]
         array([2. , 0.1, 0. ])
+
         """
         ndim = min(self.ndim, 3)    # Even if the array has more than 3Ds, we restrict to 3D
         if isinstance(spacing, (float, int)):
@@ -1457,7 +1459,8 @@ class SecondOrderTensor:
 
         >>> import numpy as np
         >>> np.all(t3 == t2)
-        True
+        np.True_
+
         """
         if self.ndim > 1:
             raise ValueError('The array must be flatten before getting dumped to text file.')
@@ -1575,9 +1578,10 @@ class SecondOrderTensor:
         >>> c.shape
         (2, 3)
         >>> np.all(c[0] == a)
-        True
+        np.True_
+
         >>> np.all(c[1] == b)
-        True
+        np.True_
 
         >>> a = SecondOrderTensor.rand(shape=(3, 4))
         >>> b = SecondOrderTensor.rand(shape=(3, 4))
@@ -1585,9 +1589,11 @@ class SecondOrderTensor:
         >>> c.shape
         (3, 2, 4)
         >>> np.all(c[:,0,:] == a)
-        True
+        np.True_
+
         >>> np.all(c[:,1,:] == b)
-        True
+        np.True_
+
         """
         mat_array = [a.matrix for a in arrays]
         if axis<0:
@@ -1645,6 +1651,7 @@ class SecondOrderTensor:
         [[1 0 0]
          [0 2 0]
          [0 0 3]]
+
         """
         v = np.asarray(v)
         if v.ndim == 1:
@@ -1698,6 +1705,7 @@ class SecondOrderTensor:
         [[2.71828183 0.         0.        ]
          [0.         2.71828183 0.        ]
          [0.         0.         2.71828183]]
+
         """
         expm = scipy.linalg.expm(self.matrix)
         if isinstance(self, SymmetricSecondOrderTensor):
@@ -1738,6 +1746,7 @@ class SecondOrderTensor:
         [[1. 0. 0.]
          [0. 1. 0.]
          [0. 0. 1.]]
+
         """
         log = scipy.linalg.logm(self.matrix)
         return SecondOrderTensor(log)
@@ -1782,6 +1791,7 @@ class SymmetricSecondOrderTensor(SecondOrderTensor):
 
         >>> print(a==b)
         True
+
         """
         if isinstance(mat, SecondOrderTensor):
             mat = mat.matrix
@@ -1834,6 +1844,7 @@ class SymmetricSecondOrderTensor(SecondOrderTensor):
         [[11. 12. 13.]
          [12. 22. 23.]
          [13. 23. 33.]]
+
         """
         if voigt_map is None:
             voigt_map = cls._voigt_map

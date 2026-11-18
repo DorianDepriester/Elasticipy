@@ -288,7 +288,9 @@ class DeformationGradient(SecondOrderTensor):
 
         >>> print(F.I3)
         [1. 1. 1. 1.]
+
         """
+
         u = u / np.linalg.norm(u)
         p = np.einsum('i,j->ij', u, u)
         q = np.eye(3) - p

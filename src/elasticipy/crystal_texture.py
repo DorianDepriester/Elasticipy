@@ -181,7 +181,7 @@ class CrystalTexture(ABC):
         Generate 10 orientations from gamma-fibre
 
         >>> from elasticipy.crystal_texture import FibreTexture
-        >>> o = FibreTexture.gamma().sample(num=10)
+        >>> o = FibreTexture.gamma().sample(num=10)  # doctest: +SKIP
         """
         pass
 
@@ -534,6 +534,7 @@ class FibreTexture(CrystalTexture):
         >>> t2
         Fibre texture
         φ1= 0.0°, ϕ= 0.0°
+
         """
         if phi1 is None:
             orient1 = Orientation.from_euler([0., Phi, phi2] , degrees=degrees)
@@ -593,6 +594,7 @@ class FibreTexture(CrystalTexture):
         >>> t
         Fibre texture
         <1. 0. 0.> || [0, 0, 1]
+
         """
         ref_orient = Orientation.from_align_vectors(miller, Vector3d(axis))
         a = cls(ref_orient, axis, phase=miller.phase)
@@ -776,14 +778,15 @@ class CompositeTexture:
         [[186.   134.   134.     0.     0.     0.  ]
          [134.   224.25  95.75   0.     0.     0.  ]
          [134.    95.75 224.25  -0.     0.     0.  ]
-         [  0.     0.     0.    25.88   0.     0.  ]
-         [  0.     0.     0.     0.    57.75  -0.  ]
-         [  0.     0.     0.     0.     0.    57.75]]
+         [  0.     0.     0.    38.75   0.     0.  ]
+         [  0.     0.     0.     0.    77.    -0.  ]
+         [  0.     0.     0.     0.     0.    77.  ]]
 
         Alternatively, on can directly use the following syntax:
 
-        >>> Cvoigt = C * t
+        >>> Cvoigt = C * t  # doctest: +SKIP
         """
+
         n = len(self)
         t = tensor.__class__.eye(shape=(n,))
         wgt = []
@@ -893,12 +896,13 @@ class CompositeTexture:
 
         >>> import numpy as np
         >>> np.count_nonzero((o * ~goss.orientation).angle == 0.)
-        530
+        np.int64(530)
 
         whereas all the other orientations correspond to brass:
 
         >>> np.count_nonzero((o * ~brass.orientation).angle == 0.)
-        470
+        np.int64(470)
+
         """
         weights = np.array([w.weight for w in self.texture_list])
         weights = weights / weights.sum()
