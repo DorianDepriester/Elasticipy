@@ -83,7 +83,17 @@ DTYPES = {
 def _list_valid_filenames(folder, startswith='strain'):
     file_list = os.listdir(folder)
     pattern = r'{}\.step\d+'.format(startswith)
-    return [f for f in file_list if re.fullmatch(pattern, f)]
+    matching_files = [f for f in file_list if re.fullmatch(pattern, f)]
+    
+    # Sort files by step number extracted from filename
+    def extract_step_number(filename):
+        match = re.search(r'\.step(\d+)', filename)
+        if match:
+            return int(match.group(1))
+        return 0
+    
+    matching_files.sort(key=extract_step_number)
+    return matching_files
 
 def from_step_file(file, dtype=None):
     """
@@ -204,17 +214,33 @@ def from_results_folder(folder, dtype=None):
     if not dir_path.is_dir():
         raise ValueError(f"{folder} is not a valid directory.")
     
+    # Collect all matching files and sort them by step number
+    matching_files = []
+    for file in dir_path.iterdir():
+        if file.is_file() and file.name.startswith(folder_name):
+            matching_files.append(file)
+    
+    # Sort files by step number extracted from filename
+    # Filename pattern: <folder_name>.step<number>
+    def extract_step_number(filename):
+        # Extract the step number from filename like "strain.step10"
+        match = re.search(r'\.step(\d+)', filename)
+        if match:
+            return int(match.group(1))
+        return 0
+    
+    matching_files.sort(key=lambda f: extract_step_number(f.name))
+    
     constructor = None
     array = []
     
-    for file in dir_path.iterdir():
-        if file.is_file() and file.name.startswith(folder_name):
-            data_file = from_step_file(str(file), dtype=dtype)
-            if constructor is None:
-                constructor = type(data_file)
-            elif constructor != type(data_file):
-                raise ValueError('The types of data contained in {} seem to be inconsistent.'.format(folder))
-            array.append(data_file)
+    for file in matching_files:
+        data_file = from_step_file(str(file), dtype=dtype)
+        if constructor is None:
+            constructor = type(data_file)
+        elif constructor != type(data_file):
+            raise ValueError('The types of data contained in {} seem to be inconsistent.'.format(folder))
+        array.append(data_file)
     
     # Stack the results along the first axis (time steps)
     if constructor == np.ndarray:
