@@ -1751,6 +1751,43 @@ class SecondOrderTensor:
         log = scipy.linalg.logm(self.matrix)
         return SecondOrderTensor(log)
 
+    def sqrt(self):
+        """
+        Compute the principal square root of the tensor.
+
+        From T, find A such that ``T==A.dot(A)``.
+
+        Returns
+        -------
+        SecondOrderTensor
+            Tensor which is a square root of the input tensor
+        """
+        mat = scipy.linalg.sqrtm(self.matrix)
+        return SecondOrderTensor(mat)
+
+    def power(self, n):
+        """
+        Compute the tensor to the power n.
+
+        Parameters
+        ----------
+        n : float or int
+            Matrix power
+
+        Returns
+        -------
+        SecondOrderTensor
+            Tensor to the power n
+        """
+        if n == 0.5:
+            return self.sqrt()
+        else:
+            mat = np.linalg.matrix_power(self.matrix, n)
+            if isinstance(self, SymmetricSecondOrderTensor):
+                return SymmetricSecondOrderTensor(mat)
+            else:
+                return SecondOrderTensor(mat)
+
 
 class SymmetricSecondOrderTensor(SecondOrderTensor):
     _voigt_map = [1, 1, 1, 1, 1, 1]
