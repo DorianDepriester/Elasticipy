@@ -124,9 +124,15 @@ class DeformationGradient(SecondOrderTensor):
         ----------
         side : {'left', 'right'}
             Specify if the right or left Cauchy-Green tensor should be computed.
+
         Returns
         -------
         CauchyGreenTensor
+
+        See Also
+        --------
+        Green_Lagrangian : compute the Green-Lagrangian tensor
+        Biot : compute the Biot strain tensor
         """
         return CauchyGreenTensor(self, side=side)
 
@@ -183,7 +189,53 @@ class DeformationGradient(SecondOrderTensor):
         B : Left Cauchy-Green tensor
         """
         I = SymmetricSecondOrderTensor.eye(shape=self.shape)
-        return 0.5 * (self.CauchyGreen() - I)
+        return 0.5 * (self.Cauchy_Green() - I)
+
+    def Biot(self):
+        return self.Seth_Hill(0.5)
+
+    def Hencky(self):
+        return 0.5 * self.log()
+
+    def logarithmic_strain(self):
+        return self.Hencky()
+
+    def Almansi(self):
+        return 0.5 * self.Seth_Hill(-1)
+
+    def Seth_Hill(self, n):
+        """
+        Compute the generalized Seth-Hill strain tensor.
+
+        Parameters
+        ----------
+        n : float
+            Seth-Hill order
+
+        Returns
+        -------
+        SymmetricSecondOrderTensor
+
+        Notes
+        -----
+        The generalized Seth-Hill tensor is defined as:
+
+        .. math::
+
+            E_n = \\frac{1}{2n}\\left[\\mathbf{C}^m - \\mathbf{I}\\right]
+
+        if n==0, the Hencky strain tensor is returned:
+
+        .. math::
+
+            E_0 = \\frac{1}{2}\\log(\\mathbf{C})
+        """
+        I = SymmetricSecondOrderTensor.eye(shape=self.shape)
+        C = self.Cauchy_Green()
+        if n==0:
+            return 0.5 * C.log()
+        else:
+            return 1 / (2 * n) * (C.power(n) - I)
 
     @property
     def E(self):
@@ -481,3 +533,6 @@ class CauchyGreenTensor(SymmetricSecondOrderTensor):
         float or numpy.ndarray
         """
         return self.I2 * self.J ** (-4 / 3)
+
+    def sqrt(self):
+        return SymmetricSecondOrderTensor(super().sqrt())
