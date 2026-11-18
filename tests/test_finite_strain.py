@@ -86,6 +86,44 @@ class TestDeformationGradient(unittest.TestCase):
         assert F.elongation([0, 1, 0]) == 0.0
         assert F.elongation([0, 0, 1]) == 0.0
 
+    def test_sqrt(self):
+        shape = (4, 3)
+        F = DeformationGradient.rand(shape=shape)
+        C = F.Cauchy_Green()
+        C_sqrt = C.sqrt()
+        assert C_sqrt.shape == shape
+        assert isinstance(C_sqrt, SymmetricSecondOrderTensor)
+        C_sqrt_sq = C_sqrt.dot(C_sqrt)
+        np.testing.assert_array_almost_equal(C_sqrt_sq.matrix, C.matrix)
+
+    def test_power(self):
+        shape = (4, 3)
+        F = DeformationGradient.rand(shape=shape)
+        F_inv = F.inv()
+        np.testing.assert_array_almost_equal(F_inv.matrix, F.power(-1).matrix)
+
+    def test_seth_hill(self):
+        shape = (3, 4)
+        F = DeformationGradient.rand(shape=shape)
+        C = F.Cauchy_Green()
+        I = SymmetricSecondOrderTensor.eye()
+
+        # Green-Lagrange
+        assert np.all(F.Seth_Hill(1) == F.E)
+
+        # Biot
+        Biot = F.Seth_Hill(0.5)
+        Biot_th = C.sqrt() - I
+        np.testing.assert_array_almost_equal(Biot.matrix, Biot_th.matrix)
+
+        # Hencky
+        assert np.all(F.Seth_Hill(0) == 0.5 * C.log())
+
+        # Almansi
+        Alma = F.Seth_Hill(-1)
+        Alma_th = 0.5 * (I - F.U.power(-2))
+        np.testing.assert_array_almost_equal(Alma.matrix, Alma_th.matrix, decimal=2)
+
 
 class TestPiolaKirchoff(unittest.TestCase):
     def test_Piola_Kirchoff_1_identity(self):
@@ -155,6 +193,7 @@ class TestPiolaKirchoff(unittest.TestCase):
 
         assert P.shape == shape
         assert S.shape == shape
+
 
 if __name__ == '__main__':
     unittest.main()
