@@ -152,7 +152,7 @@ class HyperElastic(ABC):
         J = F.J
         if not self.is_compressible() and np.any(np.abs(J-1)>1e-6):
             raise ValueError("For incompressible behaviour, the determinant of the gradient must be 1.")
-        B = F.CauchyGreen(side='left')
+        B = F.Cauchy_Green(side='left')
         return self.stress_from_B(B, h=h)
 
     @classmethod

@@ -169,6 +169,26 @@ Cauchy-Green tensors measure pure deformation, independently of rotations.
 .. doctest::
 
     >>> F = DeformationGradient.diag([1.5, 1.2, 0.8])
+        >>> C = F.Cauchy_Green()  # or F.CauchyGreen(side='right')
+        >>> B = F.CauchyGreen(side='left')  # or simply F.B
+
+        >>> print("C (right):")
+        C (right):
+        >>> print(C)
+        Cauchy-Green tensor
+        [[2.25 0.   0.  ]
+         [0.   1.44 0.  ]
+         [0.   0.   0.64]]
+
+        >>> print("B (left):")
+        B (left):
+        >>> print(B)
+        Cauchy-Green tensor
+        [[2.25 0.   0.  ]
+         [0.   1.44 0.  ]
+         [0.   0.   0.64]]
+
+    In this particular case (diagonal deformation),
     >>> C = F.CauchyGreen()  # or F.CauchyGreen(side='right')
     >>> B = F.CauchyGreen(side='left')  # or simply F.B
     

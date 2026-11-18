@@ -103,7 +103,7 @@ class DeformationGradient(SecondOrderTensor):
         """
         return self.I3
 
-    def CauchyGreen(self, side='right'):
+    def Cauchy_Green(self, side='right'):
         """
         Compute the Cauchy-Green tensor
 
@@ -130,12 +130,20 @@ class DeformationGradient(SecondOrderTensor):
         """
         return CauchyGreenTensor(self, side=side)
 
+    def CauchyGreen(self, **kwargs):
+        """
+        Alias for ``Cauchy_Green``.
+
+        This method is designed to ensure backward compatibility.
+        """
+        return self.Cauchy_Green(**kwargs)
+
     @property
     def B(self):
         """
         Compute the left Cauchy-Green tensor.
 
-        It is actually an alias for ``F.CauchyGreen(side='left')``.
+        It is actually an alias for ``F.Cauchy_Green(side='left')``.
 
         .. math::
 
@@ -148,9 +156,9 @@ class DeformationGradient(SecondOrderTensor):
         See Also
         --------
         E : Green-Lagrangian tensor
-        CauchyGreen : compute a Cauchy-Green tensor
+        Cauchy_Green : compute a Cauchy-Green tensor
         """
-        return self.CauchyGreen(side='left')
+        return self.Cauchy_Green(side='left')
 
     def Green_Lagrangian(self):
         """
@@ -171,7 +179,7 @@ class DeformationGradient(SecondOrderTensor):
 
         See Also
         --------
-        CauchyGreen : compute a Cauchy-Green tensor
+        Cauchy_Green : compute a Cauchy-Green tensor
         B : Left Cauchy-Green tensor
         """
         I = SymmetricSecondOrderTensor.eye(shape=self.shape)
@@ -315,7 +323,7 @@ class DeformationGradient(SecondOrderTensor):
         float or numpy.ndarray
             relative elongation
         """
-        C = self.CauchyGreen()
+        C = self.Cauchy_Green()
         u = u / np.linalg.norm(u)
         a = np.einsum('i,...ij,j->...', u, C.matrix, u)
         return np.maximum(a, 0.)**0.5 -1
