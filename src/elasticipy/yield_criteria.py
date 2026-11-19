@@ -363,7 +363,8 @@ class YieldCriterion(ABC):
 
             from elasticipy.yield_criteria import DruckerPrager
             dp = DruckerPrager.from_cohesion_friction_angle(2, -20)
-            dp.plot3D(xrange=(-6, 6), yrange=(-6, 6), zrange=(-6, 6), opacity=0.5)
+            fig = dp.plot3D(xrange=(-6, 6), yrange=(-6, 6), zrange=(-6, 6), opacity=0.5)
+            fig.show()
         """
         if fig is None:
             fig = go.Figure()
