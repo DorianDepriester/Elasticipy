@@ -1620,7 +1620,17 @@ class SecondOrderTensor:
             Orthogonal matrix
         P : SymmetricSecondOrderTensor
         """
-        r, p = polar(self.matrix, side=side)
+        # Try scipy's polar decomposition first, fall back to manual iteration
+        # scipy.linalg.polar only supports 2D matrices
+        try:
+            r, p = polar(self.matrix, side=side)
+        except (ValueError, np.linalg.LinAlgError):
+            # Stack of matrices: iterate over each matrix
+            shape = self.shape
+            r = np.empty(shape + (3, 3))
+            p = np.empty(shape + (3, 3))
+            for idx in np.ndindex(shape):
+                r[idx], p[idx] = polar(self.matrix[idx], side=side)
         return r, SymmetricSecondOrderTensor(p)
 
     @classmethod
@@ -1754,7 +1764,7 @@ class SecondOrderTensor:
         else:
             # Stack of matrices: iterate over each matrix
             log = np.zeros_like(self.matrix)
-            for idx in np.ndindex(self.matrix.shape[:-2]):
+            for idx in np.ndindex(self.shape):
                 log[idx] = scipy.linalg.logm(self.matrix[idx])
         return SecondOrderTensor(log)
 
@@ -1775,7 +1785,7 @@ class SecondOrderTensor:
         else:
             # Stack of matrices: iterate over each matrix
             mat = np.zeros_like(self.matrix)
-            for idx in np.ndindex(self.matrix.shape[:-2]):
+            for idx in np.ndindex(self.shape):
                 mat[idx] = scipy.linalg.sqrtm(self.matrix[idx])
         return SecondOrderTensor(mat)
 
@@ -1818,7 +1828,7 @@ class SecondOrderTensor:
             # Stack of matrices: iterate over each matrix
             # scipy.linalg.fractional_matrix_power does NOT support stacks
             mat = np.zeros_like(self.matrix)
-            for idx in np.ndindex(self.matrix.shape[:-2]):
+            for idx in np.ndindex(self.shape):
                 mat[idx] = np.linalg.matrix_power(self.matrix[idx], n_int)
         
         if isinstance(self, SymmetricSecondOrderTensor):
