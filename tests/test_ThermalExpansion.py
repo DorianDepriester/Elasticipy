@@ -51,7 +51,7 @@ class TestThermalExpansion(unittest.TestCase):
     def test_matmul_rotations(self):
         m = 50
         rotations = Rotation.random(m)
-        alphas = alpha.matmul(rotations)
+        alphas = alpha.rotate(rotations, mode='cross')
         for i in range(m):
             rot_mat = np.matmul(rotations[i].as_matrix().T, np.matmul(alpha.matrix, rotations[i].as_matrix()))
             np.testing.assert_almost_equal(rot_mat, alphas[i].matrix)
@@ -73,7 +73,7 @@ class TestThermalExpansion(unittest.TestCase):
         rotations = Rotation.random(m)
         alphas = alpha * rotations
         temp = np.linspace(0,10,n)
-        eps = alphas.matmul(temp)
+        eps = alphas.apply_temperature(temp, mode='cross')
         assert eps.shape == (m, n)
         for i in range(m):
             rot_mat = rotations[i].as_matrix()

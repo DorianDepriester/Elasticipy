@@ -7,7 +7,7 @@ from elasticipy.tensors.mapping import VoigtMapping
 I = FourthOrderTensor.identity()
 
 def gamma(C_macro_local, phi, theta, a1, a2, a3):
-    """
+    r"""
     Compute the gamma tensor (integrand for the polarization tensor)
 
     Parameters
@@ -74,7 +74,7 @@ def _vec_components(C):
 
 
 def polarization_tensor(C, a1, a2, a3, n_phi=100, n_theta=50):
-    """
+    r"""
     Numerically compute the polarization tensor of an elliptical inclusion
 
     Parameters
@@ -129,7 +129,7 @@ def polarization_tensor(C, a1, a2, a3, n_phi=100, n_theta=50):
 
 
 def localization_tensor(C_macro, C_incl, a1, a2, a3, n_phi=100, n_theta=50):
-    """
+    r"""
     Numerically compute the localization tensor of an elliptical inclusion
 
     Parameters

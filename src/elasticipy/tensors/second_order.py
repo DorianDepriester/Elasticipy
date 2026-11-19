@@ -2060,10 +2060,36 @@ class SymmetricSecondOrderTensor(SecondOrderTensor):
         return fig, ax
 
     def inv(self):
+        """
+        Compute the inverse of the symmetric second-order tensor.
+
+        Returns
+        -------
+        SymmetricSecondOrderTensor
+            Inverse of the tensor
+
+        See Also
+        --------
+        SecondOrderTensor.inv : Inverse for general second-order tensors
+        """
         return SymmetricSecondOrderTensor(_inv_3x3(self.matrix, sym=True))
 
     @property
     def J2(self):
+        """
+        Compute the second invariant of the symmetric second-order tensor.
+
+        For symmetric tensors, J2 is clipped to ensure it is non-negative.
+
+        Returns
+        -------
+        float
+            Second invariant of the tensor, clipped to [0, +inf)
+
+        See Also
+        --------
+        SecondOrderTensor.J2 : Second invariant for general second-order tensors
+        """
         return np.clip(super().J2, 0, np.inf)
 
     def lode_angle(self, degrees=False):

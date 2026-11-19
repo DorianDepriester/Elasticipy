@@ -13,6 +13,26 @@ class DeformationGradient(SecondOrderTensor):
 
     @classmethod
     def rand(cls, **kwargs):
+        """
+        Generate a random deformation gradient tensor.
+
+        The deformation gradient is generated from a random symmetric second-order tensor
+        scaled by its third invariant to ensure a positive determinant.
+
+        Parameters
+        ----------
+        **kwargs
+            Keyword arguments forwarded to SymmetricSecondOrderTensor.rand()
+
+        Returns
+        -------
+        DeformationGradient
+            Random deformation gradient tensor
+
+        See Also
+        --------
+        SymmetricSecondOrderTensor.rand : Generate random symmetric second-order tensor
+        """
         a = SymmetricSecondOrderTensor.rand(**kwargs)
         a = a * a.I3
         return cls(a.matrix)
@@ -377,12 +397,54 @@ class DeformationGradient(SecondOrderTensor):
 
     @classmethod
     def tensile(cls, u, magnitude):
+        """
+        Create a deformation gradient tensor corresponding to a tensile state.
+
+        Parameters
+        ----------
+        u : array_like
+            Direction of tension
+        magnitude : float
+            Magnitude of the tensile deformation
+
+        Returns
+        -------
+        DeformationGradient
+            Deformation gradient tensor for tensile state
+
+        See Also
+        --------
+        SecondOrderTensor.tensile : Create tensile second-order tensor
+        shear : Create shear deformation gradient
+        """
         t = SecondOrderTensor.tensile(u, magnitude)
         I = SecondOrderTensor.eye(shape=t.shape)
         return cls(t.matrix + I.matrix)
 
     @classmethod
     def shear(cls, u, v, magnitude):
+        """
+        Create a deformation gradient tensor corresponding to a shear state.
+
+        Parameters
+        ----------
+        u : array_like
+            First direction of the shear plane
+        v : array_like
+            Second direction of the shear plane
+        magnitude : float
+            Magnitude of the shear deformation
+
+        Returns
+        -------
+        DeformationGradient
+            Deformation gradient tensor for shear state
+
+        See Also
+        --------
+        SecondOrderTensor.shear : Create shear second-order tensor
+        tensile : Create tensile deformation gradient
+        """
         t = SecondOrderTensor.shear(u, v, magnitude)
         I = SecondOrderTensor.eye(shape=t.shape)
         return cls(t.matrix + I.matrix)
