@@ -111,6 +111,7 @@ class TestSecondOrderTensor(unittest.TestCase):
         np.testing.assert_array_almost_equal(t.matrix, reconstr_t.matrix)
 
     def test_polar_decomposition(self):
+        # Test with single tensor
         F = SecondOrderTensor.rand()
         R, U = F.polar()
         assert isinstance(R, np.ndarray)
@@ -121,6 +122,23 @@ class TestSecondOrderTensor(unittest.TestCase):
         assert isinstance(R, np.ndarray)
         assert isinstance(V, SymmetricSecondOrderTensor)
         np.testing.assert_array_almost_equal(F.matrix, np.matmul(V.matrix, R))
+        
+        # Test with tensor array (stacked matrices)
+        shape = (2, 3)
+        F_array = SecondOrderTensor.rand(shape=shape)
+        R_array, U_array = F_array.polar()
+        assert isinstance(R_array, np.ndarray)
+        assert isinstance(U_array, SymmetricSecondOrderTensor)
+        assert R_array.shape == shape + (3, 3)
+        assert U_array.shape == shape
+        np.testing.assert_array_almost_equal(F_array.matrix, np.matmul(R_array, U_array.matrix))
+
+        R_array, V_array = F_array.polar(side='left')
+        assert isinstance(R_array, np.ndarray)
+        assert isinstance(V_array, SymmetricSecondOrderTensor)
+        assert R_array.shape == shape + (3, 3)
+        assert V_array.shape == shape
+        np.testing.assert_array_almost_equal(F_array.matrix, np.matmul(V_array.matrix, R_array))
 
     def test_diag(self):
         T = SecondOrderTensor.diag([1,2,3])

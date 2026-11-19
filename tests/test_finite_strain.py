@@ -8,6 +8,7 @@ from elasticipy.tensors.stress_strain import StrainTensor, StressTensor
 
 class TestDeformationGradient(unittest.TestCase):
     def test_polar(self):
+        # Test with single tensor
         F = DeformationGradient.rand()
         R, U = F.polar()
         assert U == F.U
@@ -16,6 +17,17 @@ class TestDeformationGradient(unittest.TestCase):
         R, V = F.polar(side='left')
         assert V == F.V
         np.testing.assert_array_equal(R, F.R)
+        
+        # Test with tensor array (stacked matrices)
+        shape = (3, 4)
+        F_array = DeformationGradient.rand(shape=shape)
+        R_array, U_array = F_array.polar()
+        np.testing.assert_array_equal(U_array.matrix, F_array.U.matrix)
+        np.testing.assert_array_equal(R_array, F_array.R)
+
+        R_array, V_array = F_array.polar(side='left')
+        np.testing.assert_array_equal(V_array.matrix, F_array.V.matrix)
+        np.testing.assert_array_equal(R_array, F_array.R)
 
     def test_right_CauchyGreen(self):
         F = DeformationGradient.rand()
