@@ -192,16 +192,106 @@ class DeformationGradient(SecondOrderTensor):
         return 0.5 * (self.Cauchy_Green() - I)
 
     def Biot(self):
+        """
+        Compute the Biot strain tensor.
+
+        The Biot strain tensor is defined as:
+
+        .. math::
+
+            \\mathbf{E}_{Biot} = \\mathbf{C}^{1/2} - \\mathbf{I}
+
+        where :math:`\\mathbf{C}` is the right Cauchy-Green tensor.
+
+        Returns
+        -------
+        SymmetricSecondOrderTensor
+            Biot strain tensor
+
+        See Also
+        --------
+        Seth_Hill : generalized Seth-Hill strain tensor
+        Hencky : Hencky (logarithmic) strain tensor
+        Almansi : Almansi strain tensor
+        Green_Lagrangian : Green-Lagrangian strain tensor
+        """
         return self.Seth_Hill(0.5)
 
     def Hencky(self):
-        return 0.5 * self.log()
+        """
+        Compute the Hencky (logarithmic) strain tensor.
+
+        The Hencky strain tensor is defined as:
+
+        .. math::
+
+            \\mathbf{E}_{Hencky} = \\frac{1}{2}\\log(\\mathbf{C})
+
+        where :math:`\\mathbf{C}` is the right Cauchy-Green tensor.
+
+        Returns
+        -------
+        SymmetricSecondOrderTensor
+            Hencky strain tensor
+
+        See Also
+        --------
+        logarithmic_strain : alias for Hencky strain tensor
+        Seth_Hill : generalized Seth-Hill strain tensor
+        Biot : Biot strain tensor
+        Almansi : Almansi strain tensor
+        Green_Lagrangian : Green-Lagrangian strain tensor
+        """
+        return self.Seth_Hill(0)
 
     def logarithmic_strain(self):
+        """
+        Compute the logarithmic strain tensor.
+
+        This is an alias for :meth:`Hencky`.
+
+        Returns
+        -------
+        SymmetricSecondOrderTensor
+            Logarithmic (Hencky) strain tensor
+
+        See Also
+        --------
+        Hencky : Hencky strain tensor
+        Seth_Hill : generalized Seth-Hill strain tensor
+        """
         return self.Hencky()
 
     def Almansi(self):
-        return 0.5 * self.Seth_Hill(-1)
+        """
+        Compute the Almansi strain tensor.
+
+        The Almansi strain tensor is defined as:
+
+        .. math::
+
+            \\mathbf{E}_{Almansi} = \\frac{1}{2}\\left(\\mathbf{I} - \\mathbf{C}^{-1}\\right)
+
+        where :math:`\\mathbf{C}` is the right Cauchy-Green tensor.
+        This can also be expressed in terms of the right stretch tensor :math:`\\mathbf{U}`:
+
+        .. math::
+
+            \\mathbf{E}_{Almansi} = \\frac{1}{2}\\left(\\mathbf{I} - \\mathbf{U}^{-2}\\right)
+
+        Returns
+        -------
+        SymmetricSecondOrderTensor
+            Almansi strain tensor
+
+        See Also
+        --------
+        Seth_Hill : generalized Seth-Hill strain tensor
+        Hencky : Hencky strain tensor
+        Biot : Biot strain tensor
+        Green_Lagrangian : Green-Lagrangian strain tensor
+        """
+        return self.Seth_Hill(-1)
 
     def Seth_Hill(self, n):
         """
@@ -222,7 +312,7 @@ class DeformationGradient(SecondOrderTensor):
 
         .. math::
 
-            E_n = \\frac{1}{2n}\\left[\\mathbf{C}^m - \\mathbf{I}\\right]
+            E_n = \\frac{1}{2n}\\left[\\mathbf{C}^n - \\mathbf{I}\\right]
 
         if n==0, the Hencky strain tensor is returned:
 
@@ -535,4 +625,22 @@ class CauchyGreenTensor(SymmetricSecondOrderTensor):
         return self.I2 * self.J ** (-4 / 3)
 
     def sqrt(self):
+        """
+        Compute the square root of the Cauchy-Green tensor.
+
+        Returns the symmetric second-order tensor :math:`\\mathbf{A}` such that:
+
+        .. math::
+
+            \\mathbf{A}^2 = \\mathbf{C}
+
+        Returns
+        -------
+        SymmetricSecondOrderTensor
+            Square root of the Cauchy-Green tensor
+
+        See Also
+        --------
+        DeformationGradient.Biot : Biot strain tensor (uses sqrt of Cauchy-Green)
+        """
         return SymmetricSecondOrderTensor(super().sqrt())

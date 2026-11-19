@@ -1748,7 +1748,14 @@ class SecondOrderTensor:
          [0. 0. 1.]]
 
         """
-        log = scipy.linalg.logm(self.matrix)
+        # Try batch operation first, fall back to iteration for older scipy
+        if self.matrix.ndim == 2:
+            log = scipy.linalg.logm(self.matrix)
+        else:
+            # Stack of matrices: iterate over each matrix
+            log = np.zeros_like(self.matrix)
+            for idx in np.ndindex(self.matrix.shape[:-2]):
+                log[idx] = scipy.linalg.logm(self.matrix[idx])
         return SecondOrderTensor(log)
 
     def sqrt(self):
@@ -1762,7 +1769,14 @@ class SecondOrderTensor:
         SecondOrderTensor
             Tensor which is a square root of the input tensor
         """
-        mat = scipy.linalg.sqrtm(self.matrix)
+        # Try batch operation first, fall back to iteration for older scipy
+        if self.matrix.ndim == 2:
+            mat = scipy.linalg.sqrtm(self.matrix)
+        else:
+            # Stack of matrices: iterate over each matrix
+            mat = np.zeros_like(self.matrix)
+            for idx in np.ndindex(self.matrix.shape[:-2]):
+                mat[idx] = scipy.linalg.sqrtm(self.matrix[idx])
         return SecondOrderTensor(mat)
 
     def power(self, n):
@@ -1781,13 +1795,34 @@ class SecondOrderTensor:
         """
         if n == 0.5:
             return self.sqrt()
-        else:
-            mat = np.linalg.matrix_power(self.matrix, n)
+        elif n == 0:
+            # Return identity matrix
             if isinstance(self, SymmetricSecondOrderTensor):
-                return SymmetricSecondOrderTensor(mat)
+                return SymmetricSecondOrderTensor.eye(shape=self.shape)
             else:
-                return SecondOrderTensor(mat)
-
+                return SecondOrderTensor.eye(shape=self.shape)
+        
+        # Convert float to int if it represents an integer (for np.linalg.matrix_power)
+        # np.linalg.matrix_power only accepts integers
+        if isinstance(n, float) and n.is_integer():
+            n_int = int(n)
+        else:
+            n_int = n
+        
+        if self.matrix.ndim == 2:
+            # Single matrix: use numpy's matrix_power
+            mat = np.linalg.matrix_power(self.matrix, n_int)
+        else:
+            # Stack of matrices: iterate over each matrix
+            # scipy.linalg.fractional_matrix_power does NOT support stacks
+            mat = np.zeros_like(self.matrix)
+            for idx in np.ndindex(self.matrix.shape[:-2]):
+                mat[idx] = np.linalg.matrix_power(self.matrix[idx], n_int)
+        
+        if isinstance(self, SymmetricSecondOrderTensor):
+            return SymmetricSecondOrderTensor(mat)
+        else:
+            return SecondOrderTensor(mat)
 
 class SymmetricSecondOrderTensor(SecondOrderTensor):
     _voigt_map = [1, 1, 1, 1, 1, 1]

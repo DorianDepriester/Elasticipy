@@ -122,7 +122,150 @@ class TestDeformationGradient(unittest.TestCase):
         # Almansi
         Alma = F.Seth_Hill(-1)
         Alma_th = 0.5 * (I - F.U.power(-2))
-        np.testing.assert_array_almost_equal(Alma.matrix, Alma_th.matrix, decimal=2)
+        np.testing.assert_allclose(Alma.matrix, Alma_th.matrix, rtol=1e-5)
+
+    def test_biot_strain(self):
+        """Test the Biot strain tensor method"""
+        # Test with random deformation gradient
+        shape = (3, 4)
+        F = DeformationGradient.rand(shape=shape)
+        C = F.Cauchy_Green()
+        I = SymmetricSecondOrderTensor.eye()
+
+        # Biot should equal Seth_Hill(0.5)
+        Biot = F.Biot()
+        Biot_th = F.Seth_Hill(0.5)
+        np.testing.assert_array_almost_equal(Biot.matrix, Biot_th.matrix)
+
+        # Biot should equal C.sqrt() - I
+        np.testing.assert_array_almost_equal(Biot.matrix, (C.sqrt() - I).matrix)
+
+        # Test with identity: Biot should be zero
+        F_eye = DeformationGradient.eye()
+        Biot_eye = F_eye.Biot()
+        np.testing.assert_array_almost_equal(Biot_eye.matrix, np.zeros((3, 3)))
+
+        # Test with diagonal stretch
+        F_diag = DeformationGradient.diag([2, 1.5, 1])
+        Biot_diag = F_diag.Biot()
+        C_diag = F_diag.Cauchy_Green()
+        expected = C_diag.sqrt().matrix - np.eye(3)
+        np.testing.assert_array_almost_equal(Biot_diag.matrix, expected)
+
+    def test_hencky_strain(self):
+        """Test the Hencky (logarithmic) strain tensor method"""
+        # Test with random deformation gradient
+        shape = (3, 4)
+        F = DeformationGradient.rand(shape=shape)
+        C = F.Cauchy_Green()
+
+        # Hencky should equal Seth_Hill(0)
+        Hencky = F.Hencky()
+        Hencky_th = F.Seth_Hill(0)
+        np.testing.assert_array_almost_equal(Hencky.matrix, Hencky_th.matrix)
+
+        # Hencky should equal 0.5 * log(C)
+        np.testing.assert_array_almost_equal(Hencky.matrix, (0.5 * C.log()).matrix)
+
+        # Test with identity: Hencky should be zero
+        F_eye = DeformationGradient.eye()
+        Hencky_eye = F_eye.Hencky()
+        np.testing.assert_array_almost_equal(Hencky_eye.matrix, np.zeros((3, 3)))
+
+        # Test with diagonal stretch
+        F_diag = DeformationGradient.diag([2, 1.5, 1])
+        Hencky_diag = F_diag.Hencky()
+        C_diag = F_diag.Cauchy_Green()
+        expected = 0.5 * C_diag.log().matrix
+        np.testing.assert_array_almost_equal(Hencky_diag.matrix, expected)
+
+    def test_logarithmic_strain(self):
+        """Test the logarithmic_strain alias method"""
+        shape = (3, 4)
+        F = DeformationGradient.rand(shape=shape)
+
+        # logarithmic_strain should equal Hencky
+        log_strain = F.logarithmic_strain()
+        Hencky = F.Hencky()
+        np.testing.assert_array_almost_equal(log_strain.matrix, Hencky.matrix)
+
+        # Test with identity
+        F_eye = DeformationGradient.eye()
+        log_strain_eye = F_eye.logarithmic_strain()
+        np.testing.assert_array_almost_equal(log_strain_eye.matrix, np.zeros((3, 3)))
+
+    def test_almansi_strain(self):
+        """Test the Almansi strain tensor method"""
+        # Test with random deformation gradient
+        shape = (3, 4)
+        F = DeformationGradient.rand(shape=shape)
+        C = F.Cauchy_Green()
+        I = SymmetricSecondOrderTensor.eye()
+
+        # Almansi should equal Seth_Hill(-1)
+        Almansi = F.Almansi()
+        Almansi_th = F.Seth_Hill(-1)
+        np.testing.assert_array_almost_equal(Almansi.matrix, Almansi_th.matrix)
+
+        # Almansi should equal 0.5 * (I - C^-1) using power for consistency
+        # Note: using C.power(-1) instead of C.inv() for consistency with Seth_Hill implementation
+        np.testing.assert_array_almost_equal(Almansi.matrix, (0.5 * (I - C.power(-1))).matrix, decimal=2)
+
+        # Almansi should equal 0.5 * (I - U^-2)
+        # Note: U^-2 and C^-1 may have small numerical differences, so we use rtol
+        np.testing.assert_allclose(Almansi.matrix, (0.5 * (I - F.U.power(-2))).matrix, rtol=1e-5)
+
+        # Test with identity: Almansi should be zero
+        F_eye = DeformationGradient.eye()
+        Almansi_eye = F_eye.Almansi()
+        np.testing.assert_array_almost_equal(Almansi_eye.matrix, np.zeros((3, 3)))
+
+        # Test with diagonal stretch
+        F_diag = DeformationGradient.diag([2, 1.5, 1])
+        Almansi_diag = F_diag.Almansi()
+        C_diag = F_diag.Cauchy_Green()
+        expected = 0.5 * (np.eye(3) - C_diag.power(-1).matrix)
+        np.testing.assert_array_almost_equal(Almansi_diag.matrix, expected, decimal=2)
+
+    def test_seth_hill_family_consistency(self):
+        """Test consistency between all Seth-Hill family strain tensors"""
+        shape = (5, 3)
+        F = DeformationGradient.rand(shape=shape)
+
+        # Green-Lagrangian (n=1) should equal E
+        np.testing.assert_array_almost_equal(F.Seth_Hill(1).matrix, F.E.matrix)
+
+        # Biot (n=0.5)
+        np.testing.assert_array_almost_equal(F.Biot().matrix, F.Seth_Hill(0.5).matrix)
+
+        # Hencky (n=0)
+        np.testing.assert_array_almost_equal(F.Hencky().matrix, F.Seth_Hill(0).matrix)
+        np.testing.assert_array_almost_equal(F.logarithmic_strain().matrix, F.Seth_Hill(0).matrix)
+
+        # Almansi (n=-1)
+        np.testing.assert_array_almost_equal(F.Almansi().matrix, F.Seth_Hill(-1).matrix)
+
+    def test_seth_hill_special_values(self):
+        """Test Seth-Hill with various n values"""
+        F = DeformationGradient.diag([2, 1.5, 1])
+        C = F.Cauchy_Green()
+        I = SymmetricSecondOrderTensor.eye()
+
+        # Test n=1 (Green-Lagrangian)
+        E1 = F.Seth_Hill(1)
+        expected = 0.5 * (C - I)
+        np.testing.assert_array_almost_equal(E1.matrix, expected.matrix)
+
+        # Test n=0.5 (Biot)
+        E05 = F.Seth_Hill(0.5)
+        expected = C.sqrt() - I
+        np.testing.assert_array_almost_equal(E05.matrix, expected.matrix)
+
+        # Test n=-1 (Almansi)
+        E_neg1 = F.Seth_Hill(-1)
+        # For n=-1: 1/(2*(-1)) * (C^(-1) - I) = -0.5 * (C^(-1) - I) = 0.5 * (I - C^(-1))
+        expected = 0.5 * (I - C.inv())
+        np.testing.assert_array_almost_equal(E_neg1.matrix, expected.matrix, decimal=2)
 
 
 class TestPiolaKirchoff(unittest.TestCase):
