@@ -1616,8 +1616,8 @@ class SecondOrderTensor:
 
         Returns
         -------
-        R : numpy.ndarray
-            Orthogonal matrix
+        R : numpy.ndarray or numpy.ndarray with shape (..., 3, 3)
+            Orthogonal matrix (or array of matrices for stacked tensors)
         P : SymmetricSecondOrderTensor
         """
         # Try scipy's polar decomposition first, fall back to manual iteration
@@ -1805,8 +1805,6 @@ class SecondOrderTensor:
         """
         if n == 0.5:
             return self.sqrt()
-        elif n == -1:
-            return self.inv()
         elif n == 0:
             # Return identity matrix
             if isinstance(self, SymmetricSecondOrderTensor):
