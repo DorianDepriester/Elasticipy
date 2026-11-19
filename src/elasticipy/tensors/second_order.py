@@ -1795,6 +1795,8 @@ class SecondOrderTensor:
         """
         if n == 0.5:
             return self.sqrt()
+        elif n == -1:
+            return self.inv()
         elif n == 0:
             # Return identity matrix
             if isinstance(self, SymmetricSecondOrderTensor):
