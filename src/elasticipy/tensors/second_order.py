@@ -1620,7 +1620,17 @@ class SecondOrderTensor:
             Orthogonal matrix
         P : SymmetricSecondOrderTensor
         """
-        r, p = polar(self.matrix, side=side)
+        # Try scipy's polar decomposition first, fall back to manual iteration
+        # scipy.linalg.polar only supports 2D matrices
+        try:
+            r, p = polar(self.matrix, side=side)
+        except (ValueError, np.linalg.LinAlgError):
+            # Stack of matrices: iterate over each matrix
+            shape = self.matrix.shape[:-2]
+            r = np.empty(shape + (3, 3))
+            p = np.empty(shape + (3, 3))
+            for idx in np.ndindex(shape):
+                r[idx], p[idx] = polar(self.matrix[idx], side=side)
         return r, SymmetricSecondOrderTensor(p)
 
     @classmethod
