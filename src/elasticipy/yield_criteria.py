@@ -354,6 +354,14 @@ class YieldCriterion(ABC):
         plot2D : plot the yield surface in the biaxial stress space
         plot_deviatoric : plot the elastic domain in the deviatoric plane
         draw_surface_normal : show the surface normal at a given location in the principal stress space
+
+        Examples
+        --------
+        Plot the yield surface of the Drucker-Prager yield criterion:
+
+        >>> from elasticipy.yield_criteria import DruckerPrager
+        >>> dp = DruckerPrager.from_cohesion_friction_angle(2, -20)
+        >>> dp.plot3D(xrange=(-6, 6), yrange=(-6, 6), zrange=(-6, 6), opacity=0.5)
         """
         if fig is None:
             fig = go.Figure()
