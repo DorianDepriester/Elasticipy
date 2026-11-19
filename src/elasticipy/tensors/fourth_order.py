@@ -1905,13 +1905,60 @@ class SymmetricFourthOrderTensor(FourthOrderTensor):
 
     @classmethod
     def rand(cls, shape=None, **kwargs):
+        """
+        Generate a random symmetric fourth-order tensor array.
+
+        Parameters
+        ----------
+        shape : tuple, optional
+            Shape of the tensor array. If None, a single tensor is returned.
+        **kwargs
+            Additional keyword arguments forwarded to the constructor.
+
+        Returns
+        -------
+        SymmetricFourthOrderTensor
+            Random symmetric fourth-order tensor or tensor array
+
+        See Also
+        --------
+        FourthOrderTensor.rand : Generate random fourth-order tensor
+        """
         t1 = super().rand(shape)
         return cls(t1, force_symmetries=True, **kwargs)
 
     def eig(self):
+        """
+        Compute the eigenvalues and eigenvectors of the symmetric fourth-order tensor.
+
+        Returns
+        -------
+        eigenvalues : numpy.ndarray
+            Array of eigenvalues
+        eigenvectors : numpy.ndarray
+            Array of eigenvectors
+
+        See Also
+        --------
+        numpy.linalg.eigh : Eigenvalues and eigenvectors of a symmetric matrix
+        eigvals : Compute eigenvalues only
+        """
         return np.linalg.eigh(self._matrix)
 
     def eigvals(self):
+        """
+        Compute the eigenvalues of the symmetric fourth-order tensor.
+
+        Returns
+        -------
+        numpy.ndarray
+            Array of eigenvalues
+
+        See Also
+        --------
+        numpy.linalg.eigvalsh : Eigenvalues of a symmetric matrix
+        eig : Compute eigenvalues and eigenvectors
+        """
         return np.linalg.eigvalsh(self._matrix)
 
     def __add__(self, other):
