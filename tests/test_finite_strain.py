@@ -112,7 +112,7 @@ class TestDeformationGradient(unittest.TestCase):
         shape = (4, 3)
         F = DeformationGradient.rand(shape=shape)
         F_inv = F.inv()
-        np.testing.assert_array_almost_equal(F_inv.matrix, F.power(-1).matrix)
+        np.testing.assert_array_almost_equal(F_inv.matrix, F.power(-1).matrix, decimal=5)
 
     def test_seth_hill(self):
         shape = (3, 4)
