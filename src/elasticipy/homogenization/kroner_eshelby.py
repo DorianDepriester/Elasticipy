@@ -37,9 +37,9 @@ def gamma(C_macro_local, phi, theta, a1, a2, a3):
 
     .. math::
 
-        \\gamma_{ijkl}\\left(\phi,\\theta\\right) = \\frac{1}{4}\\left(
+        \gamma_{ijkl}\left(\phi,\theta\right) = \frac{1}{4}\left(
         D^{-1}_{ik}u_ju_l + D^{-1}_{jk}u_iu_l + D^{-1}_{il}u_ju_k + D^{-1}_{jl}u_iu_k
-        \\right)
+        \right)
 
     where **D** denotes the Christoffel tensor, such that:
 
@@ -51,9 +51,9 @@ def gamma(C_macro_local, phi, theta, a1, a2, a3):
 
     .. math::
 
-		u_1 =\\frac{\\sin\\theta\\cos\\phi}{a_1}\\text{, }
-		u_2 =\\frac{\\sin\\theta\\sin\\phi}{a_2}\\text{, }
-		u_3 =\\frac{\\cos\\theta}{a_3}
+    u_1 =\frac{\sin\theta\cos\phi}{a_1}\text{, }
+    u_2 =\frac{\sin\theta\sin\phi}{a_2}\text{, }
+    u_3 =\frac{\cos\theta}{a_3}
     """
     s1 = np.sin(theta)*np.cos(phi) / a1
     s2 = np.sin(theta)*np.sin(phi) / a2
@@ -108,16 +108,16 @@ def polarization_tensor(C, a1, a2, a3, n_phi=100, n_theta=50):
 
     .. math::
 
-	    P_{ijkl}=\\frac{1}{4\\pi}\\int_{0}^{\\pi}\\int_{0}^{2\\pi}
-	    \\gamma_{ijkl}\\left(\\phi,\\theta\\right)\\sin\\theta\\mathrm{d}\\phi\\mathrm{d}\\theta
+        P_{ijkl}=\frac{1}{4\pi}\int_{0}^{\pi}\int_{0}^{2\pi}
+        \gamma_{ijkl}\left(\phi,\theta\right)\sin\theta\mathrm{d}\phi\mathrm{d}\theta
 
-    where :math:`\\mathbf{\\gamma}` denotes the gamma tensor, such that:
+    where :math:`\mathbf{\gamma}` denotes the gamma tensor, such that:
 
     .. math::
 
-        \\gamma_{ijkl}\\left(\phi,\\theta\\right) = \\frac{1}{4}\\left(
+        \gamma_{ijkl}\left(\phi,\theta\right) = \frac{1}{4}\left(
         D^{-1}_{ik}u_ju_l + D^{-1}_{jk}u_iu_l + D^{-1}_{il}u_ju_k + D^{-1}_{jl}u_iu_k
-        \\right)
+        \right)
     """
     theta = np.linspace(0, np.pi, n_theta)
     phi = np.linspace(0, 2 * np.pi, n_phi)
@@ -164,9 +164,9 @@ def localization_tensor(C_macro, C_incl, a1, a2, a3, n_phi=100, n_theta=50):
 
     .. math::
 
-        \\mathbf{A}= \\left[\\mathbf{P}:\left( \\mathbf{C}-\\mathbf{C}^{macro}\\right) + \\mathbf{I}\\right]^{-1}
+        \mathbf{A}= \left[\mathbf{P}:\left( \mathbf{C}-\mathbf{C}^{macro}\right) + \mathbf{I}\right]^{-1}
 
-    where :math:`\\mathbf{P}`, :math:`\\mathbf{C}` and :math:`\\mathbf{C}^{macro}` denote the polarization tensor, the
+    where :math:`\mathbf{P}`, :math:`\mathbf{C}` and :math:`\mathbf{C}^{macro}` denote the polarization tensor, the
     particule stiffness tensor and the macroscopic stiffness tensor, respectively.
     """
     E = polarization_tensor(C_macro, a1, a2, a3, n_phi=n_phi, n_theta=n_theta)
@@ -176,7 +176,7 @@ def localization_tensor(C_macro, C_incl, a1, a2, a3, n_phi=100, n_theta=50):
 
 def kroner_eshelby(Cs, particle_sizes=None, orientations=None,
                    volume_fractions=None, n_phi=100, n_theta=50, method='del2', maxiter=1000):
-    """
+    r"""
     Compute the homogenized stiffness tensor of an ellipsoidal-inclusion
     composite using the (self-consistent) Kröner-Eshelby scheme.
 
@@ -185,17 +185,17 @@ def kroner_eshelby(Cs, particle_sizes=None, orientations=None,
 
     .. math::
 
-        \\mathbf{C}_{eff} = <\\mathbf{C}_i : \\mathbf{A}_i>
+        \mathbf{C}_{eff} = <\mathbf{C}_i : \mathbf{A}_i>
 
     where :math:`A_i` is the localization tensor of the i-th inclusion,
 
     .. math::
 
-        A_i = (\\mathbf{I} + \\mathbf{P}(\\mathbf{C}_{eff}) : (\\mathbf{C}_i - \\mathbf{C}_{eff}))^{-1},
+        A_i = (\mathbf{I} + \mathbf{P}(\mathbf{C}_{eff}) : (\mathbf{C}_i - \mathbf{C}_{eff}))^{-1},
 
-    and :math:`\\mathbf{P}(\\mathbf{C}_{eff})` is the Eshelby polarization tensor of the ellipsoid,
+    and :math:`\mathbf{P}(\mathbf{C}_{eff})` is the Eshelby polarization tensor of the ellipsoid,
     computed by angular quadrature over the unit sphere. The resulting
-    implicit equation on :math:`\\mathbf{P}(\\mathbf{C}_{eff})` is solved by fixed-point iteration, with
+    implicit equation on :math:`\mathbf{P}(\mathbf{C}_{eff})` is solved by fixed-point iteration, with
     the initial guess chosen as the Hill (or Voigt/Reuss) average of the phase stiffnesses.
 
     Notes
