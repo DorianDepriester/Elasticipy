@@ -51,9 +51,9 @@ def gamma(C_macro_local, phi, theta, a1, a2, a3):
 
     .. math::
 
-    u_1 =\frac{\sin\theta\cos\phi}{a_1}\text{, }
-    u_2 =\frac{\sin\theta\sin\phi}{a_2}\text{, }
-    u_3 =\frac{\cos\theta}{a_3}
+        u_1 =\frac{\sin\theta\cos\phi}{a_1}\text{, }
+        u_2 =\frac{\sin\theta\sin\phi}{a_2}\text{, }
+        u_3 =\frac{\cos\theta}{a_3}
     """
     s1 = np.sin(theta)*np.cos(phi) / a1
     s2 = np.sin(theta)*np.sin(phi) / a2
