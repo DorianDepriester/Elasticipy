@@ -210,7 +210,7 @@ class TestDeformationGradient(unittest.TestCase):
         """Test the Almansi strain tensor method"""
         # Test with random deformation gradient
         shape = (3, 4)
-        F = DeformationGradient.rand(shape=shape)
+        F = DeformationGradient.rand(shape=shape, seed=321)
         C = F.Cauchy_Green()
         I = SymmetricSecondOrderTensor.eye()
 
@@ -220,7 +220,7 @@ class TestDeformationGradient(unittest.TestCase):
         np.testing.assert_array_almost_equal(Almansi.matrix, Almansi_th.matrix)
 
         # Almansi should equal 0.5 * (I - C^-1) using power for consistency
-        np.testing.assert_array_almost_equal(Almansi.matrix, (0.5 * (I - C.inv())).matrix, decimal=2)
+        np.testing.assert_array_almost_equal(Almansi.matrix, (0.5 * (I - C.inv())).matrix, decimal=7)
 
         # Almansi should equal 0.5 * (I - U^-2)
         # Note: U^-2 and C^-1 may have small numerical differences, so we use rtol
