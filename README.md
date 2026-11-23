@@ -4,6 +4,7 @@
 ![Conda Downloads](https://img.shields.io/conda/d/conda-forge/Elasticipy)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/y/DorianDepriester/Elasticipy)
 ![GitHub Repo stars](https://img.shields.io/github/stars/DorianDepriester/Elasticipy)
+[![GitHub discussion](https://img.shields.io/badge/GitHub-Discussions-green?logo=github)](https://github.com/DorianDepriester/Elasticipy/discussions)
 [![PyPI - License](https://img.shields.io/pypi/l/Elasticipy)](https://github.com/DorianDepriester/Elasticipy/blob/main/LICENSE)
 [![ReadTheDoc](https://readthedocs.org/projects/elasticipy/badge/?version=latest)](https://elasticipy.readthedocs.io/)
 [![codecov](https://codecov.io/gh/DorianDepriester/Elasticipy/graph/badge.svg?token=VUZPEUPBH1)](https://codecov.io/gh/DorianDepriester/Elasticipy)

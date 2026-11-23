@@ -32,6 +32,9 @@ Elasticipy Documentation
    :alt: GitHub Repo stars
    :target: https://github.com/DorianDepriester/Elasticipy
 
+.. |GH-discuss| image:: https://img.shields.io/badge/GitHub-Discussions-green?logo=github
+   :target: https://github.com/DorianDepriester/Elasticipy/discussions
+
 .. |license| image:: https://img.shields.io/pypi/l/Elasticipy
    :alt: PyPI - License
    :target: https://github.com/DorianDepriester/Elasticipy/blob/main/LICENSE
@@ -48,7 +51,7 @@ Elasticipy Documentation
    :alt: PyPI - Python Version
 
 |pypi| |pypi-downloads| |conda| |conda-downloads|
-|github-commit| |github-stars| |license|
+|github-commit| |github-stars| |GH-discuss| |license|
 |doc| |coverage| |pypi-version| |joss| |binder|
 
 
