@@ -1650,7 +1650,8 @@ class StiffnessTensor(SymmetricFourthOrderTensor):
         Kr = S_reuss.bulk_modulus
         Gv = C_voigt._matrix[..., 3, 3] / 2
         Gr = 1 / S_reuss._matrix[..., 3, 3] / 2
-        return 5 * Gv / Gr + Kv / Kr - 6
+        A_U = 5 * Gv / Gr + Kv / Kr - 6
+        return np.clip(A_U, 0., np.inf)
 
     def Zener_ratio(self, tol=1e-4):
         """
